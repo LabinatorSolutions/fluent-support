@@ -9,14 +9,14 @@
                 </div>
             </div>
             <template v-if="has_pro">
-                <div v-if="!fetching" class="fs_table_container">
+                <div class="fs_table_container">
                     <div class="fs_table_header">
                         <div class="fs_box_actions">
                             <div class="fs_ticket_orders fs_table_search_field">
                                 <el-input
-                                    @keyup.enter="fetchTags"
+                                    @keyup.enter="searchTags"
                                     clearable
-                                    @clear="fetchTags"
+                                    @clear="searchTags"
                                     :disabled="!has_pro"
                                     :placeholder="$t('Search...')"
                                     v-model="search"
@@ -37,7 +37,8 @@
                             </el-button>
                         </div>
                     </div>
-                    <div class="fs_table_wrapper">
+                    <TableSkeleton v-if="first_loading" :rows="5" :columns="[100, 200, 250, 80, 150]" />
+                    <div v-else class="fs_table_wrapper" v-loading="fetching">
                         <el-table
                             :data="tags"
                             row-class-name="fs_table_row"
@@ -132,17 +133,43 @@
 
                     </div>
                 </div>
-                <div class="fs_box_body fs_skeleton_loader" v-else>
-                    <el-skeleton class="fs_box_wrapper" :rows="5" animated />
-                </div>
             </template>
-            <NarrowPromo
-                v-else
-                :heading="$t('segment_ticket_by_tags')"
-                :description="$t('pro_promo')"
-                :button-text="$t('Upgrade To Pro')"
-                utm-content="feature_lock_ticket_tags"
-            />
+            <div v-else class="fs_box_body">
+                <ProShowcase
+                    :feature="$t('Ticket tags')"
+                    :heading="$t('Know what every ticket is about at a glance')"
+                    :description="$t('ticket_tags_promo_description')"
+                    :specifics="promoSpecifics"
+                    utm-content="feature_lock_ticket_tags"
+                    docs-url="https://docs.fluentsupport.com/ticket-tags-custom-tags#how-to-create-tags"
+                >
+                    <template #preview>
+                        <div class="fs_pro_preview">
+                            <div class="fs_pro_preview_card fs_pro_preview_fields">
+                                <div class="fs_pro_preview_title">
+                                    <span class="fs_pro_preview_checkbox"></span>
+                                    {{ $t('Additional Details') }}
+                                </div>
+                                <div class="fs_pro_preview_label">{{ $t('Add Tags') }}</div>
+                                <div class="fs_pro_preview_input">
+                                    <span class="fs_pro_preview_chip fs_pro_preview_chip_orange">{{ $t('Billing') }}</span>
+                                    <span class="fs_pro_preview_chip fs_pro_preview_chip_purple fs_pro_preview_added">{{ $t('VIP') }}</span>
+                                    <span class="fs_pro_preview_caret">&#9662;</span>
+                                </div>
+                            </div>
+                            <div class="fs_pro_preview_card fs_pro_preview_menu">
+                                <div>{{ $t('Bug') }}</div>
+                                <div class="fs_pro_preview_menu_active">
+                                    {{ $t('VIP') }}
+                                    <!-- translators: %s: number of tickets -->
+                                    <span class="fs_pro_preview_menu_meta">{{ $_n('Used on %s ticket', 'Used on %s tickets', 38) }}</span>
+                                </div>
+                                <div>{{ $t('Feature request') }}</div>
+                            </div>
+                        </div>
+                    </template>
+                </ProShowcase>
+            </div>
         </div>
 
         <el-dialog
@@ -209,7 +236,8 @@
 import Pagination from "../../Pieces/Pagination";
 import TableMoreActions from "@/admin/Components/TableMoreActions.vue";
 import TableEmptyStateImage from "@/admin/Components/TableEmptyStateImage.vue";
-import NarrowPromo from "@/admin/Components/NarrowPromo.vue";
+import ProShowcase from "@/admin/Components/ProShowcase.vue";
+import TableSkeleton from "@/admin/Components/TableSkeleton.vue";
 
 export default {
     name: "TicketTags",
@@ -217,7 +245,8 @@ export default {
         Pagination,
         TableMoreActions,
         TableEmptyStateImage,
-        NarrowPromo
+        ProShowcase,
+        TableSkeleton
      },
 
     data() {
@@ -229,11 +258,21 @@ export default {
                 total: 0,
             },
             fetching: true,
+            first_loading: true,
             saving: false,
             tag_modal: false,
             editing_tag: false,
             search: "",
         };
+    },
+    computed: {
+        promoSpecifics() {
+            return [
+                this.$t('Create, rename and remove your own tags'),
+                this.$t('Add tags to one ticket or many at once'),
+                this.$t('Add or remove tags automatically with workflows')
+            ];
+        }
     },
     methods: {
         fetchTags() {
@@ -252,7 +291,13 @@ export default {
                 })
                 .always(() => {
                     this.fetching = false;
+                    this.first_loading = false;
                 });
+        },
+
+        searchTags() {
+            this.pagination.current_page = 1;
+            this.fetchTags();
         },
 
         createOrUpdateTag() {

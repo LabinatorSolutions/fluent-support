@@ -31,11 +31,12 @@ class TicketResponseRequest extends RequestGuard
         $data = $this->all();
 
         $sanitizeRules = [
-            'content' => 'wp_kses_post',
+            'content' => '\FluentSupport\App\Services\Helper::sanitizeHtmlContent',
             'conversation_type' => 'sanitize_text_field',
             'close_ticket' => 'sanitize_text_field',
             'ticket_id' => 'intval',
-            'informational_reply' => 'rest_sanitize_boolean'
+            'informational_reply' => 'rest_sanitize_boolean',
+            'scheduled_at' => 'intval'
         ];
 
         if( $data && is_array($data) ) {

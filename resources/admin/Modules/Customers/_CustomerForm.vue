@@ -1,9 +1,10 @@
 <template>
-    <div v-loading="loading" class="fs_customer_form">
+    <div v-loading="loading && fields_loaded" class="fs_customer_form">
+        <FormSkeleton v-if="loading && !fields_loaded" :fields="6" :button="false" />
         <form-builder :fields="basic_fields" :form-data="customer"/>
         <form-builder :fields="address_fields" :form-data="customer"/>
 
-        <div class="fs_form_buttons" v-if="$route.params.customer_id || source === 'ticket'">
+        <div class="fs_form_buttons" v-if="!hideButtons && ($route.params.customer_id || source === 'ticket')">
             <el-button class="fs_filled_btn" @click="updateCustomer()" type="success" v-if="customer.id">{{ $t('Update Customer') }}</el-button>
             <el-button class="fs_filled_btn" @click="createCustomer()" type="primary" v-else>{{ $t('Create Customer') }}</el-button>
         </div>
@@ -11,12 +12,15 @@
 </template>
 <script type="text/babel">
 import FormBuilder from '../../Pieces/FormElements/_FormBuilder';
+import FormSkeleton from '@/admin/Components/FormSkeleton.vue';
 
 export default {
     name: 'CustomerForm',
-    props: ['customer', 'source'],
+    // hideButtons: the parent dialog's footer saves instead.
+    props: ['customer', 'source', 'hideButtons'],
     components: {
-        FormBuilder
+        FormBuilder,
+        FormSkeleton
     },
     emits: ['updated'],
     data() {
@@ -24,6 +28,7 @@ export default {
             basic_fields: {},
             address_fields: {},
             loading: false,
+            fields_loaded: false,
         }
     },
     mounted() {
@@ -57,6 +62,7 @@ export default {
                 .then(response => {
                     this.address_fields = response.customerField.address_fields;
                     this.basic_fields = response.customerField.basic_fields;
+                    this.fields_loaded = true;
 
                     // Add required indicators for first name and email
                     if (this.basic_fields.first_name) {

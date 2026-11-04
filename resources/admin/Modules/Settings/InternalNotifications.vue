@@ -24,33 +24,23 @@
                 :form-data="settings"
                 label_position="top"
             />
-
-            <div v-if="isModal" class="fs_dialog_footer fs_text_right">
-                <el-button
-                    v-loading="saving"
-                    :disabled="saving"
-                    type="success"
-                    @click="saveSettings"
-                    class="fs_filled_btn"
-                >
-                    {{ $t('Update Settings') }}
-                </el-button>
-            </div>
         </div>
 
         <div v-else :class="skeletonClass">
-            <el-skeleton :rows="6" animated />
+            <FormSkeleton :fields="settingsScope === 'preferences' ? 4 : 1" :button="false" />
         </div>
     </div>
 </template>
 
 <script type="text/babel">
 import FormBuilder from '../../Pieces/FormElements/_FormBuilder';
+import FormSkeleton from '@/admin/Components/FormSkeleton.vue';
 
 export default {
     name: 'InternalNotifications',
     components: {
-        FormBuilder
+        FormBuilder,
+        FormSkeleton
     },
     props: {
         settingsScope: {
@@ -134,7 +124,7 @@ export default {
             this.saving = true;
             const settings = this.sanitizedSettings();
 
-            this.$post('settings', {
+            return this.$post('settings', {
                 settings_key: this.settingsKey,
                 settings
             })
@@ -169,7 +159,7 @@ export default {
                 false_label: 'no',
                 checkbox_label: this.$t('Enable Mention Notification'),
                 disabled: true,
-                help: this.$t('Agents will receive notifications when they are mentioned in replies or internal notes. This cannot be disabled from these settings.')
+                help: this.$t('Agent_Mention_Notification_Help')
             };
         },
         sanitizedSettings() {

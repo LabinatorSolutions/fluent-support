@@ -14,7 +14,6 @@ class PrivacyHandler
         add_filter('wp_privacy_personal_data_erasers', [$this, 'registerEraser']);
     }
 
-    // Registering exporters to export data
     public function registerExporter($exporters)
     {
         $exporters['fluent-support-tickets'] = array(
@@ -34,7 +33,6 @@ class PrivacyHandler
         return $exporters;
     }
 
-    // Registering erasers to erase data
     public function registerEraser($erasers)
     {
         $erasers['fluent-support'] = array(
@@ -44,7 +42,6 @@ class PrivacyHandler
         return $erasers;
     }
 
-    // Method to handle tickets data exporter
     public function exportTickets($user_email, $page = 1)
     {
         $customer = Customer::where('email', $user_email)->select(['id'])->first();
@@ -121,7 +118,6 @@ class PrivacyHandler
         ];
     }
 
-    // Method to handle conversations data exporter
     public function exportConversations($user_email, $page = 1)
     {
         $customer = Customer::where('email', $user_email)->select(['id'])->first();
@@ -183,7 +179,6 @@ class PrivacyHandler
         ];
     }
 
-    // Method to handle customers data exporter
     public function exportCustomerData($user_email, $page = 1)
     {
         $customer = Customer::where('email', $user_email)->first();
@@ -277,7 +272,7 @@ class PrivacyHandler
     {
         $text = '';
         foreach ($attachments as $attachment) {
-            $text .= '<a href=' . esc_url($attachment->secureUrl) . '>' . esc_html($attachment->title) . '</a>, <br>';
+            $text .= '<a href=' . esc_url($attachment->emailUrl(true)) . '>' . esc_html($attachment->title) . '</a>, <br>';
         }
 
         return $text;
@@ -287,7 +282,7 @@ class PrivacyHandler
     {
         $text = '';
         foreach ($attachments as $attachment) {
-            $text .= '<a href=' . esc_url($attachment->secureUrl) . '>' . esc_html($attachment->title) . '</a>, <br>';
+            $text .= '<a href=' . esc_url($attachment->emailUrl(true)) . '>' . esc_html($attachment->title) . '</a>, <br>';
         }
 
         return $text;
@@ -303,7 +298,6 @@ class PrivacyHandler
         return $ticketTags;
     }
 
-    // Method to handle data eraser
     public function erasePersonalData($user_email, $page = 1)
     {
         $customer = Customer::where('email', $user_email)->select(['id'])->first();
@@ -318,8 +312,9 @@ class PrivacyHandler
         }
 
         $tickets = Ticket::where('customer_id', $customer->id)->get();
+        $ticketService = new \FluentSupport\App\Services\Tickets\TicketService();
         foreach ($tickets as $ticket) {
-            $ticket->deleteTicket();
+            $ticketService->deleteTicket($ticket);
         }
 
         $customer->delete();

@@ -59,7 +59,7 @@
                         <IconPack icon-key="ai_ticket_audit" :width="22" :height="22" />
                     </span>
                     <h4>{{ $t('No audit for this range yet') }}</h4>
-                    <p>{{ $t('Pick a date range and run an audit to get mood, sentiment score, and a one-line summary for every ticket — tickets that already have a fresh audit are skipped automatically.') }}</p>
+                    <p>{{ $t('Ticket_Audit_Empty_Help') }}</p>
                     <el-button class="fs_filled_btn" type="primary" @click="runAudit">{{ $t('Run Audit') }}</el-button>
                 </div>
 
@@ -72,7 +72,8 @@
                         <div class="fs_audit_progress_fill" :style="{ width: progressPercent + '%' }"></div>
                     </div>
                     <div class="fs_audit_run_meta">
-                        <span>{{ processedCount }} {{ $t('of') }} {{ totalCandidates }} {{ $t('tickets processed') }}</span>
+                        <!-- translators: %1$s is the number of tickets audited so far, %2$s the total number of tickets in the run -->
+                        <span>{{ $t('%1$s of %2$s tickets processed', processedCount, totalCandidates) }}</span>
                         <span>{{ progressPercent }}% {{ $t('complete') }}</span>
                     </div>
                     <div class="fs_audit_run_ticker" v-if="recentAudited.length">
@@ -81,7 +82,8 @@
                             <span>
                                 #{{ item.ticket_id }} “{{ item.title }}” &rarr;
                                 <b>{{ item.status === 'failed' ? $t('Failed') : item.mood }}</b>
-                                <template v-if="item.status !== 'failed'">, {{ $t('score') }} {{ item.score }}</template>
+                                <!-- translators: %s is the sentiment score the AI audit gave the ticket -->
+                                <template v-if="item.status !== 'failed'">, {{ $t('score %s', item.score) }}</template>
                             </span>
                         </div>
                     </div>
@@ -260,7 +262,8 @@
 
                             <div class="fs_pagination_wrapper" v-if="rows.length">
                                 <span class="fs_pagination_left">
-                                    <p>{{ $t("Page") }} {{ pagination.current_page }} {{ $t("of") }} {{ Math.ceil(pagination.total / pagination.per_page) }}</p>
+                                    <!-- translators: %1$s is the current page number, %2$s the total number of pages -->
+                                    <p>{{ $t('Page %1$s of %2$s', pagination.current_page, Math.ceil(pagination.total / pagination.per_page)) }}</p>
                                     <pagination
                                         @fetch="fetchResults(false)"
                                         :pagination="pagination"
@@ -404,28 +407,18 @@ export default {
                 { key: "failed", label: this.$t("Failed"), count: this.summary.failed }
             ];
         }
-        // Mood filtering and "needs attention" are resolved server-side now (see
-        // fetchResults()) — this.rows is already the current page's filtered set,
-        // and this.needsAttentionRows is a separate bounded query over the whole
-        // range, not just whatever happens to be on the current page.
+        // Mood filtering and needs-attention are resolved server-side in fetchResults().
     },
     watch: {
         date_range: {
             handler(newVal) {
-                // Guard against this component's own date-change emission
-                // round-tripping back through the parent prop — only externally
-                // supplied ranges (e.g. browser back/forward restoring
-                // date_range via Report.vue's popstate handler, or this tab
-                // being kept alive while another report tab changes the range)
-                // should trigger a refetch here.
+                // Ignore our own date-change echoing back through the prop. Only
+                // external changes (back/forward, another report tab) should refetch.
                 if (this.isSameDateRange(newVal, this.localDateRange)) {
                     return;
                 }
                 if (this.runState === "running") {
-                    // Don't yank the range out from under an in-flight audit run
-                    // — the picker is disabled while running anyway, so this can
-                    // only be an external change. Queue it so runAudit() applies
-                    // it once the run finishes, instead of dropping it silently.
+                    // runAudit() applies it once the run finishes.
                     this.pendingExternalDateRange = newVal;
                     return;
                 }
@@ -471,18 +464,13 @@ export default {
             }
             this.activeMoodFilter = key;
             this.pagination.current_page = 1;
-            // Summary/distribution/needs-attention depend only on the date
-            // range, not the mood filter — no need to re-scan the whole
-            // range for them just because which page of rows is shown changed.
+            // Aggregates depend only on the date range, not the mood filter.
             this.fetchResults(false);
         },
 
         async fetchResults(withAggregates = true) {
             if (!this.localDateRange || this.localDateRange.length !== 2) {
-                // Invalidate any request already in flight so its response can't
-                // land afterward and populate the table for a range that's no
-                // longer selected — an empty range gets a clean idle state, not
-                // whatever the previous range's stale results happen to be.
+                // Invalidate any in-flight request so stale results can't land.
                 this.resultsRequestToken++;
                 this.loading = false;
                 this.fetchError = false;
@@ -498,8 +486,7 @@ export default {
             this.loading = true;
             this.fetchError = false;
             const [from, to] = this.localDateRange;
-            // A newer fetchResults() call (e.g. the date range changed again) may resolve
-            // before this one — only the response for the *current* token may apply.
+            // Only the latest call's response may apply.
             const requestToken = ++this.resultsRequestToken;
             try {
                 const response = await this.$get("advanced-reports/audit/results", {
@@ -520,11 +507,7 @@ export default {
                 }
                 this.rows = response.rows.data || [];
                 this.pagination.current_page = response.rows.current_page;
-                // Synced from the response rather than trusted as-sent — the
-                // backend is the source of truth for what per_page it actually
-                // applied, so page-count math can't drift out of sync with a
-                // server-side cap even if that cap changes independently of
-                // this page's size options.
+                // The server may cap per_page, so use what it applied.
                 this.pagination.per_page = response.rows.per_page;
                 this.pagination.total = response.rows.total;
                 this.runState = this.summary.total ? "done" : "idle";
@@ -534,11 +517,7 @@ export default {
                 }
                 this.fetchError = true;
                 this.$handleError(error);
-                // If this was the refresh at the end of runAudit(), don't leave
-                // the toolbar (date picker / Run Audit button, both disabled
-                // while runState === "running") stuck unusable just because
-                // this particular refresh failed — the error banner above
-                // already covers retry via the Retry button.
+                // Don't leave the toolbar disabled if runAudit()'s final refresh fails.
                 if (this.runState === "running") {
                     this.runState = "idle";
                 }
@@ -556,9 +535,7 @@ export default {
                 const response = await this.$get("advanced-reports/performance-overview/filters");
                 this.agentsFilter = response.agents || [];
             } catch (error) {
-                // Surfaced in the Escalate modal (error message + Retry, select
-                // and submit disabled) rather than silently leaving an empty,
-                // unusable dropdown with no way to recover.
+                // The Escalate modal shows an error with a Retry button.
                 this.agentsFilterError = true;
             } finally {
                 this.agentsFilterLoading = false;
@@ -591,9 +568,8 @@ export default {
                 this.$notify({
                     type: "warning",
                     title: this.$t("Batch limited"),
-                    message: this.$t("{queued} of {total} tickets queued — narrow the date range or run again to cover the rest.")
-                        .replace("{queued}", candidateResponse.queued)
-                        .replace("{total}", candidateResponse.total)
+                    // translators: %1$s is the number of tickets queued for the audit, %2$s the number of tickets in the date range
+                    message: this.$t("%1$s of %2$s tickets queued. Narrow the date range or run again to cover the rest.", candidateResponse.queued, candidateResponse.total)
                 });
             }
 
@@ -606,12 +582,10 @@ export default {
                     const results = batchResponse.results || [];
                     this.recentAudited = results.concat(this.recentAudited).slice(0, 5);
                     this.processedCount += results.length;
-                    // Ticket IDs the server didn't return a result for (e.g. a per-ticket
-                    // lock timeout) — only confirmed results count as processed.
+                    // Tickets without a result (e.g. lock timeout) count as failed.
                     failedCount += Math.max(0, chunk.length - results.length);
                 } catch (error) {
-                    // one failed batch shouldn't abort the whole run — keep going, but
-                    // it must still be counted as unprocessed rather than silently skipped
+                    // Keep going. One failed batch shouldn't abort the run.
                     failedCount += chunk.length;
                 }
             }
@@ -620,14 +594,12 @@ export default {
                 this.$notify({
                     type: "warning",
                     title: this.$t("Audit incomplete"),
-                    message: this.$t("{count} ticket(s) weren't audited in this run. Click Run Audit again to retry any that still need it.")
-                        .replace("{count}", failedCount)
+                    // translators: %s is the number of tickets the audit run could not process
+                    message: this.$_n("%s ticket wasn't audited in this run. Click Run Audit again to retry it.", "%s tickets weren't audited in this run. Click Run Audit again to retry any that still need it.", failedCount)
                 });
             }
 
-            // Apply any date_range prop change that arrived externally while this
-            // run was in flight (queued by the date_range watcher below) instead
-            // of leaving localDateRange silently out of sync with the parent.
+            // Apply a date_range change the watcher queued during the run.
             if (this.pendingExternalDateRange) {
                 this.localDateRange = this.pendingExternalDateRange;
                 this.pendingExternalDateRange = null;
@@ -641,11 +613,10 @@ export default {
         openEscalate(row) {
             this.escalateRow = row;
             this.escalateAgentId = null;
-            this.escalateNote = row.summary ? this.$t("AI audit: ") + row.summary : "";
-            // Escalation is 3 separate, non-atomic REST calls (no backend endpoint
-            // combines them) — track which have already landed so a retry after a
-            // partial failure only re-attempts what's left, instead of re-running
-            // steps that already succeeded.
+            // translators: %s is the one-line summary the AI audit wrote for the ticket
+            this.escalateNote = row.summary ? this.$t("AI audit: %s", row.summary) : "";
+            // Escalation is three separate REST calls. Track which succeeded so a
+            // retry only re-runs the rest.
             this.escalateStepsDone = { agent: false, priority: false, note: false };
             this.escalateVisible = true;
         },
@@ -691,15 +662,12 @@ export default {
                 if (this.escalateStepsDone.note) completedSteps.push(this.$t("note added"));
 
                 if (completedSteps.length) {
-                    // Some steps already committed server-side — say so explicitly
-                    // rather than a generic error that implies nothing happened,
-                    // and keep the dialog open so clicking Escalate again only
-                    // retries what's left.
+                    // Tell the user what already went through. The dialog stays open for a retry.
                     this.$notify({
                         type: "warning",
                         title: this.$t("Escalation incomplete"),
-                        message: this.$t("Already done: {done}. The rest failed — click Escalate ticket again to retry it.")
-                            .replace("{done}", completedSteps.join(", "))
+                        // translators: %1$s is a comma-separated list of the escalation steps that succeeded, e.g. "agent assigned, note added"; %2$s is the label of the Escalate ticket button
+                        message: this.$t("Already done: %1$s. The rest failed. Click \"%2$s\" again to retry it.", completedSteps.join(", "), this.$t("Escalate ticket"))
                     });
                 } else {
                     this.$handleError(error);

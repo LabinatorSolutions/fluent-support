@@ -9,11 +9,9 @@ use FluentSupport\App\Services\Tickets\ResponseService;
 use FluentSupport\App\Services\Tickets\TicketService;
 
 /**
- *  Tickets class for PHP API
- * Example Usage: $ticketsApi = FluentSupportApi('tickets');
- * @package FluentSupport\App\Api\Classes
+ * Tickets PHP API.
  *
- * @version 1.0.0
+ * Example Usage: $ticketsApi = FluentSupportApi('tickets');
  */
 class Tickets
 {
@@ -33,7 +31,7 @@ class Tickets
     }
 
     /**
-     * getTickets method will return all tickets
+     * Paginated tickets, newest first.
      *
      * @return object
      */
@@ -59,7 +57,6 @@ class Tickets
     }
 
     /**
-     * getTicket method will return a specific ticket by id
      * @param int $id
      * @return object|false
      */
@@ -77,7 +74,6 @@ class Tickets
     }
 
     /**
-     * addResponse method add response to a ticket by agent and ticket ID
      * @param array $data
      * @param int $agentId
      * @param int $ticketId
@@ -100,9 +96,8 @@ class Tickets
     }
 
     /**
-     *  createTicket method will create a new ticket
      * @param array $data
-     * @return object| boolean
+     * @return object|false
      */
 
     public function createTicket(array $data)

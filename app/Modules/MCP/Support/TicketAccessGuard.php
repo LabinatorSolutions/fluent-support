@@ -20,11 +20,8 @@ class TicketAccessGuard
     }
 
     /**
-     * Assert the current user can read/write $ticket.
-     *
-     * Checks both the canAccessTicket visibility rule and any mailbox
-     * restrictions the agent has been assigned. Returns WP_Error on the first
-     * failure, null on success — so callers do:
+     * Check the current user can access $ticket, including mailbox restrictions.
+     * Returns WP_Error on failure, null on success:
      *
      *   if ($err = TicketAccessGuard::assert($ticket)) {
      *       return $err;
@@ -45,7 +42,7 @@ class TicketAccessGuard
     }
 
     /**
-     * Assert the current user can create tickets in / move tickets to $mailboxId.
+     * Check the current user can create or move tickets in $mailboxId.
      * Returns WP_Error on failure, null on success.
      */
     public static function assertMailboxWritable($mailboxId)
@@ -58,7 +55,7 @@ class TicketAccessGuard
     }
 
     /**
-     * Assert that $targetAgent is not restricted from the mailbox of $ticket.
+     * Check $targetAgent isn't restricted from the ticket's mailbox.
      * Returns WP_Error on failure, null on success.
      *
      * @param int|null $mailboxId Destination mailbox when the ticket is being

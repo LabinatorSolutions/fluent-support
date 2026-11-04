@@ -14,3 +14,21 @@ builds
 fluent-support-user-docs
 dev-works/pr-description.md
 dev/vendor/
+
+# Per-developer Claude Code settings
+.claude/settings.local.json
+WP_REST_API.env
+
+# Release post working files (see the release-post skill)
+release-artifacts/
+
+# Editor swap files
+*.swp
+
+# REST replay working files (tests/replay/compare.sh)
+tests/lab/tmp/
+
+# Playwright E2E (tests/e2e)
+tests/e2e/.auth/
+tests/e2e/test-results/
+tests/e2e/playwright-report/

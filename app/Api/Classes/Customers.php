@@ -2,19 +2,15 @@
 
 namespace FluentSupport\App\Api\Classes;
 
-use FluentSupport\App\Http\Controllers\AuthController;
+use FluentSupport\App\Modules\Auth\AuthService;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Services\Tickets\TicketService;
 
 /**
- *  Customers class for PHP API
+ * Customers PHP API.
  *
  * Example Usage: $customersApi = FluentSupportApi('customers');
- *
- * @package FluentSupport\App\Api\Classes
- *
- * @version 1.0.0
  */
 class Customers
 {
@@ -34,7 +30,7 @@ class Customers
     }
 
     /**
-     * getCustomers method will return a all available customers
+     * Paginated list of customers.
      *
      * @return object
      */
@@ -45,8 +41,6 @@ class Customers
     }
 
     /**
-     * getCustomer method will return a specific customer by id
-     *
      * @param int $customerId
      * @return object|boolean
      */
@@ -60,8 +54,6 @@ class Customers
     }
 
     /**
-     * updateCustomer method will update the specific customer by id
-     *
      * @param array $data
      * @param int $customer_id
      * @return object|boolean
@@ -80,10 +72,7 @@ class Customers
     }
 
     /**
-     * createCustomerWithOrWithoutWpUser method will create a customer
-     * also it will create a wp user if you want to create one
-     * if you want to create a wp user too then the process will be 1st it will create a wp user
-     * after creating the wp user successfully it will create a fluent support customer
+     * Create a customer, optionally creating the WP user first.
      *
      * @param array $data
      * @param bool $createWpUser
@@ -101,9 +90,7 @@ class Customers
         }
 
         if (!username_exists($data['username'])) {
-            $authController = new AuthController();
-            $createdUser = $authController->createUser($data);
-            $updateCreatedUser = $authController->maybeUpdateUser($createdUser, $data);
+            $createdUser = AuthService::createUser($data);
             if ($createdUser) {
                 $data['user_id'] = $createdUser;
                 return Customer::create($data);
@@ -114,9 +101,8 @@ class Customers
     }
 
     /**
-     * deleteCustomer method will delete customer with or without customer tickets and attachments
      * @param int $id
-     * @param bool $withAssociatedData | this will delete all tickets and attachments of this customer
+     * @param bool $withAssociatedData Also delete the customer's tickets and attachments.
      * @return void
      */
     public function deleteCustomer($id, $withAssociatedData = false)

@@ -7,11 +7,6 @@
             is_agent="yes"
         />
 
-        <div class="fs_edit_response_actions">
-            <el-button class="fs_filled_btn" size="large" type="success" @click="editResponse()">
-            {{ draftReplyApprovePermission && response.conversation_type === 'draft_response' ? $t('Update And Approve Response') : $t('Update Response') }}
-            </el-button>
-        </div>
     </div>
 </template>
 
@@ -36,11 +31,9 @@ export default {
     },
     data() {
         return {
-            saving: false,
             filteredAgents: this.appVars.support_agents,
             popup: false,
             editor_ready: true,
-            draftReplyApprovePermission: this.appVars.me.permissions.includes('fst_approve_draft_reply'),
         };
     },
 
@@ -52,11 +45,11 @@ export default {
 
     methods: {
         editResponse() {
-            this.saving = true;
-            this.$put(
-                `tickets/${this.resolvedTicketId}/responses/${this.response.id}`,
-                { content: this.response.content }
-            )
+            const url = this.response.is_ticket_content
+                ? `tickets/${this.resolvedTicketId}/content`
+                : `tickets/${this.resolvedTicketId}/responses/${this.response.id}`;
+
+            return this.$put(url, { content: this.response.content })
                 .then((response) => {
                     this.$notify({
                         message: response.message,
@@ -67,9 +60,6 @@ export default {
                 })
                 .catch((errors) => {
                     this.$handleError(errors);
-                })
-                .always(() => {
-                    this.saving = false;
                 });
         }
     },

@@ -1,13 +1,10 @@
-/**
- * Utility functions for timesheet-related calculations and exports
- */
 export const timesheetUtils = {
     /**
-     * Calculate total minutes for a specific user across all dates
-     * @param {Object} dateLabels - Array of date labels
-     * @param {Object} timeSheets - Timesheet data object
-     * @param {Number} id - ID of the user
-     * @returns {string} Formatted total minutes
+     * Total billable time for one person across all dates.
+     * @param {Array} dateLabels
+     * @param {Object} timeSheets - Keyed by date, then by id
+     * @param {Number} id
+     * @returns {string}
      */
     calculateEntityTotalMinutes: (dateLabels, timeSheets, id) => {
         const minutes = dateLabels.reduce((acc, date) => {
@@ -18,11 +15,10 @@ export const timesheetUtils = {
     },
 
     /**
-     * Calculate total minutes for a specific agent on a specific date
-     * @param {Object} timeSheets - Timesheet data object
-     * @param {string} date - Date string
-     * @param {Number} id - ID
-     * @returns {string} Formatted total minutes
+     * @param {Object} timeSheets
+     * @param {string} date
+     * @param {Number} id
+     * @returns {string}
      */
     calculateTimeSheetTotal: (timeSheets, date, id) => {
         const sheets = timeSheets?.[date]?.[id] ?? [];
@@ -31,9 +27,8 @@ export const timesheetUtils = {
     },
 
     /**
-     * Format minutes into a human-readable time string
-     * @param {Number} minutes - Total minutes to format
-     * @returns {string} Formatted time string
+     * @param {Number} minutes
+     * @returns {string} e.g. "1h 5m", or "--" for zero
      */
     formatMinutes: (minutes) => {
         let intMinutes = parseInt(minutes);
@@ -48,11 +43,12 @@ export const timesheetUtils = {
     },
 
     /**
-     * Generate export URL for timesheet report
-     * @param {Object} config - Configuration object for export
-     * @param {Array} config.selectedItems - Selected items to export
-     * @param {Array} config.dateRange - Date range for the report
-     * @param {string} config.action - Export action name
+     * Download the report by navigating to the admin-ajax export URL.
+     * @param {Object} config
+     * @param {Array} config.selectedItems
+     * @param {Array} config.dateRange
+     * @param {string} config.action - admin-ajax action
+     * @param {string} config.itemKey - Query key for selectedItems. mailbox_id is omitted when empty.
      * @returns {void}
      */
     exportReport: (config) => {

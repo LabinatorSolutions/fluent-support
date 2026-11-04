@@ -8,8 +8,19 @@ use FluentSupport\App\Modules\MCP\Tools\ResponseTools;
 use FluentSupport\App\Modules\MCP\Tools\ManagementTools;
 use FluentSupport\App\Modules\MCP\Tools\CustomerTools;
 
+/**
+ * Tool descriptions are English and not translatable: the model reads them, and they
+ * name exact parameters and values a translation could break. Labels stay
+ * translatable because people see them in the admin and in client approval prompts.
+ */
 class AbilitiesRegistrar
 {
+    /** Tools that need Fluent Support Pro; the server only lists them when Pro is active. */
+    const PRO_ONLY = [
+        'fluent-support/merge-tickets',
+        'fluent-support/split-ticket',
+    ];
+
     private static $definitions = null;
 
     public static function getDefinitions(): array
@@ -21,18 +32,19 @@ class AbilitiesRegistrar
         self::$definitions = [
             'fluent-support/list-tickets' => [
                 'label'       => __('List Support Tickets', 'fluent-support'),
-                'description' => __('List and filter support tickets. Returns ticket summaries with content preview, customer, agent, product, and tags inline — no need to call get-ticket for each. Each row carries triage signals so you can sweep a backlog page without opening tickets: last_reply_by ("agent" | "customer" | null) and response_count. last_reply_by="customer" means the customer spoke last, so the ticket is awaiting an agent reply (this is the per-ticket value behind the waiting_for_reply filter); "agent" means we replied and the ball is in the customer\'s court. The original ticket message counts as the customer speaking, so a brand-new ticket with response_count=0 still resolves to last_reply_by="customer" (correctly — it is awaiting an agent) rather than null; null only occurs on legacy-imported tickets with no reply history at all. On open tickets this is your "is it waiting on us?" signal; on closed tickets it just reflects who spoke last. response_count is the number of replies made after ticket creation (the original message and internal notes are not counted, so response_count=0 does not imply last_reply_by is null). An optional customer_summary line may be present when an integration provides one (e.g. plan/usage info) — treat its absence as normal. For triage: use sort_by=waiting_since, order=ASC, waiting_for_reply=true. For a specific customer\'s tickets, prefer get-customer-tickets instead. Customer name and email are included for all agents with the "View Tickets (Read Only)" permission — agents need customer context to work their queue. For a multi-page sweep where you act on tickets as you go (replying/closing shifts waiting_since), use meta.paging.next_cursor from each response as the next call\'s cursor instead of incrementing page — this is immune to rows shifting position mid-sweep; plain page/per_page is fine for a one-off fetch.', 'fluent-support'),
+                'description' => 'List and filter tickets. Each row has a content preview, customer, agent, product, tags, waiting_on and response_count, so you can triage a page without opening tickets. For triage: waiting_for_reply=true, sort_by=waiting_since, order=ASC. For stale tickets: waiting_on=customer with the same sort. customer_summary appears only when an integration provides it. For one customer\'s tickets, use get-customer-tickets. When you reply to or close tickets during a multi-page sweep, pass meta.paging.next_cursor as cursor instead of incrementing page, because acting on tickets reorders the list.',
                 'input_schema' => [
                     'type'       => 'object',
                     'properties' => [
-                        'status'               => ['type' => 'string', 'enum' => ['open', 'closed', 'new', 'active', 'all'], 'description' => 'Filter by status group'],
+                        'status'               => ['type' => 'string', 'enum' => ['open', 'closed', 'new', 'active', 'all'], 'description' => 'Filter by status: open (new and active), new, active, closed or all'],
                         'agent_id'             => ['type' => 'integer', 'description' => 'Filter by assigned agent ID'],
                         'product_id'           => ['type' => 'integer', 'description' => 'Filter by product ID'],
                         'mailbox_id'           => ['type' => 'integer', 'description' => 'Filter by mailbox ID'],
-                        'priority'             => ['type' => 'string', 'enum' => ['low', 'normal', 'medium', 'high', 'critical'], 'description' => 'Filter by the internal (agent-set) priority. Aliases: low=normal, high=critical'],
-                        'client_priority'      => ['type' => 'string', 'enum' => ['low', 'normal', 'medium', 'high', 'critical'], 'description' => 'Filter by the customer-flagged priority (e.g. set via a submission form) — distinct from priority, which is agent-set. Same aliases: low=normal, high=critical'],
+                        'priority'             => ['type' => 'string', 'enum' => ['normal', 'medium', 'critical'], 'description' => 'Filter by the priority agents set'],
+                        'client_priority'      => ['type' => 'string', 'enum' => ['normal', 'medium', 'critical'], 'description' => 'Filter by the priority the customer chose when submitting the ticket'],
                         'tags'                 => ['type' => 'array', 'items' => ['type' => 'integer'], 'description' => 'Filter by tag IDs'],
-                        'waiting_for_reply'    => ['type' => 'boolean', 'description' => 'Only show tickets where the customer is waiting for an agent response (last reply was from customer). Implies status=open unless status is explicitly set, since a closed ticket cannot be awaiting a reply.'],
+                        'waiting_for_reply'    => ['type' => 'boolean', 'description' => 'Only tickets waiting on an agent reply (waiting_on="agent"). Implies status=open unless status is set.'],
+                        'waiting_on'           => ['type' => 'string', 'enum' => ['agent', 'customer'], 'description' => 'Only open tickets waiting on an agent (same as waiting_for_reply=true) or on the customer. waiting_on=customer with sort_by=waiting_since and order=ASC lists the tickets idle longest since our reply.'],
                         'unassigned'           => ['type' => 'boolean', 'description' => 'Only show tickets with no agent assigned'],
                         'needs_first_response' => ['type' => 'boolean', 'description' => 'Only show open tickets that have never had a reply (response_count=0). Combine with unassigned=true for a new-and-untouched queue view.'],
                         'customer_id'          => ['type' => 'integer', 'description' => 'Filter by customer ID'],
@@ -48,39 +60,42 @@ class AbilitiesRegistrar
                     ],
                 ],
                 'execute_callback' => [TicketTools::class, 'listTickets'],
-                'annotations'      => ['readonly' => true],
+                'annotations'      => ['readonly' => true, 'openWorldHint' => false],
             ],
 
             'fluent-support/get-ticket' => [
                 'label'       => __('Get Ticket Details', 'fluent-support'),
-                'description' => __('Get full ticket details with conversation thread, customer history (total/open tickets, first seen), previous tickets, custom fields, purchase history (WooCommerce/FluentCart), and CRM data (FluentCRM tags/lists). The thread is paginated: 50 responses per page, most recent first. Check responses_meta.has_more and increment response_page to fetch older messages. Customer name and email are included for all agents with the "View Tickets (Read Only)" permission — agents need customer context to work their queue.', 'fluent-support'),
+                'description' => 'Get a ticket with its conversation, the customer\'s history and previous tickets, custom fields, and purchase and CRM data from integrations. Content is Markdown; the customer\'s opening message is in content. The conversation comes in pages of 50 messages: page 1 holds the latest 50, and each page reads oldest to newest, like a chat. Use response_page=2 for the 50 before those when responses_meta.has_more is true, or since_response_id to get only messages newer than one you have read. Response types: response (seen by the customer; person.type says who wrote it), note (agents only), internal_info (activity lines such as assignments and closures), draft_response (unsent). Attachment links expire at url_expires_at. reply_email is the email the customer gets when you reply from this inbox.',
                 'input_schema' => [
                     'type'       => 'object',
                     'properties' => [
                         'ticket_id'         => ['type' => 'integer', 'description' => 'The ticket ID'],
                         'with_responses'    => ['type' => 'boolean', 'default' => true, 'description' => 'Include conversation thread (default: true). Set false to get only ticket metadata.'],
-                        'response_page'     => ['type' => 'integer', 'default' => 1, 'description' => 'Page of conversation thread. Page 1 = most recent 50 responses. Increment to fetch older messages when responses_meta.has_more is true.'],
-                        'with_integrations' => ['type' => 'boolean', 'default' => true, 'description' => 'Include third-party integration data (e.g. purchase history from WooCommerce/FluentCart). Default: true. Set false to skip when you only need the ticket/thread.'],
+                        'response_page'     => ['type' => 'integer', 'default' => 1, 'description' => 'Page of the conversation: 1 is the latest 50 messages, 2 the 50 before those. Use it when responses_meta.has_more is true.'],
+                        'since_response_id' => ['type' => 'integer', 'description' => 'Only return responses newer than this ID. Pass responses_meta.latest_response_id from your last call to read only new messages.'],
+                        'response_id'       => ['type' => 'integer', 'description' => 'Return only this response, e.g. to read a truncated one in full.'],
+                        'max_chars_per_response' => ['type' => 'integer', 'description' => 'Truncate each body, including the opening message, to this many characters. Truncated entries have truncated=true and full_length. Default: no limit.'],
+                        'with_integrations' => ['type' => ['boolean', 'array'], 'items' => ['type' => 'string'], 'default' => true, 'description' => 'Integration data such as purchase history. true (default), false to skip, or a list of widget keys (the keys of integrations, e.g. ["woo_purchases"]) to get only those.'],
                     ],
                     'required' => ['ticket_id'],
                 ],
                 'execute_callback' => [TicketTools::class, 'getTicket'],
-                'annotations'      => ['readonly' => true],
+                'annotations'      => ['readonly' => true, 'openWorldHint' => false],
             ],
 
             'fluent-support/create-ticket' => [
                 'label'       => __('Create Support Ticket', 'fluent-support'),
-                'description' => __('Create a new support ticket on behalf of a customer. Requires title, content, and customer_email. Automatically creates the customer if the email is new. By default the ticket is logged on the customer\'s behalf ("created by agent") — the customer gets a notification that a ticket was opened for them. Set agent_initiated=true only when the agent is proactively reaching out to start a conversation (e.g. billing follow-up, onboarding, account review); then the content is sent to the customer as the agent\'s first reply instead. Use get-support-context first to get valid product_id, mailbox_id, and agent_id values.', 'fluent-support'),
+                'description' => 'Create a new support ticket on behalf of a customer. Requires title, content, and customer_email. Automatically creates the customer if the email is new. By default the ticket is logged on the customer\'s behalf ("created by agent") — the customer gets a notification that a ticket was opened for them. Set agent_initiated=true only when the agent is proactively reaching out to start a conversation (e.g. billing follow-up, onboarding, account review); then the content is sent to the customer as the agent\'s first reply instead. Use get-support-context first to get valid product_id, mailbox_id, and agent_id values.',
                 'input_schema' => [
                     'type'       => 'object',
                     'properties' => [
                         'title'               => ['type' => 'string', 'description' => 'Ticket title/subject'],
                         'content'             => ['type' => 'string', 'description' => 'Ticket message content. Format controlled by content_format (default: markdown).'],
-                        'content_format'      => ['type' => 'string', 'enum' => ['markdown', 'html', 'text'], 'default' => 'markdown', 'description' => 'Format of the content field. markdown (default): Markdown converted to HTML. html: passed through as-is. text: plain text wrapped in paragraphs.'],
+                        'content_format'      => ['type' => 'string', 'enum' => ['markdown', 'html', 'text'], 'default' => 'markdown', 'description' => 'Format of content: markdown (default), html (as-is) or text (plain text, wrapped in paragraphs).'],
                         'customer_email'      => ['type' => 'string', 'format' => 'email', 'description' => 'Customer email address'],
                         'customer_first_name' => ['type' => 'string', 'description' => 'Customer first name (for new customers)'],
                         'customer_last_name'  => ['type' => 'string', 'description' => 'Customer last name (for new customers)'],
-                        'priority'            => ['type' => 'string', 'enum' => ['low', 'normal', 'medium', 'high', 'critical'], 'description' => 'Ticket priority. Aliases: low=normal, high=critical'],
+                        'priority'            => ['type' => 'string', 'enum' => ['normal', 'medium', 'critical'], 'description' => 'Ticket priority'],
                         'product_id'          => ['type' => 'integer', 'description' => 'Product ID'],
                         'mailbox_id'          => ['type' => 'integer', 'description' => 'Mailbox ID'],
                         'agent_id'            => ['type' => 'integer', 'description' => 'Assign to agent ID'],
@@ -89,67 +104,59 @@ class AbilitiesRegistrar
                     'required' => ['title', 'content', 'customer_email'],
                 ],
                 'execute_callback' => [TicketTools::class, 'createTicket'],
+                'annotations'      => ['readonly' => false, 'destructive' => false, 'idempotent' => false, 'openWorldHint' => true],
             ],
 
             'fluent-support/reply-to-ticket' => [
                 'label'       => __('Reply to Ticket', 'fluent-support'),
-                'description' => __('Send a customer-visible reply on a ticket. If the ticket is unassigned it is automatically assigned to you; pass assignee_id to assign someone else in the same call. Set close_ticket=true to close after replying. Supports saved replies via saved_reply_id (use list-saved-replies to browse). If you just need to close without a reply, use close-ticket instead.', 'fluent-support'),
+                'description' => 'Send a customer-visible reply. An unassigned ticket is assigned to you unless assignee_id is set. A closed ticket is reopened by the reply (reopened=true). Set draft=true when a human should review the reply before it is sent. Set informational=true for a holding message that does not answer the customer. Attach files with attachments. Before writing, read the reply_email template on get-ticket (templates are per inbox) and leave out any greeting, sign-off or signature it already has. To close without replying, use close-ticket.',
                 'input_schema' => [
                     'type'       => 'object',
                     'properties' => [
                         'ticket_id'      => ['type' => 'integer', 'description' => 'The ticket ID'],
                         'content'        => ['type' => 'string', 'description' => 'Response message content (visible to customer). Format controlled by content_format (default: markdown). Not required if saved_reply_id is provided.'],
-                        'content_format' => ['type' => 'string', 'enum' => ['markdown', 'html', 'text'], 'default' => 'markdown', 'description' => 'Format of the content field. markdown (default): Markdown converted to HTML. html: passed through as-is. text: plain text wrapped in paragraphs.'],
+                        'content_format' => ['type' => 'string', 'enum' => ['markdown', 'html', 'text'], 'default' => 'markdown', 'description' => 'Format of content: markdown (default), html (as-is) or text (plain text, wrapped in paragraphs).'],
                         'saved_reply_id' => ['type' => 'integer', 'description' => 'Use a saved reply by ID (use list-saved-replies to find IDs). Content overrides saved reply if both provided.'],
                         'assignee_id'    => ['type' => 'integer', 'description' => 'Optional. Assign the ticket to this agent as part of the reply (requires the "Assign Agents" permission; use get-support-context for agent IDs). If omitted and the ticket is unassigned, it is auto-assigned to you.'],
-                        'close_ticket'   => ['type' => 'boolean', 'default' => false, 'description' => 'Close the ticket after replying'],
+                        'close_ticket'   => ['type' => 'boolean', 'default' => false, 'description' => 'Close the ticket after replying. A closed ticket stays closed. Not allowed with draft.'],
+                        'draft'          => ['type' => 'boolean', 'default' => false, 'description' => 'Save as an unsent draft for a human to approve in the ticket view. Status and assignee are unchanged; close_ticket and assignee_id are not allowed.'],
+                        'informational'  => ['type' => 'boolean', 'default' => false, 'description' => 'A holding reply that does not answer the customer yet, such as "I have passed this to our billing team": it is sent as usual, but waiting_on stays "agent". Not allowed with draft.'],
+                        'attachments'    => self::attachmentsSchema(),
                     ],
                     'required' => ['ticket_id'],
                 ],
                 'execute_callback' => [ResponseTools::class, 'replyToTicket'],
+                'annotations'      => ['readonly' => false, 'destructive' => false, 'idempotent' => false, 'openWorldHint' => true],
             ],
 
             'fluent-support/close-ticket' => [
                 'label'       => __('Close Ticket', 'fluent-support'),
-                'description' => __('Close a ticket. Optionally send a final customer-visible reply and/or an internal note in the same call. This is the simplest way to close — use it instead of reply-to-ticket when closing is the primary intent. Set silent=true to close without firing the close notification or any automations bound to it (the same as "Close Silently" in the admin UI) — useful for tidying up spam, duplicates, or a stale backlog.', 'fluent-support'),
+                'description' => 'Close a ticket, optionally with a final reply to the customer and an internal note in the same call. Use this instead of reply-to-ticket when closing is the goal. Closing a ticket that is already closed changes nothing and sends nothing, so retrying is safe.',
                 'input_schema' => [
                     'type'       => 'object',
                     'properties' => [
                         'ticket_id'      => ['type' => 'integer', 'description' => 'The ticket ID'],
                         'reply_content'  => ['type' => 'string', 'description' => 'Optional final reply visible to the customer (sent before closing). Format controlled by content_format (default: markdown).'],
                         'internal_note'  => ['type' => 'string', 'description' => 'Optional internal note for the closure (visible to agents only). Format controlled by content_format (default: markdown).'],
-                        'content_format' => ['type' => 'string', 'enum' => ['markdown', 'html', 'text'], 'default' => 'markdown', 'description' => 'Format of reply_content and internal_note. markdown (default): Markdown converted to HTML. html: passed through as-is. text: plain text wrapped in paragraphs.'],
-                        'silent'         => ['type' => 'boolean', 'default' => false, 'description' => 'Close silently: skip the ticket-closed notification email and any workflows/integrations hooked to ticket closure. Does not suppress reply_content — a reply passed in the same call is still sent to the customer as normal; only the closure itself goes unannounced. Use for spam, duplicates, tickets resolved elsewhere, or bulk backlog cleanup where a closure email would confuse the customer.'],
+                        'content_format' => ['type' => 'string', 'enum' => ['markdown', 'html', 'text'], 'default' => 'markdown', 'description' => 'Format of reply_content and internal_note: markdown (default), html (as-is) or text (plain text, wrapped in paragraphs).'],
+                        'silent'         => ['type' => 'boolean', 'default' => false, 'description' => 'Skip the "ticket closed" email and the automations that run on closing, like "Close Silently" in the ticket view. Use it whenever the customer should not get a closing email, for example spam, duplicates or a ticket already resolved elsewhere. A reply_content in the same call is still sent.'],
                     ],
                     'required' => ['ticket_id'],
                 ],
                 'execute_callback' => [TicketTools::class, 'closeTicket'],
-            ],
-
-            'fluent-support/reopen-ticket' => [
-                'label'       => __('Reopen Ticket', 'fluent-support'),
-                'description' => __('Reopen a closed ticket. Sets status back to active and clears the resolved date. Use when a customer follows up on a closed issue.', 'fluent-support'),
-                'input_schema' => [
-                    'type'       => 'object',
-                    'properties' => [
-                        'ticket_id' => ['type' => 'integer', 'description' => 'The ticket ID'],
-                    ],
-                    'required' => ['ticket_id'],
-                ],
-                'execute_callback' => [TicketTools::class, 'reopenTicket'],
-                'annotations'      => ['idempotent' => true],
+                'annotations'      => ['readonly' => false, 'destructive' => false, 'idempotent' => true, 'openWorldHint' => true],
             ],
 
             'fluent-support/update-ticket' => [
                 'label'       => __('Update Ticket Properties', 'fluent-support'),
-                'description' => __('Update ticket properties like title, priority, status, product, mailbox, or assigned agent. Can change multiple fields at once. Use get-support-context to look up valid IDs. For just closing or reopening, use close-ticket or reopen-ticket instead.', 'fluent-support'),
+                'description' => 'Change a ticket: title, priority, status, product, mailbox or assigned agent, several at once. Assigning notifies the agent as in the ticket view. Setting status=active on a closed ticket reopens it. To close a ticket, use close-ticket. IDs come from get-support-context.',
                 'input_schema' => [
                     'type'       => 'object',
                     'properties' => [
                         'ticket_id'  => ['type' => 'integer', 'description' => 'The ticket ID'],
                         'title'      => ['type' => 'string', 'description' => 'New ticket title'],
-                        'priority'   => ['type' => 'string', 'enum' => ['low', 'normal', 'medium', 'high', 'critical'], 'description' => 'New priority. Aliases: low=normal, high=critical'],
-                        'status'     => ['type' => 'string', 'enum' => ['new', 'active'], 'description' => 'New status'],
+                        'priority'   => ['type' => 'string', 'enum' => ['normal', 'medium', 'critical'], 'description' => 'New priority'],
+                        'status'     => ['type' => 'string', 'enum' => ['new', 'active'], 'description' => 'New status: new or active. On a closed ticket, active reopens it. To close a ticket, use close-ticket.'],
                         'product_id' => ['type' => 'integer', 'description' => 'New product ID (use get-support-context to find IDs)'],
                         'mailbox_id' => ['type' => 'integer', 'description' => 'Move the ticket to this mailbox (use get-support-context to find IDs, requires the "Manage Overall Settings" permission)'],
                         'agent_id'   => ['type' => 'integer', 'description' => 'Assign to agent ID (use get-support-context to find IDs, requires the "Assign Agents" permission)'],
@@ -157,11 +164,12 @@ class AbilitiesRegistrar
                     'required' => ['ticket_id'],
                 ],
                 'execute_callback' => [TicketTools::class, 'updateTicket'],
+                'annotations'      => ['readonly' => false, 'destructive' => false, 'idempotent' => true, 'openWorldHint' => false],
             ],
 
             'fluent-support/delete-ticket' => [
                 'label'       => __('Delete Ticket', 'fluent-support'),
-                'description' => __('Permanently delete a support ticket and all its responses, attachments, and metadata. This action cannot be undone.', 'fluent-support'),
+                'description' => 'Permanently delete a ticket with all its messages, attachments and data. This cannot be undone. To remove spam or duplicates from the queue, close them with close-ticket silent=true instead; delete only when a person asks you to.',
                 'input_schema' => [
                     'type'       => 'object',
                     'properties' => [
@@ -170,12 +178,12 @@ class AbilitiesRegistrar
                     'required' => ['ticket_id'],
                 ],
                 'execute_callback' => [TicketTools::class, 'deleteTicket'],
-                'annotations'      => ['destructive' => true],
+                'annotations'      => ['readonly' => false, 'destructive' => true, 'idempotent' => true, 'openWorldHint' => false],
             ],
 
             'fluent-support/get-ticket-activity' => [
                 'label'       => __('Get Ticket Activity Log', 'fluent-support'),
-                'description' => __('Get the activity timeline for a ticket — who did what and when. Shows ticket creation, responses, status changes, agent assignments, and closures. Use to understand ticket history without reading the full conversation.', 'fluent-support'),
+                'description' => 'Get the activity timeline for a ticket — who did what and when. Shows ticket creation, responses, status changes, agent assignments, and closures. Use to understand ticket history without reading the full conversation.',
                 'input_schema' => [
                     'type'       => 'object',
                     'properties' => [
@@ -184,12 +192,12 @@ class AbilitiesRegistrar
                     'required' => ['ticket_id'],
                 ],
                 'execute_callback' => [TicketTools::class, 'getTicketActivity'],
-                'annotations'      => ['readonly' => true],
+                'annotations'      => ['readonly' => true, 'openWorldHint' => false],
             ],
 
             'fluent-support/merge-tickets' => [
                 'label'       => __('Merge Tickets', 'fluent-support'),
-                'description' => __('Merge duplicate tickets into one. All conversations and attachments from the merged tickets are moved into the target ticket. The merged tickets are deleted. Requires Fluent Support Pro.', 'fluent-support'),
+                'description' => 'Merge duplicate tickets into one. All conversations and attachments from the merged tickets are moved into the target ticket. The merged tickets are deleted.',
                 'input_schema' => [
                     'type'       => 'object',
                     'properties' => [
@@ -199,101 +207,157 @@ class AbilitiesRegistrar
                     'required' => ['target_ticket_id', 'merge_ticket_ids'],
                 ],
                 'execute_callback' => [TicketTools::class, 'mergeTickets'],
-                'annotations'      => ['destructive' => true],
+                'annotations'      => ['readonly' => false, 'destructive' => true, 'idempotent' => false, 'openWorldHint' => false],
+            ],
+
+            'fluent-support/split-ticket' => [
+                'label'       => __('Split Ticket', 'fluent-support'),
+                'description' => 'Move one message out of a ticket into a new ticket, for example when a customer raises a second, unrelated issue in the same thread. The message and its attachments leave the original ticket and become the opening message of the new one; both tickets get an activity line. The new ticket goes to the same mailbox unless you pass mailbox_id, and the site\'s rules for new tickets (assignment, automations) apply to it; the original keeps its status. notify_customer=false (the default) holds back the inbox\'s new-ticket emails to the customer; automations set up for new tickets still run. Only messages of type response can be split.',
+                'input_schema' => [
+                    'type'       => 'object',
+                    'properties' => [
+                        'ticket_id'      => ['type' => 'integer', 'description' => 'The ticket that holds the message'],
+                        'response_id'    => ['type' => 'integer', 'description' => 'The message to move (a response ID from get-ticket)'],
+                        'title'          => ['type' => 'string', 'description' => 'Title of the new ticket. Default: "Re: " and the original title.'],
+                        'content'        => ['type' => 'string', 'description' => 'Opening message of the new ticket. Default: the moved message as written.'],
+                        'content_format' => ['type' => 'string', 'enum' => ['markdown', 'html', 'text'], 'default' => 'markdown', 'description' => 'Format of content, if provided.'],
+                        'customer_id'    => ['type' => 'integer', 'description' => 'Customer of the new ticket. Default: the message author when a customer wrote it, else the ticket customer.'],
+                        'mailbox_id'     => ['type' => 'integer', 'description' => 'Mailbox of the new ticket. Default: the original ticket mailbox.'],
+                        'product_id'     => ['type' => 'integer', 'description' => 'Product of the new ticket. Default: the original ticket product.'],
+                        'notify_customer' => ['type' => 'boolean', 'default' => false, 'description' => 'Send the customer the inbox\'s new-ticket emails for the new ticket. Default false: the split is silent for the customer.'],
+                    ],
+                    'required' => ['ticket_id', 'response_id'],
+                ],
+                'execute_callback' => [TicketTools::class, 'splitTicket'],
+                'annotations'      => ['readonly' => false, 'destructive' => true, 'idempotent' => false, 'openWorldHint' => true],
             ],
 
             'fluent-support/add-internal-note' => [
                 'label'       => __('Add Internal Note', 'fluent-support'),
-                'description' => __('Add an internal note to a ticket. Requires ticket_id and content. Internal notes are only visible to agents, not to the customer.', 'fluent-support'),
+                'description' => 'Add an internal note to a ticket, visible to agents only. To notify an agent, mention them as @[agent_id:Name], e.g. @[12:Sam Lee], with the ID from get-support-context. Attach files with attachments. The result\'s mentions says who you mentioned and whether they get notified.',
                 'input_schema' => [
                     'type'       => 'object',
                     'properties' => [
                         'ticket_id'      => ['type' => 'integer', 'description' => 'The ticket ID'],
                         'content'        => ['type' => 'string', 'description' => 'Note content. Format controlled by content_format (default: markdown).'],
-                        'content_format' => ['type' => 'string', 'enum' => ['markdown', 'html', 'text'], 'default' => 'markdown', 'description' => 'Format of the content field. markdown (default): Markdown converted to HTML. html: passed through as-is. text: plain text wrapped in paragraphs.'],
+                        'content_format' => ['type' => 'string', 'enum' => ['markdown', 'html', 'text'], 'default' => 'markdown', 'description' => 'Format of content: markdown (default), html (as-is) or text (plain text, wrapped in paragraphs).'],
+                        'attachments'    => self::attachmentsSchema(),
                     ],
                     'required' => ['ticket_id', 'content'],
                 ],
                 'execute_callback' => [ResponseTools::class, 'addInternalNote'],
+                'annotations'      => ['readonly' => false, 'destructive' => false, 'idempotent' => false, 'openWorldHint' => false],
             ],
 
-            'fluent-support/assign-ticket' => [
-                'label'       => __('Assign Ticket to Agent', 'fluent-support'),
-                'description' => __('Assign a ticket to an agent. Use get-support-context to look up agent IDs. For assigning multiple tickets at once, use bulk-action with action=assign instead.', 'fluent-support'),
+            'fluent-support/update-response' => [
+                'label'       => __('Update Draft or Note', 'fluent-support'),
+                'description' => 'Replace the text of a draft reply or internal note you wrote. Nothing is sent; to send a draft, use publish-draft-reply. Sent replies and activity lines (type internal_info) cannot be changed.',
                 'input_schema' => [
                     'type'       => 'object',
                     'properties' => [
-                        'ticket_id' => ['type' => 'integer', 'description' => 'The ticket ID'],
-                        'agent_id'  => ['type' => 'integer', 'description' => 'The agent ID to assign'],
+                        'ticket_id'      => ['type' => 'integer', 'description' => 'The ticket ID'],
+                        'response_id'    => ['type' => 'integer', 'description' => 'ID of your draft (type draft_response) or note (type note), from get-ticket.'],
+                        'content'        => ['type' => 'string', 'description' => 'New content. Format controlled by content_format (default: markdown).'],
+                        'content_format' => ['type' => 'string', 'enum' => ['markdown', 'html', 'text'], 'default' => 'markdown', 'description' => 'Format of content: markdown (default), html (as-is) or text (plain text, wrapped in paragraphs).'],
                     ],
-                    'required' => ['ticket_id', 'agent_id'],
+                    'required' => ['ticket_id', 'response_id', 'content'],
                 ],
-                'execute_callback' => [ManagementTools::class, 'assignTicket'],
+                'execute_callback' => [ResponseTools::class, 'updateResponse'],
+                'annotations'      => ['readonly' => false, 'destructive' => true, 'idempotent' => true, 'openWorldHint' => false],
+            ],
+
+            'fluent-support/delete-response' => [
+                'label'       => __('Delete Draft or Note', 'fluent-support'),
+                'description' => 'Delete a draft reply or internal note you wrote. Sent replies and activity lines (type internal_info) cannot be deleted.',
+                'input_schema' => [
+                    'type'       => 'object',
+                    'properties' => [
+                        'ticket_id'   => ['type' => 'integer', 'description' => 'The ticket ID'],
+                        'response_id' => ['type' => 'integer', 'description' => 'ID of your draft (type draft_response) or note (type note), from get-ticket.'],
+                    ],
+                    'required' => ['ticket_id', 'response_id'],
+                ],
+                'execute_callback' => [ResponseTools::class, 'deleteResponse'],
+                'annotations'      => ['readonly' => false, 'destructive' => true, 'idempotent' => true, 'openWorldHint' => false],
+            ],
+
+            'fluent-support/publish-draft-reply' => [
+                'label'       => __('Publish Draft Reply', 'fluent-support'),
+                'description' => 'Send a draft reply to the customer, the same as Approve in the ticket view. Optionally pass content to edit it first. The email goes out under the name of the agent who wrote the draft (From name and signature), matching the thread. Publishing does not reopen a closed ticket.',
+                'input_schema' => [
+                    'type'       => 'object',
+                    'properties' => [
+                        'ticket_id'      => ['type' => 'integer', 'description' => 'The ticket ID'],
+                        'response_id'    => ['type' => 'integer', 'description' => 'The draft reply ID (type draft_response in get-ticket)'],
+                        'content'        => ['type' => 'string', 'description' => 'Optional. Replace the draft content before sending. Format controlled by content_format (default: markdown).'],
+                        'content_format' => ['type' => 'string', 'enum' => ['markdown', 'html', 'text'], 'default' => 'markdown', 'description' => 'Format of content: markdown (default), html (as-is) or text (plain text, wrapped in paragraphs).'],
+                    ],
+                    'required' => ['ticket_id', 'response_id'],
+                ],
+                'execute_callback' => [ResponseTools::class, 'publishDraftReply'],
+                'annotations'      => ['readonly' => false, 'destructive' => false, 'idempotent' => false, 'openWorldHint' => true],
             ],
 
             'fluent-support/tag-ticket' => [
                 'label'       => __('Add or Remove Ticket Tags', 'fluent-support'),
-                'description' => __('Add or remove tags on a ticket. Use get-support-context to look up tag IDs, or pass add_tag_names to create-and-apply new tags in one call — a tag whose title already matches is reused, not duplicated. For tagging multiple tickets at once, use bulk-action with action=tag instead.', 'fluent-support'),
+                'description' => 'Add or remove tags on a ticket. Pass existing tag IDs, or tag names, which are matched to existing tags ignoring case; tags are created by people in the admin, so an unknown name is refused with the list of tags. For many tickets at once, use bulk-action with action=tag.',
                 'input_schema' => [
                     'type'       => 'object',
                     'properties' => [
                         'ticket_id'      => ['type' => 'integer', 'description' => 'The ticket ID'],
                         'add_tag_ids'    => ['type' => 'array', 'items' => ['type' => 'integer'], 'description' => 'Existing tag IDs to add'],
-                        'add_tag_names'  => ['type' => 'array', 'items' => ['type' => 'string'], 'maxItems' => 20, 'description' => 'Tag titles to add (max 20 per request). A tag with a matching title is reused; otherwise it is created first, then applied.'],
+                        'add_tag_names'  => ['type' => 'array', 'items' => ['type' => 'string'], 'maxItems' => 20, 'description' => 'Names of existing tags to add, matched ignoring case (max 20).'],
                         'remove_tag_ids' => ['type' => 'array', 'items' => ['type' => 'integer'], 'description' => 'Tag IDs to remove'],
                     ],
                     'required' => ['ticket_id'],
                 ],
                 'execute_callback' => [ManagementTools::class, 'tagTicket'],
-            ],
-
-            'fluent-support/create-tag' => [
-                'label'       => __('Create Ticket Tag', 'fluent-support'),
-                'description' => __('Create a new ticket tag for categorization and reporting, without attaching it to a ticket. If a tag with the same title already exists, that existing tag is returned instead of creating a duplicate. To create and apply a tag to a ticket in one call, pass add_tag_names to tag-ticket instead.', 'fluent-support'),
-                'input_schema' => [
-                    'type'       => 'object',
-                    'properties' => [
-                        'title'       => ['type' => 'string', 'description' => 'Tag title'],
-                        'description' => ['type' => 'string', 'description' => 'Optional tag description'],
-                    ],
-                    'required' => ['title'],
-                ],
-                'execute_callback' => [ManagementTools::class, 'createTag'],
-                'annotations'      => ['idempotent' => true],
+                'annotations'      => ['readonly' => false, 'destructive' => false, 'idempotent' => true, 'openWorldHint' => false],
             ],
 
             'fluent-support/get-customer-tickets' => [
                 'label'       => __('Get Customer Tickets', 'fluent-support'),
-                'description' => __('Get a customer\'s tickets by email, name, or ID — no need to search for the customer first. Email is the most reliable. Best tool when someone asks "show me tickets from [customer]".', 'fluent-support'),
+                'description' => 'Get a customer\'s tickets by email, name, or ID — no need to search for the customer first. Email is the most reliable. Best tool when someone asks "show me tickets from [customer]".',
                 'input_schema' => [
                     'type'       => 'object',
                     'properties' => [
                         'email'       => ['type' => 'string', 'format' => 'email', 'description' => 'Customer email address (recommended — exact match)'],
                         'name'        => ['type' => 'string', 'description' => 'Customer name (partial match on first/last name)'],
                         'customer_id' => ['type' => 'integer', 'description' => 'Customer ID (if already known)'],
-                        'status'      => ['type' => 'string', 'enum' => ['open', 'closed', 'new', 'active', 'all'], 'description' => 'Filter by status group'],
+                        'status'      => ['type' => 'string', 'enum' => ['open', 'closed', 'new', 'active', 'all'], 'description' => 'Filter by status: open (new and active), new, active, closed or all'],
                         'page'        => ['type' => 'integer', 'default' => 1],
                         'per_page'    => ['type' => 'integer', 'default' => 15],
                     ],
                 ],
                 'execute_callback' => [CustomerTools::class, 'getCustomerTickets'],
-                'annotations'      => ['readonly' => true],
+                'annotations'      => ['readonly' => true, 'openWorldHint' => false],
             ],
 
             'fluent-support/get-support-context' => [
                 'label'       => __('Get Support Context', 'fluent-support'),
-                'description' => __('START HERE — call this first in any session. Returns: your agent identity, your open ticket queue, tickets needing attention (unassigned/longest-waiting/critical/SLA breaches), all reference data (agents/products/mailboxes/tags with IDs), ticket stats, valid priority/status values, and AI guidelines. One call gives you full situational awareness. my_queue is split into awaiting_your_reply (customer spoke last — actionable, ranked oldest-waiting-first) and awaiting_customer (you replied last — informational only); each has a _total count and a _truncated flag since only the first page is returned (10 rows for awaiting_your_reply, 5 for awaiting_customer). Each attention-list row includes last_reply_by ("agent" | "customer" | null) and response_count (same meaning as in list-tickets: last_reply_by="customer" means awaiting an agent reply; response_count excludes internal notes) — triage your queue from this single call, starting with my_queue.awaiting_your_reply; do not call get-ticket per ticket unless you need the conversation body.', 'fluent-support'),
+                'description' => 'START HERE: call this once at the start of a session. Returns your agent identity, whether your replies are sent or saved as drafts (replies), your signature, your queue, tickets that need attention, reference data with IDs (agents, products, mailboxes, tags), ticket counts, valid priority and status values, and guidelines. views lists the ticket queues (assigned to you, unassigned, waiting for reply, each open priority, each status) with their counts and the list-tickets arguments that open each one; get-ticket-views refreshes them. Each mailbox shows the templates of its reply and outreach emails, and you.signature shows your signature. my_queue.awaiting_your_reply lists your tickets waiting on you, oldest first (first 10); my_queue.awaiting_customer lists the ones waiting on the customer (first 5); each has a _total and a _truncated flag. needs_attention lists open tickets that are unassigned or critical, plus the ones waiting longest on an agent and those waiting on an agent past the SLA targets. Rows carry waiting_on and response_count, so open a ticket only when you need its conversation.',
                 'input_schema' => [
                     'type'       => 'object',
                     'properties' => new \stdClass(),
                 ],
                 'execute_callback' => [ManagementTools::class, 'getSupportContext'],
-                'annotations'      => ['readonly' => true],
+                'annotations'      => ['readonly' => true, 'openWorldHint' => false],
+            ],
+
+            'fluent-support/get-ticket-views' => [
+                'label'       => __('Get Ticket Views', 'fluent-support'),
+                'description' => 'Get current ticket counts for each queue, the same views as the ticket list sidebar: assigned to you, unassigned, waiting for reply, each open priority (critical, medium, normal) and each status (open, new, active, closed, all). Each view has a count and list_tickets, the exact list-tickets arguments that return its tickets. Counts only include tickets you can see. Use it to refresh counts during a session; get-support-context includes the same views.',
+                'input_schema' => [
+                    'type'       => 'object',
+                    'properties' => new \stdClass(),
+                ],
+                'execute_callback' => [ManagementTools::class, 'getTicketViews'],
+                'annotations'      => ['readonly' => true, 'openWorldHint' => false],
             ],
 
             'fluent-support/list-saved-replies' => [
                 'label'       => __('List Saved Replies', 'fluent-support'),
-                'description' => __('List your saved/canned replies. Only returns replies you created. Optionally filter by search text or product_id. Use the returned ID with reply-to-ticket\'s saved_reply_id param. Content may contain placeholders like {{customer.first_name}} or {{agent.first_name}}, expanded automatically when the reply is sent.', 'fluent-support'),
+                'description' => 'List your saved/canned replies. Only returns replies you created. Optionally filter by search text or product_id. Use the returned ID with reply-to-ticket\'s saved_reply_id param. Content may contain placeholders like {{customer.first_name}} or {{agent.first_name}}, expanded automatically when the reply is sent.',
                 'input_schema' => [
                     'type'       => 'object',
                     'properties' => [
@@ -302,72 +366,26 @@ class AbilitiesRegistrar
                     ],
                 ],
                 'execute_callback' => [ResponseTools::class, 'listSavedReplies'],
-                'annotations'      => ['readonly' => true],
-            ],
-
-            'fluent-support/create-saved-reply' => [
-                'label'       => __('Create Saved Reply', 'fluent-support'),
-                'description' => __('Create a new saved/canned reply for reuse across tickets. Use when you notice yourself sending the same answer repeatedly. Content supports placeholders expanded automatically at send time: {{customer.first_name}}, {{customer.last_name}}, {{agent.first_name}}, {{agent.last_name}}, {{ticket.title}}. Use the dot form exactly as shown — {{customer.first_name}}, not {{customer_first_name}} — unrecognized placeholders are sent to the customer as literal text.', 'fluent-support'),
-                'input_schema' => [
-                    'type'       => 'object',
-                    'properties' => [
-                        'title'          => ['type' => 'string', 'description' => 'Short title to identify this saved reply'],
-                        'content'        => ['type' => 'string', 'description' => 'Reply content. Format controlled by content_format (default: markdown). May include {{customer.first_name}}-style placeholders.'],
-                        'content_format' => ['type' => 'string', 'enum' => ['markdown', 'html', 'text'], 'default' => 'markdown', 'description' => 'Format of the content field. markdown (default): Markdown converted to HTML. html: passed through as-is. text: plain text wrapped in paragraphs.'],
-                        'product_id'     => ['type' => 'integer', 'description' => 'Optional. Scope this reply to a specific product (use get-support-context to find IDs).'],
-                    ],
-                    'required' => ['title', 'content'],
-                ],
-                'execute_callback' => [ResponseTools::class, 'createSavedReply'],
-            ],
-
-            'fluent-support/update-saved-reply' => [
-                'label'       => __('Update Saved Reply', 'fluent-support'),
-                'description' => __('Update an existing saved reply\'s title, content, or product scope. Only the reply\'s creator (or an agent with settings-management permission) can update it.', 'fluent-support'),
-                'input_schema' => [
-                    'type'       => 'object',
-                    'properties' => [
-                        'id'             => ['type' => 'integer', 'description' => 'The saved reply ID (use list-saved-replies to find it)'],
-                        'title'          => ['type' => 'string', 'description' => 'New title'],
-                        'content'        => ['type' => 'string', 'description' => 'New content. Format controlled by content_format (default: markdown).'],
-                        'content_format' => ['type' => 'string', 'enum' => ['markdown', 'html', 'text'], 'default' => 'markdown', 'description' => 'Format of the content field, if provided.'],
-                        'product_id'     => ['type' => 'integer', 'description' => 'New product scope'],
-                    ],
-                    'required' => ['id'],
-                ],
-                'execute_callback' => [ResponseTools::class, 'updateSavedReply'],
-            ],
-
-            'fluent-support/delete-saved-reply' => [
-                'label'       => __('Delete Saved Reply', 'fluent-support'),
-                'description' => __('Permanently delete a saved reply. Only the reply\'s creator (or an agent with settings-management permission) can delete it.', 'fluent-support'),
-                'input_schema' => [
-                    'type'       => 'object',
-                    'properties' => [
-                        'id' => ['type' => 'integer', 'description' => 'The saved reply ID (use list-saved-replies to find it)'],
-                    ],
-                    'required' => ['id'],
-                ],
-                'execute_callback' => [ResponseTools::class, 'deleteSavedReply'],
-                'annotations'      => ['destructive' => true],
+                'annotations'      => ['readonly' => true, 'openWorldHint' => false],
             ],
 
             'fluent-support/get-support-insights' => [
                 'label'       => __('Get Support Insights', 'fluent-support'),
-                'description' => __('Get performance analytics: first-response times, resolution times, waiting durations, per-agent performance (open tickets, closed count, avg response/resolution time), and volume trends. Use for reporting and team performance reviews. Returns human-readable durations like "2h 30m". waiting is split into waiting_on_agent (last_reply_by=customer — genuinely needs a reply) and waiting_on_customer (last_reply_by=agent — customer has gone idle since our reply); a blended average across both would mostly measure customer silence, not agent responsiveness. For basic ticket counts, use get-support-context instead.', 'fluent-support'),
+                'description' => 'Get team performance for a period: tickets created and closed, first-response and resolution times, and per-agent numbers. from and to give the exact window. agent_performance lists agents by open tickets, most first, up to 50 (agent_performance_total gives the full count); pass agent_id for one agent. waiting and each agent\'s open tickets describe right now, not the period. waiting is split into waiting_on_agent (a reply is owed) and waiting_on_customer (we answered and the customer has not come back); report them separately, since a blended average mostly measures customer silence. Durations read like "2h 30m". For simple ticket counts, use get-support-context.',
                 'input_schema' => [
                     'type'       => 'object',
                     'properties' => [
                         'period' => ['type' => 'string', 'enum' => ['24h', '7d', '30d', '90d'], 'default' => '7d', 'description' => 'Time period for volume and response time stats'],
+                        'agent_id' => ['type' => 'integer', 'description' => 'Only this agent in agent_performance'],
                     ],
                 ],
                 'execute_callback' => [ManagementTools::class, 'getSupportInsights'],
-                'annotations'      => ['readonly' => true],
+                'annotations'      => ['readonly' => true, 'openWorldHint' => false],
             ],
 
             'fluent-support/search-customers' => [
                 'label'       => __('Search Customers', 'fluent-support'),
-                'description' => __('Search for customers by name or email. Returns customer profiles with location and account age. Use get-customer-tickets if you already know which customer and want their tickets. Use this when you need to find or identify a customer first.', 'fluent-support'),
+                'description' => 'Search for customers by name or email. Returns customer profiles with location and account age. Use get-customer-tickets if you already know which customer and want their tickets. Use this when you need to find or identify a customer first.',
                 'input_schema' => [
                     'type'       => 'object',
                     'properties' => [
@@ -377,12 +395,36 @@ class AbilitiesRegistrar
                     ],
                 ],
                 'execute_callback' => [CustomerTools::class, 'searchCustomers'],
-                'annotations'      => ['readonly' => true],
+                'annotations'      => ['readonly' => true, 'openWorldHint' => false],
+            ],
+
+            'fluent-support/update-customer' => [
+                'label'       => __('Update Customer', 'fluent-support'),
+                'description' => 'Change a customer\'s profile: name, title, note or address. Only the fields you pass change; an empty string clears a field, except first_name. The email address cannot be changed here: if a customer asks to change it, or to send their emails somewhere else, leave an internal note and ask a person on your team to do it.',
+                'input_schema' => [
+                    'type'       => 'object',
+                    'properties' => [
+                        'customer_id'    => ['type' => 'integer', 'description' => 'The customer ID (from search-customers or get-ticket)'],
+                        'first_name'     => ['type' => 'string'],
+                        'last_name'      => ['type' => 'string'],
+                        'title'          => ['type' => 'string', 'description' => 'Job title'],
+                        'note'           => ['type' => 'string', 'description' => 'Note about the customer that agents see on the profile. Replaces the current note.'],
+                        'address_line_1' => ['type' => 'string'],
+                        'address_line_2' => ['type' => 'string'],
+                        'city'           => ['type' => 'string'],
+                        'state'          => ['type' => 'string'],
+                        'zip'            => ['type' => 'string'],
+                        'country'        => ['type' => 'string', 'description' => 'Two-letter country code, e.g. US'],
+                    ],
+                    'required' => ['customer_id'],
+                ],
+                'execute_callback' => [CustomerTools::class, 'updateCustomer'],
+                'annotations'      => ['readonly' => false, 'destructive' => true, 'idempotent' => true, 'openWorldHint' => false],
             ],
 
             'fluent-support/get-mentions' => [
                 'label'       => __('Get Agent Mentions', 'fluent-support'),
-                'description' => __('Get tickets where you have been @mentioned in internal notes or replies. Returns mention notifications with the ticket context, who mentioned you, and a content preview. Filter by read/unread status or scope to a specific ticket. Requires internal notifications to be enabled in settings.', 'fluent-support'),
+                'description' => 'Get tickets where you have been @mentioned in internal notes or replies. Returns mention notifications with the ticket context, who mentioned you, and a content preview. Filter by read/unread status or scope to a specific ticket. Requires internal notifications to be enabled in settings.',
                 'input_schema' => [
                     'type'       => 'object',
                     'properties' => [
@@ -393,44 +435,52 @@ class AbilitiesRegistrar
                     ],
                 ],
                 'execute_callback' => [ManagementTools::class, 'getMentions'],
-                'annotations'      => ['readonly' => true],
-            ],
-
-            'fluent-support/list-workflows' => [
-                'label'       => __('List Workflows', 'fluent-support'),
-                'description' => __('List automation workflows — see what automatic actions are configured (auto-assign, auto-tag, auto-reply, etc.) and their triggers. Helps you understand what the system handles automatically so you don\'t duplicate work. Paginated; use page/per_page to navigate. Requires Fluent Support Pro.', 'fluent-support'),
-                'input_schema' => [
-                    'type'       => 'object',
-                    'properties' => [
-                        'status'       => ['type' => 'string', 'enum' => ['published', 'draft', 'all'], 'default' => 'published', 'description' => 'Filter by workflow status'],
-                        'trigger_type' => ['type' => 'string', 'enum' => ['automatic', 'manual'], 'description' => 'Filter by trigger type'],
-                        'page'         => ['type' => 'integer', 'default' => 1, 'description' => 'Page number (1-based)'],
-                        'per_page'     => ['type' => 'integer', 'default' => 20, 'description' => 'Results per page (max 50)'],
-                    ],
-                ],
-                'execute_callback' => [ManagementTools::class, 'listWorkflows'],
-                'annotations'      => ['readonly' => true],
+                'annotations'      => ['readonly' => true, 'openWorldHint' => false],
             ],
 
             'fluent-support/bulk-action' => [
                 'label'       => __('Bulk Ticket Action', 'fluent-support'),
-                'description' => __('Act on multiple tickets at once — close, assign, or tag in bulk. More efficient than calling individual tools in a loop. Returns per-ticket results showing what succeeded/failed. Maximum 50 ticket IDs per call; split larger sets into multiple requests.', 'fluent-support'),
+                'description' => 'Act on multiple tickets at once: close, assign, tag or reply. action=close emails every customer the closing email unless you set silent=true. More efficient than calling individual tools in a loop. Returns per-ticket results showing what succeeded or failed. reply sends the same content to every ticket, each exactly as reply-to-ticket would (closed tickets reopen, draft and close_ticket apply to all); placeholders such as {{customer.first_name}} are filled per customer. Maximum 50 ticket IDs per call; split larger sets into multiple requests.',
                 'input_schema' => [
                     'type'       => 'object',
                     'properties' => [
                         'ticket_ids' => ['type' => 'array', 'items' => ['type' => 'integer'], 'maxItems' => 50, 'description' => 'Array of ticket IDs (max 50 per request)'],
-                        'action'     => ['type' => 'string', 'enum' => ['close', 'assign', 'tag'], 'description' => 'Action to perform'],
+                        'action'     => ['type' => 'string', 'enum' => ['close', 'assign', 'tag', 'reply'], 'description' => 'Action to perform'],
                         'agent_id'   => ['type' => 'integer', 'description' => 'Agent ID (required for assign action)'],
                         'tag_ids'    => ['type' => 'array', 'items' => ['type' => 'integer'], 'description' => 'Tag IDs (required for tag action)'],
+                        'content'        => ['type' => 'string', 'description' => 'Reply content (reply action; or use saved_reply_id).'],
+                        'content_format' => ['type' => 'string', 'enum' => ['markdown', 'html', 'text'], 'default' => 'markdown', 'description' => 'Format of content: markdown (default), html (as-is) or text (plain text, wrapped in paragraphs).'],
+                        'saved_reply_id' => ['type' => 'integer', 'description' => 'Saved reply to send (reply action).'],
+                        'close_ticket'   => ['type' => 'boolean', 'default' => false, 'description' => 'Close each ticket after replying (reply action).'],
+                        'draft'          => ['type' => 'boolean', 'default' => false, 'description' => 'Save each reply as an unsent draft for a human to approve (reply action).'],
+                        'silent'         => ['type' => 'boolean', 'default' => false, 'description' => 'Close without the "ticket closed" email and closing automations, as close-ticket silent=true (close action). Without it, every customer gets the closing email.'],
                     ],
                     'required' => ['ticket_ids', 'action'],
                 ],
                 'execute_callback' => [ManagementTools::class, 'bulkAction'],
-                'annotations'      => ['destructive' => true],
+                'annotations'      => ['readonly' => false, 'destructive' => true, 'idempotent' => false, 'openWorldHint' => true],
             ],
         ];
 
         return self::$definitions;
+    }
+
+    /** Input schema for files sent with a reply or note. */
+    private static function attachmentsSchema()
+    {
+        return [
+            'type'        => 'array',
+            'maxItems'    => \FluentSupport\App\Modules\MCP\Support\AttachmentStager::maxFiles(),
+            'items'       => [
+                'type'       => 'object',
+                'properties' => [
+                    'filename'       => ['type' => 'string', 'description' => 'File name with extension, e.g. invoice.pdf'],
+                    'content_base64' => ['type' => 'string', 'description' => 'File content, base64-encoded'],
+                ],
+                'required'   => ['filename', 'content_base64'],
+            ],
+            'description' => 'Files to attach, base64-encoded. get-support-context lists the limits under uploads: how many files, the size of each, and the allowed extensions.',
+        ];
     }
 
     public static function register()

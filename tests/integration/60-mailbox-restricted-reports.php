@@ -2,17 +2,13 @@
 /**
  * Mailbox restrictions in stats and reports.
  *
- * A viewer whose agent record carries `agent_restrictions` for a mailbox must
- * not see that mailbox's tickets or replies in any aggregate. Fixtures put one
- * active ticket (with one agent reply) in an allowed mailbox and one in a
- * restricted mailbox, both worked by the same fixture agent, and every
- * assertion is anchored on that agent's own rows so unrelated site data can
- * never make a scope look applied.
+ * A viewer with `agent_restrictions` on a mailbox must not see its tickets or
+ * replies in any aggregate. One fixture agent works one ticket (plus a reply)
+ * in an allowed and one in a restricted mailbox; assertions only use its rows.
  *
- * Restriction is resolved from the CURRENT user: Helper::getAgentByUserId()
- * -> Agent.user_id -> person_meta. The viewer therefore needs a real WP user
- * linked to a fixture agent. The user and the meta row are created here and
- * removed in this file's own finally — neither is factory-tracked.
+ * Restriction resolves from the current user, so the viewer is a real WP user
+ * linked to a fixture agent. The user and meta row aren't factory-tracked and
+ * are removed in this file's finally.
  *
  * Pro cases skip by name when fluent-support-pro is not active.
  */
@@ -20,8 +16,7 @@
 use FluentSupport\App\Models\Meta;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Modules\PermissionManager;
-use FluentSupport\App\Modules\Reporting\Reporting;
-use FluentSupport\App\Modules\StatModule;
+use FluentSupport\App\Modules\Reports\Reports;
 
 return function () {
 
@@ -36,8 +31,7 @@ return function () {
     $restrictedBox = FsFactory::mailbox();
     $customer = FsFactory::customer();
 
-    // The agent whose activity is measured. Its rows are the only ones the
-    // assertions look at, so every expected value below is exact.
+    // The agent whose activity is measured.
     $worker = FsFactory::agent();
 
     // The agent who views the reports, restricted from $restrictedBox.
@@ -102,8 +96,7 @@ return function () {
 
         $today = current_time('Y-m-d');
 
-        // Sanity: the viewer really is restricted, otherwise every case below
-        // would pass vacuously against an unscoped query.
+        // Without a real restriction every case below would pass vacuously.
         FsTest::case('restricted viewer: fixture agent resolves its mailbox restriction', function () use ($asViewer, $asAdmin, $restrictedBox) {
             $asViewer();
             try {
@@ -117,12 +110,12 @@ return function () {
             }
         });
 
-        // ---- core: StatModule::getOverAllStats() ---------------------------
+        // ---- core: Reports::overview() ---------------------------------------
 
-        FsTest::case('restricted viewer: StatModule::getOverAllStats excludes the restricted mailbox', function () use ($asNobody, $asViewer, $asAdmin, $restrictedBox) {
+        FsTest::case('restricted viewer: Reports::overview excludes the restricted mailbox', function () use ($asNobody, $asViewer, $asAdmin, $restrictedBox) {
             // Baseline with no user: no agent, no restriction, site-wide.
             $asNobody();
-            $unscoped = StatModule::getOverAllStats();
+            $unscoped = array_map(fn($count) => ['count' => $count], Reports::overview('', ''));
 
             // Exactly what the restricted mailbox contributes to each figure.
             $activeInBox = Ticket::where('mailbox_id', $restrictedBox->id)->where('status', 'active')->count();
@@ -133,7 +126,7 @@ return function () {
 
             $asViewer();
             try {
-                $scoped = StatModule::getOverAllStats();
+                $scoped = array_map(fn($count) => ['count' => $count], Reports::overview('', ''));
             } finally {
                 $asAdmin();
             }
@@ -153,12 +146,52 @@ return function () {
             );
         });
 
-        // ---- core: Reporting::agentSummary() -------------------------------
+        // ---- core: ticket counts (admin bar, dashboard widget, MCP) --------
 
-        FsTest::case('restricted viewer: Reporting::agentSummary excludes the restricted mailbox', function () use ($asViewer, $asAdmin, $worker) {
+        FsTest::case('restricted viewer: quick links and MCP stats overview exclude the restricted mailbox', function () use ($asViewer, $asAdmin, $restrictedBox, $viewerUserId) {
+            // MCP resources need ticket access; the viewer user is deleted at the end.
+            PermissionManager::attachPermissions($viewerUserId, ['fst_view_tickets']);
+
+            $unscoped = [
+                'total'      => Ticket::count(),
+                'new'        => Ticket::where('status', 'new')->count(),
+                'active'     => Ticket::where('status', 'active')->count(),
+                'closed'     => Ticket::where('status', 'closed')->count(),
+                'unassigned' => Ticket::whereNull('agent_id')->count(),
+            ];
+
+            // Exactly what the restricted mailbox contributes to each figure.
+            $inBox = function () use ($restrictedBox) {
+                return Ticket::where('mailbox_id', $restrictedBox->id);
+            };
+            $expected = [
+                'total'      => $unscoped['total'] - $inBox()->count(),
+                'new'        => $unscoped['new'] - $inBox()->where('status', 'new')->count(),
+                'active'     => $unscoped['active'] - $inBox()->where('status', 'active')->count(),
+                'closed'     => $unscoped['closed'] - $inBox()->where('status', 'closed')->count(),
+                'unassigned' => $unscoped['unassigned'] - $inBox()->whereNull('agent_id')->count(),
+            ];
+
             $asViewer();
             try {
-                $agents = (new Reporting())->agentSummary();
+                $links = (new \FluentSupport\App\Services\Tickets\TicketStats())->getQuickLinks();
+                $overview = \FluentSupport\App\Modules\MCP\Resources\ResourceProvider::readResource('fluentsupport://stats/overview');
+            } finally {
+                $asAdmin();
+            }
+
+            FsTest::assert($inBox()->count() > 0, 'fixture: the restricted mailbox has a ticket');
+            FsTest::assertSame($expected, $overview, 'MCP stats overview');
+            FsTest::assertSame($expected['total'], (int) $links[0]['number'], 'quick link: total');
+            FsTest::assertSame($expected['active'], (int) $links[1]['number'], 'quick link: active');
+        });
+
+        // ---- core: Reports::agentSummary() ----------------------------------
+
+        FsTest::case('restricted viewer: Reports::agentSummary excludes the restricted mailbox', function () use ($asViewer, $asAdmin, $worker) {
+            $asViewer();
+            try {
+                $agents = Reports::agentSummary('', '');
             } finally {
                 $asAdmin();
             }
@@ -176,8 +209,6 @@ return function () {
                 return;
             }
 
-            // The worker has one open ticket + one reply per mailbox; only the
-            // allowed mailbox's pair may be counted.
             FsTest::assertSame(1, (int) $row->stats['opens'], 'opens counts only the allowed-mailbox ticket');
             FsTest::assertSame(1, (int) $row->stats['responses'], 'responses counts only the allowed-mailbox reply');
             FsTest::assertSame(1, (int) $row->stats['interactions'], 'interactions counts only the allowed-mailbox ticket');
@@ -228,8 +259,7 @@ return function () {
             $snapshotService = '\FluentSupportPro\App\Modules\Reporting\SnapshotService';
             $snapshotModel = '\FluentSupportPro\App\Models\ReportSnapshot';
 
-            // What an unscoped capture must contain, over the same cumulative
-            // range the snapshot uses.
+            // Unscoped figures over the snapshot's cumulative range.
             $asNobody();
             $expected = \FluentSupportPro\App\Modules\Reporting\AdvancedReportService::getTicketOverview(
                 $snapshotService::CUMULATIVE_START_DATE,
@@ -238,8 +268,7 @@ return function () {
 
             $maxIdBefore = (int) $snapshotModel::max('id');
 
-            // ALTERNATE_WP_CRON, a logged-in hit on wp-cron.php and
-            // `wp cron event run --user` all run the hook with a user set.
+            // Cron can run with a user set (ALTERNATE_WP_CRON, `wp cron event run --user`).
             $asViewer();
             try {
                 $snapshotService::takeSnapshot();
@@ -265,6 +294,79 @@ return function () {
             } finally {
                 // Snapshot rows are not factory-tracked.
                 $snapshotModel::where('id', '>', $maxIdBefore)->delete();
+            }
+        });
+
+        // ---- core (pro on): Reports::agentSummary() feedback counts --------
+
+        // Last on purpose: it adds a ticket to $restrictedBox.
+        FsTest::case('restricted viewer: agentSummary counts every like, none from a restricted mailbox', function () use ($asViewer, $asAdmin, $customer, $allowedBox, $restrictedBox, $worker) {
+            if (!defined('FLUENTSUPPORTPRO_PLUGIN_VERSION')) {
+                FsTest::skip('fluent-support-pro is not active');
+                return;
+            }
+            if (\FluentSupport\App\Services\Helper::getBusinessSettings('agent_feedback_rating') !== 'yes') {
+                FsTest::skip('Agent feedback rating is off on this site');
+                return;
+            }
+
+            // Agent::getAgentIds() is cached per request, so rate the agent
+            // created at the top of this file rather than a new one.
+            $rater = $worker;
+            $allowed = FsFactory::ticket(['customer_id' => $customer->id, 'mailbox_id' => $allowedBox->id, 'agent_id' => $rater->id]);
+            $hidden = FsFactory::ticket(['customer_id' => $customer->id, 'mailbox_id' => $restrictedBox->id, 'agent_id' => $rater->id]);
+
+            // More responses than GROUP_CONCAT's 1024-byte default can list.
+            $rate = function ($ticket, $value) use ($rater) {
+                $response = FsFactory::conversation($ticket, ['person_id' => $rater->id, 'conversation_type' => 'response']);
+                Meta::create([
+                    'object_type' => 'conversation_meta',
+                    'object_id'   => $response->id,
+                    'key'         => 'agent_feedback_ratings',
+                    'value'       => $value,
+                ]);
+                return $response->id;
+            };
+            $ratedIds = [];
+            for ($i = 0; $i < 250; $i++) {
+                $ratedIds[] = $rate($allowed, 'like');
+            }
+            $ratedIds[] = $rate($allowed, 'dislike');
+            $ratedIds[] = $rate($hidden, 'like');
+
+            // MariaDB defaults group_concat_max_len to 1MB; MySQL to 1024 bytes.
+            // Run at MySQL's default so a GROUP_CONCAT shortcut is caught.
+            global $wpdb;
+            $previousConcatLen = $wpdb->get_var('SELECT @@SESSION.group_concat_max_len');
+            $wpdb->query('SET SESSION group_concat_max_len = 1024');
+
+            try {
+                $asViewer();
+                try {
+                    $agents = Reports::agentSummary('', '', [$rater->id]);
+                } finally {
+                    $asAdmin();
+                    $wpdb->query($wpdb->prepare('SET SESSION group_concat_max_len = %d', $previousConcatLen));
+                }
+
+                $row = null;
+                foreach ($agents as $agent) {
+                    if ((int) $agent->id === (int) $rater->id) {
+                        $row = $agent;
+                    }
+                }
+
+                FsTest::assert($row !== null, 'rater agent is listed in the summary');
+                if (!$row) {
+                    return;
+                }
+                FsTest::assertSame(250, (int) $row->stats['likes'], 'every like on the allowed mailbox counts; the restricted one does not');
+                FsTest::assertSame(1, (int) $row->stats['dislikes'], 'dislikes counted');
+            } finally {
+                Meta::where('object_type', 'conversation_meta')
+                    ->where('key', 'agent_feedback_ratings')
+                    ->whereIn('object_id', $ratedIds)
+                    ->delete();
             }
         });
     } finally {

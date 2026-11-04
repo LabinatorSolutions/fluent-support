@@ -62,16 +62,12 @@ class PersonsMigrator
     {
         global $wpdb;
 
-        // $table is always $wpdb->prefix . 'fs_persons' — not user input.
-        // esc_sql() is the correct escaping for SQL identifiers; $wpdb->prepare()
-        // cannot quote identifiers in WP < 6.2 (no %i placeholder available).
+        // Our own table name, not user input. esc_sql() because %i needs WP 6.2+.
         $table = esc_sql($table);
 
-        // Get existing columns
         $existing_columns = $wpdb->get_col("DESC `{$table}`", 0); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
-        // @todo: We will remove this on final release
-        // This is only for beta users
+        // @todo: Beta-only migration, remove on final release.
         if (!in_array('title', $existing_columns)) {
             // phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter,WordPress.DB.PreparedSQL.NotPrepared -- $table is sanitized via esc_sql(); column name is a hardcoded literal.
             $wpdb->query("ALTER TABLE `{$table}` ADD `title` VARCHAR(192) NULL AFTER `email`");
@@ -87,12 +83,9 @@ class PersonsMigrator
     {
         global $wpdb;
 
-        // $table is always $wpdb->prefix . 'fs_persons' — not user input.
-        // esc_sql() is the correct escaping for SQL identifiers; $wpdb->prepare()
-        // cannot quote identifiers in WP < 6.2 (no %i placeholder available).
+        // Our own table name, not user input. esc_sql() because %i needs WP 6.2+.
         $table = esc_sql($table);
 
-        // Get existing indexes
         $existing_indexes = $wpdb->get_results("SHOW INDEX FROM `{$table}`"); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
         $existing_index_names = [];
 
@@ -100,15 +93,12 @@ class PersonsMigrator
             $existing_index_names[] = $index->Key_name;
         }
 
-        // Desired indexes — keys and values are all hardcoded string literals.
         $indexes = [
             'idx_email'      => 'email',
             'idx_user_id'    => 'user_id',
             'idx_ip_address' => 'ip_address',
         ];
 
-        // Add missing indexes. $table is esc_sql()'d above; $index_name and
-        // $column_name are hardcoded array literals — no user input reaches this query.
         foreach ($indexes as $index_name => $column_name) {
             if (!in_array($index_name, $existing_index_names)) {
                 // phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter,WordPress.DB.PreparedSQL.NotPrepared -- all identifiers are either esc_sql()'d or hardcoded literals.

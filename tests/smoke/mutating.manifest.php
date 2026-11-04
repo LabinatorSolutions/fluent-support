@@ -21,8 +21,8 @@
 
 return [
     'expected' => [
-        'POST'   => 96,
-        'PUT'    => 15,
+        'POST'   => 98,
+        'PUT'    => 18,
         'DELETE' => 18,
     ],
 
@@ -131,6 +131,12 @@ return [
             'label'   => 'tickets: update property',
             'method'  => 'PUT',
             'route'   => '/tickets/{ticket_id}/property',
+            'payload' => [],
+        ],
+        [
+            'label'   => 'tickets: update opening message',
+            'method'  => 'PUT',
+            'route'   => '/tickets/{ticket_id}/content',
             'payload' => [],
         ],
         [
@@ -270,12 +276,6 @@ return [
             'payload' => [],
         ],
         [
-            'label'   => 'settings: save slack integration',
-            'method'  => 'POST',
-            'route'   => '/settings/slack-integration',
-            'payload' => [],
-        ],
-        [
             'label'   => 'settings: setup portal',
             'method'  => 'POST',
             'route'   => '/settings/setup',
@@ -306,27 +306,21 @@ return [
             'payload' => [],
         ],
         [
+            'label'   => 'settings: save remote upload options',
+            'method'  => 'POST',
+            'route'   => '/settings/remote-upload-options',
+            'payload' => [],
+        ],
+        [
+            'label'   => 'settings: retry remote uploads',
+            'method'  => 'POST',
+            'route'   => '/settings/remote-upload-retry',
+            'payload' => [],
+        ],
+        [
             'label'   => 'settings: save ai provider',
             'method'  => 'POST',
             'route'   => '/settings/ai-integration',
-            'payload' => [],
-        ],
-        [
-            'label'   => 'settings: disconnect ai provider',
-            'method'  => 'POST',
-            'route'   => '/settings/ai-integration/disconnect',
-            'payload' => [],
-        ],
-        [
-            'label'   => 'settings: save fluent bot integration',
-            'method'  => 'POST',
-            'route'   => '/settings/fluent-bot-integration',
-            'payload' => [],
-        ],
-        [
-            'label'   => 'settings: save fluent bot presets',
-            'method'  => 'POST',
-            'route'   => '/settings/fluent-bot-presets',
             'payload' => [],
         ],
         [
@@ -340,6 +334,32 @@ return [
             'method'  => 'POST',
             'route'   => '/settings/mcp/install-adapter',
             'payload' => [],
+        ],
+
+        // ---- system tools (core, SystemToolsPolicy) ----
+        [
+            'label'   => 'system tools: rest test',
+            'method'  => 'POST',
+            'route'   => '/system-tools/rest-test',
+            'payload' => [],
+        ],
+        [
+            'label'   => 'system tools: run cron',
+            'method'  => 'POST',
+            'route'   => '/system-tools/cron/run',
+            'payload' => ['hook' => 'fluent_support_daily_tasks'],
+        ],
+        [
+            'label'   => 'system tools: repair database',
+            'method'  => 'POST',
+            'route'   => '/system-tools/database/repair',
+            'payload' => [],
+        ],
+        [
+            'label'   => 'system tools: delete old logs',
+            'method'  => 'DELETE',
+            'route'   => '/system-tools/cleanup',
+            'payload' => ['days_before' => 30, 'selected_logs' => ['activity_logs']],
         ],
 
         // ---- agents (core, AgentPolicy) ----
@@ -431,6 +451,12 @@ return [
             'throws_denial' => true,
         ],
         [
+            'label'   => 'customers: bulk block / unblock',
+            'method'  => 'PUT',
+            'route'   => '/customers/bulk-status',
+            'payload' => ['status' => 'inactive', 'customer_ids' => [2147483647]],
+        ],
+        [
             'label'   => 'customers: update profile image',
             'method'  => 'POST',
             'route'   => '/customers/profile_image/{customer_id}',
@@ -498,80 +524,20 @@ return [
 
         // ---- public (core, PublicPolicy) ----
         [
-            'label'   => 'public: telegram bot webhook',
-            'method'  => 'POST',
-            'route'   => '/public/telegram_bot_response/{token}',
-            'payload' => [],
-            'skip'    => 'public by design: PublicPolicy',
+            'label'             => 'pro public: telegram bot webhook',
+            'method'            => 'POST',
+            'route'             => '/public/telegram_bot_response/{token}',
+            'payload'           => [],
+            'requires_constant' => 'FLUENTSUPPORTPRO',
+            'skip'              => 'public by design: PublicPolicy',
         ],
         [
-            'label'   => 'public: slack event webhook',
-            'method'  => 'POST',
-            'route'   => '/public/slack_response/{token}',
-            'payload' => [],
-            'skip'    => 'public by design: PublicPolicy',
-        ],
-
-        // ---- fluent-bot (core, AgentTicketPolicy) ----
-        [
-            'label'   => 'fluent-bot: create feedback',
-            'method'  => 'POST',
-            'route'   => '/fluent-bot/{id}/feedback',
-            'payload' => [],
-        ],
-        [
-            'label'   => 'fluent-bot: delete feedback',
-            'method'  => 'DELETE',
-            'route'   => '/fluent-bot/{id}/feedback/{feedback_id}',
-            'payload' => [],
-        ],
-        [
-            'label'   => 'fluent-bot: generate response',
-            'method'  => 'POST',
-            'route'   => '/fluent-bot/{id}/generate-response',
-            'payload' => [],
-        ],
-        [
-            'label'   => 'fluent-bot: generate stream response',
-            'method'  => 'POST',
-            'route'   => '/fluent-bot/{id}/generate-stream-response',
-            'payload' => [],
-        ],
-        [
-            'label'   => 'fluent-bot: get ticket summary',
-            'method'  => 'POST',
-            'route'   => '/fluent-bot/{id}/get-ticket-summary',
-            'payload' => [],
-        ],
-        [
-            'label'   => 'fluent-bot: get ticket tone',
-            'method'  => 'POST',
-            'route'   => '/fluent-bot/{id}/get-ticket-tone',
-            'payload' => [],
-        ],
-        [
-            'label'   => 'fluent-bot: save chat id',
-            'method'  => 'POST',
-            'route'   => '/fluent-bot/{id}/chat-id',
-            'payload' => [],
-        ],
-        [
-            'label'   => 'fluent-bot: delete chat id',
-            'method'  => 'DELETE',
-            'route'   => '/fluent-bot/{id}/chat-id',
-            'payload' => [],
-        ],
-        [
-            'label'   => 'fluent-bot: switch conversation',
-            'method'  => 'POST',
-            'route'   => '/fluent-bot/{id}/conversations/switch',
-            'payload' => [],
-        ],
-        [
-            'label'   => 'fluent-bot: save context selection',
-            'method'  => 'POST',
-            'route'   => '/fluent-bot/{id}/context-selection',
-            'payload' => [],
+            'label'             => 'pro public: slack event webhook',
+            'method'            => 'POST',
+            'route'             => '/public/slack_response/{token}',
+            'payload'           => [],
+            'requires_constant' => 'FLUENTSUPPORTPRO',
+            'skip'              => 'public by design: PublicPolicy',
         ],
 
         // ---- activity-logger (core, ActivityLoggerPolicy) ----
@@ -633,14 +599,13 @@ return [
             'route'   => '/ticket_importer/delete',
             'payload' => [],
         ],
-
-        // ---- ticket_image_upload (core, AgentTicketPolicy) ----
         [
-            'label'   => 'uploader: ticket image upload',
+            'label'   => 'ticket_importer: helpscout token exchange',
             'method'  => 'POST',
-            'route'   => '/ticket_image_upload',
+            'route'   => '/ticket_importer/helpscout/token',
             'payload' => [],
         ],
+
 
         // ---- pro: ticket-tags (AdminSettingsPolicy) ----
         [
@@ -793,13 +758,6 @@ return [
 
         // ---- pro: settings (AdminSettingsPolicy) ----
         [
-            'label'             => 'pro settings: save discord integration',
-            'method'            => 'POST',
-            'route'             => '/settings/discord-integration',
-            'payload'           => [],
-            'requires_constant' => 'FLUENTSUPPORTPRO',
-        ],
-        [
             'label'             => 'pro settings: update incoming webhook',
             'method'            => 'PUT',
             'route'             => '/settings/incoming-webhook',
@@ -807,16 +765,72 @@ return [
             'requires_constant' => 'FLUENTSUPPORTPRO',
         ],
         [
-            'label'             => 'pro settings: save twilio integration',
+            'label'             => 'pro settings: save auto-close',
             'method'            => 'POST',
-            'route'             => '/settings/twilio-integration',
+            'route'             => '/settings/auto-close',
             'payload'           => [],
             'requires_constant' => 'FLUENTSUPPORTPRO',
         ],
         [
-            'label'             => 'pro settings: save auto-close',
+            'label'             => 'pro settings: save remote portal',
             'method'            => 'POST',
-            'route'             => '/settings/auto-close',
+            'route'             => '/settings/remote-portal',
+            'payload'           => [],
+            'requires_constant' => 'FLUENTSUPPORTPRO',
+        ],
+        [
+            'label'             => 'pro settings: disconnect remote portal',
+            'method'            => 'POST',
+            'route'             => '/settings/remote-portal/disconnect',
+            'payload'           => [],
+            'requires_constant' => 'FLUENTSUPPORTPRO',
+        ],
+        [
+            'label'             => 'pro settings: test remote portal',
+            'method'            => 'POST',
+            'route'             => '/settings/remote-portal/test',
+            'payload'           => [],
+            'requires_constant' => 'FLUENTSUPPORTPRO',
+        ],
+        [
+            'label'             => 'pro settings: remote portal connection key',
+            'method'            => 'POST',
+            'route'             => '/settings/remote-portal/connection-key',
+            'payload'           => [],
+            'requires_constant' => 'FLUENTSUPPORTPRO',
+        ],
+        [
+            'label'             => 'remote portal: connect',
+            'method'            => 'POST',
+            'route'             => '/remote-portal/connect',
+            'payload'           => [],
+            'requires_constant' => 'FLUENTSUPPORTPRO',
+        ],
+        [
+            'label'             => 'remote portal: rotate token',
+            'method'            => 'POST',
+            'route'             => '/remote-portal/rotate-token',
+            'payload'           => [],
+            'requires_constant' => 'FLUENTSUPPORTPRO',
+        ],
+        [
+            'label'             => 'remote portal: update portal url',
+            'method'            => 'POST',
+            'route'             => '/remote-portal/portal-url',
+            'payload'           => [],
+            'requires_constant' => 'FLUENTSUPPORTPRO',
+        ],
+        [
+            'label'             => 'remote portal: test widgets',
+            'method'            => 'POST',
+            'route'             => '/remote-portal/test-widgets',
+            'payload'           => [],
+            'requires_constant' => 'FLUENTSUPPORTPRO',
+        ],
+        [
+            'label'             => 'remote portal: disconnect',
+            'method'            => 'POST',
+            'route'             => '/remote-portal/disconnect',
             'payload'           => [],
             'requires_constant' => 'FLUENTSUPPORTPRO',
         ],
@@ -872,6 +886,36 @@ return [
             'label'             => 'pro tickets: split ticket',
             'method'            => 'POST',
             'route'             => '/tickets/{ticket_id}/split_ticket',
+            'payload'           => [],
+            'requires_constant' => 'FLUENTSUPPORTPRO',
+        ],
+
+        // ---- pro: scheduled replies (ScheduledReplyPolicy) ----
+        [
+            'label'             => 'pro tickets: update scheduled reply',
+            'method'            => 'PUT',
+            'route'             => '/tickets/{ticket_id}/scheduled_reply/{response_id}',
+            'payload'           => [],
+            'requires_constant' => 'FLUENTSUPPORTPRO',
+        ],
+        [
+            'label'             => 'pro tickets: send scheduled reply now',
+            'method'            => 'POST',
+            'route'             => '/tickets/{ticket_id}/scheduled_reply/{response_id}/send_now',
+            'payload'           => [],
+            'requires_constant' => 'FLUENTSUPPORTPRO',
+        ],
+        [
+            'label'             => 'pro tickets: resume scheduled reply',
+            'method'            => 'POST',
+            'route'             => '/tickets/{ticket_id}/scheduled_reply/{response_id}/resume',
+            'payload'           => [],
+            'requires_constant' => 'FLUENTSUPPORTPRO',
+        ],
+        [
+            'label'             => 'pro tickets: cancel scheduled reply',
+            'method'            => 'DELETE',
+            'route'             => '/tickets/{ticket_id}/scheduled_reply/{response_id}',
             'payload'           => [],
             'requires_constant' => 'FLUENTSUPPORTPRO',
         ],

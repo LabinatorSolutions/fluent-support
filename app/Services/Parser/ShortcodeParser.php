@@ -64,6 +64,12 @@ class ShortcodeParser
             $defaultValue = trim($valueKeys[1]);
         }
 
+        // Before the empty-data guard: with no agent (unassigned ticket, closed by
+        // a workflow) the signature is empty, not a literal {{agent.signature}}.
+        if ($dataKey == 'agent' && $valueKey == 'signature') {
+            return $this->getAgentSignature($data);
+        }
+
         if(empty($data[$dataKey])) {
             return $matches[0];
         }
@@ -87,6 +93,33 @@ class ShortcodeParser
         }
 
         return apply_filters('fluentsupport/smartcode_fallback_callback_' . $dataKey, $matches[0], $valueKey, $defaultValue, $data);
+    }
+
+    /** Set while a signature renders: a signature naming itself, in any spelling, renders empty. */
+    private static $renderingSignature = false;
+
+    /**
+     * {{agent.signature}}: the agent's signature when enabled, otherwise empty.
+     * Its own smartcodes are filled from the same data.
+     */
+    protected function getAgentSignature($data)
+    {
+        if (self::$renderingSignature || empty($data['agent'])) {
+            return '';
+        }
+
+        $signature = \FluentSupport\App\Services\Tickets\ResponseService::getAppendedSignature($data['agent']);
+
+        if ($signature === '') {
+            return '';
+        }
+
+        self::$renderingSignature = true;
+        try {
+            return $this->parse($signature, $data);
+        } finally {
+            self::$renderingSignature = false;
+        }
     }
 
     protected function getTicketData($ticket, $valueKey, $defaultValue)

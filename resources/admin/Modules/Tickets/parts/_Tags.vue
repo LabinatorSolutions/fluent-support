@@ -3,7 +3,7 @@
     <!-- Ticket List Mode - Show first tag + count -->
     <template v-if="mode === 'ticket_list' && tags && tags.length">
       <div class="fs_tag_item">
-        <img :src="appVars.asset_url + 'images/tags.svg'" alt="">
+        <DynamicIcon name="Tags"/>
         <span class="fs_tag_text">{{ tags[0].title }}</span>
         <el-tooltip
             v-if="tags.length > 1"
@@ -24,7 +24,7 @@
     <!-- Default Mode - Show all tags with new style -->
     <template v-else>
       <div class="fs_tag_item" v-for="(tag, tagIndex) in tags" :key="tag.id">
-          <img :src="appVars.asset_url + 'images/tags.svg'" alt="">
+          <DynamicIcon name="Tags"/>
           <div class="fs_tag_text">
               {{ tag.title }}
           </div>
@@ -38,7 +38,7 @@
       </div>
 
       <!-- Add tag functionality - always show if creatable -->
-      <el-popover
+      <el-popover :persistent="false"
           v-if="creatable"
           placement="bottom"
           trigger="click"
@@ -61,9 +61,13 @@
   </div>
 </template>
 <script type="text/babel">
+import DynamicIcon from '@/admin/Components/Icons/DynamicIcon.vue';
 
 export default {
     name: "ticketTags",
+    components: {
+        DynamicIcon
+    },
     props: ["ticket_id", "tags", "creatable", "mode"],
 
     data() {

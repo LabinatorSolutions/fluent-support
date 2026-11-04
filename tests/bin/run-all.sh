@@ -54,9 +54,29 @@ run_static() {
     php "$TESTS_DIR/lint/raw-sql-prefix.php"
     record "raw-sql-prefix" "$?"
 
+    banner "static: docs-links lint"
+    php "$TESTS_DIR/lint/docs-links.php"
+    record "docs-links" "$?"
+
+    banner "static: docs-links self-test"
+    # Proof-of-catch: the fixture holds an old docs link, so the lint must fail on it.
+    ! php "$TESTS_DIR/lint/docs-links.php" "$TESTS_DIR/lint/fixtures/docs-links" >/dev/null
+    record "docs-links self-test" "$?"
+
     banner "static: route-coverage lint"
     php "$TESTS_DIR/lint/route-coverage.php"
     record "route-coverage" "$?"
+
+    banner "static: translation-map lint"
+    # The Vue translation map is generated; this fails when it drifted from the
+    # source or a call site cannot be translated. Fix: run the translate script.
+    ( cd "$REPO_ROOT" && node tests/lint/translation-map.js )
+    record "translation-map" "$?"
+
+    banner "static: translation-map self-test"
+    # Proof-of-catch: every lint check must still fire on the fixtures.
+    ( cd "$REPO_ROOT" && node tests/lint/translation-map.js --self-test >/dev/null 2>&1 )
+    record "translation-map self-test" "$?"
 }
 
 run_lab_suite() {
@@ -70,23 +90,29 @@ run_lab_suite() {
     record "$1" "$?"
 }
 
+# Plain if-chains, not `;;&` fall-through: macOS ships bash 3.2, which lacks it.
 case "$ONLY" in
-    all|static) run_static ;;&
-    all|smoke)
-        run_lab_suite "rest-smoke" "wp-content/plugins/fluent-support/tests/bin/run-smoke.php"
-        ;;&
-    all|permissions)
-        run_lab_suite "permissions" "wp-content/plugins/fluent-support/tests/bin/run-permissions.php"
-        ;;&
-    all|integration)
-        run_lab_suite "integration" "wp-content/plugins/fluent-support/tests/bin/run-integration.php"
-        ;;&
     all|static|smoke|permissions|integration) ;;
     *)
         echo "Usage: run-all.sh [all|static|smoke|permissions|integration]" >&2
         exit 2
         ;;
 esac
+
+wants() { [ "$ONLY" = all ] || [ "$ONLY" = "$1" ]; }
+
+if wants static; then
+    run_static
+fi
+if wants smoke; then
+    run_lab_suite "rest-smoke" "wp-content/plugins/fluent-support/tests/bin/run-smoke.php"
+fi
+if wants permissions; then
+    run_lab_suite "permissions" "wp-content/plugins/fluent-support/tests/bin/run-permissions.php"
+fi
+if wants integration; then
+    run_lab_suite "integration" "wp-content/plugins/fluent-support/tests/bin/run-integration.php"
+fi
 
 banner "summary"
 printf 'Tiers passed: %d, failed: %d\n' "$PASS" "$FAIL"

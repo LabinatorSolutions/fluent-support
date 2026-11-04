@@ -150,7 +150,8 @@
 
                 <div class="fs_pagination_wrapper" v-if="tableRows.length">
                     <div class="fs_pagination_left">
-                        <p>{{ $t("Page") }} {{ pagination.current_page }} {{ $t("of") }} {{ totalPages }}</p>
+                        <!-- translators: %1$s is the current page number, %2$s the total number of pages -->
+                        <p>{{ $t('Page %1$s of %2$s', pagination.current_page, totalPages) }}</p>
                         <pagination :pagination="pagination" layout="sizes" />
                     </div>
                     <div class="fs_pagination_right">
@@ -651,104 +652,9 @@ export default {
     color: var(--fs-text-secondary, #525866);
 }
 
-.fs_pagination_row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 12px 20px;
-    flex-wrap: wrap;
-}
-
 .fs_pagination_left {
     display: flex;
     align-items: center;
     gap: 10px;
-}
-
-.fs_pagination_page_label {
-    font-size: 14px;
-    line-height: 20px;
-    letter-spacing: -0.084px;
-    color: var(--fs-text-secondary, #525866);
-}
-
-.fs_page_size_btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 2px;
-    padding: 4px 6px;
-    border-radius: var(--fs-radius-md, 8px);
-    border: 1px solid var(--fs-stroke-soft, #E1E4EA);
-    background: var(--fs-subtle-btn-bg, #F9FAFB);
-    box-shadow: 0px 1px 2px 0px rgba(10, 13, 20, 0.03);
-    color: var(--fs-text-secondary, #525866);
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 20px;
-    letter-spacing: -0.084px;
-    cursor: pointer;
-    white-space: nowrap;
-}
-
-.fs_pagination_group {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.fs_pagination_nav_btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 6px;
-    border-radius: var(--fs-radius-md, 8px);
-    background: none;
-    border: none;
-    color: var(--fs-text-secondary, #525866);
-    cursor: pointer;
-
-    &:hover:not(:disabled) {
-        background: var(--fs-bg-subtle, #F5F7FA);
-    }
-
-    &:disabled {
-        opacity: 0.4;
-        cursor: default;
-    }
-}
-
-.fs_pagination_pages {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.fs_pagination_cell {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px;
-    height: 28px;
-    padding: 4px;
-    border-radius: var(--fs-radius-md, 8px);
-    border: 1px solid var(--fs-stroke-soft, #E1E4EA);
-    background: var(--fs-bg-primary, #FFF);
-    color: var(--fs-text-secondary, #525866);
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 20px;
-    letter-spacing: -0.084px;
-    cursor: pointer;
-
-    &.is-active {
-        border-color: var(--fs-stroke-strong, #0E121B);
-        color: var(--fs-text-primary, #0E121B);
-    }
-
-    &:disabled {
-        cursor: default;
-        border-color: transparent;
-    }
 }
 </style>

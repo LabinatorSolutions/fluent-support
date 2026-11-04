@@ -2,7 +2,6 @@
 
 namespace FluentSupport\App\Models;
 
-use FluentSupport\App\Services\Notifications\NotificationSettings;
 use FluentSupport\App\Services\Helper;
 
 class Notification extends Model
@@ -76,7 +75,7 @@ class Notification extends Model
 
     public static function deleteByTicketId($ticketId)
     {
-        if (!(new NotificationSettings())->notificationTablesExist()) {
+        if (!\FluentSupport\App\Modules\Notifications\NotificationService::tablesExist()) {
             return;
         }
 

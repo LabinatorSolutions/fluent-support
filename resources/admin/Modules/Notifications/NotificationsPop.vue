@@ -58,11 +58,22 @@
                 </div>
 
                 <div class="fs_notifications_pop_body">
-                    <div v-if="loading" class="fs_notifications_loading">
-                        <el-skeleton :rows="3" animated />
+                    <div v-if="loading && !notifications.length" class="fs_notifications_loading" aria-busy="true">
+                        <el-skeleton animated>
+                            <template #template>
+                                <div v-for="n in 3" :key="n" style="display: flex; gap: 12px; padding: 12px 16px;">
+                                    <el-skeleton-item variant="circle" style="width: 32px; height: 32px; flex-shrink: 0;" />
+                                    <div style="flex: 1;">
+                                        <el-skeleton-item variant="text" style="width: 75%;" />
+                                        <el-skeleton-item variant="text" style="width: 50%; margin-top: 8px;" />
+                                        <el-skeleton-item variant="text" style="width: 15%; margin-top: 8px;" />
+                                    </div>
+                                </div>
+                            </template>
+                        </el-skeleton>
                     </div>
 
-                    <div v-else-if="notifications.length" class="fs_notifications_list">
+                    <div v-else-if="notifications.length" class="fs_notifications_list" v-loading="loading">
                         <NotificationItem
                             v-for="notification in notifications"
                             :key="notification.id"
@@ -93,10 +104,26 @@
             class="fs_dialog"
         >
             <InternalNotifications
+                ref="notificationSettings"
                 settings-scope="preferences"
                 display-mode="modal"
                 @updated="settingsModalVisible = false"
             />
+            <template #footer>
+                <span class="fs_dialog_footer">
+                    <el-button class="fs_outline_btn" @click="settingsModalVisible = false">
+                        {{ $t('Cancel') }}
+                    </el-button>
+                    <el-button
+                        class="fs_filled_btn"
+                        v-loading="savingSettings"
+                        :disabled="savingSettings"
+                        @click="saveSettings"
+                    >
+                        {{ $t('Update Settings') }}
+                    </el-button>
+                </span>
+            </template>
         </el-dialog>
     </li>
 </template>
@@ -119,6 +146,7 @@ export default {
         return {
             visible: false,
             settingsModalVisible: false,
+            savingSettings: false,
             selectedCategory: 'all',
             internalNotificationsEnabled: window.fluentSupportAdmin?.internal_notification_settings?.enabled === 'yes'
         };
@@ -133,6 +161,16 @@ export default {
         }),
     },
     methods: {
+        saveSettings() {
+            const form = this.$refs.notificationSettings;
+            if (!form || form.fetching) {
+                return;
+            }
+            this.savingSettings = true;
+            form.saveSettings().always(() => {
+                this.savingSettings = false;
+            });
+        },
         async handleShow() {
             await this.refreshUnread();
         },

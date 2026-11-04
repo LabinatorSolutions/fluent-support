@@ -11,7 +11,7 @@ use FluentSupport\Framework\Support\Arr;
 class BookingLinkManager
 {
     /**
-     * Persists a booking link record as serialised ticket meta.
+     * Store a booking link record as ticket meta.
      *
      * @param Ticket $ticket
      * @param array  $metadata
@@ -28,7 +28,7 @@ class BookingLinkManager
     }
 
     /**
-     * Extracts a link token and event details from a URL and stores them as ticket meta, skipping duplicates.
+     * Store the link token and event from a booking URL, skipping tokens already stored.
      *
      * @param Ticket $ticket
      * @param object $person
@@ -65,8 +65,6 @@ class BookingLinkManager
     }
 
     /**
-     * Returns true when this link token is already recorded in the ticket's booking link meta.
-     *
      * @param Ticket $ticket
      * @param string $linkToken
      * @return bool
@@ -80,7 +78,7 @@ class BookingLinkManager
     }
 
     /**
-     * Returns all deserialised booking link records stored in this ticket's meta, most recent first.
+     * The ticket's 5 most recent booking link records.
      *
      * @param Ticket $ticket
      * @return array
@@ -101,9 +99,7 @@ class BookingLinkManager
     }
 
     /**
-     * Returns a DB-ready datetime one day before the oldest stored link's creation date.
-     *
-     * Used to bound the booking query when scoping by generated links.
+     * One day before the oldest link's created_at, used to bound the booking query.
      *
      * @param array $generatedLinks
      * @return string
@@ -127,7 +123,7 @@ class BookingLinkManager
     }
 
     /**
-     * Extracts all tokenised booking URLs (containing fs_booking_link_token) from HTML content.
+     * Booking URLs carrying fs_booking_link_token found in the content.
      *
      * @param string $content
      * @return array
@@ -144,8 +140,6 @@ class BookingLinkManager
     }
 
     /**
-     * Returns the fs_booking_link_token query param value from a URL.
-     *
      * @param string $url
      * @return string
      */
@@ -155,9 +149,7 @@ class BookingLinkManager
     }
 
     /**
-     * Resolves a CalendarSlot from a booking URL.
-     *
-     * Tries host/event query params first; falls back to extracting calendar and event slugs from the URL path.
+     * Resolve the event from the host/event query args, or from the last two path segments.
      *
      * @param string $bookingUrl
      * @return \FluentBooking\App\Models\CalendarSlot|null
@@ -192,10 +184,7 @@ class BookingLinkManager
     }
 
     /**
-     * Resolves which ticket a new booking belongs to.
-     *
-     * Tries matching via the fs_ticket_id query param first, then falls back to
-     * fs_booking_link_token stored in ticket meta.
+     * Find the ticket a booking belongs to, by fs_ticket_id first, then by link token.
      *
      * @param object $booking
      * @param array  $bookingData
@@ -228,9 +217,7 @@ class BookingLinkManager
     }
 
     /**
-     * Returns true when an internal_info conversation entry already exists for this booking.
-     *
-     * Prevents duplicate timeline notes from being created.
+     * Whether the booking already has a timeline note on the ticket.
      *
      * @param object $booking
      * @return bool
@@ -243,9 +230,7 @@ class BookingLinkManager
     }
 
     /**
-     * Maps a Booking model to a sanitised array for frontend display.
-     *
-     * Includes local time conversion and join-URL extraction.
+     * Sanitised booking data for the frontend.
      *
      * @param object $booking
      * @return array
@@ -279,10 +264,6 @@ class BookingLinkManager
     }
 
     /**
-     * Returns a pre-scoped Meta query for ticket booking_link records.
-     *
-     * Shared by lookup, existence-check, and fetch operations.
-     *
      * @return \FluentSupport\Framework\Database\Orm\Builder
      */
     private function metaQuery()
@@ -292,8 +273,6 @@ class BookingLinkManager
     }
 
     /**
-     * Parses the query string of a URL into an associative array.
-     *
      * @param string $url
      * @return array
      */
@@ -311,9 +290,7 @@ class BookingLinkManager
     }
 
     /**
-     * Returns query args from the booking's source URL.
-     *
-     * Prefers $bookingData['source_url'] over the booking model's own field.
+     * Query args of the booking's source URL, preferring $bookingData['source_url'].
      *
      * @param object $booking
      * @param array  $bookingData
@@ -327,8 +304,6 @@ class BookingLinkManager
     }
 
     /**
-     * Returns true when the booking's email case-insensitively matches the ticket customer's email.
-     *
      * @param object $booking
      * @param Ticket $ticket
      * @return bool
@@ -341,7 +316,7 @@ class BookingLinkManager
     }
 
     /**
-     * Returns true when the email matches and the ticket has a stored booking link for this event.
+     * Email matches and the ticket has a stored link for this event.
      *
      * @param object $booking
      * @param Ticket $ticket
@@ -354,8 +329,6 @@ class BookingLinkManager
     }
 
     /**
-     * Returns true when any stored booking link for this ticket targets the given event ID.
-     *
      * @param Ticket $ticket
      * @param int    $eventId
      * @return bool
@@ -372,7 +345,7 @@ class BookingLinkManager
     }
 
     /**
-     * Searches stored link-token meta across all tickets and returns the first whose email and event ID match the booking.
+     * First ticket holding this link token whose customer email and event match the booking.
      *
      * @param object $booking
      * @param string $linkToken
@@ -410,8 +383,6 @@ class BookingLinkManager
     }
 
     /**
-     * Returns true when the booking email matches the ticket customer and the stored link targets the same event.
-     *
      * @param object $booking
      * @param Ticket $ticket
      * @param array  $link
@@ -424,7 +395,7 @@ class BookingLinkManager
     }
 
     /**
-     * Returns the display timezone for a booking, preferring the calendar author timezone.
+     * Calendar author's timezone, then the host's, then the site's.
      *
      * @param object $booking
      * @return string
@@ -443,7 +414,7 @@ class BookingLinkManager
     }
 
     /**
-     * Converts a UTC booking time string to the given timezone.
+     * Convert a UTC time to $timezone.
      *
      * @param string $time
      * @param string $timezone

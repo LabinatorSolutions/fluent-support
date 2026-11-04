@@ -81,21 +81,17 @@ class TicketsMigrator
     {
         global $wpdb;
 
-        // $table is always $wpdb->prefix . 'fs_tickets' — not user input.
-        // esc_sql() is the correct escaping for SQL identifiers; $wpdb->prepare()
-        // cannot quote identifiers in WP < 6.2 (no %i placeholder available).
+        // Our own table name, not user input. esc_sql() because %i needs WP 6.2+.
         $table = esc_sql($table);
 
-        // Get existing columns
         $existing_columns = $wpdb->get_col("DESC `{$table}`", 0); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
-        // Add waiting_since column if missing (beta user migration)
         if (!in_array('waiting_since', $existing_columns)) {
             // phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter,WordPress.DB.PreparedSQL.NotPrepared -- $table is sanitized via esc_sql(); column name is a hardcoded literal.
             $wpdb->query("ALTER TABLE `{$table}` ADD `waiting_since` TIMESTAMP NULL AFTER `last_customer_response`");
         }
 
-        // Add created_by column to track agent who created ticket on behalf of customer
+        // Agent who created the ticket on behalf of the customer.
         if (!in_array('created_by', $existing_columns)) {
             // phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter,WordPress.DB.PreparedSQL.NotPrepared -- $table is sanitized via esc_sql(); column name is a hardcoded literal.
             $wpdb->query("ALTER TABLE `{$table}` ADD `created_by` BIGINT(20) UNSIGNED NULL AFTER `closed_by`");
@@ -120,12 +116,9 @@ class TicketsMigrator
     {
         global $wpdb;
 
-        // $table is always $wpdb->prefix . 'fs_tickets' — not user input.
-        // esc_sql() is the correct escaping for SQL identifiers; $wpdb->prepare()
-        // cannot quote identifiers in WP < 6.2 (no %i placeholder available).
+        // Our own table name, not user input. esc_sql() because %i needs WP 6.2+.
         $table = esc_sql($table);
 
-        // Get existing indexes
         $existing_indexes = $wpdb->get_results("SHOW INDEX FROM `{$table}`"); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
         $existing_index_names = [];
 
@@ -133,8 +126,6 @@ class TicketsMigrator
             $existing_index_names[] = $index->Key_name;
         }
 
-        // Desired indexes — keys and values (including composite column lists) are
-        // all hardcoded string literals; no user input reaches these queries.
         $indexes = [
             'idx_customer_id'      => '`customer_id`',
             'idx_agent_id'         => '`agent_id`',
@@ -152,12 +143,10 @@ class TicketsMigrator
             'idx_updated_at_id'     => '`updated_at`, `id`',
             'idx_response_count_id' => '`response_count`, `id`',
         ];
-        // Add missing indexes. $table is esc_sql()'d above; $index_name and
-        // $columns are hardcoded array literals — no user input reaches this query.
         foreach ($indexes as $index_name => $columns) {
             if (!in_array($index_name, $existing_index_names)) {
-                // phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter,WordPress.DB.PreparedSQL.NotPrepared -- all identifiers are either esc_sql()'d or hardcoded literals.
                 $indexType = $index_name === 'uniq_serial_number' ? 'UNIQUE KEY' : 'INDEX';
+                // phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter,WordPress.DB.PreparedSQL.NotPrepared -- all identifiers are either esc_sql()'d or hardcoded literals.
                 $wpdb->query("ALTER TABLE `{$table}` ADD {$indexType} `{$index_name}` ({$columns})");
             }
         }

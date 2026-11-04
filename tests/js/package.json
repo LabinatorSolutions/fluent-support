@@ -1,0 +1,13 @@
+{
+    "name": "fluent-support-js-tests",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "test": "vitest run"
+    },
+    "devDependencies": {
+        "dompurify": "3.4.17",
+        "jsdom": "25.0.1",
+        "vitest": "4.1.12"
+    }
+}

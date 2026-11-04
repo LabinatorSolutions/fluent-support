@@ -1,0 +1,490 @@
+// ═══════════════════════════════════════════════
+// Ticket bulk bar (Modules/Tickets/_BulkActions.vue)
+//
+// Same layout as FluentCRM's contact bulk bar. The bar is fixed to the bottom
+// and centered on the ticket list; its left and max-width are set inline. It
+// is drawn in the opposite theme to the page so it stands apart. The panel is
+// a sibling of the bar (never inside it) so it keeps the page theme and is not
+// caught by the bar's transform.
+// ═══════════════════════════════════════════════
+
+.fs_bb_bar {
+    // Light page: dark bar.
+    --fs-bb-bg: #0E121B;
+    --fs-bb-text: #FFFFFF;
+    --fs-bb-muted: #99A0AE;
+    --fs-bb-border: rgba(255, 255, 255, 0.16);
+    --fs-bb-hover: rgba(255, 255, 255, 0.1);
+    --fs-bb-danger: #FF6B78;
+    --fs-bb-focus: #34D399;
+
+    position: fixed;
+    z-index: 1000;
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: max-content;
+    min-height: 52px;
+    padding: 8px 8px 8px 6px;
+    border-radius: var(--fs-radius-lg, 12px);
+    background: var(--fs-bb-bg);
+    color: var(--fs-bb-text);
+    border: 1px solid var(--fs-bb-border);
+    box-shadow: 0 16px 40px rgba(14, 18, 27, 0.18), 0 2px 6px rgba(14, 18, 27, 0.08);
+    overflow: hidden;
+    animation: fs-bb-in 0.18s ease-out;
+}
+
+// Dark page: light bar.
+body.fluent_theme_dark .fs_bb_bar {
+    --fs-bb-bg: #FFFFFF;
+    --fs-bb-text: #0E121B;
+    --fs-bb-muted: #525866;
+    --fs-bb-border: #E1E4EA;
+    --fs-bb-hover: #F2F5F8;
+    --fs-bb-danger: #E5303F;
+    --fs-bb-focus: #089360;
+}
+
+@keyframes fs-bb-in {
+    from { transform: translate(-50%, 12px); opacity: 0; }
+}
+
+// No shrinking: the component measures overflow and switches layout instead.
+.fs_bb_left,
+.fs_bb_actions {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    > * {
+        flex: none;
+    }
+}
+
+.fs_bb_btn {
+    height: 34px;
+    padding: 0 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 0;
+    border-radius: var(--fs-radius-md, 8px);
+    background: transparent;
+    color: var(--fs-bb-text);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    white-space: nowrap;
+    cursor: pointer;
+
+    &:hover,
+    &[aria-expanded="true"] {
+        background: var(--fs-bb-hover);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--fs-bb-focus);
+        outline-offset: 1px;
+    }
+
+    &.is-icon {
+        width: 34px;
+        padding: 0;
+        justify-content: center;
+    }
+
+    &.is-danger {
+        color: var(--fs-bb-danger);
+    }
+
+    &.is-menu {
+        background: var(--fs-bb-hover);
+    }
+
+    .el-icon {
+        font-size: 16px;
+    }
+
+    .fs_bb_chev {
+        font-size: 12px;
+        color: var(--fs-bb-muted);
+    }
+}
+
+.fs_bb_sep {
+    width: 1px;
+    height: 20px;
+    margin: 0 4px;
+    background: var(--fs-bb-border);
+}
+
+.fs_bb_count {
+    display: inline-flex;
+    align-items: center;
+    height: 28px;
+    padding: 0 10px;
+    border: 1px solid var(--fs-bb-border);
+    border-radius: var(--fs-radius-full, 999px);
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.fs_bb_run {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 10px;
+}
+
+.fs_bb_run_label {
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.fs_bb_spin {
+    flex: none;
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--fs-bb-border);
+    border-top-color: var(--fs-bb-focus);
+    border-radius: 50%;
+    animation: fs-bb-spin 0.8s linear infinite;
+}
+
+@keyframes fs-bb-spin {
+    to { transform: rotate(360deg); }
+}
+
+// ── Panel (popover above the bar; bottom sheet when compact) ──
+.fs_bb_panel {
+    position: fixed;
+    z-index: 1001;
+    width: 344px;
+    max-width: calc(100% - 32px);
+    max-height: 480px;
+    display: flex;
+    flex-direction: column;
+    background: var(--fs-bg-primary, #FFFFFF);
+    color: var(--fs-text-primary, #0E121B);
+    border: 1px solid var(--fs-border-default, #E1E4EA);
+    border-radius: var(--fs-radius-lg, 12px);
+    box-shadow: 0 16px 40px rgba(14, 18, 27, 0.16), 0 2px 6px rgba(14, 18, 27, 0.06);
+    font-size: 14px;
+    line-height: 20px;
+    animation: fs-bb-pop 0.14s ease-out;
+
+    // Focused programmatically when it has no field to focus; the panel itself is the cue.
+    &:focus {
+        outline: none;
+    }
+
+    &.is-sheet {
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        max-width: 100%;
+        max-height: 78vh;
+        border-radius: 16px 16px 0 0;
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+        z-index: 100001;
+
+        .fs_bb_option,
+        .fs_bb_menu_item {
+            padding-top: 11px;
+            padding-bottom: 11px;
+        }
+    }
+}
+
+// Native checkboxes and radios in the panel follow the page theme.
+body.fluent_theme_dark .fs_bb_panel {
+    color-scheme: dark;
+}
+
+@keyframes fs-bb-pop {
+    from { transform: translateY(6px); opacity: 0; }
+}
+
+.fs_bb_scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+    background: rgba(14, 18, 27, 0.4);
+}
+
+.fs_bb_panel_head {
+    display: grid;
+    gap: 8px;
+    padding: 12px 12px 10px;
+    border-bottom: 1px solid var(--fs-border-default, #E1E4EA);
+}
+
+.fs_bb_panel_title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+}
+
+.fs_bb_back {
+    display: inline-flex;
+    padding: 3px;
+    border: 0;
+    border-radius: var(--fs-radius-6, 6px);
+    background: none;
+    color: var(--fs-text-secondary, #525866);
+    cursor: pointer;
+
+    &:hover {
+        background: var(--fs-bg-subtle, #F5F7FA);
+    }
+}
+
+.fs_bb_seg {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px;
+    padding: 3px;
+    border-radius: var(--fs-radius-md, 8px);
+    background: var(--fs-bg-subtle, #F5F7FA);
+
+    button {
+        padding: 4px 0;
+        border: 0;
+        border-radius: var(--fs-radius-6, 6px);
+        background: none;
+        color: var(--fs-text-secondary, #525866);
+        font-weight: 500;
+        cursor: pointer;
+
+        &[aria-pressed="true"] {
+            background: var(--fs-bg-primary, #FFFFFF);
+            color: var(--fs-text-primary, #0E121B);
+            box-shadow: 0 1px 2px rgba(14, 18, 27, 0.12);
+        }
+    }
+}
+
+.fs_bb_panel_body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 6px;
+}
+
+.fs_bb_panel_foot {
+    display: grid;
+    gap: 8px;
+    padding: 10px 12px;
+    border-top: 1px solid var(--fs-border-default, #E1E4EA);
+}
+
+.fs_bb_apply {
+    width: 100%;
+    height: 34px;
+    padding: 0 14px;
+    border: 0;
+    border-radius: var(--fs-radius-md, 8px);
+    background: var(--fs-btn-primary-bg, #0E121B);
+    color: #FFFFFF;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+
+    &.is-danger {
+        background: var(--fs-text-red, #FB3748);
+    }
+
+    &:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--fs-text-link, #089360);
+        outline-offset: 2px;
+    }
+}
+
+// The dark-mode primary button is near black; lift it off the panel.
+body.fluent_theme_dark .fs_bb_apply:not(.is-danger) {
+    background: #FFFFFF;
+    color: #0E121B;
+}
+
+// Doubled class beats WP admin's input[type="text"] rules.
+.fs_bb_field.fs_bb_field {
+    width: 100%;
+    margin: 0;
+    min-height: 32px;
+    height: 32px;
+    line-height: 30px;
+    padding: 0 10px;
+    border: 1px solid var(--fs-border-default, #E1E4EA);
+    border-radius: var(--fs-radius-md, 8px);
+    background: var(--fs-bg-primary, #FFFFFF);
+    color: var(--fs-text-primary, #0E121B);
+    font-size: 14px;
+    box-shadow: none;
+
+    &:focus {
+        outline: none;
+        border-color: var(--fs-text-link, #089360);
+        box-shadow: 0 0 0 3px rgba(8, 147, 96, 0.15);
+    }
+}
+
+// Option list
+.fs_bb_options_search {
+    padding: 2px 2px 6px;
+}
+
+.fs_bb_option,
+.fs_bb_menu_item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    padding: 7px 8px;
+    border: 0;
+    border-radius: var(--fs-radius-6, 6px);
+    background: none;
+    color: var(--fs-text-primary, #0E121B);
+    font-size: 14px;
+    text-align: left;
+    cursor: pointer;
+
+    &:hover {
+        background: var(--fs-bg-subtle, #F5F7FA);
+    }
+
+    &.is-disabled {
+        opacity: 0.55;
+        cursor: default;
+
+        &:hover {
+            background: none;
+        }
+    }
+
+    &.is-danger {
+        color: var(--fs-text-red, #FB3748);
+    }
+
+    // WP admin draws its own checkbox with appearance: none; give the
+    // native control back so accent-color follows the theme.
+    input[type="checkbox"],
+    input[type="radio"] {
+        flex: none;
+        width: 16px;
+        height: 16px;
+        min-width: 16px;
+        margin: 0;
+        -webkit-appearance: auto;
+        appearance: auto;
+        accent-color: var(--fs-text-primary, #0E121B);
+        cursor: inherit;
+
+        &::before {
+            content: none;
+        }
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--fs-text-link, #089360);
+        outline-offset: -2px;
+    }
+}
+
+.fs_bb_menu_item > span:first-of-type {
+    flex: 1;
+    min-width: 0;
+}
+
+.fs_bb_option_label {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.fs_bb_option_note {
+    color: var(--fs-text-muted, #99A0AE);
+    font-size: 12px;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.fs_bb_group_label {
+    padding: 10px 8px 4px;
+    color: var(--fs-text-muted, #99A0AE);
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 16px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+
+    &:first-child {
+        padding-top: 4px;
+    }
+}
+
+.fs_bb_info {
+    margin: 4px;
+    padding: 10px 12px;
+    border-radius: var(--fs-radius-md, 8px);
+    background: var(--fs-bg-subtle, #F5F7FA);
+    color: var(--fs-text-secondary, #525866);
+    font-size: 13px;
+
+    &.is-danger {
+        background: var(--fs-state-information-light, #FFEBEC);
+        color: var(--fs-text-primary, #0E121B);
+    }
+}
+
+.fs_bb_info_list {
+    margin: 6px 0 0 18px;
+    padding: 0;
+    list-style: disc;
+
+    li {
+        margin: 0;
+    }
+}
+
+.fs_bb_empty,
+.fs_bb_more_hint {
+    padding: 16px 12px;
+    color: var(--fs-text-secondary, #525866);
+    font-size: 13px;
+    text-align: center;
+}
+
+.fs_bb_more_hint {
+    padding: 8px 12px;
+    color: var(--fs-text-muted, #99A0AE);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fs_bb_bar,
+    .fs_bb_panel,
+    .fs_bb_spin {
+        animation: none;
+        transition: none;
+    }
+}

@@ -7,7 +7,21 @@
         </div>
 
         <div v-if="fetching" class="fs_box_body fs_skeleton_loader">
-            <el-skeleton :animated="true" :rows="5" />
+            <el-skeleton animated>
+                <template #template>
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px;">
+                        <div style="flex: 1;">
+                            <el-skeleton-item variant="text" style="width: 30%; height: 18px;" />
+                            <el-skeleton-item variant="text" style="width: 75%; margin-top: 8px;" />
+                        </div>
+                        <el-skeleton-item variant="button" style="width: 40px; height: 20px; border-radius: 10px;" />
+                    </div>
+                    <div style="margin-top: 32px;">
+                        <el-skeleton-item variant="text" style="width: 90%;" />
+                        <el-skeleton-item variant="text" style="width: 60%; margin-top: 8px;" />
+                    </div>
+                </template>
+            </el-skeleton>
         </div>
 
         <div v-else-if="loadFailed" class="fs_box_body fs_mcp_load_error">
@@ -23,7 +37,7 @@
             <div class="fs_mcp_toggle_row">
                 <div class="fs_mcp_toggle_text">
                     <p class="fs_mcp_toggle_title">{{ $t('Enable MCP for AI Agents') }}</p>
-                    <p class="fs_mcp_toggle_desc">{{ $t('When enabled, Fluent Support exposes its tools through the WordPress Abilities API so AI agents can read and update support tickets with your authorization.') }}</p>
+                    <p class="fs_mcp_toggle_desc">{{ $t('Mcp_Toggle_Help') }}</p>
                 </div>
                 <el-switch
                     v-model="mcpEnabled"
@@ -87,7 +101,8 @@
                             </template>
                         </el-input>
                         <span class="fs_mcp_status_note">
-                            <strong>{{ toolsCount }}</strong> {{ $t('tools registered') }}
+                            <!-- translators: %s is the number of MCP tools registered -->
+                            {{ $_n('%s tool registered', '%s tools registered', toolsCount) }}
                         </span>
                     </div>
 
@@ -133,10 +148,18 @@
                             {{ activeSnippet.instructions }}
                         </p>
 
-                        <el-skeleton v-if="snippetLoading" :rows="4" animated />
+                        <el-skeleton v-if="snippetLoading && !snippetsLoaded" animated>
+                            <template #template>
+                                <el-skeleton-item variant="rect" style="width: 100%; height: 160px;" />
+                                <div class="fs_mcp_copy_action">
+                                    <el-skeleton-item variant="button" style="width: 120px;" />
+                                </div>
+                            </template>
+                        </el-skeleton>
 
                         <template v-else-if="activeSnippet">
                             <el-input
+                                v-loading="snippetLoading"
                                 type="textarea"
                                 :rows="7"
                                 :model-value="renderedSnippet"
@@ -162,7 +185,7 @@
             <!-- MCP DISABLED: description / help text -->
             <template v-else>
                 <p class="fs_mcp_disabled_desc">
-                    {{ $t('MCP (Model Context Protocol) lets compatible AI clients like Claude Desktop, OpenAI Codex, and Cursor read and write your support data with your authorization. Enable the toggle above to connect an AI client to Fluent Support.') }}
+                    {{ $t('Mcp_Intro_Help') }}
                 </p>
             </template>
 

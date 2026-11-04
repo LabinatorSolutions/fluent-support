@@ -8,6 +8,8 @@
                         size="default"
                         type="success"
                         class="fs_save_settings_btn"
+                        v-loading="loading"
+                        :disabled="loading || fetching"
                         @click="saveSettings()"
                     >{{ $t("Save Settings") }}</el-button>
                 </div>
@@ -28,20 +30,22 @@
             </form-builder>
         </div>
         <div
-            class="fs_box_body fs_skeleton_loader"
+            class="fs_box_body"
             v-else
         >
-            <el-skeleton :rows="5" animated />
+            <FormSkeleton :fields="5" :button="false" />
         </div>
     </div>
 </template>
 
 <script type="text/babel">
 import FormBuilder from '../../Pieces/FormElements/_FormBuilder';
+import FormSkeleton from '@/admin/Components/FormSkeleton.vue';
 export default {
     name: 'BusinessSettings',
     components: {
-        FormBuilder
+        FormBuilder,
+        FormSkeleton
     },
     data() {
         return {
@@ -141,7 +145,8 @@ export default {
                 });
         },
         copyShortcode(shortcode) {
-            const successMessage = this.$t('Shortcode copied to clipboard: ') + shortcode;
+            // translators: %s is the shortcode that was copied, e.g. [fluent_support_portal]
+            const successMessage = this.$t('Shortcode copied to clipboard: %s', shortcode);
             const errorMessage = this.$t('Failed to copy shortcode');
 
             // Use copyToClipboard helper which handles notifications properly
@@ -191,7 +196,8 @@ export default {
 
             return this.$copyToClipboard(
                 portalLink,
-                this.$t('Copied to clipboard') + ': ' + portalLink,
+                // translators: %s is the customer portal URL that was copied
+                this.$t('Copied to clipboard: %s', portalLink),
                 this.$t('Failed to copy link')
             );
         },

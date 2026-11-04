@@ -2,11 +2,8 @@
 /**
  * Exact-ID factories for Fluent Support integration tests.
  *
- * Every fixture carries one run marker in a stable field. Cleanup verifies the
- * marker before deleting an existing primary row, scopes dependent cleanup
- * through recorded parent IDs (including the discriminator on shared tables),
- * and then proves every recorded primary ID is absent. Marker searches are
- * never used as selectors.
+ * Every fixture carries the run marker in a stable field. Cleanup deletes by
+ * recorded ID only, checks the marker first, and then proves the rows are gone.
  *
  * Table map (all under the lab's non-default WP prefix):
  *   fs_persons     Customer + Agent share it, discriminated by person_type
@@ -274,9 +271,7 @@ class FsFactory
         self::assertRecordedId('tickets', $ticket->id);
         self::assertRecordedId('tags', $tag->id);
 
-        // fs_tag_pivot is polymorphic: (tag_id, source_id, source_type). There is
-        // no ticket_id column — Ticket::tags() joins on source_id and filters
-        // source_type = 'ticket_tag'.
+        // fs_tag_pivot is polymorphic and has no ticket_id column.
         TagPivot::create([
             'tag_id'      => $tag->id,
             'source_id'   => $ticket->id,
@@ -286,9 +281,7 @@ class FsFactory
 
     /**
      * Adopt a ticket created through the REST API into exact-ID cleanup.
-     *
-     * The caller must have put this run's marker in the title so ownership
-     * stays provable at cleanup time.
+     * The caller must put this run's marker in the title.
      *
      * @param Ticket $ticket
      * @return Ticket
@@ -324,10 +317,8 @@ class FsFactory
     /**
      * Delete every recorded fixture in dependency-safe order.
      *
-     * Existing primary rows are marker-verified before any delete begins.
-     * Shared-table cleanup (fs_tag_pivot, fs_meta) always includes the
-     * discriminating column. A successful run clears the registry, making a
-     * second call a no-op.
+     * Rows are marker-verified before any delete. A successful run clears the
+     * registry, so a second call is a no-op.
      *
      * @return void
      */
@@ -348,18 +339,12 @@ class FsFactory
         $conversationIds = self::ids('conversations');
         $savedReplyIds = self::ids('saved_replies');
 
-        // Tickets first, and PER MODEL INSTANCE: Ticket::deleting cascades the
-        // ticket's meta/cc/draft rows, internal notifications, every one of
-        // its conversations (each deleted per-model so Conversation::deleting
-        // purges cc meta and attachment files), and ticket-level attachments.
-        // A query-builder bulk delete skips every one of those hooks and
-        // strands the dependent rows.
+        // Per model instance so Ticket::deleting cascades meta, notifications,
+        // conversations and attachments. A bulk delete skips those hooks.
         self::deleteModelInstances(Ticket::class, $ticketIds);
 
-        // Conversations recorded against tickets this run does NOT own (e.g.
-        // a reply added to the seed ticket). Rows a ticket cascade above
-        // already removed are simply absent by now. Per-model for the same
-        // hook reason.
+        // Covers conversations on tickets this run doesn't own, e.g. a reply on
+        // the seed ticket.
         self::deleteModelInstances(Conversation::class, $conversationIds);
 
         // Tag pivots are not covered by any model cascade.
@@ -375,8 +360,7 @@ class FsFactory
         self::deleteByIds(Tag::class, $tagIds);
         self::deleteByIds(Product::class, $productIds);
 
-        // fs_persons is shared by customers and agents; the models' global
-        // scopes discriminate person_type, so exact-ID deletes stay safe.
+        // The models' global scopes filter fs_persons by person_type.
         self::deleteByIds(Customer::class, $customerIds);
         self::deleteByIds(Agent::class, $agentIds);
         self::deleteByIds(MailBox::class, $mailboxIds);
@@ -481,10 +465,8 @@ class FsFactory
     }
 
     /**
-     * Delete recorded rows one model instance at a time so WPFluent fires the
-     * deleting hooks — the cascades to meta, notifications, attachments and
-     * attachment files live there. find() tolerates rows a prior cascade
-     * (e.g. a parent ticket's) already removed.
+     * Delete recorded rows one model at a time so the deleting hooks run their
+     * cascades. find() skips rows an earlier cascade already removed.
      *
      * @param string     $modelClass
      * @param array<int> $ids
@@ -545,13 +527,10 @@ class FsFactory
     }
 
     /**
-     * Prove the delete cascades actually ran: no conversation, meta,
-     * attachment, or tag-pivot row may survive for any recorded ticket or
-     * conversation. This is what catches a regression back to hook-skipping
-     * bulk deletes. (Notification rows are cascaded too but not asserted —
-     * their tables are optional.) The lifecycle test plants tripwire meta and
-     * attachment rows so these checks are exercised on every run, never
-     * vacuously green.
+     * Prove the delete cascades ran: no conversation, meta, attachment or
+     * tag-pivot row survives for a recorded ticket or conversation. Notification
+     * tables are optional, so they aren't checked. The lifecycle test plants
+     * meta and attachment rows so these checks never pass vacuously.
      *
      * @return void
      */

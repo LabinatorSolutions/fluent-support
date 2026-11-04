@@ -3,11 +3,8 @@
 namespace FluentSupport\App\Services\Integrations\FluentCommunity;
 
 /**
- * FluentCommunityIntegration bootstraps the Fluent Support portal
- * inside the FluentCommunity community portal.
- *
- * Activated only when FLUENT_COMMUNITY_PLUGIN_VERSION is defined and
- * the portal destination is set to fluent_community.
+ * Renders the Fluent Support portal inside the FluentCommunity portal
+ * when the portal destination is set to fluent_community.
  */
 class FluentCommunityIntegration
 {
@@ -17,19 +14,14 @@ class FluentCommunityIntegration
             return;
         }
 
-        // Register 'support' as a known FC route so FC's Vue router treats
-        // it as a valid path and does not fire the NotFound → all_feeds
-        // redirect chain on client-side navigation.
+        // Tell FC 'support' is a known route so it doesn't redirect to all_feeds.
         add_filter('fluent_community/app_route_paths', [$this, 'registerSupportRoute']);
 
-        // Handle the support route entirely in the SSR hook — mirrors the
         add_action('fluent_community/rendering_path_ssr_support', [$this, 'renderSupportPortal']);
 
-        // FC's Vue Router intercepts all portal-domain <a> clicks. Since /support
-        // is not a registered FC Vue route, the router falls through to NotFound
-        // which redirects to all_feeds. This beforeEach guard converts any SPA
-        // navigation to /support into a full page load, which then hits the SSR hook.
-        // Must run on ALL community portal pages, not just the support route.
+        // FC's Vue router has no /support route and would fall through to NotFound.
+        // Turn SPA navigation to /support into a full page load so the SSR hook runs.
+        // Needed on every portal page, not only the support route.
         add_action('fluent_community/portal_footer', [$this, 'outputRouterGuard'], 999);
     }
 

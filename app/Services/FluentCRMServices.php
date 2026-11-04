@@ -7,7 +7,8 @@ use Exception;
 class FluentCRMServices
 {
     /**
-     * This `syncCrmTags` method is used to sync tags from FluentCRM to Fluent Support.
+     * Set the FluentCRM contact's tags to exactly $data['tags'].
+     *
      * @param array $data
      * @return array
      * @throws Exception
@@ -34,7 +35,8 @@ class FluentCRMServices
     }
 
     /**
-     * This `syncCrmLists` method is used to sync lists from FluentCRM to Fluent Support.
+     * Set the FluentCRM contact's lists to exactly $data['lists'].
+     *
      * @param array $data
      * @return array
      * @throws Exception
@@ -60,8 +62,7 @@ class FluentCRMServices
     }
 
     /**
-     * This `addOrRemoveTag` method will add or remove tags from FluentCRM contact from Fluent Support.
-     * @param array $contact
+     * @param \FluentCrm\App\Models\Subscriber $contact
      * @param array $tagIds
      * @return mixed
      */
@@ -87,8 +88,7 @@ class FluentCRMServices
     }
 
     /**
-     * This `addOrRemoveList` method will add or remove lists from FluentCRM contact from Fluent Support.
-     * @param array $contact
+     * @param \FluentCrm\App\Models\Subscriber $contact
      * @param array $listIds
      * @return mixed
      */
@@ -114,7 +114,6 @@ class FluentCRMServices
         return $contact;
     }
 
-    // This `checkCrmPermission` method will check current agent has permission to access to modify customer's FluentCRM data
     private function checkCrmPermission ()
     {
         $canAddTags = \FluentCrm\App\Services\PermissionManager::currentUserCan('fcrm_manage_contacts');
@@ -127,7 +126,6 @@ class FluentCRMServices
         }
     }
 
-    // This `isCrmEnabled` method will check FluentCRM is enabled or not
     private function isCrmEnabled ()
     {
         if ( !defined('FLUENTCRM') ) {
@@ -137,7 +135,6 @@ class FluentCRMServices
         }
     }
 
-    // This `isContactAvailable` method will check if contact is valid or not
     private function isContactAvailable ( $contactId )
     {
         if (!$contactId) {

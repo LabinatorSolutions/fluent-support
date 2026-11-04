@@ -21,8 +21,8 @@
                                         v-model="new_item"/>
                         <template #reference>
                             <el-button class="fs_add_action_property" @click="addVisible = !addVisible" size="small">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                    <path d="M9.25 9.25V4.75H10.75V9.25H15.25V10.75H10.75V15.25H9.25V10.75H4.75V9.25H9.25Z" fill="#0E121B"/>
+                                <svg class="fs_icon_primary" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                    <path d="M9.25 9.25V4.75H10.75V9.25H15.25V10.75H10.75V15.25H9.25V10.75H4.75V9.25H9.25Z" fill="currentColor"/>
                                 </svg>
                                 {{$t('Add')}}
                             </el-button>
@@ -35,8 +35,8 @@
                         @click="deleteSection"
                         @keydown.enter.prevent="deleteSection"
                         @keydown.space.prevent="deleteSection">
-                        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M11.25 3H15V4.5H13.5V14.25C13.5 14.4489 13.421 14.6397 13.2803 14.7803C13.1397 14.921 12.9489 15 12.75 15H2.25C2.05109 15 1.86032 14.921 1.71967 14.7803C1.57902 14.6397 1.5 14.4489 1.5 14.25V4.5H0V3H3.75V0.75C3.75 0.551088 3.82902 0.360322 3.96967 0.21967C4.11032 0.0790176 4.30109 0 4.5 0H10.5C10.6989 0 10.8897 0.0790176 11.0303 0.21967C11.171 0.360322 11.25 0.551088 11.25 0.75V3ZM12 4.5H3V13.5H12V4.5ZM5.25 6.75H6.75V11.25H5.25V6.75ZM8.25 6.75H9.75V11.25H8.25V6.75ZM5.25 1.5V3H9.75V1.5H5.25Z" fill="#525866"/>
+                        <svg class="fs_icon_secondary" width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M11.25 3H15V4.5H13.5V14.25C13.5 14.4489 13.421 14.6397 13.2803 14.7803C13.1397 14.921 12.9489 15 12.75 15H2.25C2.05109 15 1.86032 14.921 1.71967 14.7803C1.57902 14.6397 1.5 14.4489 1.5 14.25V4.5H0V3H3.75V0.75C3.75 0.551088 3.82902 0.360322 3.96967 0.21967C4.11032 0.0790176 4.30109 0 4.5 0H10.5C10.6989 0 10.8897 0.0790176 11.0303 0.21967C11.171 0.360322 11.25 0.551088 11.25 0.75V3ZM12 4.5H3V13.5H12V4.5ZM5.25 6.75H6.75V11.25H5.25V6.75ZM8.25 6.75H9.75V11.25H8.25V6.75ZM5.25 1.5V3H9.75V1.5H5.25Z" fill="currentColor"/>
                         </svg>
                     </div>
                     <!-- <p class="fs_add_new_properties_text">{{ $t('Add new properties') }}</p> -->
@@ -61,8 +61,8 @@
                                     v-model="new_item"/>
                     <template #reference>
                         <el-button class="fs_add_action_property" @click="addVisible = !addVisible" size="small">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                <path d="M9.25 9.25V4.75H10.75V9.25H15.25V10.75H10.75V15.25H9.25V10.75H4.75V9.25H9.25Z" fill="#0E121B"/>
+                            <svg class="fs_icon_primary" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M9.25 9.25V4.75H10.75V9.25H15.25V10.75H10.75V15.25H9.25V10.75H4.75V9.25H9.25Z" fill="currentColor"/>
                             </svg>
                             {{$t('Add')}}
                         </el-button>
@@ -82,7 +82,8 @@
 
 <script>
 import RichFilterItem from './_RichFilterItem';
-import each from 'lodash/each';
+import defaultFilterOptions from './defaultFilterOptions';
+import { each } from 'lodash-es';
 
 export default {
     name: 'RichFilter',
@@ -94,7 +95,7 @@ export default {
         return {
             addVisible: false,
             new_item: [],
-            filterOptions: this.appVars.advanced_filter_options
+            filterOptions: this.appVars.advanced_filter_options || defaultFilterOptions(this.$t)
         }
     },
     computed: {

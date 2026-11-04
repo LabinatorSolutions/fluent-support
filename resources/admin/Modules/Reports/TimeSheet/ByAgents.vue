@@ -1,6 +1,6 @@
 <template>
-    <div class="fs_time_sheet" v-if="isLoaded">
-        <div class="fs_table_wrapper">
+    <div class="fs_time_sheet" v-if="has_loaded">
+        <div v-loading="!isLoaded" class="fs_table_wrapper">
             
             <el-table :data="agents" 
                 row-class-name="fs_table_row"
@@ -52,19 +52,20 @@
     </div>
 
     <div class="fs_time_sheet_skeleton" v-else>
-        <el-skeleton :animated="true" :rows="10"/>
+        <TableSkeleton :rows="8" :columns="['150px', 1, 1, 1, 1, 1, 1, '160px']" avatar />
     </div>
 </template>
 
 
 <script>
 import UserAgentDateSheetPop from './_UserAgentDateSheetPop.vue'
+import TableSkeleton from "@/admin/Components/TableSkeleton.vue";
 import {timesheetUtils}from "@/admin/Modules/Reports/TimeSheet/Pieces/TimeSheetUtils"
 import Modal from "@/admin/Pieces/Modal.vue";
 
 export default {
     name: 'ByAgents',
-    components: {Modal, UserAgentDateSheetPop},
+    components: {Modal, UserAgentDateSheetPop, TableSkeleton},
     props: {
         date_range: {
             type: Array,
@@ -97,7 +98,16 @@ export default {
     },
     data() {
         return {
+            // Stays true after the first load, so later fetches keep the table and show an overlay.
+            has_loaded: this.isLoaded
         };
+    },
+    watch: {
+        isLoaded(value) {
+            if (value) {
+                this.has_loaded = true;
+            }
+        }
     },
     methods: {
         getUserTotal(userId) {

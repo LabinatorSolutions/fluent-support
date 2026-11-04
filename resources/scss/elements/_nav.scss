@@ -5,6 +5,13 @@
     width: calc(100% - 36px);
 }
 
+// WordPress folds its menu to icons between 783px and 960px on its own (auto-fold).
+@media (min-width: 783px) and (max-width: 960px) {
+    .auto-fold #wpbody-content .fs_main_navbar {
+        width: calc(100% - 36px);
+    }
+}
+
 .wp-responsive-open #wpbody-content .fs_main_navbar {
     width: calc(100% - 210px);
 }
@@ -197,8 +204,7 @@
             }
 
             // Show dropdown on hover
-            &:hover,
-            &.fs_dropdown_open {
+            &:hover {
                 .fs_dropdown_trigger {
                     background: var(--fs-bg-subtle, #F5F7FA);
                     color: var(--fs-text-primary, #0E121B);
@@ -216,12 +222,6 @@
             }
 
             // Active state when child is active
-            &.fs_child_active {
-                .fs_dropdown_trigger {
-                    background: var(--fs-bg-subtle, #F5F7FA);
-                    color: var(--fs-text-primary, #0E121B);
-                }
-            }
         }
 
         &.fs_item_upgrade_to_pro .fs_nav_link,
@@ -429,9 +429,6 @@
         }
     }
 }
-.frame_secondary_menu.fframe_menu {
-    float: right;
-}
 
 .fs_settings_sub_menu {
     display: block;
@@ -468,7 +465,7 @@
             &.fs_sub_active {
                 span {
                     color: var(--fs-text-primary, #0E121B);
-                    border-bottom-color: var(--fs-bg-strong, #0E121B);
+                    border-bottom-color: var(--fs-stroke-strong, #0E121B);
                 }
             }
         }
@@ -645,7 +642,7 @@
                 &.fs_item_settings .fs_nav_right_item {
                     padding: 4px;
 
-                    img {
+                    img, svg {
                         width: 16px;
                         height: 16px;
                     }

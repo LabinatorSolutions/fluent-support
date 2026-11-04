@@ -2,15 +2,8 @@
 /**
  * Closed-state transitions through the generic ticket property endpoint.
  *
- * PUT /tickets/{id}/property accepted `closed` as a status value and assigned it
- * straight onto the model. That skipped TicketService::close(), so the ticket was
- * saved closed with resolved_at, closed_by and total_close_time left NULL and
- * without firing fluent_support/ticket_closed — which is what drives the customer
- * email, the Pro chat notifications and workflow trigger, the activity log and the
- * del_files_on_close attachment cleanup. A closed ticket could also be moved back
- * to active or new the same way, leaving resolved_at set on a live ticket.
- *
- * Both directions must now be refused and sent to closeTicket()/reOpenTicket().
+ * PUT /tickets/{id}/property must refuse moving into or out of `closed`. Only
+ * closeTicket()/reOpenTicket() set the closure fields and fire the close/reopen hooks.
  *
  * @package Fluent_Support
  */
@@ -27,11 +20,8 @@ use FluentSupport\Framework\Validator\ValidationException;
 class TicketStatusTransitionTest extends WP_UnitTestCase
 {
     /**
-     * Route.php binds the dispatched WP_REST_Request into the container as
-     * 'wprestrequest', and Request::inputs() merges that binding into every
-     * framework Request built afterwards. Left in place it leaks another test's
-     * prop_name/prop_value into these requests, so the binding is dropped on both
-     * ends of every test.
+     * The router binds the dispatched WP_REST_Request as 'wprestrequest', and every
+     * later framework Request merges its inputs. Drop it so params don't leak.
      */
     private function forgetRestRequestBinding()
     {
@@ -57,10 +47,8 @@ class TicketStatusTransitionTest extends WP_UnitTestCase
     }
 
     /**
-     * Build a WP user plus its fs_agents row and attach exactly the permissions given.
-     *
-     * The user must not be an administrator: attachPermissions() short-circuits for
-     * manage_options, and userCan() lets admins through unconditionally.
+     * Build a WP user plus its fs_agents row with exactly the given permissions.
+     * Not an administrator, since admins bypass permission checks.
      */
     private function makeAgent(array $permissions)
     {
@@ -85,8 +73,7 @@ class TicketStatusTransitionTest extends WP_UnitTestCase
     }
 
     /**
-     * currentUserPermissions() memoizes into a static that is not keyed by user id,
-     * so the cache has to be refilled whenever the acting user changes.
+     * currentUserPermissions() caches in a static not keyed by user, so refresh it.
      */
     private function actAs(Agent $agent)
     {
@@ -118,9 +105,7 @@ class TicketStatusTransitionTest extends WP_UnitTestCase
     }
 
     /**
-     * updateTicketProperty() funnels every failure through Helper::getSafeErrorMessage(),
-     * which throws a ValidationException carrying the message rather than returning a
-     * response, so a refusal has to be caught here.
+     * updateTicketProperty() reports failures by throwing a ValidationException.
      *
      * @return string The refusal message, or '' when the call was allowed through.
      */
@@ -158,7 +143,7 @@ class TicketStatusTransitionTest extends WP_UnitTestCase
     }
 
     /* ---------------------------------------------------------------------
-     * The finding: closing and reopening through the generic property route.
+     * Closing and reopening through the generic property route
      * ------------------------------------------------------------------ */
 
     public function test_property_route_cannot_close_a_ticket()
@@ -180,8 +165,7 @@ class TicketStatusTransitionTest extends WP_UnitTestCase
 
         $ticket = Ticket::find($ticket->id);
 
-        // The durable state is the real assertion: without the guard the row is
-        // already saved as closed by the time the response is built.
+        // Check the stored row. Without the guard it is saved closed before the response.
         $this->assertSame('active', $ticket->status, 'The ticket must not have been closed.');
         $this->assertNull($ticket->resolved_at);
         $this->assertNull($ticket->closed_by);
@@ -211,8 +195,7 @@ class TicketStatusTransitionTest extends WP_UnitTestCase
     }
 
     /**
-     * 'new' is a changeable status too, so the closed-ticket half of the guard has
-     * to cover it — not just closed -> active.
+     * The guard must cover closed -> new, not just closed -> active.
      */
     public function test_property_route_cannot_move_a_closed_ticket_to_new()
     {
@@ -228,8 +211,7 @@ class TicketStatusTransitionTest extends WP_UnitTestCase
     }
 
     /* ---------------------------------------------------------------------
-     * Control leg: the transitions the admin app actually sends here still work.
-     * handleStatusChange() in ViewTicket.vue only uses this route for new <-> active.
+     * Control: ViewTicket.vue only uses this route for new <-> active.
      * ------------------------------------------------------------------ */
 
     public function test_property_route_still_allows_new_to_active()
@@ -275,8 +257,7 @@ class TicketStatusTransitionTest extends WP_UnitTestCase
     }
 
     /* ---------------------------------------------------------------------
-     * The dedicated routes remain the only way in and out of the closed state,
-     * and still carry the closure data and hooks the property route skipped.
+     * The dedicated close/reopen routes set closure data and fire the hooks.
      * ------------------------------------------------------------------ */
 
     public function test_dedicated_close_records_closure_data_and_fires_the_hook()
@@ -287,9 +268,8 @@ class TicketStatusTransitionTest extends WP_UnitTestCase
         $ticket = $this->makeTicket('active');
         $hooksBefore = did_action('fluent_support/ticket_closed');
 
-        // 'no' is what the Close Ticket button sends (close_ticket_silently in
-        // ViewTicket.vue). An absent value would take the silent path and skip
-        // the very hooks this test is asserting on.
+        // What the Close Ticket button sends. An absent value takes the silent
+        // path and skips the hooks under test.
         $request = $this->makeRequest(['close_ticket_silently' => 'no']);
 
         (new TicketController())->closeTicket($request, $ticket->id);

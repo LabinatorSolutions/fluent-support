@@ -1,9 +1,8 @@
 import dayjs from 'dayjs';
 
 /**
- * Format date range for display in UI
- * @param {Array} dateRange - Array of two date strings [start, end]
- * @returns {string} Formatted date range string or empty string
+ * @param {Array} dateRange - [start, end]
+ * @returns {string} e.g. "Mar 01 - 15 2026", or '' when invalid
  */
 export const formatDateRangeForDisplay = (dateRange) => {
     if (!dateRange || dateRange.length !== 2) {
@@ -24,9 +23,8 @@ export const formatDateRangeForDisplay = (dateRange) => {
 };
 
 /**
- * Format a single date for API calls
- * @param {string|Date} date - Date to format
- * @returns {string} Formatted date string (YYYY-MM-DD) or empty string
+ * @param {string|Date} date
+ * @returns {string} YYYY-MM-DD, or ''
  */
 export const formatDateForAPI = (date) => {
     if (!date) {
@@ -36,9 +34,8 @@ export const formatDateForAPI = (date) => {
 };
 
 /**
- * Format date range for API calls
- * @param {Array} dateRange - Array of two date strings [start, end]
- * @returns {Object} Object with from and to properties
+ * @param {Array} dateRange - [start, end]
+ * @returns {Object} { from, to }
  */
 export const formatDateRangeForAPI = (dateRange) => {
     return {
@@ -48,10 +45,9 @@ export const formatDateRangeForAPI = (dateRange) => {
 };
 
 /**
- * Handle check all checkbox change
- * @param {boolean} checkAll - Whether all items should be checked
- * @param {Object} options - Options object containing exportOptions
- * @returns {Object} Object with selectedOptions and isIndeterminate
+ * @param {boolean} checkAll
+ * @param {Object} options - { exportOptions }
+ * @returns {Object} { selectedOptions, isIndeterminate }
  */
 export const handleCheckAllChange = (checkAll, options = {}) => {
     const { exportOptions = [] } = options;
@@ -62,10 +58,9 @@ export const handleCheckAllChange = (checkAll, options = {}) => {
 };
 
 /**
- * Handle individual column checkbox changes
- * @param {Array} selectedOptions - Currently selected options
- * @param {Object} options - Options object containing exportOptions
- * @returns {Object} Object with checkAll and isIndeterminate
+ * @param {Array} selectedOptions
+ * @param {Object} options - { exportOptions }
+ * @returns {Object} { checkAll, isIndeterminate }
  */
 export const handleColumnChanges = (selectedOptions, options = {}) => {
     const { exportOptions = [] } = options;
@@ -90,17 +85,15 @@ export const handleColumnChanges = (selectedOptions, options = {}) => {
 };
 
 /**
- * Get formatted date range parameters for API request
- * @param {Array} dateRange - Array of two date strings [start, end]
- * @returns {Object} Object with from and to date strings
+ * @param {Array} dateRange - [start, end]
+ * @returns {Object} { from, to }
  */
 export const getDateRangeParams = (dateRange) => {
     return formatDateRangeForAPI(dateRange);
 };
 
 /**
- * Get default single-day date range (today only)
- * @returns {Array} Array of two date strings [start, end] in YYYY-MM-DD format
+ * @returns {Array} [today, today] as YYYY-MM-DD
  */
 export const getDefaultDateRange = () => {
     const today = dayjs().format('YYYY-MM-DD');
@@ -109,23 +102,20 @@ export const getDefaultDateRange = () => {
 
 
 /**
- * el-date-picker `disabled-date` predicate: block anything after right now.
- * Reports only ever cover elapsed time, so every picker in the module shares
- * this rule.
- * @param {Date} date - Date instance handed over by el-date-picker
- * @returns {boolean} True when the date should be disabled
+ * el-date-picker `disabled-date` predicate. Reports only cover elapsed time.
+ * @param {Date} date
+ * @returns {boolean}
  */
 export const isFutureDate = (date) => {
     return date.getTime() > Date.now();
 };
 
 /**
- * Compare two [start, end] date range arrays by value.
- * Used by the report views to ignore a `date_range` prop update that matches
- * the range they already hold, which would otherwise trigger a refetch loop.
- * @param {Array} a - First date range
- * @param {Array} b - Second date range
- * @returns {boolean} True when both ranges hold the same values
+ * Compare two [start, end] ranges by value. Report views use it to skip a
+ * `date_range` prop update they already hold, which would loop refetches.
+ * @param {Array} a
+ * @param {Array} b
+ * @returns {boolean}
  */
 export const isSameDateRange = (a, b) => {
     if (!Array.isArray(a) || !Array.isArray(b)) {
@@ -135,13 +125,10 @@ export const isSameDateRange = (a, b) => {
 };
 
 /**
- * Format a report stat for display: counts get thousand separators, anything
- * that isn't a number (an already-formatted duration like "2 years", a "--"
- * placeholder, an empty value) is returned untouched.
- * @param {number|string} value - Raw stat value
- * @param {*} [emptyFallback] - Returned instead of an empty value, for the
- *   views that show a placeholder rather than a blank
- * @returns {string|*} Localized number string, or the value as given
+ * Add thousand separators to numeric stats. Non-numbers ("2 years", "--") pass through.
+ * @param {number|string} value
+ * @param {*} [emptyFallback] - Returned in place of an empty value
+ * @returns {string|*}
  */
 export const formatStatValue = (value, emptyFallback) => {
     if (value === null || value === undefined || value === "") {

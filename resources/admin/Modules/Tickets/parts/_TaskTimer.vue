@@ -1,10 +1,11 @@
 <template>
-    <div class="fs-task-timer-wrap">
+    <div class="fs-task-timer-wrap" v-loading="loading">
         <!-- Progress Bar with Percentage and Status -->
         <div class="fs-progress-row">
             <span class="fs-progress-percentage">{{ percentileCompleted }}%</span>
             <span v-if="!totalLoggedLabel" class="fs-no-logging-text">{{ $t('No logging yet!') }}</span>
-            <span v-else="totalLoggedLabel" class="fs-no-logging-text">{{ totalLoggedLabel }} {{ $t('logged') }}</span>
+            <!-- translators: %s is the total time logged, e.g. "1h 30m" -->
+            <span v-else="totalLoggedLabel" class="fs-no-logging-text">{{ $t('%s logged', totalLoggedLabel) }}</span>
         </div>
 
         <el-progress
@@ -16,14 +17,15 @@
 
         <!-- Time Labels Row -->
         <div class="fs-time-labels-row" v-if="estimatedMinutes">
-            <el-popover
+            <el-popover :persistent="false"
                 ref="estimatedTimePop"
                 popper-class="fs-timer-log-popover"
                 :placement="estimateTimePopoverPlacement"
                 :width="400"
                 trigger="click">
                 <template #reference>
-                    <span class="fs-time-label-text">{{ totalLoggedLabel }} {{ $t('logged') }}</span>
+                    <!-- translators: %s is the total time logged, e.g. "1h 30m" -->
+                    <span class="fs-time-label-text">{{ $t('%s logged', totalLoggedLabel) }}</span>
                 </template>
                 <el-table stripe :data="tracks" style="width: 100%">
                     <el-table-column type="expand" width="30">
@@ -59,7 +61,7 @@
                 </el-table>
             </el-popover>
 
-            <el-popover
+            <el-popover :persistent="false"
                 ref="estimatedTimeForm"
                 placement="right"
                 :width="400"
@@ -67,7 +69,8 @@
                 trigger="click">
                 <template #reference>
                     <span class="fs-time-label-text">
-                        {{ totalEstimationLabel }} {{ $t('estimated') }}
+                        <!-- translators: %s is the estimated time, e.g. "2h" -->
+                        {{ $t('%s estimated', totalEstimationLabel) }}
                     </span>
                 </template>
                 <div class="fs-estimation-popover">
@@ -92,7 +95,7 @@
                 <span>{{ $t('Add Log') }}</span>
             </el-button>
 
-            <el-popover
+            <el-popover :persistent="false"
                 v-if="!estimatedMinutes"
                 ref="estimatedTimeFormBtn"
                 placement="right"
@@ -201,7 +204,10 @@ export default {
                     this.tracks = response.tracks;
                     this.estimatedMinutes = response.estimated_minutes;
                 })
-                .catch(error => this.$handleError(error));
+                .catch(error => this.$handleError(error))
+                .always(() => {
+                    this.loading = false;
+                });
         },
 
         toggleLog() {

@@ -27,6 +27,7 @@ $bodyBg: #f1f2f5;
     --fs-bg-muted: #2B303B;
     --fs-bg-internal-note: #FFFAEB;
     --fs-bg-warning: #FFF9F3;
+    --fs-bg-selected: #F0F4FF;
 
     /* ─── BUTTONS / ACTIONS ───────────────── */
     --fs-btn-primary-bg: #0E121B;
@@ -39,7 +40,7 @@ $bodyBg: #f1f2f5;
     --fs-btn-border-black: #0E121B;
     --fs-btn-border-red: #FB3748;
 
-    /* ─── BORDER COLORS ───────────────────── */
+    /* ─── PLAIN BUTTON ────────────────────── */
     --fs-plain-button-text: #525866;
 
 
@@ -63,6 +64,7 @@ $bodyBg: #f1f2f5;
     --fs-state-feature-dark: #351A75;
     --fs-state-faded-light: #F2F5F8;
     --fs-state-faded-dark: #717784;
+    --fs-state-faded-base: #717784;
     --fs-state-faded-lighter: #F2F5F8;
     --fs-badge-faded-text: #222530;
     --fs-state-away-light: #FFECC0;
@@ -121,6 +123,28 @@ $bodyBg: #f1f2f5;
     --fs-stat-icon-warning-color: #FF8447;
     --fs-stat-icon-info-bg: #ebf1ff;
     --fs-stat-icon-info-color: #335CFF;
+    --fs-stat-icon-blue-bg: #EBF1FF;
+    --fs-stat-icon-blue-color: #335CFF;
+    --fs-stat-icon-orange-bg: #FFF1E8;
+    --fs-stat-icon-orange-color: #FF8447;
+    --fs-stat-icon-purple-bg: #EFEBFF;
+    --fs-stat-icon-purple-color: #7D52F4;
+    --fs-stat-icon-pink-bg: #FFEBF4;
+    --fs-stat-icon-pink-color: #FB4BA3;
+    --fs-stat-icon-sky-bg: #E5F8FF;
+    --fs-stat-icon-sky-color: #47C2FF;
+    --fs-stat-icon-red-bg: #FFECEF;
+    --fs-stat-icon-red-color: #FB3748;
+
+    /* ─── SMALL BADGES (sidebar widgets) ───── */
+    --fs-badge-sm-success-bg: #E0FAEC;
+    --fs-badge-sm-success-text: #0B4627;
+    --fs-badge-sm-warning-bg: #FFF3EB;
+    --fs-badge-sm-warning-text: #71330A;
+    --fs-badge-sm-danger-bg: #FFEBEC;
+    --fs-badge-sm-danger-text: #710E21;
+    --fs-badge-sm-info-bg: #EBF1FF;
+    --fs-badge-sm-info-text: #122368;
 
     /* ─── CHART COLORS ─────────────────────── */
     --fs-chart-primary: #0cbe7e;
@@ -148,6 +172,22 @@ $bodyBg: #f1f2f5;
     /* ─── WARNING COLORS ──────────────────── */
     --fs-warning-bg: rgba(250, 115, 25, 1);
     --fs-warning-text: #FFFFFF;
+
+    /* ─── PRO SHOWCASE ────────────────────── */
+    --fs-pro-badge-bg: #E0FAEC;
+    --fs-pro-badge-text: #0B4627;
+    --fs-pro-check: #089360;
+    --fs-pro-preview-shadow: 0 1px 2px rgba(23, 23, 23, 0.05), 0 8px 24px -6px rgba(23, 23, 23, 0.12);
+    --fs-pro-chip-orange-bg: #FFF3E6;
+    --fs-pro-chip-orange-border: #FFE1C2;
+    --fs-pro-chip-orange-text: #9A4C00;
+    --fs-pro-chip-purple-bg: #EFEBFF;
+    --fs-pro-chip-purple-border: #CAC0FF;
+    --fs-pro-chip-purple-text: #351A75;
+    --fs-pro-menu-active-text: #5B2CC9;
+    --fs-pro-switch-on-knob: #FFFFFF;
+    --fs-pro-crown: #F6B51E;
+    --fs-pro-switch-off-knob: #FFFFFF;
 
 
     --fs-text-link: #089360;

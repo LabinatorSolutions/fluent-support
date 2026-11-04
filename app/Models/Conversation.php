@@ -5,6 +5,11 @@ namespace FluentSupport\App\Models;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\Framework\Support\Arr;
 
+/**
+ * Column set outside $fillable:
+ *
+ * @property string $content_hash md5 of content.
+ */
 class Conversation extends Model
 {
     protected $table = 'fs_conversations';
@@ -39,7 +44,7 @@ class Conversation extends Model
         static::deleting(function ($model) {
             //Delete cc info
             Meta::where('object_type', 'response')->where('object_id', $model->id)->delete();
-            // Delete conversation-level attachments — files first, then DB records
+            // Attachment files first, then their rows
             $class = __NAMESPACE__ . '\Attachment';
             $attachments = $class::where('conversation_id', $model->id)->get();
             $class::purgeAttachments($attachments);
@@ -48,7 +53,6 @@ class Conversation extends Model
     }
 
     /**
-     * $searchable Columns in table to search
      * @var array
      */
     protected $searchable = [
@@ -56,7 +60,6 @@ class Conversation extends Model
     ];
 
     /**
-     * Local scope to filter subscribers by search/query string
      * @param ModelQueryBuilder $query
      * @param string $search
      * @return ModelQueryBuilder
@@ -78,9 +81,8 @@ class Conversation extends Model
     }
 
     /**
-     * Local scope to filter subscribers by search/query string
      * @param ModelQueryBuilder $query
-     * @param string $type
+     * @param array $type
      * @return ModelQueryBuilder
      */
     public function scopeFilterByType($query, $type)
@@ -91,7 +93,6 @@ class Conversation extends Model
     }
 
     /**
-     * One2Many: Customer has to many Click Tickets
      * @return Model Collection
      */
     public function ticket()
@@ -104,7 +105,6 @@ class Conversation extends Model
     }
 
     /**
-     * One2Many: Customer has to many Click Tickets
      * @return Model Collection
      */
     public function person()
@@ -117,7 +117,7 @@ class Conversation extends Model
     }
 
     /**
-     * A Conversation belongs to a Customer.
+     * Alias of person(). The author may be an agent, not only a customer.
      *
      * @return \FluentSupport\App\Models\Model
      */
@@ -133,7 +133,8 @@ class Conversation extends Model
     }
 
     /**
-     * One2One: Conversation has cc info
+     * CC info stored in fs_meta.
+     *
      * @return Model Collection
      */
     public function ccinfo()

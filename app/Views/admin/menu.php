@@ -51,7 +51,7 @@
                         <li data-key="<?php echo esc_attr($item['key']); ?>" class="fs_nav_item fs_item_<?php echo esc_attr($item['key']); ?>">
                             <a data-key="<?php echo esc_attr($item['key']); ?>" class="fs_nav_right_item fs_item_<?php echo esc_attr($item['key']); ?>" href="<?php echo esc_url($item['permalink']); ?>">
                                 <?php if($item['key'] === 'settings'): ?>
-                                    <img src="<?php echo esc_url($settingsLogo); ?>" alt="Settings" width="20" height="20" />
+                                    <?php include __DIR__ . '/partials/settings-icon.php'; ?>
                                 <?php elseif($item['key'] === 'upgrade_to_pro'): ?>
                                     <?php echo esc_attr($item['label']); ?>
                                 <?php else: ?>
@@ -74,7 +74,7 @@
                     <li data-key="<?php echo esc_attr($item['key']); ?>" class="fs_nav_item fs_item_<?php echo esc_attr($item['key']); ?>">
                         <a data-key="<?php echo esc_attr($item['key']); ?>" class="fs_nav_right_item fs_item_<?php echo esc_attr($item['key']); ?>" href="<?php echo esc_url($item['permalink']); ?>">
                             <?php if($item['key'] === 'settings'): ?>
-                                <img src="<?php echo esc_url($settingsLogo); ?>" alt="Settings" width="20" height="20" />
+                                <?php include __DIR__ . '/partials/settings-icon.php'; ?>
                             <?php elseif($item['key'] === 'upgrade_to_pro'): ?>
                                 <img src="<?php echo esc_url($upgradeLogo); ?>" alt="Settings" width="20" height="20" />
                                 <?php echo esc_attr($item['label']); ?>

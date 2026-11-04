@@ -1,0 +1,221 @@
+{
+    "approval draft: admin": [
+        "fluent_support/draft_response_added_by_agent"
+    ],
+    "approval draft: approved": [
+        "fluent_support/response_added_by_agent"
+    ],
+    "assign: MCP": [
+        "fluent_support/ticket_agent_change",
+        "fluent_support/agent_assigned_to_ticket"
+    ],
+    "assign: admin property": [
+        "fluent_support/ticket_agent_change",
+        "fluent_support/agent_assigned_to_ticket"
+    ],
+    "assign: bulk": [
+        "fluent_support/ticket_agent_change",
+        "fluent_support/agent_assigned_to_ticket"
+    ],
+    "change: client priority": [
+        "fluent_support/ticket_updated"
+    ],
+    "change: customer": [
+        "fluent_support/ticket_updated"
+    ],
+    "change: priority": [
+        "fluent_support/ticket_priority_changed",
+        "fluent_support/ticket_updated"
+    ],
+    "change: priority, MCP": [
+        "fluent_support/ticket_priority_changed",
+        "fluent_support/ticket_updated"
+    ],
+    "change: priority, bulk": [
+        "fluent_support/ticket_priority_changed",
+        "fluent_support/ticket_updated"
+    ],
+    "change: product": [
+        "fluent_support/ticket_updated"
+    ],
+    "change: product, bulk": [],
+    "change: status new to active": [
+        "fluent_support/ticket_status_changed",
+        "fluent_support/ticket_updated"
+    ],
+    "change: title": [
+        "fluent_support/ticket_updated"
+    ],
+    "close: MCP": [
+        "fluent_support/ticket_closed",
+        "fluent_support/ticket_closed_by_agent",
+        "fluent_support/ticket_status_changed"
+    ],
+    "close: admin": [
+        "fluent_support/ticket_closed",
+        "fluent_support/ticket_closed_by_agent",
+        "fluent_support/ticket_status_changed"
+    ],
+    "close: admin, no silent flag": [
+        "fluent_support/ticket_closed",
+        "fluent_support/ticket_closed_by_agent",
+        "fluent_support/ticket_status_changed"
+    ],
+    "close: bulk": [
+        "fluent_support/ticket_closed",
+        "fluent_support/ticket_closed_by_agent",
+        "fluent_support/ticket_status_changed"
+    ],
+    "close: portal": [
+        "fluent_support/ticket_closed",
+        "fluent_support/ticket_closed_by_customer",
+        "fluent_support/ticket_status_changed"
+    ],
+    "create: MCP, new customer": [
+        "fluent_support/customer_created",
+        "fluent_support/before_ticket_create",
+        "fluent_support/ticket_created",
+        "fluent_support/ticket_created_behalf_of_customer"
+    ],
+    "create: MCP, with an agent": [
+        "fluent_support/before_ticket_create",
+        "fluent_support/ticket_created",
+        "fluent_support/ticket_created_behalf_of_customer",
+        "fluent_support/ticket_agent_change",
+        "fluent_support/agent_assigned_to_ticket"
+    ],
+    "create: PHP API": [
+        "fluent_support/before_ticket_create",
+        "fluent_support/ticket_created",
+        "fluent_support/ticket_created_behalf_of_customer"
+    ],
+    "create: admin, existing customer": [
+        "fluent_support/before_ticket_create",
+        "fluent_support/ticket_created",
+        "fluent_support/ticket_created_behalf_of_customer"
+    ],
+    "create: admin, new customer": [
+        "fluent_support/customer_created",
+        "fluent_support/before_ticket_create",
+        "fluent_support/ticket_created",
+        "fluent_support/ticket_created_behalf_of_customer"
+    ],
+    "create: email piping": [
+        "fluent_support/customer_created",
+        "fluent_support/before_ticket_create_from_email",
+        "fluent_support/before_ticket_create",
+        "fluent_support/ticket_created",
+        "fluent_support/after_ticket_create_from_email"
+    ],
+    "create: portal": [
+        "fluent_support/before_ticket_create",
+        "fluent_support/ticket_created"
+    ],
+    "delete: MCP": [
+        "fluent_support/deleting_ticket",
+        "fluent_support/ticket_deleted"
+    ],
+    "delete: admin": [
+        "fluent_support/deleting_ticket",
+        "fluent_support/ticket_deleted"
+    ],
+    "delete: bulk": [
+        "fluent_support/deleting_ticket",
+        "fluent_support/ticket_deleted"
+    ],
+    "merge": [
+        "fluent_support/deleting_ticket",
+        "fluent_support/ticket_deleted",
+        "fluent_support/ticket_merge"
+    ],
+    "move: MCP": [
+        "fluent_support/before_move_tickets",
+        "fluent_support/tickets_moved"
+    ],
+    "move: mailbox screen": [
+        "fluent_support/before_move_tickets",
+        "fluent_support/tickets_moved"
+    ],
+    "note: MCP": [
+        "fluent_support/note_added_by_agent"
+    ],
+    "note: admin": [
+        "fluent_support/note_added_by_agent"
+    ],
+    "reopen: MCP (status active)": [
+        "fluent_support/ticket_reopen",
+        "fluent_support/ticket_reopen_by_agent",
+        "fluent_support/ticket_status_changed",
+        "fluent_support/ticket_updated"
+    ],
+    "reopen: admin": [
+        "fluent_support/ticket_reopen",
+        "fluent_support/ticket_reopen_by_agent",
+        "fluent_support/ticket_status_changed"
+    ],
+    "reopen: bulk": [
+        "fluent_support/ticket_reopen",
+        "fluent_support/ticket_reopen_by_agent",
+        "fluent_support/ticket_status_changed"
+    ],
+    "reopen: portal": [
+        "fluent_support/ticket_reopen",
+        "fluent_support/ticket_reopen_by_customer",
+        "fluent_support/ticket_status_changed"
+    ],
+    "reply: MCP": [
+        "fluent_support/response_added_by_agent"
+    ],
+    "reply: PHP API": [
+        "fluent_support/response_added_by_agent"
+    ],
+    "reply: admin": [
+        "fluent_support/response_added_by_agent"
+    ],
+    "reply: admin on an unassigned ticket (auto-assign)": [
+        "fluent_support/ticket_agent_change",
+        "fluent_support/agent_assigned_to_ticket",
+        "fluent_support/response_added_by_agent"
+    ],
+    "reply: bulk": [
+        "fluent_support/response_added_by_agent"
+    ],
+    "reply: delete": [
+        "fluent_support/response_deleted"
+    ],
+    "reply: edit": [
+        "fluent_support/response_updated"
+    ],
+    "reply: email piping": [
+        "fluent_support/response_added_by_customer"
+    ],
+    "reply: portal": [
+        "fluent_support/response_added_by_customer"
+    ],
+    "split": [
+        "fluent_support/before_ticket_split",
+        "fluent_support/before_ticket_create",
+        "fluent_support/ticket_created",
+        "fluent_support/ticket_created_behalf_of_customer",
+        "fluent_support/after_ticket_split"
+    ],
+    "tags: add": [
+        "fluent_support/ticket_tag_added"
+    ],
+    "tags: add again": [],
+    "tags: bulk add": [
+        "fluent_support/ticket_tag_added"
+    ],
+    "tags: bulk remove": [
+        "fluent_support/ticket_tag_removed"
+    ],
+    "tags: remove": [
+        "fluent_support/ticket_tag_removed"
+    ],
+    "watchers: add": [
+        "fluent_support/ticket_watchers_added"
+    ],
+    "watchers: sync": [
+        "fluent_support/ticket_watchers_added"
+    ]
+}

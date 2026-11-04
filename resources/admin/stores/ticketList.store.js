@@ -24,6 +24,21 @@ function hashFilters(data) {
     }
 }
 
+export function defaultFilters() {
+    return {
+        status_type: 'open',
+        product_id: [],
+        agent_id: [],
+        agent_group: [],
+        priority: [],
+        client_priority: [],
+        waiting_for_reply: '',
+        ticket_tags: [],
+        mailbox_id: [],
+        watcher: '',
+    };
+}
+
 export const useTicketListStore = defineStore('ticketList', {
     state: () => ({
         // Entity data
@@ -113,6 +128,12 @@ export const useTicketListStore = defineStore('ticketList', {
         },
         ticketLayout: 'default',
         viewMode: 'list',
+
+        // Label of the sidebar view the filters match, '' when they match none.
+        active_view_label: '',
+
+        // The ticket views sheet that replaces the sidebar on phones and tablets.
+        views_sheet_open: false,
 
         // In-memory cache metadata
         cache_metadata: {
@@ -358,6 +379,20 @@ export const useTicketListStore = defineStore('ticketList', {
 
         resetAdvancedFilters() {
             this.advanced_filters = [[]];
+        },
+
+        /**
+         * Replace every simple filter with a sidebar view's filters.
+         * @param {Object} viewFilters - Filter keys the view sets; the rest go back to their defaults
+         */
+        applyView(viewFilters) {
+            this.filter_type = 'simple';
+            this.search = '';
+            this.searchActive = false;
+            this.label_search_id = '';
+            this.label_search_name = '';
+            this.filters = { ...defaultFilters(), ...viewFilters };
+            this.pagination.current_page = 1;
         },
 
         handleCustomFilter(filterType, filterValue) {

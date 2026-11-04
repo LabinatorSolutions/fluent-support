@@ -57,17 +57,19 @@
                 </el-button>
             </el-form>
         </template>
-        <el-skeleton v-else-if="loading_remote" :rows="3" animated/>
+        <FormSkeleton v-else-if="loading_remote" :fields="4" :button="!!ticket_id" />
     </div>
 </template>
 
 <script type="text/babel">
-import isEmpty from 'lodash/isEmpty';
-import isArray from 'lodash/isArray';
-import each from 'lodash/each';
+import { each, isArray, isEmpty } from 'lodash-es';
+import FormSkeleton from '@/admin/Components/FormSkeleton.vue';
 
 export default   {
     name: 'CustomFieldForm',
+    components: {
+        FormSkeleton
+    },
     props: ['custom_data', 'ticket_id', 'ticket', 'type'],
     emits: ['syncData'],
     data() {

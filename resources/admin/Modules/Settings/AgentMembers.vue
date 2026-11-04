@@ -1,13 +1,13 @@
 <template>
     <div>
-        <div v-if="!loading" class="fs_table_container" style="width: 100%; margin: 0;">
+        <div class="fs_table_container" style="width: 100%; margin: 0;">
             <div class="fs_table_header">
                 <div class="fs_box_actions">
                     <div class="fs_ticket_orders fs_table_search_field">
                         <el-input
-                            @keyup.enter="fetchAgents"
+                            @keyup.enter="searchAgents"
                             clearable
-                            @clear="fetchAgents"
+                            @clear="searchAgents"
                             size="small"
                             :placeholder="$t('Search Agents')"
                             v-model="search"
@@ -27,8 +27,9 @@
                     </el-button>
                 </div>
             </div>
-            <div style="overflow: hidden; width: 100%;">
-            <div class="fs_table_wrapper fs_support_staffs_table" style="overflow-x: auto;">
+            <TableSkeleton v-if="first_loading" :rows="5" :columns="[2, 1.2, 1.2, 1.2, 1, 1, '120px']" avatar />
+            <div v-else style="overflow: hidden; width: 100%;">
+            <div class="fs_table_wrapper fs_support_staffs_table" style="overflow-x: auto;" v-loading="loading">
                 <el-table
                     :data="agents"
                     row-class-name="fs_table_row"
@@ -137,8 +138,8 @@
                                     </span>
                                 </template>
                                 <el-button class="fs_agent_permissions" type="default" size="small">
-                                    {{ scope.row.permissions.length }}
-                                    {{ $t("Permissions") }}
+                                    <!-- translators: %s is the number of permissions the agent has -->
+                                    {{ $_n('%s Permission', '%s Permissions', scope.row.permissions.length) }}
                                 </el-button>
                             </el-tooltip>
                         </template>
@@ -153,7 +154,8 @@
                                             {{ group.title }}
                                         </span>
                                     </template>
-                                    <el-tag size="small" type="info">+{{ scope.row.groups.length - 1 }} {{ $t('More') }}</el-tag>
+                                    <!-- translators: %s is the number of additional items not shown -->
+                                    <el-tag size="small" type="info">{{ $t('+%s more', scope.row.groups.length - 1) }}</el-tag>
                                 </el-tooltip>
                             </span>
                             <span v-else class="fs_text_muted">—</span>
@@ -214,9 +216,6 @@
                     />
                 </span>
             </div>
-        </div>
-        <div class="fs_box_body fs_skeleton_loader" v-else>
-            <el-skeleton :rows="5" animated />
         </div>
 
         <el-dialog
@@ -403,6 +402,7 @@
                         false-label="no"
                     >{{ $t('Enable signature for this agent') }}</el-checkbox>
                 </el-form-item>
+                <p class="fs_sub_text">{{ $t('agent_signature_help') }}</p>
                 <div v-if="editing_agent.agent_signature_enabled === 'yes'">
                     <wp-editor
                         :editor_id="'agent_signature_' + (editing_agent.id || 'new')"
@@ -486,6 +486,7 @@
 import Pagination from "../../Pieces/Pagination";
 import TableMoreActions from "@/admin/Components/TableMoreActions.vue";
 import TableEmptyStateImage from "@/admin/Components/TableEmptyStateImage.vue";
+import TableSkeleton from "@/admin/Components/TableSkeleton.vue";
 import WpEditor from "../../Pieces/_wp_editor.vue";
 
 export default {
@@ -494,6 +495,7 @@ export default {
         Pagination,
         TableMoreActions,
         TableEmptyStateImage,
+        TableSkeleton,
         WpEditor
     },
     data() {
@@ -506,6 +508,7 @@ export default {
             },
             permissions: [],
             loading: false,
+            first_loading: true,
             editing_agent: false,
             agent_modal: false,
             saving: false,
@@ -561,7 +564,12 @@ export default {
                 })
                 .always(() => {
                     this.loading = false;
+                    this.first_loading = false;
                 });
+        },
+        searchAgents() {
+            this.pagination.current_page = 1;
+            this.fetchAgents();
         },
         fetchSettings() {
             this.$get("settings/integration-settings")

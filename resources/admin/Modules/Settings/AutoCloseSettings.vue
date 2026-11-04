@@ -8,25 +8,54 @@
                         size="default"
                         type="success"
                         class="fs_save_settings_btn"
+                        v-loading="loading"
+                        :disabled="loading || fetching"
                         @click="saveSettings()"
                     >{{ $t("Save Settings") }}</el-button>
                 </div>
             </div>
             <div class="fs_box_actions"></div>
         </div>
-        <NarrowPromo
-            v-if="!has_pro"
-            :heading="$t('Auto Close tickets based on active days or based on tags or waiting time.')"
-            :description="$t('pro_promo')"
-            :button-text="$t('Upgrade To Pro')"
-            utm-content="feature_lock_auto_close"
-        />
+        <div v-if="!has_pro" class="fs_box_body">
+            <ProShowcase
+                :feature="$t('Auto close')"
+                :heading="$t('Close inactive tickets without lifting a finger')"
+                :description="$t('auto_close_promo_description')"
+                :specifics="promoSpecifics"
+                utm-content="feature_lock_auto_close"
+                docs-url="https://docs.fluentsupport.com/automatic-ticket-closing"
+            >
+                <template #preview>
+                    <div class="fs_pro_preview">
+                        <div class="fs_pro_preview_card fs_pro_preview_fields">
+                            <div class="fs_pro_preview_title">
+                                <span class="fs_pro_preview_checkbox"></span>
+                                {{ $t('Auto close rule') }}
+                            </div>
+                            <div class="fs_pro_preview_row fs_pro_preview_reveal" style="--fs-row-index: 0">
+                                <span class="fs_pro_preview_row_label">{{ $t('Inactive for') }}</span>
+                                <!-- translators: %s: number of days -->
+                                <span class="fs_pro_preview_row_value">{{ $_n('%s day', '%s days', 7) }}</span>
+                            </div>
+                            <div class="fs_pro_preview_row fs_pro_preview_reveal" style="--fs-row-index: 1">
+                                <span class="fs_pro_preview_row_label">{{ $t('Only tags') }}</span>
+                                <span class="fs_pro_preview_chip fs_pro_preview_chip_purple fs_pro_preview_chip_plain">{{ $t('Waiting on customer') }}</span>
+                            </div>
+                            <div class="fs_pro_preview_row fs_pro_preview_row_focal fs_pro_preview_reveal" style="--fs-row-index: 2">
+                                <span class="fs_pro_preview_row_label">{{ $t('Then') }}</span>
+                                <span class="fs_pro_preview_badge fs_pro_preview_badge_info">{{ $t('Close ticket') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </ProShowcase>
+        </div>
         <template v-else>
             <div
                 style="padding: 20px"
                 v-if="!fetching"
                 v-loading="loading"
-                class="fs_box_body"
+                class="fs_box_body fs_auto_close_body"
             >
                 <div>
                     <el-checkbox
@@ -46,10 +75,10 @@
                 </form-builder>
             </div>
             <div
-                class="fs_box_body fs_skeleton_loader"
+                class="fs_box_body"
                 v-else
             >
-                <el-skeleton :rows="5" animated />
+                <FormSkeleton :fields="3" :button="false" />
             </div>
         </template>
     </div>
@@ -57,13 +86,15 @@
 
 <script type="text/babel">
 import FormBuilder from "../../Pieces/FormElements/_FormBuilder";
-import NarrowPromo from "@/admin/Components/NarrowPromo.vue";
+import ProShowcase from "@/admin/Components/ProShowcase.vue";
+import FormSkeleton from "@/admin/Components/FormSkeleton.vue";
 
 export default {
     name: "AutoCloseSettings",
     components: {
         FormBuilder,
-        NarrowPromo
+        ProShowcase,
+        FormSkeleton
     },
     data() {
         return {
@@ -73,6 +104,15 @@ export default {
             loading: false,
             app_ready: false,
             settings_key: "auto_close_settings"
+        }
+    },
+    computed: {
+        promoSpecifics() {
+            return [
+                this.$t('Close tickets after a number of days without activity'),
+                this.$t('Limit the rule to tickets with certain tags'),
+                this.$t('Send your own closing message when a ticket closes')
+            ];
         }
     },
     methods: {

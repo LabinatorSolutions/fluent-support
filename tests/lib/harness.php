@@ -1,31 +1,22 @@
 <?php
 /**
- * Fluent Support local test harness.
+ * Fluent Support local test harness, shared by every runner.
  *
- * Shared runtime for every suite. Loaded by each runner via `require_once`.
- * Everything runs through WP-CLI (`wp eval-file`) against the Docker lab's
- * real WordPress + MariaDB install — never against a dev site.
+ * Runs through WP-CLI (`wp eval-file`) against the Docker lab, never a dev site.
+ * See tests/README.md before changing these choices:
  *
- * Design notes (do not "improve" these without reading tests/README.md):
- *
- *  - REST calls are dispatched IN-PROCESS via rest_do_request(), not over HTTP.
- *    Fast (no network, no second PHP boot), deterministic, and it keeps
- *    $wpdb->last_error observable in the same process.
- *  - A DB error is detected THREE ways because any one of them can be masked:
- *    the response status, $wpdb->last_error, and the plugin's own exception
- *    envelope. All three are checked.
- *  - PHP notices/warnings/deprecations are promoted to failures, filtered to
- *    the fluent-support plugin paths. "Silently broken" is the exact condition
- *    this whole effort exists to eliminate.
+ *  - REST calls go through rest_do_request() in-process, which keeps
+ *    $wpdb->last_error observable.
+ *  - Breakage is checked three ways (status, $wpdb->last_error, the plugin's
+ *    exception envelope) because any one of them can be masked.
+ *  - PHP notices/warnings/deprecations from fluent-support paths are failures.
  */
 
 if (!defined('WP_CLI') || !WP_CLI) {
     exit("Fluent Support tests must run via WP-CLI.\n");
 }
 
-// Refuse to run against anything that is not a throwaway database. The suite
-// creates and deletes real plugin records; convention (the lab) is not
-// protection the day someone points `wp eval-file` at a real site.
+// The suite creates and deletes real records, so refuse any non-throwaway database.
 require_once __DIR__ . '/guard-production-db.php';
 (static function () {
     global $wpdb;
@@ -84,9 +75,7 @@ class FsTest
                 return false;
             }
 
-            // Ignore diagnostics raised inside WP core / other plugins: we are
-            // testing Fluent Support (free and pro — the path hint matches
-            // both), and a noisy neighbour must not fail our suite.
+            // Only count Fluent Support (free and pro) diagnostics.
             if (strpos($errfile, 'plugins/fluent-support') === false) {
                 return false;
             }
@@ -94,7 +83,7 @@ class FsTest
             self::$diagnostics[] = self::errorLabel($errno) . ': ' . $errstr
                 . ' (' . self::relPath($errfile) . ':' . $errline . ')';
 
-            return true; // handled — do not print
+            return true;
         });
 
         $admin = get_users(['role' => 'administrator', 'number' => 1, 'orderby' => 'ID']);
@@ -105,9 +94,8 @@ class FsTest
     }
 
     /**
-     * Enable production-default strict SQL modes for this connection when the
-     * opt-in environment axis is active. The lab's MariaDB already runs
-     * strict-by-default; this axis exists for any environment that does not.
+     * With FS_STRICT_SQL=1, force ONLY_FULL_GROUP_BY and STRICT_TRANS_TABLES on
+     * this connection, for environments that aren't strict by default.
      */
     public static function configureSqlEnvironment()
     {
@@ -143,9 +131,8 @@ class FsTest
     }
 
     /**
-     * Print the summary and exit with a non-zero code if anything failed.
-     * Every runner MUST end with this — the exit code is what makes the suite
-     * usable from a script or a git hook.
+     * Print the summary and exit non-zero if anything failed. Every runner must
+     * end with this so scripts and git hooks see the exit code.
      */
     public static function finish($suiteName)
     {
@@ -183,8 +170,8 @@ class FsTest
     // -----------------------------------------------------------------
 
     /**
-     * Run one test case. $fn receives no arguments and should call fail()/pass()
-     * indirectly through the assert helpers below.
+     * Run one test case. $fn takes no arguments and reports through the assert
+     * helpers, fail() or skip().
      */
     public static function case($name, callable $fn)
     {
@@ -201,13 +188,11 @@ class FsTest
                 . ' (' . self::relPath($e->getFile()) . ':' . $e->getLine() . ')');
         }
 
-        // Any PHP diagnostic raised inside Fluent Support during the case is a failure.
         if (self::$diagnostics) {
             self::fail("PHP diagnostics raised:\n  - " . implode("\n  - ", self::$diagnostics));
         }
 
-        // A case is passed only if it neither failed nor skipped — a skip is
-        // NOT executed coverage and must never inflate the passed count.
+        // A skip is not coverage, so it never counts as a pass.
         if (count(self::$failures) === $failedBefore && !self::$currentSkipped) {
             self::$passed++;
         }
@@ -246,11 +231,10 @@ class FsTest
     }
 
     /**
-     * Claim diagnostics that are being surfaced as an explicit KNOWN-FAILURE.
+     * Claim diagnostics reported as an explicit KNOWN-FAILURE.
      *
-     * Use this only immediately before skip(): matching production warnings are
-     * removed from the automatic failure list so a known defect can remain
-     * executable, while every unmatched diagnostic still fails the case.
+     * Call right before skip(). Matching diagnostics no longer fail the case;
+     * unmatched ones still do.
      *
      * @param string $pattern PCRE matched against each formatted diagnostic.
      * @return array<int,string> Claimed diagnostics for inclusion in skip output.
@@ -291,13 +275,8 @@ class FsTest
 
         $wpdb->last_error = '';
 
-        /*
-         * WPFluent's Request merges inputs from the REST request into the
-         * container's request singleton. That is correct for one HTTP request
-         * per PHP process, but an in-process suite dispatches hundreds of REST
-         * requests in one process. Rebind an empty request so query parameters
-         * from one case cannot leak into the next.
-         */
+        // WPFluent merges REST inputs into a request singleton. Rebind an empty
+        // one so params from one in-process dispatch don't leak into the next.
         $app = \FluentSupport\App\App::getInstance();
         $requestClass = 'FluentSupport\Framework\Http\Request\Request';
         $app->instance($requestClass, new $requestClass($app, [], []));
@@ -316,8 +295,7 @@ class FsTest
         $response = rest_do_request($request);
         $data     = $response->get_data();
 
-        // The plugin wraps runtime errors in its own envelope, which can carry a
-        // 2xx status in some paths — check the payload shape, not just the code.
+        // The plugin's error envelope can carry a 2xx status, so check the payload.
         $isException = is_array($data)
             && isset($data['code'])
             && in_array($data['code'], ['plugin_exception', 'internal_server_error', 'rest_error'], true);
@@ -338,9 +316,7 @@ class FsTest
 
     /**
      * The core smoke assertion: a route responded without any form of breakage.
-     *
-     * Keep all three checks — a DB error can be invisible in the HTTP status
-     * on some routes, and the status alone can be invisible on others.
+     * Keep all three checks. Each one can miss what another catches.
      */
     public static function assertHealthy(array $result, $label, array $okStatuses = [200, 201, 204])
     {
@@ -362,12 +338,9 @@ class FsTest
     }
 
     /**
-     * Drop Fluent Support's own caches so a suite tests live code paths.
-     *
-     * NOT OPTIONAL. A warm transient can return 200 over a completely broken
-     * query, and a cached endpoint is exactly where a regression hides longest.
-     * Deliberately targeted (LIKE on the plugin's transient rows) rather than
-     * wp_cache_flush(), which would evict unrelated site data.
+     * Drop Fluent Support's transients so a suite tests live code paths. A warm
+     * transient can return 200 over a broken query. Targeted instead of
+     * wp_cache_flush() to leave unrelated site data alone.
      */
     public static function clearCaches()
     {
@@ -396,10 +369,8 @@ class FsTest
     /**
      * Fail closed around wp_mail() and start a fresh capture buffer.
      *
-     * The callback runs at the last possible priority and always returns true.
-     * WordPress therefore exits before PHPMailer even when another plugin added
-     * an earlier pre_wp_mail filter. Repeated calls reset captures without
-     * registering duplicate callbacks.
+     * The filter runs last and always returns true, so no mail reaches PHPMailer
+     * whatever earlier pre_wp_mail filters do. Safe to call repeatedly.
      */
     public static function interceptMail()
     {

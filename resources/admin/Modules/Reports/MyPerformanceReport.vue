@@ -88,8 +88,27 @@
             </div>
         </div>
     </div>
-    <div v-else class="fs_box_body fs_skeleton_loader">
-        <el-skeleton :rows="5" animated/>
+    <div v-else class="fs_personal_performance_box" aria-busy="true">
+        <div class="fs_personal_performance_header">
+            <div class="fs_personal_performance_title">
+                {{ $t('My Performance') }}
+            </div>
+        </div>
+        <div class="fs_personal_performance_body">
+            <div class="fs_personal_performance_list">
+                <el-skeleton v-for="n in 4" :key="n" animated>
+                    <template #template>
+                        <div class="fs_personal_performance_item">
+                            <div class="fs_personal_performance_icon_label" style="flex: 1;">
+                                <el-skeleton-item variant="circle" style="width: 20px; height: 20px; flex-shrink: 0;" />
+                                <el-skeleton-item variant="text" style="width: 40%;" />
+                            </div>
+                            <el-skeleton-item variant="text" style="width: 40px;" />
+                        </div>
+                    </template>
+                </el-skeleton>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -153,9 +172,3 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.fs_skeleton_loader {
-    padding: 20px;
-    background: var(--fs-bg-primary);
-}
-</style>

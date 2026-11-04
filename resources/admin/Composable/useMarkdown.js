@@ -1,8 +1,8 @@
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
-import { stripReservedElementPlusClasses } from '@/common/domPurifyGuards';
+import { applyPurifyGuards } from '@/common/domPurifyGuards';
 
-stripReservedElementPlusClasses(DOMPurify);
+applyPurifyGuards(DOMPurify);
 
 const markedOptions = {
     gfm: true,

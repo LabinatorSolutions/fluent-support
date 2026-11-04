@@ -5,6 +5,8 @@ import Components from "unplugin-vue-components/vite";
 import {ElementPlusResolver} from "unplugin-vue-components/resolvers";
 import path from "path";
 import fs from "fs";
+import pruneElementGrid from "./dev/vite/prune-element-grid.mjs";
+import dedupeCssRules from "./dev/vite/dedupe-css-rules.mjs";
 
 const serverConfig = require('./config/vite.json');
 
@@ -18,11 +20,18 @@ const PLUGIN_VERSION = getPluginVersion();
 
 const chunkCacheBustPlugin = {
     name: 'chunk-cache-bust',
-    renderChunk(code) {
+    // generateBundle, not renderChunk: Vite drops `import"./x.js"` of the CSS-only
+    // chunks it deletes in its own generateBundle, and a `?ver=` added earlier hides
+    // the import from it, leaving an import of a file that is never emitted.
+    generateBundle(options, bundle) {
         const ver = '?ver=' + PLUGIN_VERSION;
-        return code.replace(/(from\s*["'])(\.[^"']+\.js)(["'])/g, `$1$2${ver}$3`)
-                   .replace(/(import\s*["'])(\.[^"']+\.js)(["'])/g, `$1$2${ver}$3`)
-                   .replace(/([\[,]\s*)(["'])(\.[^"']+\.js)(["'])/g, `$1$2$3${ver}$4`);
+        for (const file of Object.values(bundle)) {
+            if (file.type !== 'chunk') {
+                continue;
+            }
+            file.code = file.code.replace(/(from\s*["'])(\.{1,2}\/[^"'?]+\.js)(["'])/g, `$1$2${ver}$3`)
+                                 .replace(/(import\s*["'])(\.{1,2}\/[^"'?]+\.js)(["'])/g, `$1$2${ver}$3`);
+        }
     }
 };
 
@@ -175,6 +184,8 @@ export default defineConfig({
             }
         }),
         mergeManifestPlugin,
+        pruneElementGrid({ sourceDir: path.resolve(__dirname, "resources") }),
+        dedupeCssRules(),
         createExtractLicensesPlugin(),
     ],
 

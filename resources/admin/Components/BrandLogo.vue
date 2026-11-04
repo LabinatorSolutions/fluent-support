@@ -17,7 +17,7 @@ export default {
     },
     data() {
         return {
-            isDark: document.body.classList.contains('fs-dark-mode')
+            isDark: document.body.classList.contains('fluent_theme_dark')
         }
     },
     computed: {
@@ -30,7 +30,7 @@ export default {
     },
     mounted() {
         this.observer = new MutationObserver(() => {
-            this.isDark = document.body.classList.contains('fs-dark-mode');
+            this.isDark = document.body.classList.contains('fluent_theme_dark');
         });
         this.observer.observe(document.body, {
             attributes: true,

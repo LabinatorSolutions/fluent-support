@@ -1,0 +1,5 @@
+<template>
+    <svg class="fs_icon_muted" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M13.3 0.7a.6.6 0 0 1 .15.62l-4 12a.6.6 0 0 1-1.1.08L5.9 8.1.6 5.65a.6.6 0 0 1 .08-1.1l12-4a.6.6 0 0 1 .62.15ZM6.95 7.9l1.75 3.78L11.65 2.8 6.95 7.9Zm4.25-6.05L2.32 4.8 6.1 6.55l5.1-4.7Z" fill="currentColor"/>
+    </svg>
+</template>

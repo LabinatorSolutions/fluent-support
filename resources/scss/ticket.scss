@@ -23,12 +23,6 @@
     align-items: flex-start;
     width: 100%;
     min-width: 0;
-
-    // Mobile: Prevent wrapping and allow horizontal scroll
-    @media all and (max-width: 767px) {
-        flex-wrap: nowrap;
-        min-width: 600px; // Ensure content doesn't get too cramped
-    }
 }
 
 // LEFT SECTION: Checkbox, Title, Author, Description
@@ -148,8 +142,8 @@
     gap: 4px;
     padding: 2px 8px;
     border-radius: 12px;
-    border: 1px solid var(--stroke-soft-200, #E1E4EA);
-    background: var(--bg-white-0, #FFF);
+    border: 1px solid var(--fs-stroke-soft, #E1E4EA);
+    background: var(--fs-bg-primary, #FFFFFF);
     font-size: 12px;
     font-weight: 500;
     line-height: 1.2;
@@ -159,13 +153,6 @@
 .fs_priority_badge img {
     width: 14px;
     height: 14px;
-}
-
-.fs_ticket_number {
-    color: var(--fs-subtle-btn-text, #525866);
-    font-size: 12px;
-    font-weight: 400;
-    white-space: nowrap;
 }
 
 .fs_ticket_description {
@@ -354,16 +341,7 @@
 }
 
 .fs_status_badge {
-    display: flex;
-    padding: 2px 8px;
-    justify-content: center;
-    align-items: center;
-    gap: 4px;
     border-radius: var(--fs-radius-6, 6px);
-    font-size: 12px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 16px;
 }
 
 .fs_status_waiting {
@@ -500,32 +478,6 @@
             flex: 1;
             max-width: 100%;
         }
-
-        .fs_search_clear_btn {
-            flex-shrink: 0;
-            padding: 8px;
-            min-width: auto;
-
-            .el-icon {
-                font-size: 16px;
-            }
-        }
-    }
-
-    .fs_search_help_text {
-        color: var(--fs-text-secondary, #525866);
-        font-size: 12px;
-        margin-top: 8px;
-
-        .fs_search_help_link {
-            color: var(--fs-link-color, #1890ff);
-            text-decoration: underline;
-            margin-left: 4px;
-
-            &:hover {
-                color: var(--fs-link-hover-color, #40a9ff);
-            }
-        }
     }
 }
 
@@ -658,12 +610,6 @@
             color: var(--fs-text-primary, #0E121B);
         }
     }
-}
-
-.fs_save_filter_btn {
-    display: flex;
-    align-items: center;
-    gap: 4px;
 }
 
 .fs_product_filter_select {
@@ -863,7 +809,6 @@
 .fs_grid_table {
     display: flex;
     flex-direction: column;
-    min-width: 700px;
     width: 100%;
 }
 
@@ -910,7 +855,7 @@
 }
 
 .fs_grid_row_selected {
-    background: var(--fs-bg-soft, #F0F4FF) !important;
+    background: var(--fs-bg-selected, #F0F4FF) !important;
 }
 
 .fs_grid_td {
@@ -959,7 +904,7 @@
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    background: var(--fs-bg-soft, #E1E4EA);
+    background: var(--fs-primary-tags-bg, #E1E4EA);
 }
 
 .fs_grid_avatar_img {
@@ -1145,7 +1090,7 @@
     width: 16px;
     height: 16px;
     border-radius: 3px;
-    background: var(--fs-bg-soft, #E1E4EA);
+    background: var(--fs-primary-tags-bg, #E1E4EA);
     color: var(--fs-text-secondary, #525866);
     font-size: 9px;
     font-weight: 600;
@@ -1166,4 +1111,55 @@
     height: 14px;
     object-fit: contain;
     display: block;
+}
+
+// First-load placeholder rows for the ticket list (AllTickets.vue). They reuse the
+// fs_ticket_item layout, so they are not clickable and do not highlight on hover.
+.fs_tickets_list.fs_tickets_list_skeleton {
+    .el-skeleton {
+        background: transparent;
+    }
+
+    .fs_ticket_item,
+    .fs_ticket_item:hover {
+        cursor: default;
+        background: var(--fs-bg-primary, #FFF);
+    }
+}
+
+// First-load placeholder for the ticket view (ViewTicket.vue) and its sidebar widgets
+// (_TicketSidebar.vue). The thread part reuses the real title, header and message classes.
+.fs_ticket_view_skeleton,
+.fs_widget_skeleton {
+    text-align: left;
+
+    .el-skeleton {
+        background: transparent;
+    }
+
+    .fs_skeleton_row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 12px;
+
+        &:first-child {
+            margin-top: 0;
+        }
+    }
+
+    .fs_skeleton_lines {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .fs_skeleton_lines > .el-skeleton__item,
+    .fs_message_content > .el-skeleton__item {
+        display: block;
+        margin-top: 8px;
+
+        &:first-child {
+            margin-top: 0;
+        }
+    }
 }

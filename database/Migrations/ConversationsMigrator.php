@@ -50,12 +50,9 @@ class ConversationsMigrator
     {
         global $wpdb;
 
-        // $table is always $wpdb->prefix . 'fs_conversations' — not user input.
-        // esc_sql() is the correct escaping for SQL identifiers; $wpdb->prepare()
-        // cannot quote identifiers in WP < 6.2 (no %i placeholder available).
+        // Our own table name, not user input. esc_sql() because %i needs WP 6.2+.
         $table = esc_sql($table);
 
-        // Get existing indexes
         $existing_indexes = $wpdb->get_results("SHOW INDEX FROM `{$table}`"); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
         $existing_index_names = [];
 
@@ -63,12 +60,8 @@ class ConversationsMigrator
             $existing_index_names[] = $index->Key_name;
         }
 
-        // Desired indexes — keys and values are all hardcoded string literals.
-        // idx_person_id_created_at speeds up Advanced Reports queries that filter
-        // fs_conversations by an agent's person_id AND a date range together —
-        // without it MySQL falls back to idx_person_id alone and scans an agent's
-        // entire conversation history before filtering by date, which gets very
-        // slow on large installs (proven ~100x slower on a 300k-ticket dataset).
+        // idx_person_id_created_at serves Advanced Reports' agent + date range queries.
+        // Without it MySQL scans the agent's whole history via idx_person_id.
         $indexes = [
             'idx_ticket_id'            => '`ticket_id`',
             'idx_person_id'            => '`person_id`',
@@ -76,8 +69,6 @@ class ConversationsMigrator
             'idx_person_id_created_at' => '`person_id`, `created_at`',
         ];
 
-        // Add missing indexes. $table is esc_sql()'d above; $index_name and
-        // $columns are hardcoded array literals — no user input reaches this query.
         foreach ($indexes as $index_name => $columns) {
             if (!in_array($index_name, $existing_index_names)) {
                 // phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter,WordPress.DB.PreparedSQL.NotPrepared -- all identifiers are either esc_sql()'d or hardcoded literals.

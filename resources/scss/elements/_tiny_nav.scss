@@ -24,6 +24,15 @@
         overflow-y: auto;
     }
 
+    .fs_ticket_nav_empty {
+        margin: 0;
+        padding: 24px 12px;
+        font-size: 14px;
+        line-height: 20px;
+        color: var(--fs-text-muted, #99A0AE);
+        text-align: center;
+    }
+
     .fs_ticket_card {
         display: flex;
         gap: 12px;
@@ -117,5 +126,16 @@
         text-align: right;
         white-space: nowrap;
         flex-shrink: 0;
+    }
+}
+
+// On stacked (tablet and phone) layouts the ticket comes first: the ticket filters
+// and the filtered ticket list would push it below the fold.
+@media (max-width: 1024px) {
+    .fs_is_viewing_ticket {
+        .fs_tickets_tiny_nav,
+        .fs_tk_inner_sidebar {
+            display: none;
+        }
     }
 }

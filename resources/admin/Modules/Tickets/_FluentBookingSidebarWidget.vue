@@ -22,10 +22,12 @@
                         rel="noopener"
                         :title="$t('View upcoming bookings in FluentBooking')"
                     >
-                        +{{ meetings.upcoming.length - 1 }} {{ $t('more') }}
+                        <!-- translators: %s is the number of additional items not shown -->
+                        {{ $t('+%s more', meetings.upcoming.length - 1) }}
                     </a>
                     <span v-else-if="meetings.upcoming.length > 1" class="fs_fb_section_count">
-                        +{{ meetings.upcoming.length - 1 }} {{ $t('more') }}
+                        <!-- translators: %s is the number of additional items not shown -->
+                        {{ $t('+%s more', meetings.upcoming.length - 1) }}
                     </span>
                 </div>
                 <div class="fs_fb_meeting_card">
@@ -45,7 +47,8 @@
                             <div class="fs_fb_meeting_title">{{ nextMeeting.event_title || $t('Meeting') }}</div>
                             <div class="fs_fb_meeting_time">{{ nextMeeting.date_text }}</div>
                             <div v-if="nextMeeting.timezone" class="fs_fb_meeting_timezone">
-                                {{ $t('Timezone') }}: {{ nextMeeting.timezone }}
+                                <!-- translators: %s is the meeting's time zone -->
+                                {{ $t('Timezone: %s', nextMeeting.timezone) }}
                             </div>
                             <div v-if="nextMeeting.internal_note" class="fs_fb_internal_note">
                                 <span>{{ $t('Internal Note') }}</span>

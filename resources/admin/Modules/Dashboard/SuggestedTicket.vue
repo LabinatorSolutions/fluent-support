@@ -25,31 +25,24 @@
 
         <div class="fs_stats_info" v-if="component_data.overall_stats">
             <p class="fs_stat_helper">
-                <span>
-                    {{ component_data.overall_stats.waiting_tickets }}
-                    {{ $t("tickets") }}</span
-                >
-                {{ $t("are waiting for reply with") }}
-                <span>
-                    {{ $t("average") }}
-                    {{ component_data.overall_stats.average_waiting }}
-                    {{ $t("wait time") }}</span
-                >
-                & {{ $t("max wait time") }}
-                <span>{{
-                    component_data.overall_stats.max_waiting
-                }}</span>
+                <span class="fs_stat_helper_icon"><DynamicIcon name="InformationFill" /></span>
+                <span class="fs_stat_helper_text">
+                    <!-- translators: %1$s is the number of tickets waiting for a reply, %2$s the average wait (e.g. 3 hours), %3$s the longest wait -->
+                    {{ $_n('%1$s ticket is waiting for a reply, with an average wait of %2$s and a longest wait of %3$s.', '%1$s tickets are waiting for a reply, with an average wait of %2$s and a longest wait of %3$s.', component_data.overall_stats.waiting_tickets, component_data.overall_stats.average_waiting, component_data.overall_stats.max_waiting) }}
+                </span>
             </p>
         </div>
     </div>
 </template>
 <script>
 import DashboardTicket from "@/admin/Components/DashboardTicket.vue";
+import DynamicIcon from "@/admin/Components/Icons/DynamicIcon.vue";
 
 export default {
     name: "SuggestedTicket",
     components: {
-        DashboardTicket
+        DashboardTicket,
+        DynamicIcon
     },
     props: {
         component_data: {

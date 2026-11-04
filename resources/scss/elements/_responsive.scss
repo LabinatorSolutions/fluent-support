@@ -71,18 +71,6 @@
             }
         }
 
-        .inner_sidebar {
-            width: 100%;
-
-            ul {
-                li {
-                    display: inline-block;
-                    margin-bottom: 10px;
-                    padding-right: 15px;
-                }
-            }
-        }
-
         .inner_body {
             width: 100%;
         }
@@ -132,7 +120,6 @@
         .fs_tickets_view {
             position: static;
             .fs_ticket_sidebar {
-                margin-top: 80px;
                 width: 100%;
             }
             .fs_tk_inner_body{
@@ -141,11 +128,6 @@
 
             .fs_ticket_body {
                 width: 100%;
-
-                .fs_thread_wrap {
-                    margin: 0;
-                    padding: 20px 10px;
-                }
 
                 .fs_thread_body {
                     width: 100%;
@@ -157,7 +139,6 @@
             padding: 8px 10px;
         }
         .fs_top_bar_actions .fs_action_buttons{
-            padding: 8px 10px;
             flex-wrap: wrap;
             gap: 10px !important;
             .fs_more_action,
@@ -176,37 +157,9 @@
         }
 
         .fs_ticket_body {
-            .fs_th_header .fs_tk_subject h2 {
-                font-size: 16px;
-                line-height: 21px;
-                font-weight: 500;
-                display: inline;
-            }
-
-            .fs_business_name {
-                display: none;
-            }
-
-            .fs_thread .fs_avatar {
-                position: absolute;
-                margin: 19px 0px 0px 10px;
-                width: 28px;
-                height: 28px;
-                background: transparent;
-
-                img {
-                    border-radius: 50%;
-                    max-width: 24px;
-                    max-height: 24px;
-                }
-            }
 
             .fs_thread_head {
                 padding-left: 32px;
-
-                .fs_thread_title {
-                    font-size: 15px;
-                }
             }
 
             .fs_create_response {
@@ -265,36 +218,6 @@
         flex-wrap: wrap;
         overflow: scroll;
     }
-    .fframe_body{
-        .fs_all_tickets {
-            .fs_tickets_list {
-                overflow-x: auto;
-                overflow-y: visible;
-                -webkit-overflow-scrolling: touch;
-                width: 100%;
-
-                .fs_ticket_item {
-                    min-width: 650px;
-                    flex-shrink: 0;
-
-                    .fs_ticket_main_content {
-                        flex-wrap: nowrap;
-                    }
-
-                    .fs_ticket_footer {
-                        align-items: flex-start;
-                        flex-direction: column;
-                        justify-content: flex-start;
-                        gap: 10px;
-                        .fs_ticket_meta{
-                            gap: 5px;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     .dashboard {
         .el-row {
             flex-wrap: wrap;
@@ -331,10 +254,6 @@
     .fs_popover.el-tooltip{
         width: 250px !important;
     }
-    .fs_filter_dropdown {
-        height: auto !important;
-        max-height: 60vh !important;
-    }
 }
 
 @media all and (max-width: 768px) {
@@ -370,10 +289,6 @@
 {
     .el-drawer.rtl.open.fs_dashboard_settings{
         width:80%!important;
-    }
-    
-    .el-drawer.rtl.open.fs_wc_order_details{
-        width:100%!important;
     }
 }
 

@@ -14,30 +14,30 @@
                 <div class="fs_menu_container">
                     <div class="fs_menu_item" :class="{ active: $route.name === 'box_settings' }">
                         <router-link :to="{ name: 'box_settings', params: { box_id: mailbox.id } }">
-                            <img :src="appVars.asset_url + 'images/inboxSettings.svg'" alt="">
+                            <DynamicIcon name="InboxSettings"/>
                             <span>{{ $t('Inbox Settings') }}</span>
                             <div class="fs_menu_arrow_wrapper">
-                                <img v-if="$route.name === 'box_settings'" class="fs_menu_arrow" :src="appVars.asset_url + 'images/arrow.svg'" />
+                                <DynamicIcon name="Arrow" v-if="$route.name === 'box_settings'" class="fs_menu_arrow"/>
                             </div>
                         </router-link>
                     </div>
 
                     <div class="fs_menu_item" :class="{ active: $route.name === 'email_settings' }">
                         <router-link :to="{ name: 'email_settings', params: { box_id: mailbox.id } }">
-                            <img :src="appVars.asset_url + 'images/emailSettings.svg'" alt="">
+                            <DynamicIcon name="EmailSettings"/>
                             <span>{{ $t('Email Settings') }}</span>
                             <div class="fs_menu_arrow_wrapper">
-                                <img v-if="$route.name === 'email_settings'" class="fs_menu_arrow" :src="appVars.asset_url + 'images/arrow.svg'" />
+                                <DynamicIcon name="Arrow" v-if="$route.name === 'email_settings'" class="fs_menu_arrow"/>
                             </div>
                         </router-link>
                     </div>
 
                     <div v-if="mailbox && mailbox.box_type == 'email'" class="fs_menu_item" :class="{ active: $route.name === 'email_piping' }">
                         <router-link :to="{ name: 'email_piping', params: { box_id: mailbox.id } }">
-                            <img :src="appVars.asset_url + 'images/emailPiping.svg'" alt="">
+                            <DynamicIcon name="EmailPiping"/>
                             <span>{{ $t('Email Piping') }}</span>
                             <div class="fs_menu_arrow_wrapper">
-                                <img v-if="$route.name === 'email_piping'" class="fs_menu_arrow" :src="appVars.asset_url + 'images/arrow.svg'" />
+                                <DynamicIcon name="Arrow" v-if="$route.name === 'email_piping'" class="fs_menu_arrow"/>
                             </div>
                         </router-link>
                     </div>
@@ -48,15 +48,45 @@
                 </div>
             </div>
         </div>
-        <div class="fs_box_body fs_skeleton_loader" v-else>
-            <el-skeleton :rows="5" animated/>
+        <div class="fs_box_wrapper" v-else>
+            <div class="fs_breadcrumb">
+                <el-skeleton animated>
+                    <template #template>
+                        <el-skeleton-item variant="text" style="width: 220px;" />
+                    </template>
+                </el-skeleton>
+            </div>
+            <div class="fs_mailbox_settings_wrapper">
+                <div class="fs_menu_container">
+                    <div v-for="n in 3" :key="n" class="fs_menu_item">
+                        <el-skeleton animated>
+                            <template #template>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <el-skeleton-item variant="rect" style="width: 20px; height: 20px; flex-shrink: 0;" />
+                                    <el-skeleton-item variant="text" style="width: 60%;" />
+                                </div>
+                            </template>
+                        </el-skeleton>
+                    </div>
+                </div>
+                <div class="inner_body fs_box_body fs_padded_20">
+                    <FormSkeleton :fields="5" :button="false" />
+                </div>
+            </div>
         </div>
     </div>
 </template>
 
 <script type="text/babel">
+import DynamicIcon from '@/admin/Components/Icons/DynamicIcon.vue';
+import FormSkeleton from '@/admin/Components/FormSkeleton.vue';
+
 export default {
     name: 'MailBoxRoot',
+    components: {
+        DynamicIcon,
+        FormSkeleton
+    },
     props: ['box_id'],
     data() {
         return {

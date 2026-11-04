@@ -1,6 +1,5 @@
 <template>
     <div class="fs_create_ticket_container">
-        <!-- Back Button -->
         <back-button/>
 
         <div class="fs_ticket_form_container">
@@ -171,7 +170,7 @@ import Errors from '@/common/Errors.js'
 import CustomFieldsForm from "./_CustomFieldForm";
 import AttachmentForm from "./_AttachmentForm";
 import BackButton from "./pieces/BackButton";
-import debounce from "lodash/debounce";
+import { debounce } from "lodash-es";
 
 export default {
     name: 'CreateTicket',
@@ -278,9 +277,8 @@ export default {
                 })
                 .catch((errors) => {
                     this.errors.record(errors)
-                    // Portal Rest.js rejects with the parsed JSON body directly (no responseJSON
-                    // wrapper). A top-level `message` is a general, non-field error — show it
-                    // persistently above the submit button.
+                    // Portal Rest.js rejects with the JSON body itself. A top-level
+                    // `message` is a non-field error shown above the submit button.
                     this.generalError = (errors && errors.message) ? errors.message : ''
                     this.creating = false;
                     this.resetRecaptcha();
@@ -290,12 +288,8 @@ export default {
                 })
         },
         ensureRecaptchaScript() {
-            // Loaded lazily here (rather than enqueued for every portal route) since
-            // this component is the only consumer of the Google reCAPTCHA script.
-            // Dedupe against an already-present tag with this id — whether from an
-            // earlier mount of this component, or another plugin's own enqueue of the
-            // same handle ('recaptcha' -> 'recaptcha-js'), e.g. AuthHandler's own v2
-            // recaptcha enqueue for the login form.
+            // Loaded here since this is the only portal consumer. Reuse an existing
+            // 'recaptcha-js' tag, e.g. from an earlier mount or AuthHandler's enqueue.
             const existingScript = document.getElementById('recaptcha-js');
 
             if (existingScript) {
@@ -303,8 +297,7 @@ export default {
                     return;
                 }
 
-                // The shared tag was loaded for a different version/site key — swap it
-                // so v3's execute() isn't called against the wrong render key.
+                // Loaded for a different site key, which would break v3's execute().
                 this.replaceRecaptchaScript(existingScript);
                 return;
             }
@@ -357,10 +350,8 @@ export default {
             existingScript.replaceWith(freshScript);
         },
         markRecaptchaScriptPending(scriptEl) {
-            // window.grecaptcha can still hold a stale instance (e.g. from the script
-            // tag we're about to replace) until this specific element finishes loading
-            // — gate readiness on it explicitly so waitForRecaptchaScript() can't treat
-            // the old global as ready for the newly requested version/site key.
+            // window.grecaptcha may still be the replaced script's instance until this
+            // element loads, so waitForRecaptchaScript() must not trust it yet.
             this.recaptchaScriptPendingReload = true;
 
             scriptEl.addEventListener('load', () => {
@@ -378,12 +369,9 @@ export default {
                 return;
             }
 
-            // Primary path: render as soon as the enqueued recaptcha script actually
-            // finishes loading, rather than assuming it completes within the poll window.
             this.attachRecaptchaScriptListeners();
 
-            // Fallback path: bounded poll, in case the script tag can't be observed
-            // directly or its load event already fired before this component mounted.
+            // Fallback for when the load event already fired or the tag isn't found.
             this.pollForRecaptchaWidget();
         },
         renderRecaptchaWidget() {
@@ -411,8 +399,8 @@ export default {
             return true;
         },
         attachRecaptchaScriptListeners() {
-            // WordPress appends "-js" to the enqueued script handle ('recaptcha',
-            // see CustomerPortalHandler::enqueueScripts()) to build the <script> tag's id.
+            // WordPress builds this id from the 'recaptcha' handle enqueued in
+            // AuthHandler::loadAssets(). Our own tag uses the same id.
             const scriptEl = document.getElementById('recaptcha-js');
 
             if (!scriptEl) {
@@ -427,7 +415,7 @@ export default {
             scriptEl.addEventListener('error', this.recaptchaScriptErrorHandler, {once: true});
         },
         pollForRecaptchaWidget() {
-            const maxAttempts = 50; // ~15s fallback poll, in case the script's load event never fires
+            const maxAttempts = 50; // ~15s
 
             if (this.recaptchaPollTimeoutId) {
                 clearTimeout(this.recaptchaPollTimeoutId);
@@ -452,17 +440,12 @@ export default {
 
             const scriptEl = document.getElementById('recaptcha-js');
 
-            // Reload when the script never loaded, or when the tag present belongs to
-            // a different version/site key (e.g. AuthHandler's own recaptcha enqueue
-            // won the shared 'recaptcha-js' id) — window.grecaptcha existing doesn't
-            // mean it's usable for this form.
+            // Reload if the script never loaded or was loaded for a different site key.
             if (!window.grecaptcha || !this.isRecaptchaScriptCompatible(scriptEl)) {
                 this.reloadRecaptchaScript();
 
-                // loadRecaptchaWidget() below is a no-op for v3 (no widget to render),
-                // so it never attaches load/error handling to the replacement script.
-                // Attach it here instead — otherwise a second failure goes unnoticed
-                // until the next submit's bounded 15s wait times out.
+                // loadRecaptchaWidget() is a no-op for v3, so watch the new script here
+                // or a second failure goes unnoticed until the next submit.
                 if (this.recaptchaVersion === 'recaptcha_v3') {
                     this.waitForRecaptchaScript();
                 }
@@ -482,11 +465,8 @@ export default {
                 failedScript.removeEventListener('error', this.recaptchaScriptErrorHandler);
             }
 
-            // A <script> tag that already fired 'error' won't be retried by the browser
-            // on its own — replace it with a fresh element (cache-busted) so Retry can
-            // recover from a genuine script-load failure, not just a slow one. Rebuilt
-            // from the current version/site key rather than cache-busting the existing
-            // src, since that src may belong to an incompatible shared tag.
+            // Browsers don't retry a failed <script>, so swap in a fresh, cache-busted one.
+            // Build the src from our settings since the old one may be for another site key.
             const retryUrl = new URL(this.buildRecaptchaScriptSrc(), window.location.href);
             retryUrl.searchParams.set('fs_retry', Date.now());
 
@@ -533,11 +513,8 @@ export default {
                             resolve(token);
                         };
 
-                        // ready()'s callback firing, and execute() resolving/rejecting, isn't
-                        // guaranteed with an invalid/incompatible site key or grecaptcha
-                        // instance — bound the wait so create() doesn't hang forever with
-                        // creating=true. Tracked on `this` (like recaptchaV3WaitTimeoutId)
-                        // so beforeUnmount() can cancel it early.
+                        // With a bad site key, ready()/execute() may never settle. Bound the
+                        // wait so create() can't hang. Kept on `this` for beforeUnmount().
                         this.recaptchaExecuteTimeoutId = setTimeout(() => finish(''), 15000);
 
                         try {
@@ -551,10 +528,8 @@ export default {
                                     finish('');
                                 }
 
-                                // Google may create the badge lazily on this first execute()
-                                // call rather than at script-ready time. The mount-time poll
-                                // window may already have elapsed by the time the user
-                                // actually submits, so re-poll here in case it just appeared.
+                                // The badge may only appear after the first execute(), long
+                                // after the mount-time poll gave up.
                                 this.recaptchaBadgePollAttempts = 0;
                                 this.pollForRecaptchaBadge();
                             });
@@ -568,16 +543,13 @@ export default {
             return Promise.resolve(this.recaptchaToken);
         },
         waitForRecaptchaScript() {
-            // A stale window.grecaptcha can survive a script replacement/reload until
-            // the new element's own 'load' fires — don't trust it as ready until then.
             if (window.grecaptcha && !this.recaptchaScriptPendingReload) {
                 this.recaptchaLoadFailed = false;
                 return Promise.resolve(true);
             }
 
-            // The v3 flow has no visible widget to retry from, so — unlike the v2
-            // poll — a slow-loading script here is handled by waiting out the same
-            // bounded window inline, rather than failing the first submit attempt.
+            // v3 has no widget to retry from, so wait for a slow script instead of
+            // failing the first submit.
             return new Promise((resolve) => {
                 const maxWaitMs = 15000;
                 let settled = false;
@@ -588,9 +560,7 @@ export default {
                     }
                     settled = true;
                     clearTimeout(timeoutId);
-                    // Surfaces a Retry control (see fs_recaptcha_container v3 block)
-                    // instead of leaving the user to hit the same 15s wait again on
-                    // every submit with only a generic "not a robot" error.
+                    // Shows the v3 Retry control in fs_recaptcha_container.
                     this.recaptchaLoadFailed = !isReady;
                     resolve(isReady);
                 };
@@ -607,7 +577,7 @@ export default {
             });
         },
         pollForRecaptchaBadge() {
-            const maxAttempts = 50; // ~15s, mirrors the widget poll's bound
+            const maxAttempts = 50; // ~15s
 
             if (this.recaptchaBadgePollTimeoutId) {
                 clearTimeout(this.recaptchaBadgePollTimeoutId);
@@ -631,9 +601,8 @@ export default {
             this.recaptchaBadgePollTimeoutId = setTimeout(() => this.pollForRecaptchaBadge(), 300);
         },
         showRecaptchaBadge(visible) {
-            // The badge is portal-wide hidden by default (all_public.scss) so it doesn't
-            // float on pages that don't use v3. Un-hide it here while this form is mounted,
-            // per Google's reCAPTCHA ToS requirement that the badge stay visible.
+            // all_public.scss hides the badge portal-wide. Google's terms require it
+            // visible where v3 runs, so show it while this form is mounted.
             const badge = document.querySelector('.grecaptcha-badge');
 
             if (badge) {
@@ -680,9 +649,7 @@ export default {
         if (this.recaptchaEnabled && this.recaptchaVersion === 'recaptcha_v3') {
             this.waitForRecaptchaScript().then((isReady) => {
                 if (isReady && !this.isUnmounted) {
-                    // The badge isn't guaranteed to exist in the DOM as soon as the
-                    // script is ready — grecaptcha can create it lazily (e.g. on the
-                    // first execute() call) — so poll for it rather than assuming.
+                    // grecaptcha may create the badge lazily, so poll for it.
                     this.pollForRecaptchaBadge();
                 }
             });

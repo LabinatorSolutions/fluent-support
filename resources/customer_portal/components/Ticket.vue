@@ -15,7 +15,7 @@
                                 </span>
                                 <span v-if="canViewPrivateTicketNumber && privateTicketNumber" class="fs_ticket_meta_separator">•</span>
                                 <span v-if="canViewPrivateTicketNumber && privateTicketNumber !== ''">
-                                    {{ $t('Default') }} {{ $t('Ticket') }}: <strong>{{ displayTicketNumber }}</strong>
+                                    {{ $t('Ticket number:') }} <strong>{{ displayTicketNumber }}</strong>
                                 </span>
                                 <span v-else>
                                     #<strong>{{ displayTicketNumber }}</strong>
@@ -38,7 +38,7 @@
                             <p v-if="ticket.product">{{ ticket.product.title }}</p>
                         </div>
                         <div v-if="ticket.status != 'closed'" class="fs_ticket_actions_btn">
-                            <div v-loading="fetching" class="fs_ticket_refresh_btn" @click="fetchTicket()">
+                            <div class="fs_ticket_refresh_btn" :class="{ fs_is_busy: fetching }" :aria-busy="fetching ? 'true' : 'false'" @click="fetchTicket()">
                                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                                      xmlns="http://www.w3.org/2000/svg">
                                     <path
@@ -48,8 +48,9 @@
                                 <span>{{ $t('Refresh') }}</span>
                             </div>
 
-                            <div class="fs_close_ticket" :disabled="updating" v-loading="updating"
+                            <div class="fs_close_ticket" :class="{ fs_is_busy: updating }" :aria-busy="updating ? 'true' : 'false'"
                                  @click="closeTicket()">
+                                <span v-if="updating" class="fs_spinner" aria-hidden="true"></span>
                                 <span class="fs_close_ticket_title">{{ $t('Close Ticket') }}</span>
                             </div>
                         </div>
@@ -80,15 +81,26 @@
                                             fill="#335CFF"/>
                                     </svg>
 
-                                    <p>{{ $t('ticket_closed') }} {{ ticket.resolved_at }}
-                                        <span v-if="ticket.closed_by_person">
-                                            {{ $t('by') }} {{ getHumanName(ticket.closed_by_person) }}
-                                        </span>
-                                        {{ $t('reopen_ticket_instruction') }}
+                                    <p>
+                                        <!-- Imported tickets can be closed with no close date. -->
+                                        <template v-if="ticket.resolved_at && ticket.closed_by_person">
+                                            <!-- translators: %1$s is the date the ticket was closed, %2$s the name of the person who closed it -->
+                                            {{ $t('This ticket was closed on %1$s by %2$s.', ticket.resolved_at, getHumanName(ticket.closed_by_person)) }}
+                                        </template>
+                                        <template v-else-if="ticket.resolved_at">
+                                            <!-- translators: %s is the date the ticket was closed -->
+                                            {{ $t('This ticket was closed on %s.', ticket.resolved_at) }}
+                                        </template>
+                                        <template v-else-if="ticket.closed_by_person">
+                                            <!-- translators: %s is the name of the person who closed the ticket -->
+                                            {{ $t('This ticket was closed by %s.', getHumanName(ticket.closed_by_person)) }}
+                                        </template>
+                                        {{ $t('If you still need help with this issue, reopen the ticket and reply.') }}
                                     </p>
                                 </span>
 
-                                <a class="fs_ticket_reopen" :disabled="updating" v-loading="updating" @click="reOpen()">
+                                <a class="fs_ticket_reopen" :class="{ fs_is_busy: updating }" :aria-busy="updating ? 'true' : 'false'" @click="reOpen()">
+                                    <span v-if="updating" class="fs_spinner" aria-hidden="true"></span>
                                     {{ $t('Reopen This ticket') }}
                                 </a>
                             </div>
@@ -203,10 +215,11 @@
                                 </section>
                             </div>
                         </article>
-                        <article class="fs_ticket_thread fs_conversion_starter" ref="conversionStarter">
+                        <!-- An agent-initiated ticket opens on the agent's first response, like an email; its body is only a placeholder. -->
+                        <article v-if="!isAgentInitiated || !isEmpty(ticket.custom_fields)" class="fs_ticket_thread fs_conversion_starter" ref="conversionStarter">
                             <div class="fs_conversion_starter_section">
                                 <div class="fs_join_thread_custom_field">
-                                    <div class="fs_ticket_thread_content fs_starter_thread_content">
+                                    <div v-if="!isAgentInitiated" class="fs_ticket_thread_content fs_starter_thread_content">
                                         <section class="fs_ticket_avatar">
                                             <img v-if="ticket.created_by_agent" :src="ticket.created_by_agent.photo" :alt="ticket.created_by_agent.full_name"/>
                                             <img v-else :src="ticket.customer.photo" :alt="ticket.customer.full_name"/>
@@ -277,9 +290,37 @@
                 </div>
             </template>
 
-            <div style="padding: 20px;" class="fs_ticket_body" v-else-if="!error_message">
-                <el-skeleton :rows="5" animated/>
-            </div>
+            <!-- Placeholder shaped like the ticket header, reply box and thread -->
+            <el-skeleton v-else-if="!error_message" animated class="fs_portal_skeleton" aria-hidden="true">
+                <template #template>
+                    <div class="fs_ticket_heroarea">
+                        <div class="fs_tk_subject">
+                            <div class="fs_ticket_heading fs_skeleton_lines fs_skeleton_grow">
+                                <el-skeleton-item variant="h3" style="width: 60%;"/>
+                                <el-skeleton-item variant="text" style="width: 80px;"/>
+                            </div>
+                            <el-skeleton-item variant="button" class="fs_skeleton_badge"/>
+                        </div>
+                        <div class="fs_ticket_reply_box fs_skeleton_lines">
+                            <el-skeleton-item variant="text" style="width: 96px;"/>
+                            <el-skeleton-item variant="rect" class="fs_skeleton_reply_input"/>
+                        </div>
+                    </div>
+                    <div class="fs_ticket_threads_container">
+                        <div v-for="row in 3" :key="row" class="fs_ticket_thread fs_customer_conversation">
+                            <div class="fs_ticket_thread_content">
+                                <el-skeleton-item variant="circle" class="fs_skeleton_avatar"/>
+                                <div class="fs_skeleton_lines fs_skeleton_grow">
+                                    <el-skeleton-item variant="text" style="width: 160px;"/>
+                                    <el-skeleton-item variant="text"/>
+                                    <el-skeleton-item variant="text" :style="{ width: (row === 2 ? 50 : 75) + '%' }"/>
+                                    <el-skeleton-item variant="text" style="width: 72px;"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </el-skeleton>
             <div style="padding: 20px; text-align: center;" class="fs_ticket_body" v-else-if="error_message">
                 <p v-html="error_message"></p>
                 <el-button type="primary" @click="$router.push({ name: 'dashboard' })" size="small">
@@ -291,11 +332,10 @@
 </template>
 
 <script type="text/babel">
-import { stripReservedElementPlusClasses } from '@/common/domPurifyGuards';
+import { applyPurifyGuards } from '@/common/domPurifyGuards';
 import InlineReply from "./InlineReply";
 import BackButton from "./pieces/BackButton";
-import isEmpty from 'lodash/isEmpty';
-import isArray from 'lodash/isArray';
+import { isArray, isEmpty } from 'lodash-es';
 
 export default {
     name: 'ticket',
@@ -318,6 +358,9 @@ export default {
         }
     },
     computed: {
+        isAgentInitiated() {
+            return !!(this.ticket.created_by_agent && this.ticket.created_by_agent.agent_initiated);
+        },
         displayTicketNumber() {
             return this.ticket.display_ticket_number || this.ticket.serial_number || this.ticket.id;
         },
@@ -406,17 +449,27 @@ export default {
 
             return person.full_name;
         },
+        // The closed notice reads when and by whom, so they change with the status. The
+        // close/re-open responses carry the date but not the person.
+        applyTicketStatus(ticket) {
+            this.ticket.status = ticket.status;
+            this.ticket.resolved_at = ticket.resolved_at || null;
+            this.ticket.closed_by_person = ticket.closed_by_person || null;
+        },
         recordNewResponse(response, ticket) {
             this.conversations.unshift(response);
-            this.ticket.status = ticket.status;
+            this.applyTicketStatus(ticket);
         },
         closeTicket() {
+            if (this.updating) {
+                return;
+            }
             this.updating = true;
             this.$post(`tickets/${this.ticket_id}/close`, {
                 intended_ticket_hash: this.appVars.intended_ticket_hash || ''
             })
                 .then(response => {
-                    this.ticket.status = response.ticket.status;
+                    this.applyTicketStatus(response.ticket);
                 })
                 .catch((errors) => {
                     this.$handleError(errors);
@@ -426,12 +479,15 @@ export default {
                 });
         },
         reOpen() {
+            if (this.updating) {
+                return;
+            }
             this.updating = true;
             this.$post(`tickets/${this.ticket_id}/re-open`, {
                 intended_ticket_hash: this.appVars.intended_ticket_hash || ''
             })
                 .then(response => {
-                    this.ticket.status = response.ticket.status;
+                    this.applyTicketStatus(response.ticket);
                 })
                 .catch((errors) => {
                     this.$handleError(errors);
@@ -477,10 +533,9 @@ export default {
                 return string;
             }
 
-            stripReservedElementPlusClasses(window.DOMPurify);
+            applyPurifyGuards(window.DOMPurify);
 
             return window.DOMPurify.sanitize(string, {
-                ADD_ATTR:    ['target'],
                 FORBID_TAGS: ['style'],
             });
         }

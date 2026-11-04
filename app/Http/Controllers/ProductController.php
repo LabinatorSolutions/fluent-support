@@ -9,7 +9,6 @@ use FluentSupport\Framework\Http\Request\Request;
 class ProductController extends Controller
 {
     /**
-     * index method will return the list of product
      * @param Request $request
      * @param Product $product
      * @return array
@@ -20,7 +19,6 @@ class ProductController extends Controller
     }
 
     /**
-     * get method will get product by id and return
      * @param Product $product
      * @param int $product_id
      * @return array
@@ -31,8 +29,7 @@ class ProductController extends Controller
     }
 
     /**
-     * creare method will create new product
-     * @param Request $request
+     * @param ProductRequest $request
      * @param Product $product
      * @return array
      * @throws \FluentSupport\Framework\Validator\ValidationException
@@ -46,8 +43,7 @@ class ProductController extends Controller
 
 
     /**
-     * update methd will update an exiting product by id
-     * @param Request $request
+     * @param ProductRequest $request
      * @param Product $product
      * @param int $product_id
      * @return array
@@ -61,7 +57,6 @@ class ProductController extends Controller
     }
 
     /**
-     * delete method will delete an existing product by id
      * @param Product $product
      * @param int $product_id
      * @return array

@@ -24,7 +24,7 @@
             <el-checkbox
                 v-if="hasPreviousMigration"
                 v-model="start_from_previous_migration"
-                :label="$t('An incomplete migration exists. Would you like to resume from the previous one?') + ' (' + previously_imported.completed + '% ' + $t('completed') + ')'"
+                :label="resumeMigrationLabel"
                 size="large"
             />
             <div class="fs_importer_actions">
@@ -61,6 +61,10 @@ export default {
         };
     },
     computed: {
+        resumeMigrationLabel() {
+            // translators: %s is how much of the previous migration finished, as a percentage, e.g. "40%"
+            return this.$t('An incomplete migration exists (%s completed). Would you like to resume from the previous one?', this.previously_imported.completed + '%');
+        },
         hasPreviousMigration() {
             return this.previously_imported
                 && Object.keys(this.previously_imported).length > 0

@@ -1,0 +1,599 @@
+// Scheduled replies: Reply split button, scheduling popover, pending card and badges
+
+// ─── Reply split button ────────────────────
+.fs_response_actions.fs_button_group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    .el-button.fs_reply_close_btn {
+        height: auto;
+        margin: 0;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--fs-text-secondary, #525866);
+        text-decoration: underline;
+        text-underline-offset: 3px;
+
+        &:hover {
+            color: var(--fs-text-primary, #0E121B);
+        }
+    }
+}
+
+.fs_reply_icon {
+    flex: none;
+}
+
+.fs_reply_split {
+    display: inline-flex;
+    align-items: stretch;
+
+    &.fs_reply_split_on {
+        .el-button.fs_filled_btn {
+            height: 36px;
+            font-weight: 600;
+
+            > span {
+                gap: 8px;
+            }
+
+            &:hover,
+            &[aria-expanded="true"] {
+                background: var(--fs-bg-muted, #2B303B);
+            }
+
+            &:focus {
+                box-shadow: none;
+            }
+
+            &:focus-visible {
+                box-shadow: 0 0 0 2px var(--fs-bg-primary, #FFF), 0 0 0 4px var(--fs-text-info, #335CFF);
+            }
+
+            &.is-disabled,
+            &.is-disabled:hover {
+                background: var(--fs-btn-primary-bg, #0E121B);
+                color: var(--fs-text-white, #FFF);
+                opacity: 0.6;
+                cursor: not-allowed;
+            }
+        }
+
+        .fs_reply_btn:not(.fs_reply_split_toggle) {
+            padding: 0 16px 0 14px;
+            border-start-end-radius: 0;
+            border-end-end-radius: 0;
+        }
+
+        .fs_reply_split_toggle {
+            width: 34px;
+            margin-inline-start: 0 !important;
+            padding: 0;
+            border-start-start-radius: 0;
+            border-end-start-radius: 0;
+            border-inline-start: 1px solid color-mix(in srgb, currentColor 22%, transparent);
+        }
+    }
+}
+
+.fs_create_response .fs_editor_needs_text .wp-editor-container {
+    border-color: var(--fs-dot-warning, #FF8447);
+    box-shadow: 0 0 0 3px var(--fs-dot-warning-glow, #FFF1EB);
+}
+
+.fs_schedule_empty_notice {
+    display: flex;
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid var(--fs-state-away-light, #FFECC0);
+    border-radius: var(--fs-radius-md, 8px);
+    background: var(--fs-state-away-lighter, #FFFAEB);
+    color: var(--fs-state-away-dark, #624C18);
+
+    .el-icon {
+        flex: none;
+        margin-top: 1px;
+        font-size: 18px;
+    }
+}
+
+.fs_schedule_empty_notice_text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 13px;
+    line-height: 1.45;
+
+    strong {
+        font-size: 14px;
+        font-weight: 600;
+    }
+}
+
+.fs_schedule_edit_empty {
+    margin: 12px 0 0;
+}
+
+.fs_schedule_edit_banner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 12px 0 0;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: rgba(51, 92, 255, 0.08);
+    color: var(--fs-text-primary, #0E121B);
+    font-size: 13px;
+
+    .fs_schedule_edit_banner_text {
+        flex: 1;
+    }
+
+    .el-button {
+        font-weight: 500;
+    }
+}
+
+// ─── Scheduling popover ────────────────────
+.fs_schedule_popover.el-popover.el-popper {
+    border: 1px solid var(--fs-border-default, #E1E4EA);
+    border-radius: 10px;
+    background: var(--fs-bg-primary, #FFF);
+    box-shadow: 0 12px 32px rgba(14, 18, 27, 0.16), 0 2px 6px rgba(14, 18, 27, 0.08);
+
+    &.fs_schedule_popover_menu {
+        padding: 6px;
+    }
+
+    &.fs_schedule_popover_form {
+        max-width: calc(100vw - 48px);
+        padding: 0;
+        border-radius: 14px;
+    }
+}
+
+.fs_schedule_menu {
+    display: flex;
+    flex-direction: column;
+}
+
+.el-button.fs_schedule_menu_item {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+    height: auto;
+    margin: 0;
+    padding: 9px 10px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--fs-text-primary, #0E121B);
+    text-align: start;
+
+    &:hover,
+    &:focus-visible {
+        background: var(--fs-bg-subtle, #F5F7FA);
+        color: var(--fs-text-primary, #0E121B);
+    }
+
+    &:focus-visible {
+        box-shadow: 0 0 0 2px var(--fs-bg-primary, #FFF), 0 0 0 4px var(--fs-shadow-soft, rgba(153, 160, 174, 0.16));
+    }
+
+    > span {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .el-icon {
+        margin-top: 2px;
+        font-size: 16px;
+        color: var(--fs-text-secondary, #525866);
+    }
+
+    .fs_schedule_menu_text {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1px;
+        margin: 0;
+    }
+
+    strong {
+        display: inline-flex;
+        align-items: center;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 20px;
+        color: var(--fs-text-primary, #0E121B);
+    }
+
+    small {
+        font-size: 12px;
+        line-height: 16px;
+        color: var(--fs-text-muted, #99A0AE);
+    }
+
+}
+
+.fs_schedule_blocked {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px;
+
+    p {
+        margin: 0;
+        font-size: 13px;
+        line-height: 1.5;
+        color: var(--fs-text-secondary, #525866);
+    }
+
+    .el-button.fs_outline_btn {
+        height: 32px;
+        padding: 0 12px;
+        font-size: 13px;
+        color: var(--fs-text-primary, #0E121B);
+
+        > span {
+            gap: 6px;
+        }
+    }
+}
+
+.fs_schedule_blocked_head {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.fs_schedule_blocked_icon {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--fs-radius-md, 8px);
+    background: var(--fs-badge-sm-info-bg, #EBF1FF);
+    color: var(--fs-text-info, #335CFF);
+    font-size: 16px;
+}
+
+.fs_schedule_blocked_title {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 13px;
+    line-height: 1.25;
+    color: var(--fs-text-secondary, #525866);
+
+    strong {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--fs-text-primary, #0E121B);
+    }
+}
+
+.fs_schedule_popover .fs_pro_badge {
+    margin-inline-start: 6px;
+}
+
+.fs_schedule_form_header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-height: 60px;
+    padding: 10px 56px;
+    border-bottom: 1px solid var(--fs-border-default, #E1E4EA);
+
+    .el-button.fs_schedule_back {
+        position: absolute;
+        top: 50%;
+        inset-inline-start: 12px;
+        width: 36px;
+        height: 36px;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        background: var(--fs-bg-subtle, #F5F7FA);
+        color: var(--fs-text-secondary, #525866);
+        transform: translateY(-50%);
+
+        &:hover {
+            background: var(--fs-border-default, #E1E4EA);
+            color: var(--fs-text-primary, #0E121B);
+        }
+
+        &:focus-visible {
+            box-shadow: 0 0 0 2px var(--fs-bg-primary, #FFF), 0 0 0 4px var(--fs-shadow-soft, rgba(153, 160, 174, 0.16));
+        }
+
+        .el-icon {
+            font-size: 18px;
+        }
+    }
+
+    .fs_pro_badge {
+        margin-inline-start: 8px;
+    }
+
+    .fs_schedule_form_title {
+        font-size: 17px;
+        font-weight: 700;
+        color: var(--fs-text-primary, #0E121B);
+    }
+}
+
+.fs_schedule_form_body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 14px 16px 16px;
+
+    .fs_schedule_form_desc {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.45;
+        color: var(--fs-text-primary, #0E121B);
+    }
+
+    .fs_schedule_tz,
+    .fs_schedule_error {
+        margin: 0;
+        font-size: 12.5px;
+        line-height: 1.45;
+        color: var(--fs-text-muted, #99A0AE);
+    }
+
+    .fs_schedule_error {
+        color: var(--fs-text-red, #FB3748);
+    }
+
+    .el-checkbox {
+        height: auto;
+
+        .el-checkbox__label {
+            font-size: 14px;
+            color: var(--fs-text-secondary, #525866);
+        }
+    }
+
+    .el-button.fs_schedule_submit {
+        width: 100%;
+        height: 40px;
+        margin: 0;
+        font-size: 14.5px;
+        font-weight: 600;
+
+        &:hover {
+            background: var(--fs-bg-muted, #2B303B);
+        }
+    }
+}
+
+.fs_schedule_form_preview {
+    .fs_schedule_tile {
+        opacity: 0.55;
+        cursor: not-allowed;
+    }
+
+    .fs_schedule_tz {
+        opacity: 0.55;
+    }
+
+    .el-checkbox .el-checkbox__original {
+        opacity: 0;
+    }
+}
+
+.fs_narrow_promo.fs_schedule_upsell {
+    align-items: stretch;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    text-align: start;
+
+    p {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 12px 14px;
+        border-radius: var(--fs-radius-md, 8px);
+        background: var(--fs-state-feature-light, #EFEBFF);
+        color: var(--fs-state-feature-dark, #351A75);
+    }
+
+    a.el-button {
+        width: 100%;
+        height: 40px;
+        margin-top: 4px;
+    }
+}
+
+.fs_schedule_fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+
+    @media (max-width: 420px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.fs_schedule_tile {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    padding: 10px 14px;
+    border: 1px solid var(--fs-btn-disabled, #CACFD8);
+    border-radius: 12px;
+    background: var(--fs-bg-primary, #FFF);
+    cursor: pointer;
+
+    &:hover {
+        border-color: var(--fs-text-secondary, #525866);
+    }
+
+    &:focus-within {
+        border-color: var(--fs-text-info, #335CFF);
+        box-shadow: 0 0 0 1px var(--fs-text-info, #335CFF);
+    }
+
+    > .el-icon {
+        flex-shrink: 0;
+        font-size: 20px;
+        color: var(--fs-text-secondary, #525866);
+    }
+
+    .fs_schedule_tile_body {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+    }
+
+    .fs_schedule_tile_label {
+        font-size: 12px;
+        color: var(--fs-text-muted, #99A0AE);
+    }
+
+    .fs_schedule_tile_value {
+        overflow: hidden;
+        font-size: 15px;
+        color: var(--fs-text-primary, #0E121B);
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .fs_schedule_tile_picker {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+
+        .el-input__wrapper,
+        .el-select__wrapper {
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+    }
+
+    .el-date-editor.el-input.fs_schedule_tile_picker {
+        width: 100%;
+        height: 100%;
+    }
+}
+
+// ─── Pending card in the thread ────────────
+.fs_conversation_message.fs_scheduled_reply_card {
+    margin: 12px 16px;
+    border: 1px dashed var(--fs-text-info, #335CFF);
+    border-radius: 8px;
+    background: rgba(51, 92, 255, 0.04);
+
+    &.fs_scheduled_reply_card_paused {
+        border-color: var(--fs-status-pending, #D97706);
+        background: var(--fs-status-waiting-bg, #FEF3C7);
+    }
+}
+
+.fs_scheduled_reply_state {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: var(--fs-badge-sm-info-bg, #EBF1FF);
+    color: var(--fs-text-info, #335CFF);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 16px;
+
+    .fs_scheduled_reply_card_paused & {
+        background: var(--fs-status-pending-bg, #FEF3C7);
+        color: var(--fs-status-pending, #D97706);
+    }
+}
+
+.fs_scheduled_reply_tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 6px;
+
+    span {
+        padding: 1px 8px;
+        border-radius: 6px;
+        border: 1px solid var(--fs-stroke-soft, #E1E4EA);
+        font-size: 12px;
+        color: var(--fs-text-secondary, #525866);
+    }
+}
+
+.fs_scheduled_reply_warning {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 10px 0;
+    padding: 8px 12px;
+    border-radius: 6px;
+    background: var(--fs-status-pending-bg, #FEF3C7);
+    color: var(--fs-status-waiting-color, #92400E);
+    font-size: 13px;
+}
+
+.fs_scheduled_reply_actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+
+    .el-button + .el-button {
+        margin-inline-start: 0;
+    }
+
+    .el-button.is-text.fs_scheduled_reply_cancel {
+        color: var(--fs-text-red, #FB3748);
+    }
+}
+
+// ─── Badges: ticket header, breadcrumb and ticket lists ───
+.fs_scheduled_reply_badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: var(--fs-badge-sm-info-bg, #EBF1FF);
+    color: var(--fs-text-info, #335CFF);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 18px;
+    white-space: nowrap;
+
+    &.fs_scheduled_reply_badge_paused {
+        background: var(--fs-status-pending-bg, #FEF3C7);
+        color: var(--fs-status-pending, #D97706);
+    }
+}
+
+.fs_needs_review_badge {
+    display: inline-flex;
+    align-items: center;
+    margin-inline-start: 6px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: var(--fs-status-pending-bg, #FEF3C7);
+    color: var(--fs-status-pending, #D97706);
+    font-size: 12px;
+    font-weight: 500;
+}

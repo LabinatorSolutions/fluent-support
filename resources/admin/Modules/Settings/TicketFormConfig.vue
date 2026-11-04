@@ -26,28 +26,63 @@
                 class="fs_box_body fs_skeleton_loader"
                 v-else
             >
-                <el-skeleton :rows="5" animated />
+                <FormSkeleton :fields="4" :button="false" />
             </div>
         </template>
-            <NarrowPromo
-                v-else
-                :heading="$t('ticket_form_notice_for_pro')"
-                :description="$t('pro_promo')"
-                :button-text="$t('Upgrade To Pro')"
+        <div v-else class="fs_box_body">
+            <ProShowcase
+                :feature="$t('Ticket form settings')"
+                :heading="$t('Shape the ticket form your customers fill in')"
+                :description="$t('ticket_form_promo_description')"
+                :specifics="promoSpecifics"
                 utm-content="feature_lock_ticket_form_customization"
-            />
+                docs-url="https://docs.fluentsupport.com/ticket-form-customization#ticket-form-configuration"
+            >
+                <template #preview>
+                    <div class="fs_pro_preview">
+                        <div class="fs_pro_preview_card fs_pro_preview_fields">
+                            <div class="fs_pro_preview_title">
+                                <span class="fs_pro_preview_checkbox"></span>
+                                {{ $t('Ticket form') }}
+                            </div>
+                            <div class="fs_pro_preview_row">
+                                <span class="fs_pro_preview_row_name">{{ $t('Subject') }}</span>
+                                <span class="fs_pro_preview_switch fs_pro_preview_switch_on"></span>
+                            </div>
+                            <div class="fs_pro_preview_row fs_pro_preview_row_focal">
+                                <span class="fs_pro_preview_row_name">
+                                    {{ $t('Product') }}
+                                    <span class="fs_pro_preview_tag">{{ $t('Required') }}</span>
+                                </span>
+                                <span class="fs_pro_preview_switch fs_pro_preview_switch_on"></span>
+                            </div>
+                            <div class="fs_pro_preview_row fs_pro_preview_row_off">
+                                <span class="fs_pro_preview_row_name">{{ $t('Attachments') }}</span>
+                                <span class="fs_pro_preview_switch fs_pro_preview_switch_turning_off"></span>
+                            </div>
+                            <div class="fs_pro_preview_note fs_pro_preview_added">
+                                <span class="fs_pro_preview_note_icon"></span>
+                                <span>{{ $t('Suggested article: Resetting your password') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </ProShowcase>
+        </div>
     </div>
 </template>
 
 <script type="text/babel">
 import FormBuilder from "../../Pieces/FormElements/_FormBuilder";
-import NarrowPromo from "@/admin/Components/NarrowPromo.vue";
+import ProShowcase from "@/admin/Components/ProShowcase.vue";
+import FormSkeleton from "@/admin/Components/FormSkeleton.vue";
 
 export default {
     name: "TicketFormConfig",
     components: {
         FormBuilder,
-        NarrowPromo,
+        ProShowcase,
+        FormSkeleton,
     },
     data() {
         return {
@@ -61,6 +96,13 @@ export default {
     computed: {
         has_pro() {
             return this.appVars?.has_pro || false;
+        },
+        promoSpecifics() {
+            return [
+                this.$t('Show or hide fields on the ticket form'),
+                this.$t('Make choosing a product required'),
+                this.$t('Connect your knowledge base so articles are suggested before a ticket is sent')
+            ];
         },
     },
     watch: {

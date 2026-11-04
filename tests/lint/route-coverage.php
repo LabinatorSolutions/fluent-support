@@ -2,17 +2,14 @@
 /**
  * Route-coverage lint.
  *
- * Re-parses the WPFluent route files (core api.php + each sibling's routes
- * file) with its own tiny parser and diffs the result against the committed
- * smoke manifests:
+ * Parses the WPFluent route files (core api.php + each sibling's) and diffs
+ * them against the smoke manifests:
  *
  *   - every GET route must appear in tests/smoke/routes.manifest.php
  *   - every POST/PUT/PATCH/DELETE route must appear in
  *     tests/smoke/mutating.manifest.php
  *
- * A route added to production without a manifest entry fails the gate, so the
- * manifests can be trusted as the covered-surface map. Runs on the host; no
- * WordPress needed.
+ * Runs on the host; no WordPress needed.
  *
  * Usage:
  *   php tests/lint/route-coverage.php            # diff (exit 1 on drift)
@@ -105,9 +102,8 @@ function fsParseRoutes($file)
             0,
             $offset
         )) {
-            // The group's { follows later in this statement; record the depth
-            // the group body will open AT (current depth), popped when its
-            // closing } returns below it.
+            // The group's { comes later in this statement. Its body sits at
+            // $depth + 1 and is popped when its closing } drops below that.
             $prefixStack[] = ['prefix' => $m[2], 'depth' => $depth + 1];
             $offset += strlen($m[0]);
             continue;
@@ -161,6 +157,10 @@ function fsNormalizeRoute($path)
 $sources = [
     ['label' => $config['plugin_slug'], 'file' => $root . '/' . 'app/Http/Routes/api.php'],
 ];
+// Feature modules keep their routes in app/Modules/{Name}/routes.php.
+foreach (glob($root . '/app/Modules/*/routes.php') ?: [] as $moduleRoutes) {
+    $sources[] = ['label' => $config['plugin_slug'] . ':' . basename(dirname($moduleRoutes)), 'file' => $moduleRoutes];
+}
 foreach ($config['siblings'] as $slug => $sibling) {
     $file = $root . '/' . $sibling['path_hint'] . '/' . $sibling['routes_file'];
     if (!is_file($file)) {
@@ -168,6 +168,9 @@ foreach ($config['siblings'] as $slug => $sibling) {
         continue;
     }
     $sources[] = ['label' => $slug, 'file' => $file];
+    foreach (glob($root . '/' . $sibling['path_hint'] . '/app/Modules/*/routes.php') ?: [] as $moduleRoutes) {
+        $sources[] = ['label' => $slug . ':' . basename(dirname($moduleRoutes)), 'file' => $moduleRoutes];
+    }
 }
 
 $census = ['GET' => [], 'MUTATING' => []];
@@ -175,9 +178,8 @@ foreach ($sources as $sourceEntry) {
     $parsed = fsParseRoutes($sourceEntry['file']);
     foreach ($parsed as $method => $paths) {
         foreach ($paths as $path) {
-            // ->any() routes (webhook listeners) can mutate, so they belong in
-            // the mutating manifest — usually as a documented public skip. The
-            // manifest exercises them once, as POST, so census them as POST.
+            // ->any() routes (webhook listeners) can mutate. The mutating
+            // manifest exercises them once as POST.
             $censusMethod = $method === 'ANY' ? 'POST' : $method;
             $key = ($censusMethod === 'GET' ? '' : $censusMethod . ' ') . fsNormalizeRoute($path);
             $bucket = $censusMethod === 'GET' ? 'GET' : 'MUTATING';

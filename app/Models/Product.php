@@ -24,7 +24,6 @@ class Product extends Model
     protected $searchable = ['title', 'description'];
 
     /**
-     * Local scope to filter products by search/query string
      * @param ModelQueryBuilder $query
      * @param string $search
      * @return ModelQueryBuilder
@@ -47,7 +46,6 @@ class Product extends Model
     }
 
     /**
-     * Local scope to order products alphabetically by title
      * @param $query
      * @return mixed
      */
@@ -57,7 +55,6 @@ class Product extends Model
     }
 
     /**
-     * This `getProducts` method will return the list of products
      * @param string $search
      * @return array
      */
@@ -69,7 +66,6 @@ class Product extends Model
     }
 
     /**
-     * This `getProduct` method will get product by id and return
      * @param int $productId
      * @return array
      */
@@ -81,7 +77,6 @@ class Product extends Model
     }
 
     /**
-     * This `createProduct` method will create a new product
      * @param array $data
      * @return array
      */
@@ -97,7 +92,6 @@ class Product extends Model
     }
 
     /**
-     * This `updateProduct` method will update an exiting product by id
      * @param int $productId
      * @param array $data
      * @return array
@@ -116,7 +110,6 @@ class Product extends Model
     }
 
     /**
-     * This `deleteProduct` method will delete an exiting product by id
      * @param int $productId
      * @return array
      */

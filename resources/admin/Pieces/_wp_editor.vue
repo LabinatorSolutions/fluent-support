@@ -1,14 +1,6 @@
 <template>
     <div class="wp_vue_editor_wrapper">
         <div class="fs_action_buttons">
-            <div class="fs_ai_tools_box" v-if="fluentBotIntegration">
-                <el-button class="fs_fluent_bot_response_button" @click="toggleFluentBotPanel">
-                    <img :src="fluentBotIconSrc" alt="" class="fs_fluent_bot_icon">
-                    <p>
-                        {{$t('Ask FluentBot')}}
-                    </p>
-                </el-button>
-            </div>
             <div class="fs_ai_tools_box" v-if="openAIIntegration">
                 <el-popover
                     placement="bottom"
@@ -18,7 +10,7 @@
                 >
                     <template #reference>
                         <el-button class="fs_openAI_response_button" @click="showAIResponseBox = !showAIResponseBox">
-                            <img :src="appVars.asset_url + 'images/aiFillButton.svg'" alt="">
+                            <DynamicIcon name="AiFillButton"/>
                             <p>
                                 {{$t('Ask AI')}}
                             </p>
@@ -110,7 +102,7 @@
             >
                 <template #reference>
                     <el-button class="fs_ai_popover_button" @click="editSelection()" size="small" type="default">
-                        <img :src="appVars.asset_url + 'images/aiIcon.svg'" alt="">
+                        <DynamicIcon name="AiIcon"/>
                     </el-button>
                 </template>
                 <div class="fs_ai_response_box">
@@ -128,17 +120,17 @@
 import ImagePasteUploader from './FormElements/_ImagePasteUploader';
 import TemplateInserter from '../Modules/Tickets/_templateInserter.vue';
 import AIResponseGenerator from '../Modules/Tickets/_AIResponseGenerator.vue';
-import FluentBotAIResponseGenerator from '../Modules/Tickets/_FluentBotAIResponseGenerator.vue';
 import FluentBookingInserter from '../Modules/Tickets/_FluentBookingInserter.vue';
 import { getFluentBookingContentStyle } from '../../common/fluentBookingContentStyle';
+import DynamicIcon from '@/admin/Components/Icons/DynamicIcon.vue';
 
 export default {
     name: 'wp_editor',
     components: {
+        DynamicIcon,
         TemplateInserter,
         AIResponseGenerator,
         FluentBookingInserter,
-        FluentBotAIResponseGenerator,
         ImagePasteUploader,
     },
 
@@ -203,12 +195,6 @@ export default {
                 return false
             }
         },
-        fluentBotIntegration: {
-            type: Boolean,
-            default() {
-                return false
-            }
-        },
         showSavedReplies: {
             type: Boolean,
             default() {
@@ -246,7 +232,7 @@ export default {
             }
         }
     },
-    emits: ['update:modelValue', 'toggleCcOption', 'toggleFluentBot'],
+    emits: ['update:modelValue', 'toggleCcOption'],
     data() {
         return {
             showButtonDesigner: false,
@@ -262,7 +248,6 @@ export default {
             actionBarStyle: {},
             showChatGPTPromptBox: false,
             showAIResponseBox: false,
-            showFluentBotAIResponseBox: false,
             selectedText: '',
             editorData: {},
             loadingImage: false,
@@ -277,13 +262,10 @@ export default {
                 top: '44px',
                 left: '12px'
             },
-            isDarkMode: document.body.classList.contains('fs-dark-mode')
+            isDarkMode: document.body.classList.contains('fluent_theme_dark')
         }
     },
     computed: {
-        fluentBotIconSrc() {
-            return this.appVars.asset_url + 'images/' + (this.isDarkMode ? 'fluentBotLight.svg' : 'fluentBotDark.svg');
-        },
         shortcodes() {
             return this.editor_shortcodes;
         },
@@ -317,7 +299,7 @@ export default {
     },
     methods: {
         handleThemeChange() {
-            const isDarkMode = document.body.classList.contains('fs-dark-mode');
+            const isDarkMode = document.body.classList.contains('fluent_theme_dark');
 
             if (isDarkMode === this.isDarkMode) {
                 return;
@@ -336,17 +318,17 @@ export default {
 
             this.editor.remove(this.editor_id);
             const that = this;
-            const isDarkMode = document.body.classList.contains('fs-dark-mode');
+            const isDarkMode = document.body.classList.contains('fluent_theme_dark');
             const mentionChipBg = this.getThemeCssValue('--fs-status-info-bg', isDarkMode ? '#1E3A5F' : '#E1E4EA');
             const mentionChipText = this.getThemeCssValue('--fs-status-info-text', isDarkMode ? '#93C5FD' : '#1976D2');
             const mentionStyle = `.fs_agent_mention { display: inline-flex; align-items: center; border-radius: 6px; color: ${mentionChipText}; font-weight: 500; white-space: nowrap; } .fs_agent_mention[contenteditable="false"] { user-select: all; }`;
             const bookingStyle = getFluentBookingContentStyle({
-                titleColor: this.getThemeCssValue('--fs-text-primary', isDarkMode ? '#E5E7EB' : '#0E121B'),
-                textSecondary: this.getThemeCssValue('--fs-text-secondary', isDarkMode ? '#99A0AE' : '#525866'),
-                textPrimary: this.getThemeCssValue('--fs-text-primary', isDarkMode ? '#E5E7EB' : '#0E121B'),
-                borderColor: this.getThemeCssValue('--fs-stroke-soft', isDarkMode ? '#2B303B' : '#E1E4EA'),
-                backgroundColor: this.getThemeCssValue('--fs-bg-primary', isDarkMode ? '#181B25' : '#FFFFFF'),
-                subtleBackground: this.getThemeCssValue('--fs-bg-subtle', isDarkMode ? '#202531' : '#F5F7FA'),
+                titleColor: this.getThemeCssValue('--fs-text-primary', isDarkMode ? '#F5F6F7' : '#0E121B'),
+                textSecondary: this.getThemeCssValue('--fs-text-secondary', isDarkMode ? '#C1C7D1' : '#525866'),
+                textPrimary: this.getThemeCssValue('--fs-text-primary', isDarkMode ? '#F5F6F7' : '#0E121B'),
+                borderColor: this.getThemeCssValue('--fs-stroke-soft', isDarkMode ? '#2C3C4E' : '#E1E4EA'),
+                backgroundColor: this.getThemeCssValue('--fs-bg-primary', isDarkMode ? '#151D26' : '#FFFFFF'),
+                subtleBackground: this.getThemeCssValue('--fs-bg-subtle', isDarkMode ? '#1C2732' : '#F5F7FA'),
                 radius: this.getThemeCssValue('--fs-radius-md', '8px'),
                 focusRing: this.getThemeCssValue('--fs-shadow-soft', 'rgba(153, 160, 174, 0.16)')
             });
@@ -354,7 +336,7 @@ export default {
                 height: that.height,
                 toolbar1: 'formatselect,code,table,bold,italic,bullist,numlist,link,blockquote,alignleft,aligncenter,alignright,underline,strikethrough,forecolor,removeformat,codeformat,outdent,indent,undo,redo',
                 content_style: isDarkMode
-                    ? `body { background-color: #181B25; color: #E5E7EB; } a { color: #93C5FD; } ${mentionStyle} ${bookingStyle}`
+                    ? `body { background-color: #151D26; color: #F5F6F7; } a { color: #93C5FD; } ${mentionStyle} ${bookingStyle}`
                     : `${mentionStyle} ${bookingStyle}`,
                 setup(editor) {
                     editor.on('change', function (ed, l) {
@@ -529,14 +511,6 @@ export default {
 
         closeAIResponsePromptBox() {
             this.showAIResponseBox = false;
-        },
-
-        toggleFluentBotPanel() {
-            this.$emit('toggleFluentBot');
-        },
-
-        closeFluentBotAIResponsePromptBox() {
-            this.showFluentBotAIResponseBox = false;
         },
 
         handleCommand(command) {
@@ -860,7 +834,6 @@ export default {
 
             this.showChatGPTPromptBox = false;
             this.showAIResponseBox = false;
-            this.showFluentBotAIResponseBox = false;
             this.showActionBar = false;
         },
 
@@ -948,10 +921,14 @@ export default {
     mounted() {
         this.initEditor();
         this.app_ready = true;
-        window.addEventListener('fs-theme-changed', this.handleThemeChange);
+        window.addEventListener('fluent_theme_changed', this.handleThemeChange);
     },
     beforeUnmount() {
-        window.removeEventListener('fs-theme-changed', this.handleThemeChange);
+        window.removeEventListener('fluent_theme_changed', this.handleThemeChange);
+
+        if (this.hasWpEditor) {
+            this.editor.remove(this.editor_id);
+        }
     }
 }
 </script>

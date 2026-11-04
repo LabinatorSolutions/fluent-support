@@ -38,19 +38,30 @@
                             v-loading="loading"
                             @click="refreshList"
                         >
-                            <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M2.59725 1.82476C3.95817 0.645503 5.69924 -0.0025049 7.5 7.27699e-06C11.6423 7.27699e-06 15 3.35776 15 7.50001C15 9.10201 14.4975 10.587 13.6425 11.805L11.25 7.50001H13.5C13.5001 6.32373 13.1544 5.17336 12.506 4.19195C11.8576 3.21054 10.9349 2.44138 9.85288 1.9801C8.77082 1.51882 7.57704 1.38578 6.41997 1.59752C5.2629 1.80926 4.19359 2.35643 3.345 3.17101L2.59725 1.82476ZM12.4028 13.1753C11.0418 14.3545 9.30076 15.0025 7.5 15C3.35775 15 0 11.6423 0 7.50001C0 5.89801 0.5025 4.41301 1.3575 3.19501L3.75 7.50001H1.5C1.4999 8.67629 1.84556 9.82665 2.494 10.8081C3.14244 11.7895 4.06505 12.5586 5.14712 13.0199C6.22918 13.4812 7.42296 13.6142 8.58003 13.4025C9.7371 13.1908 10.8064 12.6436 11.655 11.829L12.4028 13.1753Z" fill="#525866"/>
+                            <svg class="fs_icon_secondary" width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M2.59725 1.82476C3.95817 0.645503 5.69924 -0.0025049 7.5 7.27699e-06C11.6423 7.27699e-06 15 3.35776 15 7.50001C15 9.10201 14.4975 10.587 13.6425 11.805L11.25 7.50001H13.5C13.5001 6.32373 13.1544 5.17336 12.506 4.19195C11.8576 3.21054 10.9349 2.44138 9.85288 1.9801C8.77082 1.51882 7.57704 1.38578 6.41997 1.59752C5.2629 1.80926 4.19359 2.35643 3.345 3.17101L2.59725 1.82476ZM12.4028 13.1753C11.0418 14.3545 9.30076 15.0025 7.5 15C3.35775 15 0 11.6423 0 7.50001C0 5.89801 0.5025 4.41301 1.3575 3.19501L3.75 7.50001H1.5C1.4999 8.67629 1.84556 9.82665 2.494 10.8081C3.14244 11.7895 4.06505 12.5586 5.14712 13.0199C6.22918 13.4812 7.42296 13.6142 8.58003 13.4025C9.7371 13.1908 10.8064 12.6436 11.655 11.829L12.4028 13.1753Z" fill="currentColor"/>
                             </svg>
                             <span>{{ $t('Refresh') }}</span>
                         </button>
                     </div>
                 </div>
 
-                <div v-if="loading" class="fs_notifications_empty">
-                    {{ $t('Loading...') }}
+                <div v-if="loading && !notifications.length" class="fs_notifications_page_list" aria-busy="true">
+                    <el-skeleton animated>
+                        <template #template>
+                            <div v-for="n in 6" :key="n" style="display: flex; gap: 12px; padding: 12px 16px;">
+                                <el-skeleton-item variant="circle" style="width: 32px; height: 32px; flex-shrink: 0;" />
+                                <div style="flex: 1;">
+                                    <el-skeleton-item variant="text" style="width: 75%;" />
+                                    <el-skeleton-item variant="text" style="width: 50%; margin-top: 8px;" />
+                                    <el-skeleton-item variant="text" style="width: 15%; margin-top: 8px;" />
+                                </div>
+                            </div>
+                        </template>
+                    </el-skeleton>
                 </div>
 
-                <div v-else-if="notifications.length" class="fs_notifications_page_list">
+                <div v-else-if="notifications.length" class="fs_notifications_page_list" v-loading="loading">
                     <NotificationItem
                         v-for="notification in notifications"
                         :key="notification.id"

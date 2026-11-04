@@ -8,10 +8,7 @@ use FluentSupport\App\Services\Tickets\AgentTicketAccess;
 use FluentSupport\Framework\Support\Arr;
 
 /**
- *  PermissionManager class is responsible for getting/settings data related to permission
- * @package FluentSupport\App\Modules
- *
- * @version 1.0.0
+ * Fluent Support's own agent permissions, stored in user meta.
  */
 
 class PermissionManager
@@ -24,7 +21,6 @@ class PermissionManager
     const VISIBILITY_ASSIGNED_ONLY          = 'assigned_only';
 
     /**
-     * pluginPermissions method will return the list of permissions support by Fluent Support Plugin
      * @return string[]
      */
     public static function pluginPermissions()
@@ -86,8 +82,7 @@ class PermissionManager
     }
 
     /**
-     * currentUserCan method will return whether a user has the selected permission or not.
-     * Backward-compatible alias for userCan().
+     * Alias of userCan().
      *
      * @param $permission
      * @return bool
@@ -98,8 +93,7 @@ class PermissionManager
     }
 
     /**
-     * attachPermissions method will save selected permissions to user meta.
-     * Also cleans up any legacy fst_* WordPress capabilities.
+     * Save permissions to user meta and drop legacy fst_* capabilities.
      *
      * @param $user
      * @param $permissions
@@ -121,16 +115,14 @@ class PermissionManager
 
         $allPermissions = self::pluginPermissions();
 
-        // Allowlist (never a denylist): only known plugin permissions may be written.
-        // The privilege-ceiling invariant (an actor may only grant permissions it holds)
-        // is enforced upstream by AgentPolicy, which limits agent mutations to
-        // administrators — the only entry point that reaches this write.
+        // Only known permissions. There is no "grant only what you hold" check
+        // here because AgentPolicy limits agent edits to administrators.
         $permissions = array_values(array_intersect($allPermissions, $permissions));
 
         $exclusionRules = self::getExclusionRules();
         $permissions = self::applyExclusionRules($permissions, $exclusionRules);
 
-        // Auto-grant fst_view_tickets when any manage, draft, or approve permission is present
+        // Manage, draft and approve all imply fst_view_tickets
         $manageOrDraftPermissions = [
             'fst_manage_own_tickets',
             'fst_manage_unassigned_tickets',
@@ -144,10 +136,8 @@ class PermissionManager
             $permissions[] = 'fst_view_tickets';
         }
 
-        // Store permissions in user meta
         update_user_meta($user->ID, self::META_KEY, array_values($permissions));
 
-        // Clean up legacy WordPress capabilities
         foreach ($allPermissions as $cap) {
             $user->remove_cap($cap);
         }
@@ -156,7 +146,7 @@ class PermissionManager
     }
 
     /**
-     * Clean removal of all Fluent Support permissions for a user.
+     * Remove all Fluent Support permissions from a user.
      *
      * @param int $userId
      * @return void
@@ -165,7 +155,7 @@ class PermissionManager
     {
         delete_user_meta($userId, self::META_KEY);
 
-        // Clean up any legacy WordPress capabilities
+        // Legacy capabilities
         $user = get_user_by('ID', $userId);
         if ($user && !user_can($user, 'manage_options')) {
             foreach (self::pluginPermissions() as $cap) {
@@ -198,11 +188,8 @@ class PermissionManager
      */
     public static function getExclusionRules()
     {
-        // Mutual exclusion rules applied when assigning permissions:
-        // - If agent has any manage_*_tickets permission, remove fst_draft_reply
-        //   (draft-only mode is for agents who CANNOT manage tickets)
-        // - If agent has fst_draft_reply, remove fst_approve_draft_reply
-        //   (draft-only agents should not approve their own drafts)
+        // Draft-only mode is for agents who can't manage tickets, and a
+        // draft-only agent must not approve their own drafts.
         return [
             'fst_manage_unassigned_tickets' => 'fst_draft_reply',
             'fst_manage_other_tickets'      => 'fst_draft_reply',
@@ -233,10 +220,9 @@ class PermissionManager
     }
 
     /**
-     * getUserPermissions method will get all permissions for a user.
-     * Reads from user meta with legacy wp_capabilities fallback.
+     * Reads user meta, migrating legacy fst_* capabilities on first read.
      *
-     * @param false $user
+     * @param int|\WP_User|false $user
      * @return array|string[]
      */
     public static function getUserPermissions($user = false)
@@ -257,21 +243,18 @@ class PermissionManager
             return $pluginPermission;
         }
 
-        // Read from meta first
         $permissions = self::getMetaPermissions($user->ID);
 
         if (!empty($permissions)) {
             return array_values(array_intersect($permissions, $pluginPermission));
         }
 
-        // Legacy fallback: read from wp_capabilities and migrate
+        // Legacy: permissions stored as WP capabilities. Move them to meta.
         $legacyPermissions = array_values(array_intersect(array_keys($user->allcaps), $pluginPermission));
 
         if (!empty($legacyPermissions)) {
-            // Migrate to meta
             update_user_meta($user->ID, self::META_KEY, $legacyPermissions);
 
-            // Clean up legacy caps
             foreach ($legacyPermissions as $cap) {
                 $user->remove_cap($cap);
             }
@@ -281,7 +264,6 @@ class PermissionManager
     }
 
     /**
-     * currentUserPermissions method will return the permission of logged-in user
      * @param bool $cached
      * @return array|mixed|string[]
      */
@@ -299,9 +281,8 @@ class PermissionManager
     }
 
     /**
-     * Determine the WordPress capability string for menu registration.
-     * Returns 'manage_options' for admins, the user's WP role for agents
-     * with permissions, or empty string to hide the menu.
+     * Capability for the admin menu: 'manage_options' for admins, the user's
+     * role for agents, or '' to hide the menu.
      *
      * @return string
      */
@@ -319,7 +300,7 @@ class PermissionManager
 
         $metaPermissions = self::getMetaPermissions($userId);
 
-        // Legacy fallback: check wp_capabilities for fst_* caps
+        // Legacy agents may still have fst_* capabilities instead of meta
         if (empty($metaPermissions)) {
             $user = get_user_by('ID', $userId);
             if ($user) {
@@ -350,8 +331,8 @@ class PermissionManager
     }
 
     /**
-     * Whether the current user can perform mutating ticket actions (reply, close, reopen, assign, etc.).
-     * Draft-only agents return false here — they can view tickets and create drafts but cannot publish.
+     * Whether the current user can reply, close, assign, etc. False for
+     * draft-only agents.
      *
      * @return bool
      */
@@ -365,8 +346,7 @@ class PermissionManager
     }
 
     /**
-     * Whether the current user can access ticket API routes at all (read or write).
-     * Includes manage, merge, draft-only, and view-only agents.
+     * Whether the current user can reach ticket routes at all, read or write.
      *
      * @return bool
      */
@@ -383,17 +363,14 @@ class PermissionManager
     }
 
     /**
-     * Determine ticket visibility level from a permission set.
-     *
-     * Business rule: fst_view_tickets and fst_draft_reply get full visibility because
-     * read-only and draft agents need to view any ticket, even though they cannot publish.
+     * Manage permissions win. Otherwise view-only and draft agents see all
+     * tickets, since they can't modify them.
      *
      * @param array $permissions
      * @return string One of the VISIBILITY_* constants.
      */
     private static function resolveTicketVisibility(array $permissions)
     {
-        // Manage-level permissions take priority for visibility
         if (in_array('fst_manage_other_tickets', $permissions)) {
             return self::VISIBILITY_ALL;
         }
@@ -406,7 +383,6 @@ class PermissionManager
             return self::VISIBILITY_ASSIGNED_ONLY;
         }
 
-        // Non-manage roles (draft, view-only) can see all tickets but cannot modify
         if (in_array('fst_draft_reply', $permissions)
             || in_array('fst_view_tickets', $permissions)) {
             return self::VISIBILITY_ALL;
@@ -416,7 +392,6 @@ class PermissionManager
     }
 
     /**
-     * currentTicketVisibility method will return the permission level for a user in tickets
      * @return string
      */
     public static function currentTicketVisibility()
@@ -426,8 +401,7 @@ class PermissionManager
     }
 
     /**
-     * getAgentTicketVisibility method will return the access level of an agent in tickets
-     * @param false $userId
+     * @param int|false $userId
      * @return string
      */
     public static function getAgentTicketVisibility($userId = false)
@@ -442,7 +416,8 @@ class PermissionManager
     }
 
     /**
-     * canAccessTicket method will return whether the selected user has permission in selected ticket or not
+     * Whether the current agent can access this ticket.
+     *
      * @param $ticket
      * @return bool
      */
@@ -452,7 +427,6 @@ class PermissionManager
     }
 
     /**
-     * getReadablePermissionGroups method will return the permission group as array
      * @return array[]
      */
     public static function getReadablePermissionGroups()
@@ -505,13 +479,7 @@ class PermissionManager
         return MailBox::select(['id', 'name'])->get();
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Deprecated Methods
-    |--------------------------------------------------------------------------
-    | These methods are kept for backward compatibility with third-party add-ons.
-    | They delegate to the renamed replacements and will be removed in a future release.
-    */
+    // Deprecated aliases, kept for third-party add-ons.
 
     /**
      * @deprecated Use currentTicketVisibility() instead.

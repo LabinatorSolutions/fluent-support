@@ -19,18 +19,7 @@ class UploadService
 
     public static function handleTempFileUpload($file)
     {
-
-        $uploadDir = wp_upload_dir();
-        $fluentSupportFolder = $uploadDir['basedir'] . DIRECTORY_SEPARATOR . FLUENT_SUPPORT_UPLOAD_DIR;
-        if (!file_exists($fluentSupportFolder . DIRECTORY_SEPARATOR . 'index.html')) {
-            if (!is_dir($fluentSupportFolder)) {
-                // create the folder
-                @mkdir($fluentSupportFolder, 0755);
-            }
-
-            @file_put_contents($fluentSupportFolder . DIRECTORY_SEPARATOR . 'index.html', '');
-            @file_put_contents($fluentSupportFolder . DIRECTORY_SEPARATOR . '.htaccess', 'deny from all');
-        }
+        self::ensureProtectedUploadDir();
 
 
         $uploadInfo = FileSystem::setSubDir('temp_files')->put($file);
@@ -39,6 +28,23 @@ class UploadService
         }
 
         return new \WP_Error('file_upload_error', __('File upload failed', 'fluent-support'));
+    }
+
+    /**
+     * Create the plugin's upload folder with a blank index and a deny-all .htaccess.
+     */
+    public static function ensureProtectedUploadDir()
+    {
+        $uploadDir = wp_upload_dir();
+        $fluentSupportFolder = $uploadDir['basedir'] . DIRECTORY_SEPARATOR . FLUENT_SUPPORT_UPLOAD_DIR;
+        if (!file_exists($fluentSupportFolder . DIRECTORY_SEPARATOR . 'index.html')) {
+            if (!is_dir($fluentSupportFolder)) {
+                @mkdir($fluentSupportFolder, 0755);
+            }
+
+            @file_put_contents($fluentSupportFolder . DIRECTORY_SEPARATOR . 'index.html', '');
+            @file_put_contents($fluentSupportFolder . DIRECTORY_SEPARATOR . '.htaccess', 'deny from all');
+        }
     }
 
     private function handleUploadToLocal($ticketId, $file)
@@ -58,8 +64,6 @@ class UploadService
     }
 
     /**
-     *
-     *
      * @param array $file file data from request
      * @param int $ticketId ticket id
      * @return array $uploadedFiles uploaded file data
@@ -72,7 +76,8 @@ class UploadService
     }
 
     /**
-     * Handle email attachments
+     * Download an email attachment into the ticket folder (or temp_files when there's no ticket).
+     *
      * @param array $file file data from request
      * @param int $ticketId ticket id
      * @param array $acceptedMimes accepted mime types for file upload
@@ -80,7 +85,7 @@ class UploadService
      */
     public function _handleEmailAttachments($file, $ticketId = null, $acceptedMimes = [])
     {
-        $fileContent = $this->requestContent($file['url'], $acceptedMimes);
+        $fileContent = $this->requestContent($file['url'], $acceptedMimes, $file['filename']);
 
         if (!$fileContent) {
             return null;
@@ -103,7 +108,7 @@ class UploadService
             $contentType = $file['contentType'];
         }
 
-        // this is the file data from email attachment and required for upload to cloud
+        // Shape expected by the cloud upload drivers.
         return [
             'name' => $file['filename'],
             'type' => $contentType,
@@ -113,12 +118,12 @@ class UploadService
     }
 
     /**
-     * Get file content from url
-     * @param array $attachment file data from request
+     * @param string $contentUrl
      * @param array $acceptedMimes accepted mime types for file upload
-     * @return array $uploadedFiles uploaded file data
+     * @param string $filename the attachment's file name, to judge a text/plain file by its extension
+     * @return string|null Response body, or null on error, rejected type or non-2xx status.
      */
-    public function requestContent($contentUrl, $acceptedMimes = [])
+    public function requestContent($contentUrl, $acceptedMimes = [], $filename = '')
     {
         $response = wp_safe_remote_request($contentUrl, [
             'method'  => 'GET',
@@ -129,7 +134,14 @@ class UploadService
             return;
         }
 
-        $contentType = wp_remote_retrieve_header($response, 'content-type');
+        // A text type usually arrives with a charset (`text/markdown; charset=utf-8`).
+        $contentType = strtolower(trim(explode(';', (string) wp_remote_retrieve_header($response, 'content-type'))[0]));
+
+        // Mail clients often declare a CSV as text/plain. Judge such a file by its extension;
+        // FileSystem::putAsContent() still checks the content against that extension.
+        if ($contentType === 'text/plain' && $filename) {
+            $contentType = wp_check_filetype($filename, FileSystem::ticketMimeTypes())['type'] ?: $contentType;
+        }
 
         if ($acceptedMimes && !in_array($contentType, $acceptedMimes)) {
             return;
@@ -143,7 +155,6 @@ class UploadService
     }
 
 
-    // Verify if local upload is enable or not
     public static function isLocalUploadDisable()
     {
         return Meta::where('key', 'disable_local_upload')
@@ -151,7 +162,6 @@ class UploadService
             ->exists();
     }
 
-    // Verify if there's any integrated drivers enable
     public static function isIntegratedDriversEnable()
     {
         return Meta::where('key', '!=', 'disable_local_upload')

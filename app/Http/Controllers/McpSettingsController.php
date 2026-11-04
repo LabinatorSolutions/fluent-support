@@ -7,11 +7,8 @@ use FluentSupport\App\Modules\MCP\Support\PermissionGate;
 use FluentSupport\Framework\Http\Request\Request;
 
 /**
- * Backend for the Settings → MCP for AI Agents page.
- *
- * Covers: enable/disable toggle, one-click FluentHub install, and per-client
- * connection snippets. SLA and AI guidelines are intentionally not exposed here —
- * they are tool-layer concerns read by PermissionGate and live in _mcp_settings.
+ * Settings → MCP for AI Agents: enable toggle, FluentHub install, client snippets.
+ * SLA and AI guidelines live in _mcp_settings and are read by PermissionGate, not here.
  */
 class McpSettingsController extends Controller
 {
@@ -19,8 +16,7 @@ class McpSettingsController extends Controller
     const TOOLKIT_DOWNLOAD_URL   = 'https://github.com/WPManageNinja/fluent-toolkit';
 
     /**
-     * GET fluent-support/v2/settings/mcp
-     * Returns all data the settings page needs in one request.
+     * GET settings/mcp. Everything the settings page needs.
      */
     public function getStatus(Request $request)
     {
@@ -44,8 +40,7 @@ class McpSettingsController extends Controller
     }
 
     /**
-     * POST fluent-support/v2/settings/mcp/toggle
-     * Body: { mcp_enabled: true|'yes'|1|'on' }
+     * POST settings/mcp/toggle with mcp_enabled: true|'yes'|1|'on'.
      */
     public function toggle(Request $request)
     {
@@ -63,7 +58,7 @@ class McpSettingsController extends Controller
 
         PermissionGate::setEnabled($enabled);
 
-        // Re-read the persisted state so the UI can never show "enabled" for a write that didn't land.
+        // Re-read so the UI never shows a state that failed to save.
         $stored = PermissionGate::isEnabled();
 
         return [
@@ -75,9 +70,8 @@ class McpSettingsController extends Controller
     }
 
     /**
-     * POST fluent-support/v2/settings/mcp/install-adapter
-     * One-click FluentHub install. Requires a Fluent Pro plugin to hook
-     * fluent_toolkit/can_auto_install + fluent_toolkit/do_auto_install.
+     * POST settings/mcp/install-adapter. Needs a Fluent Pro plugin hooked into
+     * fluent_toolkit/can_auto_install and fluent_toolkit/do_auto_install.
      */
     public function installAdapter(Request $request)
     {
@@ -95,8 +89,26 @@ class McpSettingsController extends Controller
             ]);
         }
 
+        // The installer reports why it failed through this action.
+        $failure = null;
+        $onFailure = function ($error) use (&$failure) {
+            $failure = $error;
+        };
+        add_action('fluent_toolkit/auto_install_failed', $onFailure);
+
         do_action('fluent_toolkit/do_auto_install');
+
+        remove_action('fluent_toolkit/auto_install_failed', $onFailure);
         wp_clean_plugins_cache();
+
+        if (!$this->isToolkitPresent()) {
+            $reason = is_wp_error($failure) ? $failure->get_error_message() : '';
+
+            return $this->sendError([
+                'message'              => trim(__('FluentHub could not be installed automatically.', 'fluent-support') . ' ' . $reason . ' ' . __('Install it manually, then reload this page.', 'fluent-support')),
+                'toolkit_download_url' => self::TOOLKIT_DOWNLOAD_URL,
+            ]);
+        }
 
         $adapterAvailable = MCPInit::adapterAvailable();
 
@@ -105,13 +117,14 @@ class McpSettingsController extends Controller
             'toolkit_installed' => $this->isToolkitPresent(),
             'message'           => $adapterAvailable
                 ? __('FluentHub installed and activated. The MCP endpoint is ready.', 'fluent-support')
-                : __('FluentHub was installed. Please reload this page to finish connecting the MCP endpoint.', 'fluent-support'),
+                : (is_wp_error($failure)
+                    ? $failure->get_error_message()
+                    : __('FluentHub was installed. Please reload this page to finish connecting the MCP endpoint.', 'fluent-support')),
         ]);
     }
 
     /**
-     * GET fluent-support/v2/settings/mcp/config-snippets
-     * Query param: local_dev=yes|no (falls back to auto-detected isLocalDev when omitted)
+     * GET settings/mcp/config-snippets. local_dev=yes|no overrides isLocalDev().
      */
     public function getConfigSnippets(Request $request)
     {
@@ -221,23 +234,16 @@ class McpSettingsController extends Controller
         }
     }
 
-    // -------------------------------------------------------------------------
-    // Toolkit detection helpers — mirrors FluentCRM MCPSettingsController
-    // -------------------------------------------------------------------------
-
-    /** True when FluentHub is loaded in the current request (constant defined). */
     private function isToolkitLoaded()
     {
         return defined('FLUENT_TOOLKIT_VERSION');
     }
 
-    /** True when FluentHub is loaded OR present in the plugin directory. */
     private function isToolkitPresent()
     {
         return $this->isToolkitLoaded() || $this->isPluginPresent(self::TOOLKIT_PLUGIN_FILE);
     }
 
-    /** Version string from the loaded constant, or from the plugin header, or null. */
     private function detectToolkitVersion()
     {
         if ($this->isToolkitLoaded()) {
@@ -267,22 +273,9 @@ class McpSettingsController extends Controller
         return $plugins[$pluginFile]['Version'] ?? null;
     }
 
-    // -------------------------------------------------------------------------
-    // Local-dev detection
-    // -------------------------------------------------------------------------
-
     /**
-     * Heuristic: are we on a local/dev install?
-     *
-     * Checks (in order):
-     *   1. Hostname ends in a dev TLD (.test, .local, .localhost, .lab, .docker)
-     *   2. Hostname is a loopback literal (localhost, 127.0.0.1, ::1)
-     *   3. Hostname is a private RFC 1918 IP address
-     *
-     * Note: .dev is intentionally excluded — it is a real HSTS-preloaded
-     * public gTLD (owned by Google) and we must not disable TLS on those sites.
-     *
-     * Filterable via fluent_support/mcp_is_local_dev for edge cases.
+     * Dev TLD, loopback host, or private/reserved IP. The snippet disables TLS
+     * checks on local installs, so .dev is excluded: it's a real public gTLD.
      */
     private function isLocalDev()
     {

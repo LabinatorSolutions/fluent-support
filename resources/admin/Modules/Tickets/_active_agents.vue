@@ -20,21 +20,20 @@
                 </div>
             </div>
             <div class="fs_active_agents_text">
-                {{ totalCount }} {{ $t('People Watching') }}
+                <!-- translators: %s is the number of agents viewing this ticket -->
+                {{ $_n('%s Person Watching', '%s People Watching', totalCount) }}
             </div>
         </div>
-        <el-tooltip effect="dark" :content="$t(isExpanded ? 'Hide Watchers' : 'Show Watchers')" placement="top" trigger="hover">
-            <button
-                type="button"
-                class="fs_active_agents_toggle"
-                :class="{ 'fs_active_agents_toggle_bordered': isExpanded }"
-                :aria-label="$t(isExpanded ? 'Hide Watchers' : 'Show Watchers')"
-                :aria-expanded="isExpanded"
-                @click="toggleExpanded"
-            >
-                <IconPack :icon-key="isExpanded ? 'arrow_right_close' : 'arrow_left_open'" :width="20" :height="20" />
-            </button>
-        </el-tooltip>
+        <button v-tip="$t(isExpanded ? 'Hide Watchers' : 'Show Watchers')"
+            type="button"
+            class="fs_active_agents_toggle"
+            :class="{ 'fs_active_agents_toggle_bordered': isExpanded }"
+            :aria-label="$t(isExpanded ? 'Hide Watchers' : 'Show Watchers')"
+            :aria-expanded="isExpanded"
+            @click="toggleExpanded"
+        >
+            <IconPack :icon-key="isExpanded ? 'arrow_right_close' : 'arrow_left_open'" :width="20" :height="20" />
+        </button>
     </div>
 </template>
 
@@ -85,8 +84,12 @@ export default {
             this.isExpanded = !this.isExpanded;
         },
 
-        scheduleNextEvent() {
-            const randTimer = Math.random() * 20000 + 30000;
+        // After a failed poll, wait longer, but keep polling.
+        scheduleNextEvent(afterError = false) {
+            if (this.app_off) {
+                return;
+            }
+            const randTimer = (afterError ? 60000 : 30000) + Math.random() * 20000;
             setTimeout(() => {
                 if (!this.loading) {
                     this.activityOn();
@@ -106,6 +109,7 @@ export default {
                 })
                 .catch((errors) => {
                     console.error(errors);
+                    this.scheduleNextEvent(true);
                 })
                 .always(() => {
                     this.loading = false;

@@ -8,14 +8,14 @@
                     </div>
                 </div>
             </div>
-            <div v-if="!fetching" class="fs_table_container">
+            <div class="fs_table_container">
                 <div class="fs_table_header">
                     <div class="fs_box_actions">
                         <div class="fs_ticket_orders fs_table_search_field">
                             <el-input
-                                @keyup.enter="getProducts"
+                                @keyup.enter="searchProducts"
                                 clearable
-                                @clear="getProducts"
+                                @clear="searchProducts"
                                 :placeholder="$t('Search...')"
                                 v-model="search"
                                 class="fs_text_input fs_table_search_input"
@@ -34,7 +34,8 @@
                         </el-button>
                     </div>
                 </div>
-                <div class="fs_table_wrapper">
+                <TableSkeleton v-if="first_loading" :rows="5" :columns="[100, 200, 250, 150]" />
+                <div v-else class="fs_table_wrapper" v-loading="fetching">
                     <el-table
                         :data="products"
                         row-class-name="fs_table_row"
@@ -112,9 +113,6 @@
                     </span>
                 </div>
             </div>
-            <div class="fs_box_body fs_skeleton_loader" v-else>
-                <el-skeleton class="fs_box_wrapper" :rows="5" animated />
-            </div>
         </div>
 
         <el-dialog
@@ -123,7 +121,7 @@
             :title="
                 editing_product && editing_product.id
                     ? $t('Edit Product')
-                    : $t('Create New Supported Product')
+                    : $t('Add a New Product')
             "
             v-model="ticket_modal"
             width="60%"
@@ -166,7 +164,7 @@
                         {{
                             (editing_product && editing_product.id)
                                 ? $t("Update Product")
-                                : $t("Add Product") }}
+                                : $t("Create Product") }}
                     </el-button>
                 </span>
             </template>
@@ -178,12 +176,14 @@
 import Pagination from "../../Pieces/Pagination";
 import TableMoreActions from "@/admin/Components/TableMoreActions.vue";
 import TableEmptyStateImage from "@/admin/Components/TableEmptyStateImage.vue";
+import TableSkeleton from "@/admin/Components/TableSkeleton.vue";
 export default {
     name: "SupportProducts",
     components: {
         Pagination,
         TableMoreActions,
-        TableEmptyStateImage
+        TableEmptyStateImage,
+        TableSkeleton
      },
 
     data() {
@@ -195,6 +195,7 @@ export default {
                 total: 0,
             },
             fetching: true,
+            first_loading: true,
             saving: false,
             ticket_modal: false,
             editing_product: false,
@@ -218,7 +219,13 @@ export default {
             })
             .always(() => {
                 this.fetching = false;
+                this.first_loading = false;
             });
+        },
+
+        searchProducts() {
+            this.pagination.current_page = 1;
+            this.getProducts();
         },
 
         createOrUpdateProduct() {

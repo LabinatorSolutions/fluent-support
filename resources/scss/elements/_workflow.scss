@@ -33,10 +33,6 @@
             font-weight: 400;
             line-height: 20px;
             letter-spacing: -0.084px;
-            .fs_workflow_status_text_label{
-                font-size: 14px;
-                font-weight: 500;
-            }
         }
     }
     .fs_trigger_conditions{
@@ -148,7 +144,7 @@
         gap: 12px;
         align-self: stretch;
         border-radius: 8px 8px 0 0;
-        border-bottom: 1px solid var(--stroke-soft-200, #E1E4EA);
+        border-bottom: 1px solid var(--fs-stroke-soft, #E1E4EA);
         background: var(--fs-bg-primary, #FFF);
         h3{
             margin: 0;
@@ -164,12 +160,6 @@
         background: var(--fs-bg-primary, #FFF);
         color: var(--fs-text-secondary, #525866);
     }
-
-    .fs_workflow_trigger_box {
-        background: var(--fs-bg-primary, #FFFFFF);
-        padding: 15px 20px;
-        border-radius: 4px;
-    }
 }
 
 .fs_trigger_mappers {
@@ -182,125 +172,16 @@
         letter-spacing: -0.084px;
     }
 }
-.fs_add_trigger{
-    .fs_select_field_label {
-        color: var(--fs-text-primary, #0E121B);
-        font-size: 14px;
-        font-style: normal;
-        font-weight: 500;
-        line-height: 20px;
-        letter-spacing: -0.084px;
-        margin: 0px;
-    }
-}
-
-.fs_provider_selectors{
-    margin-top: 10px;
-}
-.fs_actions_wrap{
+.fs_workflow_runs_wrap {
     margin-top: 24px;
 }
-.fs_trigger_view {
-    border-bottom: none;
-    .fs_trigger_name {
-        box-sizing: border-box;
-        margin-left: 10px;
-        color: var(--fs-text-secondary, #525866);
-    }
-
-    .fs_actions_board {
-        .el-collapse-item__title{
-            display: flex;
-            gap: 8px;
-        }
-        .el-collapse-item__header{
-            background: var(--fs-bg-primary, #FFFFFF);
-            border-bottom: 1px solid #D6DAE1;
-            padding: 0 15px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            transition: background 0.4s;
-            position: relative;
-            cursor: move;
-        }
-        .el-collapse-item__wrap {
-          border-bottom: 0;
-        }
-        .el-collapse-item__header.is-active{
-            border-radius: 8px 8px 0 0;
-        }
-        .el-collapse-item__header:hover{
-            background-color: #F5F7FA;
-        }
-        .el-collapse-item__content {
-            padding: 0px;
-        }
-    }
-
-    @media (min-width: 768px) and (max-width: 830px) {
-        .fs_actions_board {
-            .ghost {
-                opacity: 0.5;
-                text-align: center;
-                border-style: dashed;
-                border-radius: 10px;
-                float: none;
-            }
-            .el-collapse-item__header{
-                background-color: #F5F5F5;
-                border-radius: 8px;
-                height: auto;
-                cursor: move;
-                border: 1px solid rgb(226, 228, 231);
-                box-shadow: 4px 2px 4px rgb(18 25 97 / 8%);
-
-            }
-            .el-collapse-item__header.is-active{
-                border-radius: 8px 8px 0px 0px;
-            }
-            .el-collapse-item__header:hover{
-                background-color: #EDF8F2;
-            }
-        }
-    }
-
-    .fcon_provider_info {
-        display: flex;
-        align-content: center;
-        align-items: center;
-        cursor: pointer;
-
-        .fc_trigger_logo {
-            margin-right: 20px;
-
-            img {
-                width: 32px;
-            }
-        }
-
-        .fc_trigger_titles {
-            flex-grow: 1;
-            font-size: 17px;
-
-            span.fc_item_open {
-                float: right;
-            }
-        }
-    }
-
-    .fs_trigger_editor {
-        overflow: hidden;
-        padding: 20px;
-        background: #f7fafc;
-        h3{
-            font-size: 14px;
-            font-style: normal;
-            font-weight: 500;
-            line-height: 20px;
-            margin: 0px 0px 6px 0px;
-        }
-    }
+.fs_workflow_runs_wrap .fs_box_edit_header {
+    align-items: center;
+    justify-content: space-between;
+}
+.fs_workflow_runs_empty {
+    margin: 0;
+    color: var(--fs-text-secondary, #525866);
 }
 
 .ghost {
@@ -309,18 +190,6 @@
     border-style: dashed;
     border-radius: 10px;
     float: none;
-}
-
-.fs_all_triggers {
-    border: 1px solid #D6DAE1;
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-span.fs_trigger_sub {
-    padding-left: 15px;
-    font-size: 90%;
-    color: gray;
 }
 
 .fs_condition_line {
@@ -356,55 +225,8 @@ span.fs_trigger_sub {
     }
 }
 
-p.fs_cond_or {
-    text-align: center;
-    color: gray;
-    margin: 0 0 5px;
-    padding: 0;
-}
-
 .fs_add_and_icon {
     flex-shrink: 0;
-}
-
-.fs_add_and_text {
-    margin-left: 0;
-}
-
-.fs_cond_and {
-    text-align: center;
-    color: #9AA1B0;
-    margin: 8px 0;
-    padding: 8px 0;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    &::before {
-        content: '';
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 1px;
-        height: 100%;
-        background: #E6E8EF;
-        top: 0;
-    }
-
-    em {
-        background: var(--fs-bg-primary, #FFFFFF);
-        font-size: 12px;
-        font-style: normal;
-        font-weight: 400;
-        color: #9AA1B0;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        padding: 4px 8px;
-        margin: 0;
-        position: relative;
-        z-index: 1;
-    }
 }
 
 .fs_conditional_group {
@@ -432,10 +254,6 @@ p.fs_cond_or {
         background: var(--fs-bg-primary, #FFFFFF);
         color: var(--fs-text-secondary, #525866);
         box-shadow: 0 1px 2px 0 rgba(10, 13, 20, 0.03);
-        .fs_or_btn{
-            padding: 0;
-            gap: 8px;
-        }
         .fs_or_text{
             color: var(--fs-text-secondary, #525866);
             font-size: 14px;
@@ -444,15 +262,6 @@ p.fs_cond_or {
             line-height: 20px;
         }
     }
-}
-
-
-.fs_group_footer .fs_delete_section_btn, .fs_group_footer .fs_delete_section_btn:hover {
-    color: #E5484D !important;
-}
-
-.fs_group_footer .fs_delete_text {
-    margin-left: 6px;
 }
 
 /* Inter-group AND separator */
@@ -549,58 +358,6 @@ ul.fs_workflow_items {
         }
     }
 }
-
-.fs_add_more_and_btn {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 12px;
-    margin: 10px 0px 0px 0px;
-    .fs_add_and_button {
-        display: flex;
-        padding: 4px 6px;
-        justify-content: center;
-        align-items: center;
-        gap: 6px;
-        border-radius: var(--radius-8, 8px);
-        border: 1px solid var(--stroke-soft-200, #E1E4EA);
-        background: var(--fs-bg-primary, #FFF);
-        box-shadow: 0 1px 2px 0 rgba(10, 13, 20, 0.03);
-        cursor: pointer;
-        transition: all 0.2s;
-        font-size: 12px;
-        font-style: normal;
-        font-weight: 500;
-        line-height: 20px;
-        color: #0E121B;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-
-        &:hover {
-            background: var(--fs-bg-primary, #FFFFFF) !important;
-            border-color: #E1E4EA !important;
-            color: var(--fs-bg-primary, #FFFFFF) !important;
-        }
-
-        .fs_add_and_text {
-            color: #0E121B;
-            font-size: 12px;
-            font-weight: 500;
-            letter-spacing: 0.5px;
-        }
-
-        svg {
-            flex-shrink: 0;
-        }
-    }
-}
-
-.fs_horizontal_line {
-    flex: 1;
-    height: 1px;
-    background: #E6E8EF;
-    max-width: 100%;
-}
 .fs_workflow_title_link {
     text-decoration: none !important;
 }
@@ -609,59 +366,9 @@ ul.fs_workflow_items {
     text-decoration: underline !important;
 }
 
-.fs_action_footer {
-    display: flex;
-    justify-content: right;
-    align-items: center;
-    gap: 12px;
-    margin-top: 20px;
-}
-
-.fs_delete_action_btn {
-    color: #FF6B6B !important;
-    padding: 0 !important;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 14px;
-    font-weight: 400;
-}
-
-.fs_delete_action_btn:hover {
-    color: #FF5252 !important;
-}
-
-.fs_delete_action_btn .el-icon {
-    font-size: 16px;
-}
-
-.fs_save_action_btn {
-    background-color: #0E121B !important;
-    border-color: #0E121B !important;
-    color: #FFFFFF !important;
-    border-radius: 8px !important;
-    padding: 8px 20px !important;
-    font-size: 14px;
-    font-weight: 500;
-    min-width: 80px;
-}
-
-.fs_save_action_btn:hover {
-    background-color: #1a1d24 !important;
-    border-color: #1a1d24 !important;
-}
 .fs_add_icon {
     flex-shrink: 0;
     margin-right: 6px;
-}
-
-.fs_add_another_action_btn span {
-    margin-left: 0;
-}
-
-.fs_add_another_action_btn {
-    margin-top: 12px;
-    padding: 10px 10px 10px 12px !important;
 }
 
 .fs_box_wrapper .fs_box_header {
@@ -670,7 +377,7 @@ ul.fs_workflow_items {
     justify-content: space-between;
     flex-direction: row;
     padding: 12px 24px;
-    border-bottom: 1px solid var(--stroke-soft-200, #E1E4EA);
+    border-bottom: 1px solid var(--fs-stroke-soft, #E1E4EA);
     background: var(--fs-bg-primary, #FFF);
 }
 
@@ -694,3 +401,325 @@ ul.fs_workflow_items {
     }   
 }
 
+
+/* Flow builder: the workflow as a column of step cards (EditWorkFlow.vue, _WorkflowFlow.vue). */
+.fs_wf_editor {
+    max-width: 720px;
+}
+
+.fs_wf_unsaved {
+    color: var(--fs-text-secondary, #525866);
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.fs_wf_flow {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.fs_wf_step {
+    display: block;
+    padding: 16px 20px;
+    border: 1px solid var(--fs-stroke-soft, #E1E4EA);
+    border-radius: var(--fs-radius-md-lg, 10px);
+    background: var(--fs-bg-primary, #FFF);
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+
+    &:hover {
+        border-color: var(--fs-text-muted, #99A0AE);
+    }
+
+    &:focus-visible,
+    &.fs_wf_step_active {
+        outline: none;
+        border-color: var(--fs-stroke-strong, #0E121B);
+        box-shadow: 0 0 0 2px var(--fs-bg-primary, #FFF), 0 0 0 4px var(--fs-shadow-soft, rgba(153, 160, 174, 0.16));
+    }
+
+    &.fs_wf_step_static {
+        cursor: default;
+
+        &:hover {
+            border-color: var(--fs-stroke-soft, #E1E4EA);
+        }
+    }
+
+    &.fs_wf_step_empty {
+        border-style: dashed;
+        text-align: center;
+    }
+
+    &.fs_wf_step_invalid {
+        border-color: var(--fs-state-away-dark, #624C18);
+    }
+}
+
+.fs_wf_step_label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--fs-text-muted, #99A0AE);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 16px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.fs_wf_step_empty .fs_wf_step_label {
+    justify-content: center;
+}
+
+.fs_wf_step_title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+    color: var(--fs-text-primary, #0E121B);
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+}
+
+.fs_wf_step_icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    border-radius: var(--fs-radius-6, 6px);
+
+    &.fs_wf_step_icon_trigger {
+        background: var(--fs-state-feature-light, #EFEBFF);
+        color: var(--fs-state-feature-dark, #351A75);
+    }
+}
+
+.fs_wf_step_detail {
+    margin-top: 4px;
+    color: var(--fs-text-secondary, #525866);
+    font-size: 14px;
+    line-height: 20px;
+    overflow-wrap: anywhere;
+}
+
+.fs_wf_muted {
+    color: var(--fs-text-muted, #99A0AE);
+}
+
+.fs_wf_warning {
+    color: var(--fs-state-away-dark, #624C18);
+}
+
+p.fs_wf_warning {
+    margin: 0 0 16px;
+    padding: 8px 12px;
+    border-radius: var(--fs-radius-md, 8px);
+    background: var(--fs-state-away-lighter, #FFFAEB);
+}
+
+.fs_wf_drag_handle {
+    display: inline-flex;
+    cursor: grab;
+    color: var(--fs-text-muted, #99A0AE);
+}
+
+.fs_wf_ghost .fs_wf_step {
+    opacity: 0.5;
+    border-style: dashed;
+}
+
+.fs_wf_conditions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.fs_wf_condition_group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: var(--fs-radius-md, 8px);
+    background: var(--fs-bg-subtle, #F5F7FA);
+}
+
+.fs_wf_condition_line {
+    color: var(--fs-text-primary, #0E121B);
+    font-size: 14px;
+    line-height: 20px;
+    overflow-wrap: anywhere;
+}
+
+.fs_wf_pill {
+    padding: 0 8px;
+    border-radius: var(--fs-radius-full, 999px);
+    background: var(--fs-state-faded-light, #F2F5F8);
+    color: var(--fs-state-faded-dark, #717784);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 20px;
+
+    &.fs_wf_pill_and {
+        background: var(--fs-bg-primary, #FFF);
+        border: 1px solid var(--fs-stroke-soft, #E1E4EA);
+    }
+}
+
+.fs_wf_connector {
+    position: relative;
+    height: 24px;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        border-left: 1px solid var(--fs-stroke-soft, #E1E4EA);
+    }
+
+    &.fs_wf_connector_insert {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 48px;
+    }
+}
+
+.el-button.fs_wf_insert_btn {
+    position: relative;
+    border-color: var(--fs-stroke-soft, #E1E4EA);
+    background: var(--fs-bg-primary, #FFF);
+    color: var(--fs-text-secondary, #525866);
+
+    &:hover,
+    &:focus-visible {
+        border-color: var(--fs-stroke-strong, #0E121B);
+        background: var(--fs-bg-primary, #FFF);
+        color: var(--fs-text-primary, #0E121B);
+    }
+}
+
+.fs_wf_help_text {
+    margin: 0 0 16px;
+    color: var(--fs-text-secondary, #525866);
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.fs_wf_drawer {
+    // Below the WordPress admin bar, which sits above the drawer overlay.
+    &.el-drawer.rtl {
+        top: var(--wp-admin--admin-bar--height, 32px);
+        height: calc(100% - var(--wp-admin--admin-bar--height, 32px));
+    }
+
+    .el-drawer__header {
+        margin-bottom: 0;
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--fs-stroke-soft, #E1E4EA);
+        color: var(--fs-text-primary, #0E121B);
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 24px;
+    }
+
+    .el-drawer__body {
+        padding: 20px;
+    }
+
+    .el-drawer__footer {
+        padding: 12px 20px;
+        border-top: 1px solid var(--fs-stroke-soft, #E1E4EA);
+    }
+
+    // The condition rows stack in the narrow drawer: field, then operator and value.
+    .fs_conditional_group {
+        padding: 12px;
+    }
+
+    .fs_condition_line {
+        flex-wrap: wrap;
+        gap: 8px;
+
+        .fs_cond_block {
+            padding-right: 0;
+            flex: 1 1 40%;
+
+            &.fs_cond_data {
+                flex-basis: calc(100% - 48px);
+            }
+
+            &.fs_cond_action {
+                flex: 0 0 auto;
+                order: 1;
+            }
+
+            &.fs_cond_operator,
+            &.fc_cond_value {
+                order: 2;
+            }
+        }
+    }
+}
+
+.fs_wf_drawer_footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+
+    .fs_stroke_btn {
+        margin-inline-end: auto;
+    }
+}
+
+.fs_wf_action_search {
+    margin-bottom: 12px;
+}
+
+.fs_wf_choice_list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.fs_wf_choice {
+    padding: 12px 16px;
+    border: 1px solid var(--fs-stroke-soft, #E1E4EA);
+    border-radius: var(--fs-radius-md, 8px);
+    background: var(--fs-bg-primary, #FFF);
+    cursor: pointer;
+
+    &:hover {
+        background: var(--fs-bg-subtle, #F5F7FA);
+    }
+
+    &:focus-visible,
+    &.fs_wf_choice_active {
+        outline: none;
+        border-color: var(--fs-stroke-strong, #0E121B);
+    }
+}
+
+.fs_wf_choice_title {
+    color: var(--fs-text-primary, #0E121B);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+}
+
+.fs_wf_choice_desc {
+    margin-top: 2px;
+    color: var(--fs-text-secondary, #525866);
+    font-size: 13px;
+    line-height: 18px;
+}

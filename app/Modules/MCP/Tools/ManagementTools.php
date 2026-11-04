@@ -2,6 +2,7 @@
 
 namespace FluentSupport\App\Modules\MCP\Tools;
 
+use FluentSupport\App\Modules\Reports\Reports;
 use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Product;
@@ -13,12 +14,17 @@ use FluentSupport\App\Modules\MCP\Support\TicketAccessGuard;
 use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\TicketHelper;
+use FluentSupport\App\Services\Tickets\AgentTicketAccess;
 use FluentSupport\App\Services\Tickets\TicketService;
+use FluentSupport\App\Services\Tickets\TicketStats;
 
 class ManagementTools
 {
     const CACHE_PREFIX  = 'fsmcp_ctx_';
     const CACHE_TTL     = 60;
+
+    /** Bumped to invalidate every agent's cached context; it is part of the cache key. */
+    const CACHE_VERSION_OPTION = '_fluent_support_mcp_ctx_version';
     const MAX_AGENTS    = 50;
     const MAX_BULK      = 50;
     const MAX_TAG_NAMES = 20;
@@ -30,7 +36,7 @@ class ManagementTools
             return MCPHelper::error('unauthorized', __('No agent found for current user', 'fluent-support'));
         }
 
-        $cacheKey = self::CACHE_PREFIX . $currentAgent->id;
+        $cacheKey = self::CACHE_PREFIX . $currentAgent->id . '_' . (int) get_option(self::CACHE_VERSION_OPTION, 0);
         $cached   = get_transient($cacheKey);
         if ($cached !== false) {
             return $cached;
@@ -44,8 +50,7 @@ class ManagementTools
 
     private static function buildContext($currentAgent)
     {
-        $canSeeSensitive     = PermissionManager::userCan('fst_sensitive_data');
-        $restrictedMailboxes = PermissionManager::getRestrictedMailboxIds();
+        $canSeeSensitive = PermissionManager::userCan('fst_sensitive_data');
 
         $agents = Agent::select(['id', 'first_name', 'last_name', 'email', 'status'])
             ->where('person_type', 'agent')
@@ -72,12 +77,20 @@ class ManagementTools
                 return ['id' => $p->id, 'title' => $p->title, 'description' => $p->description ?: ''];
             })->toArray();
 
+        $signature = \FluentSupport\App\Services\Tickets\ResponseService::getAppendedSignature($currentAgent);
+
         $mailboxes = MailBox::getAccessibleBoxes($canSeeSensitive)
-            ->map(function ($mb) use ($canSeeSensitive) {
+            ->map(function ($mb) use ($canSeeSensitive, $currentAgent, $signature) {
                 $entry = ['id' => $mb->id, 'name' => $mb->name];
                 if ($canSeeSensitive) {
                     $entry['email'] = $mb->email;
                 }
+                // What the customer receives around the agent's text, so replies
+                // don't repeat the template's greeting, sign-off or signature.
+                $entry['emails'] = [
+                    'reply'    => self::describeAgentEmail($mb, 'ticket_replied_by_agent_email_to_customer', $currentAgent, $signature, true),
+                    'outreach' => self::describeAgentEmail($mb, 'ticket_created_by_agent_on_behalf_email_to_customer', $currentAgent, $signature, true),
+                ];
                 return $entry;
             })->toArray();
 
@@ -86,21 +99,16 @@ class ManagementTools
             ->get()
             ->toArray();
 
-        $statusCounts = Ticket::selectRaw('status, COUNT(*) as cnt')
-            ->when($restrictedMailboxes, fn($q) => $q->whereNotIn('mailbox_id', $restrictedMailboxes))
-            ->groupBy('status')
-            ->get()
-            ->pluck('cnt', 'status');
+        // Same counts as the ticket list sidebar, so stats and views agree with what the agent can open.
+        $counts = (new TicketStats())->getSidebarCounts($currentAgent);
+        $views  = self::buildTicketViews($currentAgent, $counts);
 
         $stats = [
-            'total'      => (int) $statusCounts->sum(),
-            'new'        => (int) ($statusCounts['new'] ?? 0),
-            'active'     => (int) ($statusCounts['active'] ?? 0),
-            'closed'     => (int) ($statusCounts['closed'] ?? 0),
-            'unassigned' => Ticket::whereNull('agent_id')
-                ->whereNotIn('status', ['closed'])
-                ->when($restrictedMailboxes, fn($q) => $q->whereNotIn('mailbox_id', $restrictedMailboxes))
-                ->count(),
+            'total'      => (int) ($counts['statuses']['all'] ?? 0),
+            'new'        => (int) ($counts['statuses']['new'] ?? 0),
+            'active'     => (int) ($counts['statuses']['active'] ?? 0),
+            'closed'     => (int) ($counts['statuses']['closed'] ?? 0),
+            'unassigned' => (int) $counts['open']['unassigned'],
         ];
 
         $ticketFields = ['id', 'title', 'status', 'priority', 'customer_id', 'agent_id', 'waiting_since', 'created_at', 'response_count', 'last_agent_response', 'last_customer_response'];
@@ -116,11 +124,11 @@ class ManagementTools
         $firstResponseCutoff = date('Y-m-d H:i:s', $now - ($firstResponseHours * 3600));
         $resolutionCutoff    = date('Y-m-d H:i:s', $now - ($resolutionHours * 3600));
 
-        $myQueueBase = static::scopedTicketQuery($ticketFields, $eagerLoad, $restrictedMailboxes)
+        $myQueueBase = static::scopedTicketQuery($ticketFields, $eagerLoad)
             ->where('agent_id', $currentAgent->id)
             ->whereNotIn('status', ['closed']);
 
-        // Split by who's turn it is instead of ranking both populations by raw waiting_since:
+        // Split by whose turn it is instead of ranking both populations by raw waiting_since:
         // an agent-last ticket idle for 12 days and a customer-last ticket waiting 12 days both
         // have an old waiting_since, but only the latter needs a reply. Mixing them let stale
         // agent-last tickets crowd the actionable ones out of the capped list.
@@ -153,7 +161,7 @@ class ManagementTools
             'awaiting_customer_truncated'   => $awaitingCustomerTotal > count($awaitingCustomer),
         ];
 
-        $unassigned = static::scopedTicketQuery($ticketFields, $eagerLoad, $restrictedMailboxes)
+        $unassigned = static::scopedTicketQuery($ticketFields, $eagerLoad)
             ->whereNull('agent_id')
             ->whereNotIn('status', ['closed'])
             ->orderBy('created_at', 'ASC')
@@ -162,16 +170,19 @@ class ManagementTools
             ->map(function ($t) use ($now) { return self::formatContextTicket($t, $now); })
             ->toArray();
 
-        $longestWaiting = static::scopedTicketQuery($ticketFields, $eagerLoad, $restrictedMailboxes)
+        // Only tickets waiting on an agent: a ticket we answered months ago has the
+        // oldest waiting_since but needs nothing from us.
+        $longestWaiting = static::scopedTicketQuery($ticketFields, $eagerLoad)
             ->whereNotIn('status', ['closed'])
             ->whereNotNull('waiting_since')
+            ->waitingOnly()
             ->orderBy('waiting_since', 'ASC')
             ->limit(5)
             ->get()
             ->map(function ($t) use ($now) { return self::formatContextTicket($t, $now); })
             ->toArray();
 
-        $critical = static::scopedTicketQuery($ticketFields, $eagerLoad, $restrictedMailboxes)
+        $critical = static::scopedTicketQuery($ticketFields, $eagerLoad)
             ->where('priority', 'critical')
             ->whereNotIn('status', ['closed'])
             ->orderBy('created_at', 'ASC')
@@ -180,7 +191,7 @@ class ManagementTools
             ->map(function ($t) use ($now) { return self::formatContextTicket($t, $now); })
             ->toArray();
 
-        $slaFirstResponse = static::scopedTicketQuery($ticketFields, $eagerLoad, $restrictedMailboxes)
+        $slaFirstResponse = static::scopedTicketQuery($ticketFields, $eagerLoad)
             ->whereNotIn('status', ['closed'])
             ->where('response_count', 0)
             ->where('created_at', '<=', $firstResponseCutoff)
@@ -190,9 +201,12 @@ class ManagementTools
             ->map(function ($t) use ($now) { return self::formatContextTicket($t, $now); })
             ->toArray();
 
-        $slaResolution = static::scopedTicketQuery($ticketFields, $eagerLoad, $restrictedMailboxes)
+        // Past the resolution target and still waiting on an agent. Tickets waiting on the
+        // customer are excluded: nothing we can do moves them.
+        $slaResolution = static::scopedTicketQuery($ticketFields, $eagerLoad)
             ->whereNotIn('status', ['closed'])
             ->where('created_at', '<=', $resolutionCutoff)
+            ->waitingOnly()
             ->orderBy('created_at', 'ASC')
             ->limit(5)
             ->get()
@@ -201,22 +215,32 @@ class ManagementTools
 
         $guidelines = apply_filters('fluent_support/mcp_ai_guidelines', PermissionGate::getAiGuidelines());
         if (!$guidelines) {
+            // Tone and conduct only: the triage order is in the server instructions.
             $guidelines = 'Be professional and empathetic. Address customers by name. '
-                . 'For triage, prioritize: critical priority first, then longest waiting, then unassigned. '
-                . 'Always check the conversation history before replying. '
-                . 'Use internal notes to document decisions or escalation reasons.';
+                . 'Read the whole conversation before replying. '
+                . 'Use internal notes to record decisions and escalations.';
         }
 
-        $openCount = $stats['new'] + $stats['active'];
+        $openCount = (int) ($counts['statuses']['open'] ?? 0);
 
         return MCPHelper::envelope(
             "Support context: {$openCount} open ticket(s), {$stats['unassigned']} unassigned",
             [
-                'you'      => [
-                    'agent_id' => $currentAgent->id,
-                    'name'     => MCPHelper::personName($currentAgent),
-                    'email'    => $currentAgent->email,
-                ],
+                'you'      => array_merge([
+                    'agent_id'  => $currentAgent->id,
+                    'name'      => MCPHelper::personName($currentAgent),
+                    'email'     => $currentAgent->email,
+                ], self::replyMode(), [
+                    // Added only where an inbox email template uses {{agent.signature}};
+                    // each mailbox's emails say whether theirs does.
+                    'signature' => $signature !== '' ? [
+                        'enabled' => true,
+                        'text'    => mb_substr(MCPHelper::htmlToMarkdown($signature), 0, self::SIGNATURE_MAX_CHARS),
+                    ] : [
+                        'enabled' => false,
+                        'note'    => 'You have no signature set.',
+                    ],
+                ]),
                 'my_queue' => $myQueue,
                 'needs_attention' => [
                     'unassigned'      => $unassigned,
@@ -236,22 +260,221 @@ class ManagementTools
                 'mailboxes'  => $mailboxes,
                 'tags'       => $tags,
                 'stats'      => $stats,
+                'views'      => $views,
                 'priorities' => ['normal', 'medium', 'critical'],
                 'statuses'   => ['new', 'active', 'closed'],
+                'uploads'    => self::uploadLimits(),
+                // Every date the MCP returns is in this zone, shown by its offset.
+                'site_timezone' => wp_timezone_string(),
                 'guidelines' => $guidelines,
             ]
         );
     }
 
+    /**
+     * How this agent's replies go out, as reply-to-ticket applies it. Only an agent
+     * who cannot send directly gets a sentence explaining why.
+     *
+     * @return array
+     */
+    private static function replyMode()
+    {
+        if (PermissionManager::userCan(\FluentSupport\App\Modules\MCP\Support\AbilityGuard::MANAGE_TICKET_CAPS)) {
+            return ['replies' => 'send'];
+        }
+
+        if (PermissionManager::currentUserCan('fst_draft_reply')) {
+            return [
+                'replies'      => 'draft_only',
+                'replies_note' => 'You only have the Draft Reply permission: reply-to-ticket saves your replies as drafts for another agent to approve.',
+            ];
+        }
+
+        return [
+            'replies'      => 'none',
+            'replies_note' => 'You can read tickets but not reply to them.',
+        ];
+    }
+
+    /** How much of an inbox email template the MCP shows, in characters of Markdown. */
+    const TEMPLATE_MAX_CHARS = 2000;
+
+    /** How much of the agent's signature the MCP shows, in characters of Markdown. */
+    const SIGNATURE_MAX_CHARS = 1000;
+
+    /**
+     * The email the customer gets when the agent writes from this mailbox: the
+     * template itself, with [YOUR MESSAGE] where the agent's text goes and
+     * [YOUR SIGNATURE] where their signature is added. The agent reads the template
+     * and decides what to leave out; nothing here guesses at greetings or sign-offs.
+     *
+     * adds_signature is true only when the template has {{agent.signature}} and the
+     * agent has a signature; then [YOUR SIGNATURE] marks it.
+     *
+     * @param MailBox     $mailbox
+     * @param string      $emailKey
+     * @param Agent       $agent
+     * @param string|null $signature The agent's signature HTML. Pass it when describing several mailboxes for one agent.
+     * @param bool        $compact   For get-support-context: leave out the signature text (it is under
+     *                               you.signature) and the shared note (it is in the server instructions).
+     * @return array
+     */
+    public static function describeAgentEmail($mailbox, $emailKey, $agent, $signature = null, $compact = false)
+    {
+        if ($signature === null) {
+            $signature = \FluentSupport\App\Services\Tickets\ResponseService::getAppendedSignature($agent);
+        }
+        $hasSignature = (string) $signature !== '';
+
+        $settings = (new \FluentSupport\App\Services\EmailNotification\Settings())->getBoxEmailSettings($mailbox, $emailKey);
+        if (!$settings) {
+            return ['sent' => false, 'note' => 'This inbox does not send this email.'];
+        }
+
+        $body = (string) ($settings['email_body'] ?? '');
+
+        // The outreach email carries the agent's text as {{ticket.content}}: for an
+        // agent-initiated ticket that is the agent's first message.
+        $contentPattern = $emailKey === 'ticket_created_by_agent_on_behalf_email_to_customer'
+            ? '/{{\s*(response\.(full_)?content|ticket\.content)\s*}}/'
+            : '/{{\s*response\.(full_)?content\s*}}/';
+        $signaturePattern = '/{{\s*agent\.signature\s*}}/';
+
+        $includesMessage = (bool) preg_match($contentPattern, $body);
+        $hasSignatureSlot = (bool) preg_match($signaturePattern, $body);
+        $addsSignature = $hasSignature && $hasSignatureSlot;
+
+        // The signature placeholder renders empty for an agent without one.
+        $shown = preg_replace($contentPattern, '[YOUR MESSAGE]', $body);
+        $shown = preg_replace($signaturePattern, $hasSignature ? '[YOUR SIGNATURE]' : '', $shown);
+        $template = MCPHelper::htmlToMarkdown($shown);
+        $truncated = mb_strlen($template) > self::TEMPLATE_MAX_CHARS;
+        if ($truncated) {
+            $template = mb_substr($template, 0, self::TEMPLATE_MAX_CHARS) . '...';
+        }
+
+        // From the agent's side a signature is either added automatically or not;
+        // why not (no slot in the template, or no signature set) doesn't change what to write.
+        if (!$includesMessage) {
+            $note = 'This email does not include your message: it tells the customer to read it in the portal.';
+        } elseif ($compact) {
+            // The shared rule is in the server instructions; adds_signature carries the rest.
+            $note = '';
+        } else {
+            $note = 'The customer gets this template with [YOUR MESSAGE] replaced by your text, so leave out any greeting or sign-off it already has. '
+                . ($addsSignature
+                    ? 'Your signature, shown in signature, is added automatically at [YOUR SIGNATURE], so do not sign your message. '
+                    : 'No signature is added automatically. ')
+                . 'The [...] markers are for reading the template only; never type them in a reply.';
+        }
+
+        $description = [
+            'sent'           => ($settings['status'] ?? 'no') === 'yes',
+            'includes_reply' => $includesMessage,
+            'adds_signature' => $addsSignature,
+            'subject'        => (string) ($settings['email_subject'] ?? ''),
+            'template'       => $template,
+            'from_name'      => $mailbox->getFromName($agent),
+        ];
+
+        if ($truncated) {
+            $description['template_truncated'] = true;
+        }
+
+        if ($addsSignature && !$compact) {
+            $description['signature'] = mb_substr(MCPHelper::htmlToMarkdown($signature), 0, self::SIGNATURE_MAX_CHARS);
+        }
+
+        if ($note !== '') {
+            $description['note'] = $note;
+        }
+
+        return $description;
+    }
+
+    /**
+     * The limits AttachmentStager applies to files sent with a reply or note.
+     *
+     * @return array
+     */
+    private static function uploadLimits()
+    {
+        $settings = (new \FluentSupport\App\Services\EmailNotification\Settings())->globalBusinessSettings();
+
+        return [
+            'max_files'        => \FluentSupport\App\Modules\MCP\Support\AttachmentStager::maxFiles(),
+            'max_file_size_mb'   => floatval($settings['max_file_size'] ?? 0) ?: null,
+            'allowed_extensions' => \FluentSupport\App\Modules\MCP\Support\AttachmentStager::allowedExtensions(),
+            'note'               => 'Per reply or note: up to max_files files, each up to max_file_size_mb as a file (base64 text is about a third larger).',
+        ];
+    }
+
+    public static function getTicketViews($params)
+    {
+        $currentAgent = MCPHelper::resolveAgent();
+        if (!$currentAgent) {
+            return MCPHelper::error('unauthorized', __('No agent found for current user', 'fluent-support'));
+        }
+
+        $views  = self::buildTicketViews($currentAgent, (new TicketStats())->getSidebarCounts($currentAgent));
+        $counts = array_column($views, 'count', 'key');
+
+        $summary = sprintf(
+            '%d waiting for reply, %d assigned to you',
+            $counts['waiting_for_reply'] ?? 0,
+            $counts['assigned_to_me'] ?? 0
+        );
+        if (isset($counts['unassigned'])) {
+            $summary .= sprintf(', %d unassigned', $counts['unassigned']);
+        }
+
+        return MCPHelper::envelope($summary, ['views' => $views]);
+    }
+
+    /**
+     * The ticket list sidebar's views: each one's count and the list-tickets
+     * arguments that return the same tickets.
+     *
+     * @param \FluentSupport\App\Models\Agent $agent  The current user's agent.
+     * @param array                          $counts TicketStats::getSidebarCounts() for that agent.
+     * @return array
+     */
+    private static function buildTicketViews($agent, $counts)
+    {
+        $view = function ($key, $label, $count, $args) {
+            return ['key' => $key, 'label' => $label, 'count' => (int) $count, 'list_tickets' => $args];
+        };
+
+        $views = [
+            $view('assigned_to_me', 'Assigned to you', $counts['open']['mine'], ['status' => 'open', 'agent_id' => (int) $agent->id]),
+        ];
+
+        // Agents who only see their own tickets never see an unassigned one.
+        if (PermissionManager::getAgentTicketVisibility() !== PermissionManager::VISIBILITY_ASSIGNED_ONLY) {
+            $views[] = $view('unassigned', 'Unassigned', $counts['open']['unassigned'], ['status' => 'open', 'unassigned' => true]);
+        }
+
+        $views[] = $view('waiting_for_reply', 'Waiting for reply', $counts['open']['waiting'], ['waiting_for_reply' => true]);
+
+        // Only the priorities list-tickets accepts, highest first.
+        foreach (['critical', 'medium', 'normal'] as $priority) {
+            if (isset($counts['priorities'][$priority])) {
+                $views[] = $view('priority_' . $priority, ucfirst($priority) . ' priority (open)', $counts['priorities'][$priority], ['status' => 'open', 'priority' => $priority]);
+            }
+        }
+
+        foreach (['open', 'new', 'active', 'closed', 'all'] as $status) {
+            if (isset($counts['statuses'][$status])) {
+                $views[] = $view('status_' . $status, ucfirst($status) . ' tickets', $counts['statuses'][$status], ['status' => $status]);
+            }
+        }
+
+        return $views;
+    }
+
     public static function invalidateSupportContextCache()
     {
-        global $wpdb;
-        $like = $wpdb->esc_like('_transient_' . self::CACHE_PREFIX) . '%';
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-        $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", $like));
-        $like = $wpdb->esc_like('_transient_timeout_' . self::CACHE_PREFIX) . '%';
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-        $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", $like));
+        update_option(self::CACHE_VERSION_OPTION, (int) get_option(self::CACHE_VERSION_OPTION, 0) + 1, false);
     }
 
     /**
@@ -263,17 +486,13 @@ class ManagementTools
      * restricted-mailbox filter alone is not enough: an agent scoped to only their own tickets
      * must not enumerate other customers' tickets across the rest of the instance.
      */
-    private static function scopedTicketQuery($ticketFields, $eagerLoad, $restrictedMailboxes)
+    private static function scopedTicketQuery($ticketFields, $eagerLoad)
     {
         $query = Ticket::select($ticketFields)->with($eagerLoad);
 
         do_action_ref_array('fluent_support/tickets_query_by_permission_ref', [&$query]);
 
-        if ($restrictedMailboxes) {
-            $query->whereNotIn('mailbox_id', $restrictedMailboxes);
-        }
-
-        return $query;
+        return (new AgentTicketAccess())->applyMailboxRestrictionScope($query);
     }
 
     private static function formatContextTicket($ticket, int $now)
@@ -284,7 +503,7 @@ class ManagementTools
             'status'         => $ticket->status ?: 'new',
             'priority'       => MCPHelper::normalizePriority($ticket->priority),
             'response_count' => (int) $ticket->response_count,
-            'last_reply_by'  => $ticket->last_reply_by,
+            'waiting_on'     => MCPHelper::waitingOn($ticket),
         ];
 
         if ($ticket->relationLoaded('customer') && $ticket->customer) {
@@ -297,44 +516,6 @@ class ManagementTools
         }
 
         return $item;
-    }
-
-    public static function assignTicket($params)
-    {
-        $agent = MCPHelper::resolveAgent();
-        if (!$agent) {
-            return MCPHelper::error('unauthorized', __('No agent found for current user', 'fluent-support'));
-        }
-
-        $ticketId   = (int) ($params['ticket_id'] ?? 0);
-        $newAgentId = (int) ($params['agent_id'] ?? 0);
-
-        if (!$ticketId || !$newAgentId) {
-            return MCPHelper::error('invalid_param', __('ticket_id and agent_id are required', 'fluent-support'), ['fields' => ['ticket_id', 'agent_id']]);
-        }
-
-        $ticket = Ticket::find($ticketId);
-        if (!$ticket) {
-            return MCPHelper::error('not_found', __('Ticket not found', 'fluent-support'), ['next_step' => 'Use list-tickets to find valid ticket IDs']);
-        }
-
-        if ($err = TicketAccessGuard::assert($ticket)) {
-            return $err;
-        }
-
-        $newAgent = MCPHelper::resolveAssignmentTarget($newAgentId, $ticket, 'agent_id');
-        if (is_wp_error($newAgent)) {
-            return $newAgent;
-        }
-
-        MCPHelper::applyAgentAssignment($ticket, $newAgent, $agent);
-
-        $agentName = MCPHelper::personName($newAgent);
-
-        return MCPHelper::envelope(
-            "Ticket #{$ticketId} assigned to {$agentName}",
-            ['agent' => MCPHelper::formatPersonSummary($newAgent)]
-        );
     }
 
     public static function tagTicket($params)
@@ -369,144 +550,88 @@ class ManagementTools
             return MCPHelper::error('invalid_param', sprintf(__('add_tag_names may not exceed %d items per request. Split into multiple calls.', 'fluent-support'), self::MAX_TAG_NAMES), ['fields' => ['add_tag_names'], 'limit' => self::MAX_TAG_NAMES]);
         }
 
-        $namesResult    = self::findOrCreateTagsByTitles($addTagNames);
-        $failedTagNames = $namesResult['failed'];
-        $createdAnyTag  = $namesResult['created_any'];
-        foreach ($namesResult['tags'] as $tag) {
-            $addTagIds[] = (int) $tag->id;
+        // Names only pick existing tags: the tag list is configuration that people
+        // manage in the admin. Any unknown name stops the call before anything changes.
+        $resolved = self::resolveTagNames($addTagNames);
+        if ($resolved['unknown']) {
+            return MCPHelper::error(
+                'unknown_tag',
+                /* translators: %s is a comma-separated list of tag names */
+                sprintf(__('No tag is called: %s', 'fluent-support'), implode(', ', $resolved['unknown'])),
+                [
+                    'fields'         => ['add_tag_names'],
+                    'available_tags' => $resolved['available'],
+                    'next_step'      => 'Use one of these tags, or ask a person to create a new tag in the admin.',
+                ]
+            );
+        }
+        foreach ($resolved['ids'] as $tagId) {
+            $addTagIds[] = $tagId;
+        }
+
+        // Only real ticket tags: fs_taggables also holds agent groups and other types.
+        if ($addTagIds) {
+            $addTagIds = TicketTag::whereIn('id', array_unique($addTagIds))->pluck('id')->toArray();
         }
 
         if ($addTagIds) {
-            $ticket->applyTags(array_unique($addTagIds));
+            (new TicketService())->addTags($ticket, $addTagIds);
         }
 
         if ($removeTagIds) {
-            $ticket->detachTags($removeTagIds);
-        }
-
-        if ($createdAnyTag) {
-            self::invalidateSupportContextCache();
+            (new TicketService())->removeTags($ticket, $removeTagIds);
         }
 
         $ticket->load('tags');
 
-        $summary = "Tags updated on ticket #{$ticketId}";
-        if ($failedTagNames) {
-            $summary .= sprintf(__(' (failed to create: %s)', 'fluent-support'), implode(', ', $failedTagNames));
-        }
+        /* translators: %d is the ticket ID */
+        $summary = sprintf(__('Tags updated on ticket #%d', 'fluent-support'), $ticketId);
 
         $data = ['tags' => $ticket->tags->map(function ($tag) {
             return ['id' => $tag->id, 'title' => $tag->title];
         })->toArray()];
 
-        if ($failedTagNames) {
-            $data['failed_tag_names'] = array_values($failedTagNames);
-        }
-
         return MCPHelper::envelope($summary, $data);
     }
 
     /**
-     * Find an existing ticket tag by exact title match, or create one.
-     * created_by is left unset so TicketTag::boot() applies its own
-     * get_current_user_id() default — the same convention every other
-     * tag-creation path (REST, UI) relies on; setting it here to an
-     * agent/person id would mix two incompatible id spaces in the column.
+     * Existing tags for tag-ticket's add_tag_names, matched by title ignoring case
+     * and surrounding spaces. Nothing is created.
      *
-     * @return array{tag: ?TicketTag, created: bool}|null
+     * @param string[] $names
+     * @return array{ids: int[], unknown: string[], available: string[]}
      */
-    private static function findOrCreateTag($title, $description = null)
+    private static function resolveTagNames(array $names)
     {
-        $title = trim($title);
-        if ($title === '') {
-            return null;
+        if (!$names) {
+            return ['ids' => [], 'unknown' => [], 'available' => []];
         }
 
-        $existing = TicketTag::where('title', $title)->first();
-        if ($existing) {
-            return ['tag' => $existing, 'created' => false];
-        }
-
-        $data = ['title' => $title];
-        if ($description !== null) {
-            $data['description'] = $description;
-        }
-
-        return ['tag' => TicketTag::create($data), 'created' => true];
-    }
-
-    /**
-     * Batched sibling of findOrCreateTag() for tag-ticket's add_tag_names —
-     * resolves all titles with a single whereIn() lookup instead of one
-     * query per name, then creates only the titles that didn't already
-     * exist. Bounded by MAX_TAG_NAMES at the call site.
-     *
-     * @return array{tags: TicketTag[], created_any: bool, failed: string[]}
-     */
-    private static function findOrCreateTagsByTitles(array $titles)
-    {
-        if (!$titles) {
-            return ['tags' => [], 'created_any' => false, 'failed' => []];
-        }
-
-        $existingByTitle = TicketTag::whereIn('title', $titles)->get()->keyBy('title');
-
-        $tags      = [];
-        $failed    = [];
-        $createdAny = false;
-
-        foreach ($titles as $title) {
-            $existing = $existingByTitle->get($title);
-            if ($existing) {
-                $tags[] = $existing;
-                continue;
+        $tags = TicketTag::select(['id', 'title'])->orderBy('title', 'ASC')->get();
+        $byKey = [];
+        foreach ($tags as $tag) {
+            $key = mb_strtolower(trim((string) $tag->title));
+            if (!isset($byKey[$key])) {
+                $byKey[$key] = (int) $tag->id;
             }
+        }
 
-            $tag = TicketTag::create(['title' => $title]);
-            if ($tag && $tag->id) {
-                $tags[]     = $tag;
-                $createdAny = true;
+        $ids = [];
+        $unknown = [];
+        foreach ($names as $name) {
+            $key = mb_strtolower(trim($name));
+            if (isset($byKey[$key])) {
+                $ids[] = $byKey[$key];
             } else {
-                $failed[] = $title;
+                $unknown[] = $name;
             }
         }
 
-        return ['tags' => $tags, 'created_any' => $createdAny, 'failed' => $failed];
-    }
-
-    public static function createTag($params)
-    {
-        $agent = MCPHelper::resolveAgent();
-        if (!$agent) {
-            return MCPHelper::error('unauthorized', __('No agent found for current user', 'fluent-support'));
-        }
-
-        $title = sanitize_text_field($params['title'] ?? '');
-        if ($title === '') {
-            return MCPHelper::error('invalid_param', __('title is required', 'fluent-support'), ['fields' => ['title']]);
-        }
-
-        $description = isset($params['description']) ? sanitize_textarea_field($params['description']) : null;
-
-        $resolved = self::findOrCreateTag($title, $description);
-        $tag      = $resolved['tag'] ?? null;
-
-        if (!$tag || !$tag->id) {
-            return MCPHelper::error('failed', __('Failed to create tag', 'fluent-support'), ['retryable' => true]);
-        }
-
-        if ($resolved['created']) {
-            self::invalidateSupportContextCache();
-        }
-
-        $summary = $resolved['created']
-            ? sprintf(__('Tag "%s" created', 'fluent-support'), $tag->title)
-            : sprintf(__('Tag "%s" already exists', 'fluent-support'), $tag->title);
-
-        return MCPHelper::envelope(
-            $summary,
-            ['tag' => ['id' => $tag->id, 'title' => $tag->title], 'created' => $resolved['created']]
-        );
+        return [
+            'ids'       => array_values(array_unique($ids)),
+            'unknown'   => $unknown,
+            'available' => $unknown ? array_slice($tags->pluck('title')->all(), 0, 200) : [],
+        ];
     }
 
     public static function getSupportInsights($params)
@@ -516,197 +641,92 @@ class ManagementTools
             return MCPHelper::error('unauthorized', __('No agent found for current user', 'fluent-support'));
         }
 
-        $period    = sanitize_text_field($params['period'] ?? '7d');
         $periodMap = ['24h' => 1, '7d' => 7, '30d' => 30, '90d' => 90];
-        $days      = $periodMap[$period] ?? 7;
-        $since     = gmdate('Y-m-d H:i:s', strtotime("-{$days} days"));
+        $period    = sanitize_text_field($params['period'] ?? '7d');
+        if (!isset($periodMap[$period])) {
+            $period = '7d';
+        }
 
-        $restrictedMailboxes = PermissionManager::getRestrictedMailboxIds();
-        $scoped              = function () use ($restrictedMailboxes) {
-            $query = Ticket::query();
+        // Ticket dates are stored in site time (current_time('mysql')), so the
+        // cut-off must be site time too; a UTC cut-off shifts the whole window.
+        $nowTs   = time();
+        $sinceTs = $nowTs - $periodMap[$period] * DAY_IN_SECONDS;
+        $since   = wp_date('Y-m-d H:i:s', $sinceTs);
+        $now     = current_time('mysql');
+
+        // The Reports meanings, over the tickets this agent can see (visibility
+        // and mailbox restrictions), as every MCP tool.
+        $tickets = function () {
+            $query = Reports::tickets();
+            // For third-party code hooked here; applyAccessScope() is the real check.
             do_action_ref_array('fluent_support/tickets_query_by_permission_ref', [&$query]);
-            if ($restrictedMailboxes) {
-                $query->whereNotIn('mailbox_id', $restrictedMailboxes);
+            return (new AgentTicketAccess())->applyAccessScope($query);
+        };
+        $created = fn() => $tickets()->where('created_at', '>=', $since);
+        $closed  = fn() => $tickets()->where('status', 'closed')->where('resolved_at', '>=', $since);
+
+        $times = function (array $durations, $nullWhenEmpty = true) {
+            if (!$durations['count'] && $nullWhenEmpty) {
+                return ['count' => 0, 'average' => null, 'median' => null, 'max' => null, 'min' => null];
             }
-            return $query;
+            return ['count' => $durations['count']] + array_map([__CLASS__, 'formatDuration'], array_diff_key($durations, ['count' => 0]));
+        };
+        // Wait so far, measured in site time like waiting_since.
+        $waits = function ($query) use ($times, $now) {
+            $durations = $times(Reports::durations($query, 'TIMESTAMPDIFF(SECOND, waiting_since, ?)', [$now]), false);
+            unset($durations['min']);
+            return $durations;
         };
 
-        $periodTicketsQuery  = $scoped()->where('created_at', '>=', $since);
-        $closedInPeriodQuery = $scoped()->where('resolved_at', '>=', $since);
-
-        // Response times — aggregates in SQL; bounded sample only for median.
-        $rtBase   = $scoped()->where('first_response_time', '>', 0)->where('created_at', '>=', $since);
-        $rtAgg    = (clone $rtBase)->selectRaw('COUNT(*) as cnt, AVG(first_response_time) as avg_val, MAX(first_response_time) as max_val, MIN(first_response_time) as min_val')->first();
-        $rtSample = ($rtAgg && (int) $rtAgg->cnt > 0)
-            ? (clone $rtBase)->orderByDesc('id')->limit(500)->pluck('first_response_time')->toArray()
-            : [];
-
-        // Resolution times — same pattern.
-        $ctBase   = (clone $closedInPeriodQuery)->where('total_close_time', '>', 0);
-        $ctAgg    = (clone $ctBase)->selectRaw('COUNT(*) as cnt, AVG(total_close_time) as avg_val, MAX(total_close_time) as max_val, MIN(total_close_time) as min_val')->first();
-        $ctSample = ($ctAgg && (int) $ctAgg->cnt > 0)
-            ? (clone $ctBase)->orderByDesc('id')->limit(500)->pluck('total_close_time')->toArray()
-            : [];
-
-        // Waiting — split by who's turn it is. last_reply_by=customer tickets are genuinely
-        // waiting on an agent; last_reply_by=agent tickets only reflect how long the customer
-        // has been idle since our last reply. A single blended average over both populations
-        // measures mostly customer silence and hides how many tickets actually need a reply.
-        $waitOnAgentBase    = $scoped()->whereNotIn('status', ['closed'])->whereNotNull('waiting_since')->waitingOnly();
-        $waitOnCustomerBase = $scoped()->whereNotIn('status', ['closed'])->whereNotNull('waiting_since')->where(function ($q) {
-            $q->whereColumn('last_customer_response', '<', 'last_agent_response');
-        });
-        $waitingOnAgent    = self::computeWaitStats($waitOnAgentBase);
-        $waitingOnCustomer = self::computeWaitStats($waitOnCustomerBase);
-
-        $allAgents = Agent::where('person_type', 'agent')
-            ->whereNotNull('first_name')
-            ->where('first_name', '!=', '')
-            ->select(['id', 'first_name', 'last_name'])
-            ->get()
-            ->keyBy('id');
-
-        $agentWorkload = $scoped()->whereNotIn('status', ['closed'])
-            ->whereNotNull('agent_id')
-            ->selectRaw('agent_id, COUNT(*) as ticket_count')
-            ->groupBy('agent_id')
-            ->get()
-            ->keyBy('agent_id');
-
-        $agentClosedInPeriod = $scoped()->where('resolved_at', '>=', $since)
-            ->whereNotNull('agent_id')
-            ->selectRaw('agent_id, COUNT(*) as closed_count')
-            ->groupBy('agent_id')
-            ->get()
-            ->keyBy('agent_id');
-
-        $agentResponseTimes = $scoped()->where('first_response_time', '>', 0)
-            ->where('created_at', '>=', $since)
-            ->whereNotNull('agent_id')
-            ->selectRaw('agent_id, AVG(first_response_time) as avg_response_time')
-            ->groupBy('agent_id')
-            ->get()
-            ->keyBy('agent_id');
-
-        $agentResolutionTimes = $scoped()->where('resolved_at', '>=', $since)
-            ->where('total_close_time', '>', 0)
-            ->whereNotNull('agent_id')
-            ->selectRaw('agent_id, AVG(total_close_time) as avg_close_time')
-            ->groupBy('agent_id')
-            ->get()
-            ->keyBy('agent_id');
-
-        $agentIds = $allAgents->keys()
-            ->merge($agentWorkload->keys())
-            ->merge($agentClosedInPeriod->keys())
-            ->unique();
+        // Per agent: open tickets now, and closed tickets and average times for the period.
+        $byAgent = fn($query, $value) => $query->whereNotNull('agent_id')->selectRaw("agent_id, $value AS value")->groupBy('agent_id')->pluck('value', 'agent_id')->all();
+        $open = $byAgent($tickets()->where('status', '!=', 'closed'), 'COUNT(*)');
+        $closedCounts = $byAgent($closed(), 'COUNT(*)');
+        $firstResponse = $byAgent($created()->where('first_response_time', '>', 0), 'AVG(first_response_time)');
+        $resolution = $byAgent($closed()->where('total_close_time', '>', 0), 'AVG(total_close_time)');
 
         $performance = [];
-        foreach ($agentIds as $agentId) {
-            $agentModel = $allAgents->get($agentId);
-            if (!$agentModel) {
+        $agents = Agent::whereNotNull('first_name')->where('first_name', '!=', '')->select(['id', 'first_name', 'last_name'])->get();
+        foreach ($agents as $row) {
+            if (!empty($params['agent_id']) && (int) $row->id !== (int) $params['agent_id']) {
                 continue;
             }
-
-            $entry = [
-                'agent_id'         => $agentId,
-                'agent_name'       => MCPHelper::personName($agentModel),
-                'open_tickets'     => (int) ($agentWorkload->get($agentId)->ticket_count ?? 0),
-                'closed_in_period' => (int) ($agentClosedInPeriod->get($agentId)->closed_count ?? 0),
+            $performance[] = [
+                'agent_id'           => $row->id,
+                'agent_name'         => MCPHelper::personName($row),
+                'open_tickets'       => (int) ($open[$row->id] ?? 0),
+                'closed_in_period'   => (int) ($closedCounts[$row->id] ?? 0),
+                'avg_first_response' => isset($firstResponse[$row->id]) ? self::formatDuration((float) $firstResponse[$row->id]) : null,
+                'avg_resolution'     => isset($resolution[$row->id]) ? self::formatDuration((float) $resolution[$row->id]) : null,
             ];
-
-            $avgResponse = $agentResponseTimes->get($agentId);
-            $entry['avg_first_response'] = $avgResponse
-                ? self::formatDuration((float) $avgResponse->avg_response_time)
-                : null;
-
-            $avgResolution = $agentResolutionTimes->get($agentId);
-            $entry['avg_resolution'] = $avgResolution
-                ? self::formatDuration((float) $avgResolution->avg_close_time)
-                : null;
-
-            $performance[] = $entry;
         }
-
         usort($performance, fn($a, $b) => $b['open_tickets'] - $a['open_tickets']);
 
-        $truncatedAgents = count($performance) > self::MAX_AGENTS;
-        if ($truncatedAgents) {
-            $performance = array_slice($performance, 0, self::MAX_AGENTS);
-        }
-
-        $created = (clone $periodTicketsQuery)->count();
-        $closed  = (clone $closedInPeriodQuery)->count();
+        $agentTotal = count($performance);
+        $volume = ['created' => $created()->count(), 'closed' => $closed()->count()];
 
         return MCPHelper::envelope(
-            "Support insights for {$period}: {$created} created, {$closed} closed",
+            "Support insights for {$period}: {$volume['created']} created, {$volume['closed']} closed",
             [
                 'period' => $period,
-                'volume' => ['created' => $created, 'closed' => $closed],
-                'first_response_time' => self::computeTimeStatsFromAgg($rtAgg, $rtSample),
-                'resolution_time'     => self::computeTimeStatsFromAgg($ctAgg, $ctSample),
+                'from'   => wp_date('c', $sinceTs),
+                'to'     => wp_date('c', $nowTs),
+                'volume' => $volume,
+                'first_response_time' => $times(Reports::durations($created()->where('first_response_time', '>', 0), 'first_response_time')),
+                'resolution_time'     => $times(Reports::durations($closed()->where('total_close_time', '>', 0), 'total_close_time')),
+                // A reply is owed (waiting_on_agent), or we answered and wait for the customer.
                 'waiting'             => [
-                    'waiting_on_agent'    => $waitingOnAgent,
-                    'waiting_on_customer' => $waitingOnCustomer,
+                    'waiting_on_agent'    => $waits(Reports::waiting($tickets())),
+                    'waiting_on_customer' => $waits(Reports::waitingOnCustomer($tickets())),
                 ],
-                'agent_performance'          => $performance,
-                'agent_performance_truncated' => $truncatedAgents,
+                'agent_performance'           => array_slice($performance, 0, self::MAX_AGENTS),
+                'agent_performance_total'     => $agentTotal,
+                'agent_performance_truncated' => $agentTotal > self::MAX_AGENTS,
             ]
         );
     }
 
-    private static function computeTimeStatsFromAgg($agg, array $sample)
-    {
-        if (!$agg || (int) $agg->cnt === 0) {
-            return ['count' => 0, 'average' => null, 'median' => null, 'max' => null, 'min' => null];
-        }
-
-        return [
-            'count'   => (int) $agg->cnt,
-            'average' => self::formatDuration((float) $agg->avg_val),
-            'median'  => self::formatDuration(self::median($sample)),
-            'max'     => self::formatDuration((float) $agg->max_val),
-            'min'     => self::formatDuration((float) $agg->min_val),
-        ];
-    }
-
-    /**
-     * Aggregate + bounded-sample-for-median pattern for a waiting_since-based population,
-     * mirroring computeTimeStatsFromAgg() but for the TIMESTAMPDIFF-against-now duration used
-     * by the two waiting populations (waiting_on_agent / waiting_on_customer) instead of a
-     * stored duration column.
-     */
-    private static function computeWaitStats($baseQuery)
-    {
-        $agg = (clone $baseQuery)
-            ->selectRaw('COUNT(*) as cnt, AVG(TIMESTAMPDIFF(SECOND, waiting_since, UTC_TIMESTAMP())) as avg_val, MAX(TIMESTAMPDIFF(SECOND, waiting_since, UTC_TIMESTAMP())) as max_val')
-            ->first();
-        $sample = ($agg && (int) $agg->cnt > 0)
-            ? (clone $baseQuery)->selectRaw('TIMESTAMPDIFF(SECOND, waiting_since, UTC_TIMESTAMP()) as wait_sec')->orderByDesc('id')->limit(500)->pluck('wait_sec')->toArray()
-            : [];
-
-        return [
-            'count'   => $agg ? (int) $agg->cnt : 0,
-            'average' => self::formatDuration($agg ? (float) $agg->avg_val : 0),
-            'max'     => self::formatDuration($agg ? (float) $agg->max_val : 0),
-            'median'  => self::formatDuration(self::median($sample)),
-        ];
-    }
-
-    private static function median(array $values)
-    {
-        if (empty($values)) {
-            return 0;
-        }
-        sort($values);
-        $count = count($values);
-        $mid   = (int) floor($count / 2);
-        return ($count % 2 === 0)
-            ? ($values[$mid - 1] + $values[$mid]) / 2
-            : $values[$mid];
-    }
-
-    private static function formatDuration($seconds)
+    public static function formatDuration($seconds)
     {
         return MCPHelper::formatDuration($seconds);
     }
@@ -729,7 +749,7 @@ class ManagementTools
             return MCPHelper::error('invalid_param', sprintf(__('ticket_ids may not exceed %d items per request. Split into multiple calls.', 'fluent-support'), self::MAX_BULK), ['fields' => ['ticket_ids'], 'limit' => self::MAX_BULK]);
         }
 
-        $allowedActions = ['close', 'assign', 'tag'];
+        $allowedActions = ['close', 'assign', 'tag', 'reply'];
         if (!in_array($action, $allowedActions)) {
             return MCPHelper::error('invalid_param', sprintf(__('action must be one of: %s', 'fluent-support'), implode(', ', $allowedActions)), ['fields' => ['action']]);
         }
@@ -744,11 +764,21 @@ class ManagementTools
             }
         }
 
+        $bulkTagIds = [];
         if ($action === 'tag') {
             $tagIds = array_map('intval', (array) ($params['tag_ids'] ?? []));
             if (empty($tagIds)) {
                 return MCPHelper::error('invalid_param', __('tag_ids is required for the tag action', 'fluent-support'), ['fields' => ['tag_ids']]);
             }
+            // Only real ticket tags: fs_taggables also holds agent groups and other types.
+            $bulkTagIds = TicketTag::whereIn('id', $tagIds)->pluck('id')->toArray();
+            if (!$bulkTagIds) {
+                return MCPHelper::error('invalid_param', __('None of the tag_ids is a ticket tag', 'fluent-support'), ['fields' => ['tag_ids'], 'next_step' => 'Use get-support-context to see available tags and their IDs']);
+            }
+        }
+
+        if ($action === 'reply' && empty($params['content']) && empty($params['saved_reply_id'])) {
+            return MCPHelper::error('invalid_param', __('content or saved_reply_id is required for the reply action', 'fluent-support'), ['fields' => ['content', 'saved_reply_id']]);
         }
 
         $tickets       = Ticket::whereIn('id', $ticketIds)->get();
@@ -776,7 +806,8 @@ class ManagementTools
                         if ($ticket->status === 'closed') {
                             $results[] = ['id' => $ticket->id, 'status' => 'already_closed'];
                         } else {
-                            $ticketService->close($ticket, $agent);
+                            // close() takes 'yes'/'no'; only 'no' sends the closing email.
+                            $ticketService->close($ticket, $agent, '', !empty($params['silent']) ? 'yes' : 'no');
                             $results[] = ['id' => $ticket->id, 'status' => 'closed'];
                         }
                         break;
@@ -791,9 +822,12 @@ class ManagementTools
                         break;
 
                     case 'tag':
-                        $tagIds = array_map('intval', (array) ($params['tag_ids'] ?? []));
-                        $ticket->applyTags($tagIds);
+                        $ticketService->addTags($ticket, $bulkTagIds);
                         $results[] = ['id' => $ticket->id, 'status' => 'tagged'];
+                        break;
+
+                    case 'reply':
+                        $results[] = self::bulkReply($ticket, $params);
                         break;
                 }
             } catch (\Exception $e) {
@@ -802,11 +836,11 @@ class ManagementTools
         }
 
         $processed = count(array_filter($results, function ($r) {
-            return !in_array($r['status'], ['not_found', 'forbidden', 'mailbox_restricted', 'error']);
+            return in_array($r['status'], ['closed', 'already_closed', 'assigned', 'tagged', 'replied', 'drafted', 'duplicate'], true);
         }));
 
         $total     = count($ticketIds);
-        $verbMap   = ['close' => 'closed', 'assign' => 'assigned', 'tag' => 'tagged'];
+        $verbMap   = ['close' => 'closed', 'assign' => 'assigned', 'tag' => 'tagged', 'reply' => 'replied to'];
         $verb      = $verbMap[$action] ?? $action;
 
         return MCPHelper::envelope(
@@ -816,6 +850,46 @@ class ManagementTools
         );
     }
 
+    /**
+     * One ticket of a bulk reply, through the same path as reply-to-ticket
+     * (access, reopen, auto-assign, drafts, duplicate guard).
+     */
+    private static function bulkReply(Ticket $ticket, $params)
+    {
+        $replyParams = array_intersect_key($params, array_flip(['content', 'content_format', 'saved_reply_id', 'close_ticket', 'draft']));
+        $replyParams['ticket_id'] = $ticket->id;
+
+        $result = ResponseTools::replyToTicket($replyParams);
+
+        if (is_wp_error($result)) {
+            $error = json_decode($result->get_error_message(), true);
+            return [
+                'id'      => $ticket->id,
+                'status'  => $error['error']['code'] ?? 'error',
+                'message' => $error['error']['message'] ?? $result->get_error_message(),
+            ];
+        }
+
+        $data = $result['data'];
+        if (!empty($data['duplicate'])) {
+            $status = 'duplicate';
+        } elseif (!empty($data['draft'])) {
+            $status = 'drafted';
+        } else {
+            $status = 'replied';
+        }
+
+        return array_filter([
+            'id'            => $ticket->id,
+            'status'        => $status,
+            'response_id'   => $data['response']['id'] ?? null,
+            'ticket_status' => $data['ticket_status'] ?? null,
+            'reopened'      => !empty($data['reopened']) ?: null,
+        ], function ($value) {
+            return $value !== null;
+        });
+    }
+
     public static function getMentions($params)
     {
         $agent = MCPHelper::resolveAgent();
@@ -823,8 +897,7 @@ class ManagementTools
             return MCPHelper::error('unauthorized', __('No agent found for current user', 'fluent-support'));
         }
 
-        $notificationSettings = new \FluentSupport\App\Services\Notifications\NotificationSettings();
-        if (!$notificationSettings->canUseNotificationTables(true)) {
+        if (!\FluentSupport\App\Modules\Notifications\NotificationService::tablesReady(true)) {
             return MCPHelper::error('not_available', __('Internal notifications are not enabled. Enable them in Fluent Support Settings > Notifications.', 'fluent-support'), [
                 'next_step' => 'Enable internal notifications in Fluent Support admin settings',
             ]);
@@ -838,7 +911,7 @@ class ManagementTools
         }
 
         $filters = [
-            'category' => \FluentSupport\App\Services\Notifications\NotificationCategory::MENTIONS,
+            'category' => \FluentSupport\App\Modules\Notifications\NotificationService::MENTIONS,
         ];
 
         if ($status !== 'all') {
@@ -849,8 +922,7 @@ class ManagementTools
             $filters['ticket_id'] = (int) $params['ticket_id'];
         }
 
-        $queryService = new \FluentSupport\App\Services\Notifications\NotificationQueryService();
-        $query        = $queryService->getNotificationsForPerson($agent->id, $filters);
+        $query = \FluentSupport\App\Modules\Notifications\NotificationService::query($agent->id, $filters);
 
         if (!$query) {
             return MCPHelper::error('not_available', __('Internal notifications are not enabled.', 'fluent-support'));
@@ -858,8 +930,7 @@ class ManagementTools
 
         $paginated = $query->paginate($perPage, ['*'], 'page', $page);
 
-        $unreadCount = (new \FluentSupport\App\Services\Notifications\NotificationQueryService())
-            ->getUnreadCount($agent->id, ['category' => \FluentSupport\App\Services\Notifications\NotificationCategory::MENTIONS]);
+        $unreadCount = \FluentSupport\App\Modules\Notifications\NotificationService::unreadCount($agent->id, ['category' => \FluentSupport\App\Modules\Notifications\NotificationService::MENTIONS]);
 
         $mentions = [];
         foreach ($paginated->items() as $notification) {
@@ -910,57 +981,4 @@ class ManagementTools
         );
     }
 
-    public static function listWorkflows($params)
-    {
-        if (!class_exists('\FluentSupportPro\App\Models\Workflow')) {
-            return MCPHelper::error('not_available', __('Workflows require Fluent Support Pro', 'fluent-support'));
-        }
-
-        ['page' => $page, 'per_page' => $perPage] = MCPHelper::pagination($params);
-
-        $query = \FluentSupportPro\App\Models\Workflow::query();
-
-        $status = sanitize_text_field($params['status'] ?? 'published');
-        if ($status !== 'all') {
-            $query->where('status', $status);
-        }
-
-        if (!empty($params['trigger_type'])) {
-            $query->where('trigger_type', sanitize_text_field($params['trigger_type']));
-        }
-
-        $paginated = $query->with([
-            'actions' => fn($q) => $q->select(['id', 'workflow_id', 'title', 'action_name']),
-        ])->orderBy('priority', 'ASC')->paginate($perPage, ['*'], 'page', $page);
-
-        $triggerLabels = [
-            'fluent_support/ticket_created'             => 'When a new ticket is created',
-            'fluent_support/response_added_by_customer' => 'When a customer replies',
-            'fluent_support/ticket_closed'              => 'When a ticket is closed',
-        ];
-
-        $total = $paginated->total();
-
-        $workflows = array_map(function ($wf) use ($triggerLabels) {
-            return [
-                'id'            => $wf->id,
-                'title'         => $wf->title,
-                'status'        => $wf->status,
-                'trigger_type'  => $wf->trigger_type,
-                'trigger_key'   => sanitize_text_field($wf->trigger_key),
-                'trigger_label' => $triggerLabels[$wf->trigger_key] ?? sanitize_text_field($wf->trigger_key),
-                'actions'       => $wf->actions->map(fn($a) => [
-                    'action' => $a->action_name,
-                    'title'  => $a->title,
-                ])->toArray(),
-                'last_ran_at'   => MCPHelper::toIso8601($wf->last_ran_at),
-            ];
-        }, $paginated->items());
-
-        return MCPHelper::envelope(
-            sprintf(_n('Found %d workflow', 'Found %d workflows', $total, 'fluent-support'), $total),
-            ['workflows' => $workflows],
-            MCPHelper::pagingMeta($paginated)
-        );
-    }
 }

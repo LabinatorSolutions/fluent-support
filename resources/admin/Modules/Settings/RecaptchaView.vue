@@ -6,7 +6,7 @@
                     <h3>{{ $t("reCAPTCHA Settings") }}</h3>
                     <div class="fs_save_settings_container">
                         <div class="fs_actions" v-if="hasSavedSettings">
-                            <el-button class="fs_stroke_btn" @click="clearSettings">
+                            <el-button class="fs_stroke_btn" v-loading="loading" :disabled="loading" @click="clearSettings">
                                 {{ $t("Clear Settings") }}
                             </el-button>
                         </div>
@@ -16,7 +16,8 @@
                                 type="success"
                                 class="fs_save_settings_btn"
                                 @click="saveSettings()"
-                                :disabled="!isValid"
+                                v-loading="loading"
+                                :disabled="!isValid || loading"
                             >{{ $t("Save Settings") }}</el-button>
                         </div>
                     </div>
@@ -34,7 +35,7 @@
                             v-if="appVars.auth_provider == 'fluent_auth'"
                             class="fs_recaptcha_fluent_auth_notice"
                         >
-                            {{ $t("Signin and Registration forms are handled by the FluentAuth plugin. The settings below only apply to the Ticket Creation Form.") }}
+                            {{ $t("Recaptcha_FluentAuth_Forms_Help") }}
                         </p>
                         <el-form label-position="top" label-width="140px">
                             <el-form-item class="fs_form_item" :label="$t('Enable reCAPTCHA')">
@@ -121,15 +122,20 @@
                 class="fs_box_body fs_skeleton_loader"
                 v-else
             >
-                <el-skeleton :rows="5" animated />
+                <FormSkeleton :fields="5" :button="false" />
             </div>
         </div>
     </div>
 </template>
 
 <script type="text/babel">
+import FormSkeleton from '@/admin/Components/FormSkeleton.vue';
+
 export default {
     name: 'RecaptchaView',
+    components: {
+        FormSkeleton
+    },
     data() {
         return {
             reCaptchaVersion: "recaptcha_v2",

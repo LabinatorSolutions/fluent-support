@@ -1,201 +1,124 @@
-const {Fragment, useState} = wp.element;
-const {
-    SelectControl,
-    TextControl,
-    Button,
-    Spinner,
-    SearchControl,
-    ToggleControl
-} = wp.components;
-const {__} = wp.i18n;
+import { Fragment, useState } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 
-import './view_ticket.scss';
-import ViewTicketInspectorControls, { generateStyles } from './InspectorSettings';
+import ViewTicketInspectorControls from './InspectorSettings';
+import { BackNav, StatusBadge } from '../PreviewParts';
 
-export const ViewTicketBlock = props => {
-    const {attributes: blockAttributes, setAttributes, showSection} = props;
-
-    const [activeTab, setActiveTab] = useState('Visual');
-    const [details, setDetails] = useState('');
-
-    const {
-        blockStyles,
-        primaryButtonStyles,
-        secondaryButtonStyles,
-        avatarStyle
-    } = generateStyles(blockAttributes);
+// Mirrors resources/customer_portal/components/Ticket.vue with a sample conversation
+export const ViewTicketBlock = ({attributes, setAttributes, showSection}) => {
+    const [showPrivacyNotice, setShowPrivacyNotice] = useState(true);
 
     return (
         <Fragment>
-            <ViewTicketInspectorControls attributes={blockAttributes} setAttributes={setAttributes} />
-
-            <div className="fs_block_back_nav">
-                <button className="fs_block_back_button" onClick={() => showSection('allTickets')}>
-                    <svg width="6" height="10" viewBox="0 0 6 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M2.20437 4.9992L5.91687 8.7117L4.85637 9.7722L0.083374 4.9992L4.85637 0.226196L5.91687 1.2867L2.20437 4.9992Z"
-                            fill="#0E121B"
-                        />
-                    </svg>
-                    <span>Back to All Tickets</span>
-                </button>
-            </div>
-
-            <div className="fs_block_editor_view_ticket" style={blockStyles}>
-                <div className="fs_block_editor_view_ticket_header">
-                    <h2 className="fs_block_ticket_title">#2053 Premium Access Not Working</h2>
-                    <div className="fs_block_ticket_status active">Active</div>
-                </div>
-
-                <div className="fs_block_ticket_actions">
-                    <button className="fs_block_refresh_button" style={secondaryButtonStyles}>
-                        <span className="dashicons dashicons-update-alt"></span> Refresh
-                    </button>
-                    <button className="fs_block_close_ticket_button" style={secondaryButtonStyles}>
-                        Close Ticket
-                    </button>
-                </div>
-
-                <div className="fs_block_ticket_privacy_notice">
-                    <span className="fs_block_privacy_icon">i</span>
-                    <p className="fs_block_privacy_text">This ticket is private—only you and official support agents can view
-                        it.</p>
-                    <button className="fs_block_close_notice_button">×</button>
-                </div>
-
-                <div className="fs_block_reply_container">
-                    <label className="fs_block_reply_header">Write a reply</label>
-                    <div className="fs_block_ticket_details_container">
-                        <div className="fs_block_ticket_details_tabs">
-                            <div className="fs_block_tabs_wrapper">
-                                <button
-                                    className={`fs_block_tab_button ${activeTab === 'Visual' ? 'active' : ''}`}
-                                    onClick={() => setActiveTab('Visual')}
-                                >
-                                    Visual
-                                </button>
-                                <button
-                                    className={`fs_block_tab_button ${activeTab === 'Text' ? 'active' : ''}`}
-                                    onClick={() => setActiveTab('Text')}
-                                >
-                                    Text
-                                </button>
-                            </div>
-                        </div>
-                        <div className="fs_block_ticket_details_editor">
-                            <div className="fs_block_editor_toolbar">
-                                <select className="fs_block_paragraph_dropdown">
-                                    <option>Paragraph</option>
-                                </select>
-                                <button className="fs_block_toolbar_button fs_block_bold"><span
-                                    className="dashicons dashicons-editor-bold"></span></button>
-                                <button className="fs_block_toolbar_button fs_block_italic"><span
-                                    className="dashicons dashicons-editor-italic"></span></button>
-                                <button className="fs_block_toolbar_button fs_block_list_bullets"><span
-                                    className="dashicons dashicons-editor-ul"></span></button>
-                                <button className="fs_block_toolbar_button fs_block_list_numbers"><span
-                                    className="dashicons dashicons-editor-ol"></span></button>
-                                <button className="fs_block_toolbar_button fs_block_link"><span
-                                    className="dashicons dashicons-admin-links"></span></button>
-                                <button className="fs_block_toolbar_button fs_block_quote"><span
-                                    className="dashicons dashicons-editor-quote"></span></button>
-                                <button className="fs_block_toolbar_button fs_block_align_left"><span
-                                    className="dashicons dashicons-editor-alignleft"></span></button>
-                                <button className="fs_block_toolbar_button fs_block_align_center"><span
-                                    className="dashicons dashicons-editor-aligncenter"></span></button>
-                                <button className="fs_block_toolbar_button fs_block_align_right"><span
-                                    className="dashicons dashicons-editor-alignright"></span></button>
-                                <button className="fs_block_toolbar_button fs_block_align_justify"><span
-                                    className="dashicons dashicons-editor-justify"></span></button>
-                                <button className="fs_block_toolbar_button fs_block_font"><span
-                                    className="dashicons dashicons-editor-textcolor"></span></button>
-                                <button className="fs_block_toolbar_button fs_block_undo"><span
-                                    className="dashicons dashicons-undo"></span></button>
-                                <button className="fs_block_toolbar_button fs_block_redo"><span
-                                    className="dashicons dashicons-redo"></span></button>
-                            </div>
-                            <textarea
-                                className="fs_block_editor_textarea"
-                                placeholder="Enter ticket details here..."
-                                value={details}
-                                onChange={(e) => setDetails(e.target.value)}
-                            ></textarea>
-                        </div>
-                    </div>
-                    <div className="fs_block_attachment_section">
-                        <h4 className="fs_block_attachment_header">Add Attachment</h4>
-                        <button className="fs_block_browse_file_button" style={secondaryButtonStyles}>
-                            <svg width="20" height="18" viewBox="0 0 24 24" fill="currentColor"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M12 12.5274L15.8187 16.3452L14.5452 17.6187L12.9 15.9735V21H11.1V15.9717L9.45479 17.6187L8.18129 16.3452L12 12.5274ZM12 3C13.5453 3.00007 15.0366 3.568 16.1906 4.59581C17.3445 5.62361 18.0805 7.03962 18.2586 8.5746C19.3784 8.87998 20.3553 9.56919 21.0186 10.5218C21.6818 11.4744 21.9892 12.6297 21.887 13.786C21.7849 14.9422 21.2796 16.0257 20.4596 16.8472C19.6396 17.6687 18.5569 18.1759 17.4009 18.2802V16.4676C17.815 16.4085 18.2133 16.2674 18.5723 16.0527C18.9314 15.8379 19.244 15.5539 19.4921 15.217C19.7402 14.8801 19.9186 14.4972 20.0171 14.0906C20.1155 13.6839 20.132 13.2618 20.0655 12.8488C19.9991 12.4357 19.851 12.0401 19.6299 11.6849C19.4089 11.3297 19.1193 11.0221 18.7781 10.78C18.4369 10.538 18.0508 10.3663 17.6425 10.2751C17.2343 10.1838 16.8119 10.1748 16.4001 10.2486C16.541 9.5924 16.5334 8.91297 16.3778 8.2601C16.2222 7.60722 15.9224 6.99743 15.5006 6.47538C15.0788 5.95333 14.5455 5.53225 13.9399 5.24298C13.3343 4.9537 12.6716 4.80357 12.0004 4.80357C11.3293 4.80357 10.6666 4.9537 10.061 5.24298C9.45533 5.53225 8.92207 5.95333 8.50025 6.47538C8.07843 6.99743 7.77873 7.60722 7.62309 8.2601C7.46746 8.91297 7.45984 9.5924 7.60079 10.2486C6.77968 10.0944 5.93095 10.2727 5.2413 10.7443C4.55165 11.2159 4.07759 11.9421 3.92339 12.7632C3.76919 13.5843 3.9475 14.433 4.41908 15.1227C4.89065 15.8123 5.61688 16.2864 6.43799 16.4406L6.59999 16.4676V18.2802C5.4439 18.1761 4.36116 17.669 3.54101 16.8476C2.72087 16.0261 2.21548 14.9426 2.1132 13.7863C2.01091 12.6301 2.31822 11.4747 2.98142 10.522C3.64462 9.56934 4.62153 8.88005 5.74139 8.5746C5.91933 7.03954 6.65525 5.62342 7.80921 4.59558C8.96317 3.56774 10.4546 2.99988 12 3Z"
-                                    fill="currentColor"/>
-                            </svg>
-                            <span>Browse File</span>
-                        </button>
-                        <p className="fs_block_attachment_info">
-                            (Supported Types: Photos, CSV, PDF/Docs, Zip, JSON and max file size: 2.0MB)
-                        </p>
-                    </div>
-
-                    <div className="fs_block_reply_actions">
-                        <a href="#" className="fs_block_reply_and_close_link">
-                            Reply and Close
-                        </a>
-                        <button
-                            className="fs_block_reply_button"
-                            style={primaryButtonStyles}
-                        >
-                            <span>Reply</span>
-                            <svg width="16" height="12" viewBox="0 0 16 12" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M7.75 12L15.25 6L7.75 0V3.75C3.60775 3.75 0.25 7.10775 0.25 11.25C0.25 11.4548 0.2575 11.6572 0.274 11.8575C1.37125 9.777 3.5215 8.33925 6.01525 8.25375L6.25 8.25H7.75V12ZM9.25 6.75H6.2245L5.96425 6.75525C5.0005 6.7875 4.07125 6.98775 3.20725 7.32975C4.3075 6.05625 5.935 5.25 7.75 5.25H9.25V3.12075L12.8485 6L9.25 8.87925V6.75Z"
-                                    fill="currentColor"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-                <div className="fs_block_conversation_container">
-                    <div className="fs_block_conversation_message fs_block_agent_message">
-                        <div className="fs_block_message_avatar" style={avatarStyle}>
-
-                        </div>
-                        <div className="fs_block_message_content">
-                        <div className="fs_block_message_header">
-                                <div className="fs_block_message_author">
-                                    <span className="fs_block_author_name">Support Agent</span>
-                                    <span className="fs_block_author_role">Support Team</span>
+            <ViewTicketInspectorControls attributes={attributes} setAttributes={setAttributes}/>
+            <div className="fs_ticket_wrapper fs_ticket">
+                <BackNav onBack={() => showSection('allTickets')}/>
+                <div className="fs_tickets_container">
+                    <div className="fs_ticket_heroarea">
+                        <div className="fs_tk_subject">
+                            <div className="fs_ticket_heading">
+                                <h2 className="fs_ticket_subject">{__('Unable to log in after password reset', 'fluent-support')}</h2>
+                                <div className="fs_ticket_meta">
+                                    <span> #<strong>2053</strong></span>
                                 </div>
                             </div>
-                            <div className="fs_block_message_text">
-                                <p>Hi! Thanks for reaching out. I’ve checked your account, and there was a delay in
-                                    syncing your subscription. I’ve manually updated it, and you should now have full
-                                    access. Please refresh your page and let me know if everything works!</p>
+                            <StatusBadge tag="div" className="capitalized" status="active"
+                                         label={__('Active', 'fluent-support')}/>
+                        </div>
+                        <div className="fs_ticket_actions">
+                            <div className="fs_product_name"></div>
+                            <div className="fs_ticket_actions_btn">
+                                <div className="fs_ticket_refresh_btn">
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M3.09725 2.32476C4.45817 1.1455 6.19924 0.497495 8 0.500007C12.1423 0.500007 15.5 3.85776 15.5 8.00001C15.5 9.60201 14.9975 11.087 14.1425 12.305L11.75 8.00001H14C14.0001 6.82373 13.6544 5.67336 13.006 4.69195C12.3576 3.71054 11.4349 2.94138 10.3529 2.4801C9.27082 2.01882 8.07704 1.88578 6.91997 2.09752C5.7629 2.30926 4.69359 2.85643 3.845 3.67101L3.09725 2.32476ZM12.9028 13.6753C11.5418 14.8545 9.80076 15.5025 8 15.5C3.85775 15.5 0.5 12.1423 0.5 8.00001C0.5 6.39801 1.0025 4.91301 1.8575 3.69501L4.25 8.00001H2C1.9999 9.17629 2.34556 10.3267 2.994 11.3081C3.64244 12.2895 4.56505 13.0586 5.64712 13.5199C6.72918 13.9812 7.92296 14.1142 9.08003 13.9025C10.2371 13.6908 11.3064 13.1436 12.155 12.329L12.9028 13.6753Z"
+                                            fill="currentColor"/>
+                                    </svg>
+                                    <span>{__('Refresh', 'fluent-support')}</span>
+                                </div>
+                                <div className="fs_close_ticket">
+                                    <span className="fs_close_ticket_title">{__('Close Ticket', 'fluent-support')}</span>
+                                </div>
                             </div>
-                            <div className="fs_block_message_footer">
-                                <span className="fs_block_message_timestamp">1 day ago</span>
+                        </div>
+                        <div className="fs_ticket_response">
+                            {showPrivacyNotice && (
+                                <div className="fs_ticket_alert">
+                                    <div className="el-alert el-alert--info is-light" role="alert">
+                                        <i className="el-icon el-alert__icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+                                                <path fill="currentColor"
+                                                      d="M512 64a448 448 0 1 1 0 896.064A448 448 0 0 1 512 64m67.2 275.072c33.28 0 60.288-23.104 60.288-57.344s-27.072-57.344-60.288-57.344c-33.28 0-60.16 23.104-60.16 57.344s26.88 57.344 60.16 57.344M590.912 699.2c0-6.848 2.368-24.64 1.024-34.752l-52.608 60.544c-10.88 11.456-24.512 19.392-30.912 17.28a12.992 12.992 0 0 1-8.256-14.72l87.68-276.992c7.168-35.136-12.544-67.2-54.336-71.296-44.096 0-108.992 44.736-148.48 101.504 0 6.784-1.28 23.68.064 33.792l52.544-60.608c10.88-11.328 23.552-19.328 29.952-17.152a12.8 12.8 0 0 1 7.808 16.128L388.48 728.576c-10.048 32.256 8.96 63.872 55.04 71.04 67.84 0 107.904-43.648 147.456-100.416z"/>
+                                            </svg>
+                                        </i>
+                                        <div className="el-alert__content">
+                                            <span className="el-alert__title">{__('This ticket is Private. Only you and official support agents can view this conversation', 'fluent-support')}</span>
+                                            <i className="el-icon el-alert__close-btn" onClick={() => setShowPrivacyNotice(false)}>
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+                                                    <path fill="currentColor"
+                                                          d="M764.288 214.592 512 466.88 259.712 214.592a31.936 31.936 0 0 0-45.12 45.12L466.752 512 214.528 764.224a31.936 31.936 0 1 0 45.12 45.184L512 557.184l252.288 252.288a31.936 31.936 0 0 0 45.12-45.12L557.12 512.064l252.288-252.352a31.936 31.936 0 1 0-45.12-45.184z"/>
+                                                </svg>
+                                            </i>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                            <div className="fs_ticket_reply_box">
+                                <h3>{__('Write a reply', 'fluent-support')}</h3>
+                                <textarea className="fs_ticket_reply_text" readOnly
+                                          placeholder={__('Click Here to Write a reply', 'fluent-support')}></textarea>
                             </div>
                         </div>
                     </div>
-                    <div className="fs_block_conversation_message fs_block_thread_start">
-                        <div className="fs_block_message_avatar" style={avatarStyle}>
 
-                        </div>
-                        <div className="fs_block_message_content">
-                            <div className="fs_block_message_header">
-                                <div className="fs_block_message_author">
-                                    <span className="fs_block_author_name">You</span>
-                                    <span className="fs_block_author_info">started the conversation</span>
+                    <div className="fs_ticket_body">
+                        <div className="fs_ticket_threads_container">
+                            <article className="fs_customer_conversation fs_ticket_thread fs_person_agent fs_agent fs_conv_type_response">
+                                <div className="fs_ticket_thread_content">
+                                    <section className="fs_ticket_avatar fs_block_avatar_initials">AM</section>
+                                    <section className="fs_ticket_thread_wrap">
+                                        <div className="fs_thread_message">
+                                            <div className="fs_thread_head">
+                                                <div className="fs_thread_name">
+                                                    <strong>{__('Alex Morgan', 'fluent-support')}</strong> <span
+                                                    className="fs_thread_ribbon fs_thread_ribbon_agent">{__('Support Staff', 'fluent-support')}</span>
+                                                </div>
+                                            </div>
+                                            <div className="fs_thread_body">
+                                                <p>{__('Thanks for the details. I have reset your session from our side. Please clear your browser cache and try logging in again with your new password.', 'fluent-support')}</p>
+                                            </div>
+                                            <div className="fs_actions_head">
+                                                <div className="fs_thread_actions">{__('2 hours ago', 'fluent-support')}</div>
+                                            </div>
+                                        </div>
+                                    </section>
                                 </div>
-                            </div>
-                            <div className="fs_block_message_text">
-                                <p>Hi, I upgraded to the premium plan, but my account still shows the free plan
-                                    restrictions. Can you check?</p>
-                            </div>
-                            <div className="fs_block_message_footer">
-                                <span className="fs_block_message_timestamp">2 days ago</span>
-                            </div>
+                            </article>
+                            <article className="fs_ticket_thread fs_conversion_starter">
+                                <div className="fs_conversion_starter_section">
+                                    <div className="fs_join_thread_custom_field">
+                                        <div className="fs_ticket_thread_content fs_starter_thread_content">
+                                            <section className="fs_ticket_avatar fs_block_avatar_initials">JD</section>
+                                            <section className="fs_ticket_thread_wrap">
+                                                <section className="fs_thread_message">
+                                                    <div className="fs_thread_head">
+                                                        <div className="fs_thread_name">
+                                                            <strong>{__('You', 'fluent-support')}</strong> {__('started the conversation', 'fluent-support')}
+                                                        </div>
+                                                    </div>
+                                                    <div className="fs_thread_body">
+                                                        <p>{__('After resetting my password, I am unable to log in. The new credentials are not being recognized.', 'fluent-support')}</p>
+                                                    </div>
+                                                    <div className="fs_actions_head">
+                                                        <div className="fs_thread_actions">{__('Yesterday', 'fluent-support')}</div>
+                                                    </div>
+                                                </section>
+                                            </section>
+                                        </div>
+                                    </div>
+                                </div>
+                            </article>
                         </div>
                     </div>
                 </div>

@@ -8,12 +8,10 @@
             </div>
         </div>
 
-        <div v-if="!configs.length" class="fs_skeleton_loader">
-            <el-skeleton :rows="5" animated/>
-        </div>
+        <TableSkeleton v-if="first_loading" :rows="6" :columns="[3, 1, '80px']" />
 
         <!-- Custom Table -->
-        <div v-else class="fs_email_settings_table">
+        <div v-else class="fs_email_settings_table" v-loading="loading">
             <table class="fs_table">
                 <thead>
                     <tr>
@@ -33,10 +31,12 @@
                         <td class="fs_table_cell">
                             <el-button
                                 @click="editEmail(config)"
+                                v-loading="loading_email === config.key"
+                                :disabled="!!loading_email"
                                 text
                                 class="fs_edit_btn"
                             >
-                                <img :src="appVars.asset_url + 'images/edit.svg'" alt="">
+                                <DynamicIcon name="Edit"/>
                             </el-button>
                         </td>
                     </tr>
@@ -159,12 +159,16 @@
 <script type="text/babel">
 import WpEditor from '../../Pieces/_wp_editor';
 import Modal from "../../Pieces/Modal";
+import DynamicIcon from '@/admin/Components/Icons/DynamicIcon.vue';
+import TableSkeleton from '@/admin/Components/TableSkeleton.vue';
 
 export default {
     name: 'BoxEmailSettings',
     components: {
+        DynamicIcon,
         WpEditor,
-        Modal
+        Modal,
+        TableSkeleton
     },
     props: ['box_id', 'mailbox'],
 
@@ -176,6 +180,8 @@ export default {
             configs: [],
             edit_modal: false,
             loading: false,
+            first_loading: true,
+            loading_email: '',
             saving: false,
             allowed_mails_for_attachments: [
                 'ticket_created_email_to_customer',
@@ -238,6 +244,7 @@ export default {
                     '{{agent.first_name}}': this.$t('Agent First Name'),
                     '{{agent.last_name}}': this.$t('Agent Last Name'),
                     '{{agent.full_name}}': this.$t('Agent Full Name'),
+                    '{{agent.signature}}': this.$t('Agent Signature'),
                     '{{response.title}}': this.$t('Response Title'),
                     '{{response.content}}': this.$t('Response Content'),
                     '{{agent.title}}': this.$t('Agent Title'),
@@ -259,11 +266,13 @@ export default {
                     this.$handleError(errors);
                 })
                 .always(() => {
-                    this.saving = false;
+                    this.loading = false;
+                    this.first_loading = false;
                 });
         },
 
         editEmail(email) {
+            this.loading_email = email.key;
             this.$get(`mailboxes/${this.box_id}/email_settings`, {
                 email_type: email.key,
             })
@@ -275,7 +284,7 @@ export default {
                     this.$handleError(errors);
                 })
                 .always(() => {
-                    this.loading = false;
+                    this.loading_email = '';
                 });
 
             this.active_email = email.key;
@@ -296,7 +305,6 @@ export default {
                         position: 'bottom-right'
                     });
                     this.edit_modal = false;
-                    this.loading = true;
                     this.getConfigs();
                 })
                 .catch((errors) => {

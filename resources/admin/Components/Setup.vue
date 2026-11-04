@@ -289,7 +289,7 @@
                                 <div class="fs_help_section">
                             <span class="fs_help_text">{{ $t('Need Help?') }}</span>
                             <a
-                                href="https://fluentsupport.com/docs/"
+                                href="https://docs.fluentsupport.com/"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 class="fs_doc_link">

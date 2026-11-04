@@ -22,14 +22,11 @@
 </template>
 
 <script type="text/babel">
-import debounce from "lodash/debounce";
+import { debounce } from "lodash-es";
 
 /**
- * Remote search for the commerce workflow conditions (Customer Purchased Product / Variation).
- * Each condition row renders its own instance, so options/loading are naturally per-row — no
- * shared keying is needed. The `GET workflows/commerce-options` endpoint and the remote_select
- * condition both live in fluent-support-pro, so this component is only used when that plugin is
- * active.
+ * Remote search for the commerce workflow conditions (purchased product / variation).
+ * The endpoint and the remote_select condition live in Pro, so this only renders with Pro active.
  */
 export default {
     name: "RemoteCommerceSelect",
@@ -56,10 +53,8 @@ export default {
         },
     },
     created() {
-        // Only the newest request may apply its result, so a slower older response can't overwrite
-        // the latest search (or clear its loading state).
+        // Only the newest request may apply its result.
         this._reqToken = 0;
-        // Typing fires at most one request per ~300ms idle, not one per keystroke.
         this._debouncedFetch = debounce((query) => this.fetchOptions(query), 300);
     },
     mounted() {

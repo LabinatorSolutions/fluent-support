@@ -1,0 +1,10 @@
+<template>
+    <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="20" height="21" viewBox="0 0 20 21" fill="none">
+        <rect x="2.5" y="3.75" width="7" height="5.5" rx="1" stroke="currentColor"/>
+        <rect x="10.5" y="11.75" width="7" height="5.5" rx="1" stroke="currentColor"/>
+        <path d="M6 9.25V14.5H10.5" stroke="currentColor"/>
+        <path d="M14 11.75V6.5H9.5" stroke="currentColor"/>
+        <path d="M9 13L10.5 14.5L9 16" stroke="currentColor"/>
+        <path d="M11 5L9.5 6.5L11 8" stroke="currentColor"/>
+    </svg>
+</template>

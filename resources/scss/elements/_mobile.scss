@@ -1,0 +1,798 @@
+// Phone and tablet layout for the admin app: the ticket list and single ticket first, then the other pages.
+// Loaded after the desktop and older responsive rules, so it overrides them by order.
+
+// WordPress drops #wpcontent's left padding to 10px below 782px, so pull the app back by that much only.
+@media all and (max-width: 782px) {
+    .toplevel_page_fluent-support #alpha_app {
+        margin-left: -10px;
+    }
+}
+
+.fs_all_tickets .fs_btn_icon_mobile,
+.fs_all_tickets .el-button.fs_list_view_btn {
+    display: none;
+}
+
+// Tablets and phones: the list title opens the ticket views (the sidebar is hidden).
+@media all and (max-width: 1024px) {
+    .fs_all_tickets {
+        padding-top: 12px;
+
+        .fs_component_header {
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .fs_component_head {
+            flex: 1 1 auto;
+            min-width: 0;
+
+            .fs_page_title {
+                display: none;
+            }
+        }
+
+        .el-button.fs_list_view_btn {
+            display: flex;
+            max-width: 100%;
+            height: 40px;
+            margin: 0;
+            padding: 4px 8px;
+            color: var(--fs-text-primary, #0E121B);
+        }
+    }
+
+    // The 60px offset is for the outer reports wrapper; the report cards inside it don't need it.
+    .fs_reports_wrapper .fs_reports_content .fs_box_wrapper {
+        padding-top: 0;
+    }
+
+    // Ticket views: a bottom sheet on phones, a side panel on tablets
+    .el-drawer.fs_mobile_views_drawer {
+        background: var(--fs-bg-primary, #FFFFFF);
+
+        &.btt {
+            border-radius: var(--fs-radius-lg, 12px) var(--fs-radius-lg, 12px) 0 0;
+        }
+
+        // Starts below the WordPress admin bar, which sits above every overlay.
+        &.ltr {
+            top: var(--wp-admin--admin-bar--height, 32px);
+            height: auto;
+            bottom: 0;
+        }
+
+        .el-drawer__header {
+            margin: 0;
+            padding: 16px 16px 8px;
+            color: var(--fs-text-primary, #0E121B);
+            font-size: 16px;
+            font-weight: 500;
+            line-height: 24px;
+        }
+
+        .el-drawer__body {
+            padding: 0 8px 24px;
+        }
+
+        .fs_sidebar_items {
+            padding: 0 0 8px;
+        }
+
+        // The active marker sits on the sidebar's edge; in the sheet the fill is enough.
+        .fs_sidebar_items ul {
+            display: block;
+
+            li {
+                margin: 0;
+            }
+
+            li a {
+                box-sizing: border-box;
+                min-height: 44px;
+
+                &.fs_sidebar_active:before {
+                    display: none;
+                }
+            }
+        }
+    }
+}
+
+// Tablets: one row of tabs and filters, and the full first line of each ticket for its title.
+@media all and (min-width: 768px) and (max-width: 1024px) {
+    .fs_all_tickets .fs_box_head.fs_status_tabs_wrapper {
+        display: flex !important;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+
+        .fs_status_tabs {
+            margin: 0;
+        }
+
+        .fs_filter_controls {
+            margin: 0 0 0 auto;
+        }
+    }
+
+    // Line 1: the title row. Line 2: preview, then status and counts on the right.
+    .fframe_body .fs_tickets_list:not(.fs_tickets_list_compact) {
+        .fs_ticket_main_content {
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 2px 12px;
+        }
+
+        .fs_ticket_left_section,
+        .fs_ticket_right_section {
+            display: contents;
+        }
+
+        .fs_ticket_title_row {
+            flex: 0 0 100%;
+            min-width: 0;
+        }
+
+        .fs_ticket_description {
+            flex: 1 1 0;
+            order: 2;
+            width: auto;
+            min-width: 0;
+        }
+
+        .fs_ticket_status_group {
+            order: 3;
+            margin-inline-start: auto;
+        }
+
+        .fs_ticket_meta_info {
+            order: 4;
+        }
+    }
+}
+
+// Tablets: more stat tiles per row on the Dashboard and Reports
+@media all and (min-width: 768px) and (max-width: 1024px) {
+    .fs_dashboard_wrapper .fs_stats_grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .fs_reports_wrapper .fs_stat_boxes_row_4 {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+// Single ticket stacked below 769px: keep the sidebar close to the thread.
+@media all and (max-width: 768px) {
+    .fframe_body .fs_tickets_view .fs_ticket_sidebar {
+        margin-top: 16px;
+    }
+}
+
+@media all and (max-width: 767px) {
+    // Cards run edge to edge; rows that sit outside a card keep their own inner padding.
+    .fframe_body {
+        padding-inline: 0;
+
+        .fs_tickets_view {
+            margin: 0;
+        }
+
+        .fs_all_tickets .fs_component_header {
+            padding-inline: 12px;
+        }
+
+        .fs_all_tickets .fs_box_header,
+        .fs_all_tickets .fs_box_body,
+        .fs_ticket_body,
+        .fs_tk_sidebar_wrap_new {
+            border-inline: none;
+            border-radius: 0;
+        }
+    }
+
+    // Ticket list
+    .fs_all_tickets {
+        .fs_component_header {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .fs_box_actions.fs_tickets_actions_btn {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 8px;
+            width: 100%;
+
+            .el-button {
+                height: 40px;
+                margin: 0;
+            }
+
+            > .el-tooltip__trigger,
+            > .el-dropdown {
+                flex-shrink: 0;
+            }
+
+            .fs_refresh_btn,
+            .fs_more_action_btn,
+            .fs_add_ticket_btn {
+                width: 40px;
+                padding: 0;
+            }
+
+            .fs_waiting_reply_btn {
+                flex: 1 1 auto;
+                min-width: 0;
+            }
+
+            .fs_btn_label {
+                display: none;
+            }
+
+            .fs_btn_icon_mobile {
+                display: inline-flex;
+            }
+
+            .fs_add_ticket_btn [class*="icon"] + span {
+                margin: 0;
+            }
+        }
+
+        .fs_box_header {
+            padding: 12px;
+        }
+
+        .fs_box_head.fs_status_tabs_wrapper {
+            display: flex !important;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 12px;
+            overflow: visible;
+
+            .fs_status_tabs {
+                display: block;
+                margin: 0;
+                overflow-x: auto;
+                scrollbar-width: none;
+
+                &::-webkit-scrollbar {
+                    display: none;
+                }
+
+                .fs_segmented_control {
+                    display: flex;
+                    width: max-content;
+                    min-width: 100%;
+
+                    .fs_segment_button {
+                        flex: 1 0 auto;
+                        padding: 6px 12px;
+                    }
+                }
+            }
+
+            // Wraps onto a second line only when a translated label is too long.
+            .fs_filter_controls {
+                flex-wrap: wrap;
+                width: 100%;
+                margin: 0;
+                gap: 6px;
+            }
+
+            .fs_filter_left_section {
+                flex: 0 0 auto;
+                gap: 6px;
+            }
+
+            .fs_filter_right_section {
+                gap: 4px;
+                margin-inline-start: auto;
+            }
+
+            .fs_filter_left_section .el-button,
+            .fs_filter_right_section .el-button {
+                width: 32px;
+                height: 32px;
+                margin: 0;
+                padding: 0;
+            }
+
+            .fs_advanced_button .el-switch__label span {
+                font-size: 13px;
+            }
+        }
+
+        .fs_search_bar_section {
+            padding-top: 12px;
+        }
+
+        .fs_select_all_section {
+            padding: 10px 12px;
+        }
+    }
+
+    // Ticket rows: stack the meta under the title instead of a side column
+    .fframe_body .fs_all_tickets .fs_tickets_list {
+        overflow: visible;
+
+        .fs_ticket_item {
+            min-width: 0;
+            padding: 14px 12px;
+        }
+
+        .fs_ticket_main_content {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        // Line 1 is the title; author, number, tags and source follow on line 2.
+        .fs_ticket_title_row {
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 4px 8px;
+        }
+
+        .fs_ticket_title_group {
+            display: contents;
+        }
+
+        .fs_ticket_title_row > .el-checkbox {
+            align-self: flex-start;
+        }
+
+        .fs_ticket_title {
+            flex: 1 1 calc(100% - 32px);
+            white-space: normal;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .fs_ticket_title_row:not(:has(> .el-checkbox)) .fs_ticket_title {
+            flex-basis: 100%;
+        }
+
+        .fs_ticket_title_row:has(> .el-checkbox) .fs_ticket_author {
+            margin-inline-start: 24px;
+        }
+
+        .fs_ticket_title_row .fs_tags {
+            margin: 0;
+        }
+
+        .fs_ticket_description {
+            width: 100%;
+            max-height: 40px;
+
+            .fs_tk_preview_text {
+                -webkit-line-clamp: 2;
+                line-clamp: 2;
+                max-height: 40px;
+            }
+        }
+
+        .fs_ticket_title_row:has(> .el-checkbox) + .fs_ticket_description,
+        .fs_ticket_main_content:has(.fs_ticket_title_row > .el-checkbox) .fs_ticket_right_section {
+            padding-inline-start: 24px;
+        }
+
+        // Status, priority, waiting time and agent first, then counts, all on wrapping lines
+        .fs_ticket_right_section {
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 6px 12px;
+        }
+
+        .fs_ticket_meta_info,
+        .fs_ticket_status_group {
+            display: contents;
+        }
+
+        .fs_ticket_meta_info > * {
+            order: 2;
+        }
+
+        // Compact layout: two lines per ticket instead of one
+        &.fs_tickets_list_compact {
+            .fs_ticket_item {
+                padding: 10px 12px !important;
+            }
+
+            .fs_ticket_main_content,
+            .fs_ticket_left_section {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 4px;
+            }
+
+            .fs_ticket_title_group {
+                white-space: normal;
+            }
+
+            .fs_ticket_inline_description {
+                display: none;
+            }
+
+            .fs_ticket_right_section {
+                flex-direction: row;
+                gap: 6px 12px;
+            }
+        }
+    }
+
+    // Single ticket: top bar
+    .fframe_body .fs_combined_top_bar {
+        margin: 0 0 12px;
+        border-block: 1px solid var(--fs-stroke-soft, #E1E4EA);
+        border-inline: none;
+        border-radius: 0;
+        background: var(--fs-bg-primary, #FFFFFF);
+
+        .fs_top_bar_right {
+            box-sizing: border-box;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            padding: 8px 12px;
+        }
+
+        .fs_breadcrumbs_group {
+            min-width: 0;
+        }
+
+        .fs_top_bar_position {
+            justify-self: end;
+        }
+
+        .fs_top_bar_actions {
+            grid-column: 1 / -1;
+            min-width: 0;
+            padding-top: 8px;
+            border-top: 1px solid var(--fs-stroke-soft, #E1E4EA);
+
+            .fs_action_buttons {
+                display: flex;
+                flex: 1 1 auto;
+                flex-wrap: nowrap;
+                min-width: 0;
+                justify-content: flex-start;
+                gap: 8px !important;
+                padding: 0;
+
+                > * {
+                    flex-shrink: 0;
+                }
+
+                .el-button {
+                    height: 36px;
+                    margin: 0;
+                }
+
+                .fs_close_ticket_btn {
+                    margin-inline-start: auto;
+                }
+
+                .fs_agent_selector_tooltip {
+                    min-width: 0;
+
+                    .el-button {
+                        width: 100%;
+                        max-width: 100%;
+                        min-width: 0;
+                        overflow: hidden;
+
+                        > span {
+                            min-width: 0;
+                            max-width: 100%;
+                        }
+                    }
+
+                    .fs_agent_selector_display {
+                        min-width: 0;
+                        max-width: 100%;
+                    }
+
+                    // Too narrow for the name; the avatar and the tooltip name the agent.
+                    .fs_agent_name_display {
+                        display: none;
+                    }
+                }
+            }
+        }
+    }
+
+    // Single ticket: body and sidebar
+    .fframe_body .fs_tickets_view {
+        .fs_view_ticket {
+            margin-top: 0;
+        }
+
+        .fs_ticket_body {
+            margin: 0;
+        }
+
+        .fs_ticket_sidebar {
+            margin-top: 16px;
+        }
+
+        .fs_conversation_message {
+            padding: 16px 12px;
+        }
+
+        // The header stays beside the avatar; the message itself uses the full width below it.
+        .fs_message_container .fs_message_body {
+            margin-inline-start: calc(-1 * (32px + 12px));
+        }
+    }
+}
+
+// Other admin pages on phones
+@media all and (max-width: 767px) {
+    // Page titles and breadcrumbs sit outside the edge-to-edge cards, so they keep their own inner padding.
+    .fframe_body {
+        .fs_component_header,
+        .fs_customers_page_head,
+        .fs_customer_page_head,
+        .fs_inside_menu_component_header,
+        .fs_mailboxes .fs_breadcrumb {
+            padding-inline: 12px;
+            box-sizing: border-box;
+        }
+
+        .fs_component_header,
+        .fs_customers_page_head {
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+    }
+
+    // Activity and Notifications tabs: fixed to the top on desktop; on phones they scroll with the page.
+    .fframe_body .fs_inside_activity_menu_tab_header {
+        position: static;
+        width: auto;
+        margin: 0 0 12px;
+        padding: 0 12px;
+
+        .fs-inside-activity-menu-tabs {
+            flex-wrap: nowrap;
+            gap: 18px;
+            overflow-x: auto;
+            scrollbar-width: none;
+
+            &::-webkit-scrollbar {
+                display: none;
+            }
+
+            > * {
+                flex-shrink: 0;
+            }
+        }
+    }
+
+    // Reply editor: one swipeable toolbar row instead of four wrapped rows above the text.
+    .fframe_body .wp_vue_editor_wrapper .mce-toolbar {
+        .mce-flow-layout,
+        .mce-btn-group {
+            display: block;
+            max-width: 100%;
+        }
+    }
+
+    .fframe_body .wp_vue_editor_wrapper .mce-toolbar .mce-btn-group > div {
+        max-width: 100%;
+        overflow-x: auto;
+        white-space: nowrap;
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+
+    // That padding made room for the fixed tabs; they no longer cover the page.
+    .fframe_body .fs_activity_logger_component {
+        padding-top: 0;
+    }
+
+    .fframe_body .fs_mailboxes .fs_box_body.fs_padded_20 {
+        padding: 12px;
+    }
+
+    // Dashboard and Reports: two compact stat tiles per row
+    .fs_dashboard_wrapper .fs_stats_grid,
+    .fs_reports_wrapper .fs_stat_boxes_row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .fs_dashboard_wrapper .fs_stats_grid {
+        padding-inline: 8px;
+    }
+
+    .fs_dashboard_wrapper .fs_stat_card,
+    .fs_reports_wrapper .fs_stat_box {
+        gap: 10px;
+        padding: 12px;
+    }
+
+    // Customers: each row becomes a two-line card instead of a table that scrolls sideways.
+    // Line 1: checkbox, customer, actions. Line 2: tickets and last activity, under the name.
+    .fs_customers .fs_customers_table .el-table {
+        min-width: 0;
+
+        .el-scrollbar__view {
+            display: block !important;
+        }
+
+        .el-table__header-wrapper,
+        .el-table__body colgroup,
+        .el-scrollbar__bar.is-horizontal {
+            display: none;
+        }
+
+        .el-table__body {
+            width: 100% !important;
+        }
+
+        .el-table__body tr.el-table__row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            column-gap: 8px;
+            row-gap: 4px;
+            padding: 12px;
+            border-bottom: 1px solid var(--fs-stroke-soft, #E1E4EA);
+        }
+
+        // Hover and selection tint the whole card, not each cell on its own.
+        .el-table__body tr.el-table__row:hover {
+            background: var(--fs-table-hover-bg, #F9FAFB);
+        }
+
+        .el-table__body td.el-table__cell {
+            display: block;
+            width: auto;
+            padding: 0;
+            border: none;
+            background: transparent;
+
+            .cell {
+                padding: 0;
+                line-height: 18px;
+            }
+        }
+
+        // Line 1 is sized to leave no room for the meta cells, so they wrap to line 2.
+        .el-table__body td.el-table-column--selection {
+            flex: 0 0 24px;
+        }
+
+        .el-table__body td.fs_col_customer {
+            flex: 1 1 calc(100% - 100px);
+            min-width: 0;
+        }
+
+        .el-table__body td.fs_col_actions {
+            flex: 0 0 32px;
+            order: 1;
+        }
+
+        .el-table__body td.fs_col_tickets,
+        .el-table__body td.fs_col_activity {
+            order: 2;
+            font-size: 12px;
+            color: var(--fs-text-secondary, #525866);
+        }
+
+        // Starts under the avatar.
+        .el-table__body td.fs_col_tickets {
+            margin-inline-start: 32px;
+        }
+
+        .el-table__body td.fs_col_activity .cell::before {
+            content: "\00b7";
+            margin-inline-end: 8px;
+        }
+
+        .el-table__body td.fs_col_location,
+        .el-table__body td.fs_col_created {
+            display: none;
+        }
+    }
+
+    // Custom fields: each row becomes a two-line card. Line 1: label and actions. Line 2: slug and type.
+    // There is no hover on touch screens, so the drag handle stays visible.
+    .fs_custom_fields_wrapper {
+        .fs_custom_field_table_header_row {
+            grid-template-columns: minmax(0, 1fr) auto;
+
+            .fs_field_slug_header,
+            .fs_field_type_header {
+                display: none;
+            }
+        }
+
+        .fs_custom_field_row .fs_custom_drag_svg {
+            opacity: 1;
+        }
+
+        .fs_custom_field_column {
+            grid-template-columns: minmax(0, max-content) minmax(0, 1fr) auto;
+            grid-template-areas:
+                "label label actions"
+                "slug type actions";
+            row-gap: 2px;
+
+            > div {
+                padding-inline: 12px 0;
+            }
+
+            .fs_field_label {
+                grid-area: label;
+            }
+
+            .fs_field_slug,
+            .fs_field_type {
+                font-size: 12px;
+            }
+
+            .fs_field_slug {
+                grid-area: slug;
+            }
+
+            .fs_field_type {
+                grid-area: type;
+                padding-inline-start: 8px;
+            }
+
+            .fs_field_actions {
+                grid-area: actions;
+            }
+        }
+    }
+
+    // A table wider than the screen scrolls sideways inside its card; keep its "No data" message on screen.
+    .fframe_body .el-table__empty-block {
+        position: sticky;
+        left: 0;
+        max-width: calc(100vw - 24px);
+    }
+
+    // Table toolbars (search, bulk actions, add button) wrap instead of scrolling sideways.
+    .fframe_body .fs_table_header {
+        flex-wrap: wrap;
+        overflow-x: visible;
+        padding: 12px;
+
+        .fs_box_actions {
+            flex-wrap: wrap;
+            width: 100%;
+            min-width: 0;
+        }
+
+        .fs_table_search_field {
+            flex: 1 1 180px;
+            min-width: 0;
+
+            .el-input {
+                width: 100%;
+            }
+        }
+    }
+}

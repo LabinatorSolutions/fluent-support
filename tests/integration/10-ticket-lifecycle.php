@@ -1,20 +1,19 @@
 <?php
 /**
- * Ticket lifecycle through the routes the admin app actually calls.
+ * Ticket lifecycle through the routes the admin app calls: create, read,
+ * agent reply, close, reopen.
  *
- * create (POST /tickets) -> read (GET /tickets/{id}) -> agent reply
- * (POST /tickets/{id}/responses) -> close (POST /tickets/{id}/close) ->
- * reopen (POST /tickets/{id}/re-open).
- *
- * Every assertion is read back from the DB through the models, so a controller
- * that returns a happy message while writing nothing still fails.
+ * Assertions read back from the DB, so a controller that reports success
+ * without writing still fails.
  */
 
 use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Meta;
 use FluentSupport\App\Models\Ticket;
+use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Helper;
+use FluentSupport\App\Services\Tickets\AgentTicketAccess;
 
 return function () {
 
@@ -24,6 +23,46 @@ return function () {
     $agent = Helper::getAgentByUserId();
 
     $ticketId = null;
+
+    // Runs $fn() as a freshly-created agent who has ONLY fst_draft_reply (no
+    // fst_manage_tickets/fst_manage_own_tickets/etc.), then restores the admin
+    // user and deletes the WP user. The WP user isn't FsFactory-tracked, so
+    // cleanup happens here, not in the suite-wide teardown.
+    $withDraftOnlyAgent = function (callable $fn) {
+        $adminId = get_current_user_id();
+        $login = FsTest::uniq('fs-lifecycle-drafter');
+        $userId = wp_insert_user([
+            'user_login' => $login,
+            'user_pass'  => wp_generate_password(24, true, true),
+            'user_email' => $login . '@example.test',
+            'role'       => 'subscriber',
+        ]);
+
+        if (is_wp_error($userId)) {
+            FsTest::fail('Could not create draft-only user: ' . $userId->get_error_message());
+            return;
+        }
+
+        $switchTo = function ($id) {
+            wp_set_current_user($id);
+            PermissionManager::currentUserPermissions(false);
+            AgentTicketAccess::resetCache();
+        };
+
+        try {
+            $drafter = FsFactory::agent();
+            $drafter->user_id = $userId;
+            $drafter->save();
+            PermissionManager::attachPermissions($userId, ['fst_draft_reply']);
+
+            $switchTo($userId);
+            $fn();
+        } finally {
+            $switchTo($adminId);
+            require_once ABSPATH . 'wp-admin/includes/user.php';
+            wp_delete_user($userId);
+        }
+    };
 
     FsTest::case('rest_created_ticket_starts_new_with_no_responses', function () use (
         $marker, $customer, $mailbox, &$ticketId
@@ -38,11 +77,8 @@ return function () {
             ],
         ]);
 
-        // Adopt anything the endpoint persisted BEFORE asserting on the
-        // response. A write that then errors (or a success payload missing the
-        // id) would otherwise leave a row no failure path ever registers, and
-        // it would survive exact-ID cleanup. The marker makes ownership
-        // provable, so this never captures another run's data.
+        // Adopt persisted rows before asserting, so a write that then errors
+        // still gets cleaned up.
         foreach (Ticket::where('title', 'LIKE', '%' . $marker . '%')->get() as $persisted) {
             FsFactory::adoptRestTicket($persisted);
         }
@@ -63,10 +99,8 @@ return function () {
 
         $ticketId = $created;
 
-        // Cascade tripwires: rows Ticket::deleting must sweep at cleanup.
-        // Without them the factory's dependent-row assertions are vacuously
-        // green and a regression back to hook-skipping bulk deletes would
-        // pass unnoticed. purgeAttachments() tolerates the missing file.
+        // Tripwire rows Ticket::deleting must sweep at cleanup, so the factory's
+        // dependent-row checks aren't vacuous. purgeAttachments() tolerates the missing file.
         Meta::create([
             'object_type' => 'ticket_meta',
             'object_id'   => $created,
@@ -141,8 +175,7 @@ return function () {
         FsTest::assertSame('response', $conversation->conversation_type, 'conversation type');
         FsTest::assertSame((int) $agent->id, (int) $conversation->person_id, 'conversation author is the acting agent');
 
-        // Conversation-level cascade tripwires (Conversation::deleting must
-        // sweep cc meta and this attachment when the parent ticket cascades).
+        // Tripwires Conversation::deleting must sweep when the ticket cascades.
         Meta::create([
             'object_type' => 'response',
             'object_id'   => $responseId,
@@ -163,8 +196,7 @@ return function () {
         ]);
 
         $ticket = Ticket::find($ticketId);
-        // ResponseService promotes 'new' -> 'active' on the first agent response
-        // and records how long the customer waited for it.
+        // The first agent response moves 'new' to 'active' and records the wait.
         FsTest::assertSame('active', $ticket->status, 'status after first agent reply');
         FsTest::assertSame(1, (int) $ticket->response_count, 'response_count after one reply');
         FsTest::assert($ticket->first_response_time !== null,
@@ -234,7 +266,7 @@ return function () {
 
         FsTest::assertSame('critical', Ticket::find($ticketId)->priority, 'priority after property update');
 
-        // FS-SEC-007: only allowlisted columns may be written here.
+        // Only allowlisted columns may be written here.
         $rejected = FsTest::rest('PUT', '/tickets/' . $ticketId . '/property', [
             'prop_name'  => 'customer_id',
             'prop_value' => '999999',
@@ -242,5 +274,57 @@ return function () {
         FsTest::assert($rejected['status'] !== 200,
             'customer_id must not be writable through the generic property endpoint (status '
             . $rejected['status'] . ')');
+    });
+
+    // S-1: fst_draft_reply alone must never be enough to close a ticket. The
+    // controller used to skip its manage-permission check for any
+    // conversation_type=draft_response request, but ResponseService honors
+    // close_ticket regardless of conversation type — so a draft-only agent
+    // could close a ticket just by adding close_ticket=yes to a draft save.
+    FsTest::case('draft_only_agent_cannot_close_ticket_via_close_ticket_param', function () use (
+        $marker, $withDraftOnlyAgent
+    ) {
+        $ticket = FsFactory::ticket(['status' => 'active', 'title' => 'Draft-only close attempt ' . $marker]);
+
+        $withDraftOnlyAgent(function () use ($ticket) {
+            $result = FsTest::rest('POST', '/tickets/' . $ticket->id . '/responses', [
+                'content'           => 'saving my draft',
+                'conversation_type' => 'draft_response',
+                'close_ticket'      => 'yes',
+            ]);
+
+            FsTest::assert(!in_array((int) $result['status'], [200, 201], true),
+                'a draft-only agent sending close_ticket=yes must be rejected, got status ' . $result['status']);
+        });
+
+        $fresh = Ticket::find($ticket->id);
+        FsTest::assertSame('active', $fresh->status,
+            'ticket must stay open: a draft-only agent must not be able to close it via close_ticket=yes');
+        FsTest::assert(empty($fresh->resolved_at), 'resolved_at must not be stamped');
+        FsTest::assert(empty($fresh->closed_by), 'closed_by must not be stamped');
+        FsTest::assertSame(0, Conversation::where('ticket_id', $ticket->id)->count(),
+            'no conversation, draft or otherwise, should be stored once the request is rejected');
+    });
+
+    // Guards against an overcorrection: the fix above must not block a
+    // draft-only agent from saving an ordinary draft (no close_ticket).
+    FsTest::case('draft_only_agent_can_still_save_a_plain_draft', function () use (
+        $marker, $withDraftOnlyAgent
+    ) {
+        $ticket = FsFactory::ticket(['status' => 'active', 'title' => 'Draft-only plain draft ' . $marker]);
+
+        $withDraftOnlyAgent(function () use ($ticket) {
+            $result = FsTest::rest('POST', '/tickets/' . $ticket->id . '/responses', [
+                'content'           => 'a harmless draft',
+                'conversation_type' => 'draft_response',
+            ]);
+
+            FsTest::assertHealthy($result, 'draft-only agent saving a plain draft must still succeed');
+        });
+
+        $fresh = Ticket::find($ticket->id);
+        FsTest::assertSame('active', $fresh->status, 'a plain draft must not change ticket status');
+        FsTest::assertSame(1, Conversation::where('ticket_id', $ticket->id)
+            ->where('conversation_type', 'draft_response')->count(), 'the draft itself must be saved');
     });
 };

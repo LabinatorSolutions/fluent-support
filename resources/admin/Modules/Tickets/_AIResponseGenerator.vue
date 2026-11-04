@@ -2,21 +2,17 @@
     <div class="fs_container">
         <div class="fs_ai_header_section">
             <div class="fs_icon_container">
-                <img
-                    loading="lazy"
-                    :src="appVars.asset_url + 'images/aiMagicIcon.svg'"
-                    class="fs_icon"
-                />
+                <DynamicIcon name="AiMagicIcon" class="fs_icon"/>
             </div>
 
             <div class="fs_text_container">
-                <div class="fs_header_text">{{ $t(title) }}</div>
-                <div class="fs_description_text">{{ $t(description) }}</div>
+                <div class="fs_header_text">{{ title }}</div>
+                <div class="fs_description_text">{{ description }}</div>
             </div>
 
             <div class="fs_close">
                 <el-button class="fs_close_button" @click="closeModal">
-                    <img :src="appVars.asset_url + 'images/closeIcon.svg'" alt="">
+                    <DynamicIcon name="CloseIcon"/>
                 </el-button>
             </div>
         </div>
@@ -24,7 +20,7 @@
         <div class="fs_draft" v-if="draftData.length > 1">
             <el-button class="fs_draft_button" @click="showDraft = !showDraft">
                 <span>{{$t('Draft')}}</span>
-                <img :class="['fs_draft_arrow', { 'rotate-down': showDraft }]" :src="appVars.asset_url + 'images/arrowRight.svg'" alt="">
+                <DynamicIcon name="ArrowRight" :class="['fs_draft_arrow', { 'rotate-down': showDraft }]"/>
             </el-button>
             <div>
                 <el-collapse-transition>
@@ -48,19 +44,19 @@
                 <div class="fs_response_header">
                     <div class="fs_resize">
                         <el-button class="fs_resize_button" text @click="isFullSize = !isFullSize">
-                            <img :src="appVars.asset_url + 'images/resize.svg'" alt="">
+                            <DynamicIcon name="Resize"/>
                         </el-button>
                     </div>
                     <div class="fs_response_actions">
                         <div class="fs_copy_text">
                             <el-button class="fs_copy_text_button" text @click="copyText">
-                                <img :src="appVars.asset_url + 'images/copyText.svg'" alt="">
+                                <DynamicIcon name="CopyText"/>
                             </el-button>
                         </div>
 
                         <div class="fs_regenerate">
                             <el-button class="fs_regenerate_button" @click="generateResponse(finalPrompts)">
-                                <img :src="appVars.asset_url + 'images/regenerate.svg'" alt="">
+                                <DynamicIcon name="Regenerate"/>
                             </el-button>
                         </div>
 
@@ -83,7 +79,7 @@
                 <textarea v-model="prompt" rows="3" :placeholder="$t('Enter your prompt here...')" class="fs_textarea" required></textarea>
                 <div class="fs_prompt_button">
                     <el-button class="fs_prompt_submit" @click="generateResponse(prompt)" >
-                        <img :src="appVars.asset_url + 'images/aiPromptSubmitButton.svg'" alt="">
+                        <DynamicIcon name="AiPromptSubmitButton"/>
                     </el-button>
                 </div>
             </div>
@@ -110,9 +106,13 @@
 
 <script type="text/babel">
 import { parseMarkdown } from '@/admin/Composable/useMarkdown';
+import DynamicIcon from '@/admin/Components/Icons/DynamicIcon.vue';
 
 export default {
     name: 'AIResponseGenerator',
+    components: {
+        DynamicIcon
+    },
     props: ['selectedText', 'type'],
     data() {
         return {
@@ -132,13 +132,13 @@ export default {
     },
     computed: {
         title() {
-            const modifyResponseTitle = 'Enhance Responses with AI';
-            const generateResponseTitle = 'Generate Responses with AI';
+            const modifyResponseTitle = this.$t('Enhance Responses with AI');
+            const generateResponseTitle = this.$t('Generate Responses with AI');
             return this.type === 'modifyResponse' ? modifyResponseTitle : generateResponseTitle;
         },
         description() {
-            const modifyResponseDescription = 'Refine ticket responses with AI to enhance clarity and precision.';
-            const generateResponseDescription = 'Let AI generate ticket responses to enhance support efficiency.';
+            const modifyResponseDescription = this.$t('Refine ticket responses with AI for clarity and precision.');
+            const generateResponseDescription = this.$t('Let AI draft ticket responses for you.');
             return this.type === 'modifyResponse' ? modifyResponseDescription : generateResponseDescription;
         },
         formattedResponse() {

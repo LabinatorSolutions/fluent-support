@@ -2,14 +2,9 @@
 /**
  * Customer portal: a logged-in customer sees their own tickets and nothing else.
  *
- * The portal resolves the customer from the current WP user (id/email), so
- * these cases create real WP users, link them to factory customers, and switch
- * identity with wp_set_current_user() — dropping the permission cache each
- * time, exactly as the runner does between files.
- *
- * Portal ticket routes address tickets by their PUBLIC identifier
- * (serial_number), not the primary key. Asserting with the primary key here
- * would silently test the wrong row.
+ * The portal resolves the customer from the current WP user, so these cases
+ * use real WP users linked to factory customers. Portal routes address tickets
+ * by serial_number, not the primary key.
  */
 
 use FluentSupport\App\Models\Conversation;
@@ -67,9 +62,8 @@ return function () {
             'user_id' => $intruderUserId,
         ]);
 
-        // Serial numbers default to the primary key, which would make a
-        // lookup by id indistinguishable from a lookup by public identifier.
-        // Forcing them apart is what gives these cases their meaning.
+        // Serials default to the primary key. Force them apart so a lookup by id
+        // can't pass for a lookup by serial.
         $serialBase = 900000 + wp_rand(1, 80000);
 
         $ownerTicket = FsFactory::ticket([
@@ -126,6 +120,15 @@ return function () {
                 'the customer must NOT see another customer ticket');
         });
 
+        FsTest::case('portal_list_caps_per_page', function () use ($becomeUser, $ownerUserId) {
+            $becomeUser($ownerUserId);
+            foreach ([100000 => 100, -5 => 1] as $asked => $expected) {
+                $result = FsTest::rest('GET', '/customer-portal/tickets', ['per_page' => $asked]);
+                $payload = json_decode(wp_json_encode($result['data']['tickets'] ?? []), true);
+                FsTest::assertSame($expected, (int) ($payload['per_page'] ?? 0), 'per_page ' . $asked);
+            }
+        });
+
         FsTest::case('portal_customer_can_read_their_own_ticket', function () use (
             $becomeUser, $ownerUserId, $ownerSerial, $ownerTicket
         ) {
@@ -138,6 +141,51 @@ return function () {
             FsTest::assertSame((int) $ownerTicket->id, $returned, 'the portal returns the ticket we asked for');
         });
 
+        FsTest::case('portal_unknown_ticket_number_is_refused_without_a_fatal_error', function () use (
+            $becomeUser, $ownerUserId, $serialBase
+        ) {
+            $becomeUser($ownerUserId);
+
+            // Past both fixture serials; no ticket in the suite owns it.
+            $unknownSerial = $serialBase + 50000;
+            FsTest::assert(!Ticket::where('serial_number', $unknownSerial)->exists(), 'the serial is unused');
+
+            $result = FsTest::rest('GET', '/customer-portal/tickets/' . $unknownSerial);
+
+            FsTest::assert(!$result['is_exception'], 'no plugin exception: ' . $result['message']);
+            FsTest::assert(strpos($result['message'], 'do not have permission to this support ticket') !== false,
+                'the same refusal as a ticket the customer cannot see, got: ' . $result['message']);
+        });
+
+        FsTest::case('portal_ticket_opened_by_an_agent_exposes_only_the_agents_name_and_photo', function () use (
+            $becomeUser, $ownerUserId, $owner, $serialBase
+        ) {
+            $agent = FsFactory::agent();
+            $ticket = FsFactory::ticket([
+                'customer_id'   => $owner->id,
+                'title'         => 'Portal on-behalf ticket',
+                'privacy'       => 'private',
+                'serial_number' => $serialBase + 2,
+                'created_by'    => $agent->id,
+            ]);
+            $serial = (int) Ticket::find($ticket->id)->serial_number;
+
+            $becomeUser($ownerUserId);
+
+            $result = FsTest::rest('GET', '/customer-portal/tickets/' . $serial);
+            FsTest::assertHealthy($result, 'GET /customer-portal/tickets/{serial} (on behalf)');
+
+            $payload = json_decode(wp_json_encode($result['data']['ticket'] ?? []), true);
+
+            FsTest::assertSame($agent->full_name, $payload['created_by_agent']['full_name'] ?? null,
+                'the portal shows who opened the ticket');
+            // The Agent row behind created_by carries email, IP and user id; none of it is the customer's business.
+            FsTest::assert(!array_key_exists('created_by_person', $payload),
+                'the portal must not serialize the creating agent record, got keys: ' . implode(',', array_keys($payload)));
+            FsTest::assert(strpos(wp_json_encode($payload), $agent->email) === false,
+                'the creating agent email must not appear anywhere in the portal ticket payload');
+        });
+
         FsTest::case('portal_customer_cannot_read_another_customers_ticket', function () use (
             $becomeUser, $intruderUserId, $ownerSerial, $ownerTicket
         ) {
@@ -145,8 +193,6 @@ return function () {
 
             $result = FsTest::rest('GET', '/customer-portal/tickets/' . $ownerSerial);
 
-            // A private ticket belongs to one customer only; anyone else must be
-            // refused rather than served the row.
             $returned = isset($result['data']['ticket']['id']) ? (int) $result['data']['ticket']['id'] : 0;
             FsTest::assert($returned !== (int) $ownerTicket->id,
                 'another customer must never receive ticket ' . $ownerTicket->id
@@ -228,6 +274,78 @@ return function () {
             FsTest::assert(!empty($ticket->resolved_at), 'a portal close must stamp resolved_at');
         });
 
+        FsTest::case('portal_ticket_responses_leave_out_agent_priority_and_mail_internals', function () use (
+            $becomeUser, $ownerUserId, $owner, $marker
+        ) {
+            $private = ['priority', 'message_id', 'content_hash', 'secret_content'];
+            $kept = ['id', 'title', 'status', 'serial_number', 'client_priority', 'last_agent_response', 'last_customer_response'];
+            // Reply, close and re-open return only what the portal reads back: the status.
+            $actionKept = ['id', 'status', 'serial_number'];
+
+            $ticket = FsFactory::ticket(['customer_id' => $owner->id, 'title' => 'Portal fields ' . $marker]);
+            Ticket::where('id', $ticket->id)->update([
+                'priority'       => 'critical',
+                'message_id'     => '<fstest-' . $marker . '@example.invalid>',
+                'content_hash'   => md5($marker),
+                'secret_content' => 'secret ' . $marker,
+            ]);
+            $serial = (int) Ticket::find($ticket->id)->serial_number;
+
+            $becomeUser($ownerUserId);
+
+            $check = function ($row, $label, $expectedKeys = null) use ($private, $kept) {
+                $expectedKeys = $expectedKeys ?: $kept;
+                $row = json_decode(wp_json_encode($row), true);
+                if (!is_array($row)) {
+                    FsTest::fail($label . ': no ticket in the response');
+                    return;
+                }
+                foreach ($private as $key) {
+                    FsTest::assert(!array_key_exists($key, $row), $label . ': ' . $key . ' left out');
+                }
+                foreach ($expectedKeys as $key) {
+                    FsTest::assert(array_key_exists($key, $row), $label . ': ' . $key . ' kept');
+                }
+            };
+
+            $list = FsTest::rest('GET', '/customer-portal/tickets', ['per_page' => 100, 'filter_type' => 'all']);
+            FsTest::assertHealthy($list, 'list');
+            $rows = json_decode(wp_json_encode($list['data']['tickets']), true);
+            $row = null;
+            foreach ((array) ($rows['data'] ?? []) as $candidate) {
+                if ((int) $candidate['id'] === (int) $ticket->id) {
+                    $row = $candidate;
+                }
+            }
+            $check($row, 'list');
+
+            $single = FsTest::rest('GET', '/customer-portal/tickets/' . $serial);
+            FsTest::assertHealthy($single, 'single');
+            $check($single['data']['ticket'] ?? null, 'single');
+
+            $reply = FsTest::rest('POST', '/customer-portal/tickets/' . $serial . '/responses', ['content' => '<p>Fields ' . $marker . '</p>']);
+            FsTest::assertHealthy($reply, 'reply');
+            $check($reply['data']['ticket'] ?? null, 'reply', $actionKept);
+
+            $closed = FsTest::rest('POST', '/customer-portal/tickets/' . $serial . '/close');
+            FsTest::assertHealthy($closed, 'close');
+            $check($closed['data']['ticket'] ?? null, 'close', $actionKept);
+
+            $reopened = FsTest::rest('POST', '/customer-portal/tickets/' . $serial . '/re-open');
+            FsTest::assertHealthy($reopened, 'reopen');
+            $check($reopened['data']['ticket'] ?? null, 'reopen', $actionKept);
+
+            $created = FsTest::rest('POST', '/customer-portal/tickets', ['title' => 'Created ' . $marker, 'content' => '<p>New ' . $marker . '</p>']);
+            FsTest::assertHealthy($created, 'create');
+            $createdRow = json_decode(wp_json_encode($created['data']['ticket'] ?? null), true);
+            foreach ($private as $key) {
+                FsTest::assert(is_array($createdRow) && !array_key_exists($key, $createdRow), 'create: ' . $key . ' left out');
+            }
+            if (!empty($createdRow['id'])) {
+                FsFactory::adoptRestTicket(Ticket::find($createdRow['id']));
+            }
+        });
+
         FsTest::case('portal_me_endpoint_reports_the_logged_in_user', function () use (
             $becomeUser, $ownerUserId, $owner
         ) {
@@ -239,8 +357,29 @@ return function () {
             FsTest::assertSame((int) $ownerUserId, (int) $result['data']['user_id'], 'me.user_id');
             FsTest::assertSame($owner->email, (string) $result['data']['email'], 'me.email');
         });
+
+        // FS-PORTAL-001: a signed link must not open a blocked customer's ticket.
+        FsTest::case('portal_signed_link_refuses_a_blocked_customer', function () use ($becomeUser, $adminId) {
+            if (!\FluentSupport\App\Services\Helper::isPublicSignedTicketEnabled()) {
+                FsTest::skip('signed ticket links are off in this lab');
+            }
+
+            $blocked = FsFactory::customer(['status' => 'blocked']);
+            $blockedTicket = FsFactory::ticket(['customer_id' => $blocked->id]);
+            $activeTicket = FsFactory::ticket();
+
+            $becomeUser(0);
+            try {
+                $refused = FsTest::rest('GET', '/customer-portal/tickets/' . $blockedTicket->serial_number, ['intended_ticket_hash' => $blockedTicket->hash]);
+                $opened = FsTest::rest('GET', '/customer-portal/tickets/' . $activeTicket->serial_number, ['intended_ticket_hash' => $activeTicket->hash]);
+            } finally {
+                $becomeUser($adminId);
+            }
+
+            FsTest::assertSame(403, (int) $refused['status'], 'blocked customer, signed link');
+            FsTest::assertHealthy($opened, 'active customer, signed link');
+        });
     } finally {
-        // Identity and permission cache must be handed back to the runner.
         $becomeUser($adminId);
 
         require_once ABSPATH . 'wp-admin/includes/user.php';

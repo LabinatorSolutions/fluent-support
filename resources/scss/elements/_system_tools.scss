@@ -1,0 +1,346 @@
+.fs_box_wrapper.fs_system_tools {
+    // Pages are a column of separate cards; `.fs_inner_body` outranks the rule that paints this body white.
+    .fs_inner_body & .fs_box_body.fs_st_body {
+        max-width: 800px;
+        padding: 0;
+        gap: 20px;
+        align-items: stretch;
+        background: transparent;
+    }
+
+    .fs_st_placeholder {
+        margin: 0;
+        padding: 20px;
+        border-radius: 8px;
+        background: var(--fs-bg-primary, #FFF);
+        color: var(--fs-text-secondary, #525866);
+    }
+
+    .fs_st_card {
+        border-radius: 8px;
+        background: var(--fs-bg-primary, #FFF);
+    }
+
+    .fs_st_card_header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        min-height: 56px;
+        padding: 10px 20px;
+        border-bottom: 1px solid var(--fs-border-default, #E1E4EA);
+
+        h4 {
+            margin: 0;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--fs-text-primary, #0E121B);
+        }
+    }
+
+    .fs_st_card_actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .fs_st_card_body {
+        padding: 20px;
+    }
+
+    .fs_st_label {
+        margin: 0;
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 16px;
+        color: var(--fs-text-secondary, #525866);
+    }
+
+    .fs_st_value {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 20px;
+        color: var(--fs-text-primary, #0E121B);
+    }
+
+    .fs_st_rest_grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 12px;
+    }
+
+    .fs_st_rest_tile {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        padding: 8px 12px;
+        border-radius: 8px;
+        background: var(--fs-bg-subtle, #F5F7FA);
+    }
+
+    .fs_st_rest_badge {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        width: fit-content;
+        padding: 4px 8px 4px 4px;
+        border: 1px solid var(--fs-border-default, #E1E4EA);
+        border-radius: 6px;
+        background: var(--fs-bg-primary, #FFF);
+
+        span {
+            font-size: 12px;
+            font-weight: 500;
+            line-height: 16px;
+            color: var(--fs-text-secondary, #525866);
+        }
+
+        .el-icon {
+            font-size: 16px;
+        }
+
+        &.is_ok .el-icon {
+            color: var(--fs-state-success-dark, #1FC16B);
+        }
+
+        &.is_error .el-icon {
+            color: var(--fs-text-red, #FB3748);
+        }
+
+        &.is_slow .el-icon,
+        &.is_checking .el-icon {
+            color: var(--fs-stat-icon-warning-color, #FF8447);
+        }
+    }
+
+    .fs_st_notice {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 10px;
+        border-radius: 8px;
+        background: var(--fs-bg-primary, #FFF);
+
+        .el-icon {
+            flex-shrink: 0;
+            font-size: 20px;
+            color: var(--fs-text-info, #335CFF);
+        }
+
+        p {
+            flex: 1;
+            margin: 0;
+            font-size: 14px;
+            line-height: 20px;
+            color: var(--fs-text-primary, #0E121B);
+        }
+
+        a {
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 20px;
+            text-decoration: underline;
+            color: var(--fs-text-primary, #0E121B);
+        }
+    }
+
+    .fs_st_server_stats {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 24px;
+        padding: 12px 20px;
+        border: 1px solid var(--fs-border-default, #E1E4EA);
+        border-radius: 8px;
+    }
+
+    .fs_st_server_stat {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .fs_st_divider {
+        align-self: stretch;
+        width: 1px;
+        background: var(--fs-border-default, #E1E4EA);
+    }
+
+    .fs_st_list {
+        overflow: hidden;
+        border: 1px solid var(--fs-border-default, #E1E4EA);
+        border-radius: 8px;
+    }
+
+    .fs_st_list_item {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 20px;
+        border-bottom: 1px solid var(--fs-border-default, #E1E4EA);
+
+        &:last-child {
+            border-bottom: 0;
+        }
+    }
+
+    .fs_st_list_info {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .fs_st_list_name {
+        margin: 0;
+        font-size: 14px;
+        line-height: 20px;
+        color: var(--fs-text-primary, #0E121B);
+    }
+
+    .fs_st_list_meta {
+        display: flex;
+        gap: 4px;
+        margin: 0;
+        font-size: 12px;
+        line-height: 16px;
+        color: var(--fs-text-primary, #0E121B);
+    }
+
+    .fs_st_intro {
+        margin: 0 0 16px;
+        font-size: 13px;
+        line-height: 1.6;
+        color: var(--fs-text-secondary, #525866);
+    }
+
+    .fs_st_alert {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 16px;
+        padding: 10px 14px;
+        border-radius: 6px;
+        font-size: 13px;
+
+        .el-icon {
+            flex-shrink: 0;
+            font-size: 18px;
+        }
+
+        &.is_ok {
+            background: var(--fs-state-success-light, #E0FAEC);
+            color: var(--fs-state-success-dark, #1FC16B);
+        }
+
+        &.is_error {
+            background: var(--fs-state-information-light, #FFEBEC);
+            color: var(--fs-state-information-dark, #FB3748);
+        }
+
+        &.is_warning {
+            background: var(--fs-bg-warning, #FFF9F3);
+            color: var(--fs-text-primary, #0E121B);
+
+            .el-icon {
+                color: var(--fs-stat-icon-warning-color, #FF8447);
+            }
+        }
+    }
+
+    .fs_st_field_help {
+        margin: 6px 0 0;
+        font-size: 12px;
+        color: var(--fs-text-secondary, #525866);
+
+        &.is_error {
+            color: var(--fs-text-red, #FB3748);
+        }
+    }
+
+    .fs_st_days_input {
+        max-width: 430px;
+    }
+
+    .fs_st_list.el-checkbox-group {
+        display: block;
+        width: 100%;
+    }
+
+    .fs_st_checkbox_item {
+        padding: 12px 20px;
+
+        .el-checkbox {
+            align-items: flex-start;
+            height: auto;
+            white-space: normal;
+        }
+
+        .el-checkbox__input {
+            margin-top: 3px;
+        }
+
+        .el-checkbox__label {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+    }
+
+    .fs_st_checkbox_desc {
+        font-size: 13px;
+        font-weight: 400;
+        color: var(--fs-text-secondary, #525866);
+    }
+
+    .fs_st_overdue {
+        font-weight: 500;
+        color: var(--fs-text-red, #FB3748);
+    }
+
+    @media screen and (max-width: 768px) {
+        .fs_st_server_stats {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 12px;
+        }
+
+        .fs_st_divider {
+            width: auto;
+            height: 1px;
+        }
+    }
+}
+
+// The preview dialog is appended to <body>, outside the page wrapper; `fs_dialog` styles the frame.
+.el-dialog.fs_st_cleanup_dialog {
+    .fs_st_count_table {
+        overflow: hidden;
+        border: 1px solid var(--fs-border-default, #E1E4EA);
+        border-radius: 8px;
+    }
+
+    .fs_st_count_row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        padding: 10px 12px;
+        border-top: 1px solid var(--fs-border-default, #E1E4EA);
+        color: var(--fs-text-primary, #0E121B);
+
+        &.is_head {
+            border-top: 0;
+            padding: 8px 12px;
+            background: var(--fs-bg-subtle, #F5F7FA);
+            font-weight: 500;
+            color: var(--fs-text-secondary, #525866);
+        }
+    }
+
+    .fs_st_field_help {
+        margin: 8px 0 0;
+        font-size: 12px;
+        color: var(--fs-text-secondary, #525866);
+    }
+}

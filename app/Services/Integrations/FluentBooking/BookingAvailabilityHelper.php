@@ -8,10 +8,7 @@ use FluentSupport\Framework\Support\Arr;
 class BookingAvailabilityHelper
 {
     /**
-     * Validates and returns an IANA timezone string, falling back to $fallback then to the WordPress site timezone.
-     *
-     * Delegates validation to DateTimeHelper::getValidatedTimeZone() which uses a static per-request cache and
-     * applies the fluent_booking/fallback_timezone filter, avoiding repeated scans of DateTimeZone::listIdentifiers().
+     * Return a valid IANA timezone, falling back to $fallback, then the site timezone.
      *
      * @param string $timezone
      * @param string $fallback
@@ -40,10 +37,7 @@ class BookingAvailabilityHelper
     }
 
     /**
-     * Builds the start/end date window for an availability query.
-     *
-     * Handles named ranges (next_3_days, this_week, next_week, next_14_days), specific date lists,
-     * and calendar-month requests.
+     * Start/end window for an availability query: a named range, specific dates, or a calendar month.
      *
      * @param string $range
      * @param string $timezone
@@ -111,10 +105,7 @@ class BookingAvailabilityHelper
     }
 
     /**
-     * Initialises the FluentBooking time-slot service, fetches available spots, and returns formatted day/slot arrays.
-     *
-     * Applies the fluent_booking/available_slots_for_view filter before formatting.
-     * Throws on service init failure so callers can handle it at the appropriate level.
+     * Fetch available spots from FluentBooking and format them as day/slot arrays.
      *
      * @param object      $event
      * @param array       $rangeData
@@ -151,9 +142,7 @@ class BookingAvailabilityHelper
     }
 
     /**
-     * Validates user-submitted slot start times against live FluentBooking availability.
-     *
-     * Returns only slots that are still bookable.
+     * Keep only the submitted slots that are still bookable.
      *
      * @param array    $selectedSlots
      * @param object   $event
@@ -238,7 +227,7 @@ class BookingAvailabilityHelper
     }
 
     /**
-     * Appends the link token to the booking_url of each slot so individual slot links are traceable back to this send.
+     * Tag each slot's booking_url with the link token so bookings trace back to this send.
      *
      * @param array  $selectedSlots
      * @param string $linkToken
@@ -260,7 +249,7 @@ class BookingAvailabilityHelper
     }
 
     /**
-     * Builds the HTML block of grouped time-slot links for insertion into an agent reply.
+     * HTML block of time-slot links, grouped by day, for an agent reply.
      *
      * @param array  $selectedSlots
      * @param object $event
@@ -353,7 +342,7 @@ class BookingAvailabilityHelper
     }
 
     /**
-     * Builds the plain-text equivalent of the booking suggestion for clipboard copy.
+     * Plain-text version of the booking suggestion, for clipboard copy.
      *
      * @param string $message
      * @param array  $selectedSlots
@@ -390,9 +379,7 @@ class BookingAvailabilityHelper
     }
 
     /**
-     * Maps raw FluentBooking spot data into the day-grouped slot structure returned to the frontend.
-     *
-     * Filters results to the requested date range.
+     * Group raw FluentBooking spots by day, limited to the requested range.
      *
      * @param array       $availableSpots
      * @param array       $rangeData
@@ -473,7 +460,7 @@ class BookingAvailabilityHelper
     }
 
     /**
-     * Validates, deduplicates, and sorts an array of Y-m-d date strings, capping at 7 entries.
+     * Valid, unique, sorted Y-m-d dates, at most 7.
      *
      * @param array         $selectedDates
      * @param \DateTimeZone $timezoneObject
@@ -510,7 +497,7 @@ class BookingAvailabilityHelper
     }
 
     /**
-     * Validates a Y-m month string against the given timezone, returning an empty string if invalid.
+     * Return the Y-m month string, or '' if invalid.
      *
      * @param string        $calendarMonth
      * @param \DateTimeZone $timezoneObject
@@ -534,7 +521,7 @@ class BookingAvailabilityHelper
     }
 
     /**
-     * Builds a booking URL pre-selecting a specific date, time, duration, and timezone.
+     * Booking URL with the date, time, duration and timezone preselected.
      *
      * @param object      $event
      * @param Ticket|null $ticket
@@ -557,7 +544,7 @@ class BookingAvailabilityHelper
     }
 
     /**
-     * Returns a localised "%d min" string, or an empty string for zero/negative durations.
+     * Localised "%d min", or '' for non-positive durations.
      *
      * @param int $duration
      * @return string

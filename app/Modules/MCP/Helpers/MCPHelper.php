@@ -15,10 +15,21 @@ class MCPHelper
     /** Default per_page ceiling. Individual tools may raise their own limit up to HARD_MAX_PER_PAGE. */
     const MAX_PER_PAGE = 100;
 
-    /** Absolute ceiling no tool can exceed, however large a per_page it requests. */
+    /** Ceiling no tool can exceed. */
     const HARD_MAX_PER_PAGE = 200;
 
-    /** Maximum chars kept in a content preview before truncation. */
+    /**
+     * Version of the shape of tool results, sent as meta.schema_version so scripts
+     * can tell when it changed. Bump it when a result field is renamed or removed
+     * or changes meaning; adding a field does not need a bump.
+     *
+     * 2 (2026-10-07): last_reply_by became waiting_on; reply_email shows the
+     * template instead of guessed greeting/sign-off flags; uploads lists
+     * allowed_extensions; the customer email can no longer be changed.
+     */
+    const SCHEMA_VERSION = 2;
+
+    /** Max chars in a content preview. */
     const PREVIEW_CHARS = 150;
 
     public static function resolveAgent()
@@ -31,6 +42,31 @@ class MCPHelper
         return Helper::getAgentByUserId($userId);
     }
 
+    /**
+     * Whose turn it is on an open ticket: "agent" when the customer is owed a reply
+     * (a new ticket counts), "customer" when we answered and wait for them. Null on a
+     * closed ticket, and on an imported one with no reply history.
+     *
+     * Ticket::last_reply_by holds the same fact under an older, inverted name;
+     * informational replies and notes do not change it.
+     *
+     * @param \FluentSupport\App\Models\Ticket $ticket
+     * @return string|null
+     */
+    public static function waitingOn($ticket)
+    {
+        if ($ticket->status === 'closed') {
+            return null;
+        }
+
+        $lastReplyBy = $ticket->last_reply_by;
+        if ($lastReplyBy === 'customer') {
+            return 'agent';
+        }
+
+        return $lastReplyBy === 'agent' ? 'customer' : null;
+    }
+
     public static function formatTicketForMCP($ticket)
     {
         $data = [
@@ -41,6 +77,7 @@ class MCPHelper
             'client_priority' => $ticket->client_priority ?: 'normal',
             'source'          => $ticket->source,
             'response_count'  => (int) $ticket->response_count,
+            'waiting_on'      => self::waitingOn($ticket),
             'created_at'      => self::toIso8601($ticket->created_at),
             'updated_at'      => self::toIso8601($ticket->updated_at),
             'waiting_since'   => self::toIso8601($ticket->waiting_since),
@@ -75,15 +112,14 @@ class MCPHelper
             })->toArray();
         }
 
-        $data['content'] = self::htmlToText($ticket->content);
+        $data['content'] = self::htmlToMarkdown($ticket->content);
 
         return $data;
     }
 
     public static function formatTicketList($paginated, $customerMeta = [])
     {
-        // Accepts either a WPFluent paginator (page/per_page mode) or a plain
-        // collection/array (keyset cursor mode, which fetches rows directly).
+        // A paginator in page mode, a plain collection/array in keyset cursor mode.
         $items = is_object($paginated) && method_exists($paginated, 'items') ? $paginated->items() : $paginated;
 
         if (!is_iterable($items)) {
@@ -101,7 +137,7 @@ class MCPHelper
                 'priority'        => self::normalizePriority($ticket->priority),
                 'client_priority' => $ticket->client_priority ?: 'normal',
                 'response_count'  => (int) $ticket->response_count,
-                'last_reply_by'   => $ticket->last_reply_by,
+                'waiting_on'      => self::waitingOn($ticket),
                 'created_at'      => self::toIso8601($ticket->created_at),
                 'waiting_since'   => self::toIso8601($ticket->waiting_since),
             ];
@@ -122,7 +158,7 @@ class MCPHelper
                 $item['tags'] = $ticket->tags->pluck('title')->toArray();
             }
 
-            // Optional integration-provided customer one-liner (gated upstream by fst_sensitive_data).
+            // Integration-provided one-liner, gated upstream by fst_sensitive_data.
             if ($ticket->customer_id && isset($customerMeta[$ticket->customer_id])) {
                 $item['customer_summary'] = $customerMeta[$ticket->customer_id];
             }
@@ -134,25 +170,20 @@ class MCPHelper
     }
 
     /**
-     * Wrap a tool response in a consistent envelope.
-     *
-     * Every tool response has:
-     *   summary — one-line the agent can quote ("12 tickets found, page 1 of 3")
-     *   data    — the actual payload
-     *   meta    — schema_version, generated_at, plus any caller-supplied keys (e.g. paging)
+     * Standard tool response: a quotable one-line summary, the data, and meta
+     * (schema_version, generated_at, plus caller keys such as paging).
      */
     public static function envelope($summary, $data, $meta = [])
     {
         return [
             'summary' => $summary,
             'data'    => $data,
-            'meta'    => array_merge(['schema_version' => 1, 'generated_at' => gmdate('c')], $meta),
+            'meta'    => array_merge(['schema_version' => self::SCHEMA_VERSION, 'generated_at' => wp_date('c')], $meta),
         ];
     }
 
     /**
-     * Extract and clamp page/per_page from $params.
-     * Returns ['page' => int, 'per_page' => int].
+     * Clamped ['page' => int, 'per_page' => int] from $params.
      */
     public static function pagination($params, $default = 15, $max = null)
     {
@@ -164,8 +195,7 @@ class MCPHelper
     }
 
     /**
-     * Build the paging meta block from a WPFluent paginator.
-     * Merge this into the $meta arg of envelope().
+     * Paging block for envelope()'s $meta, from a paginator.
      */
     public static function pagingMeta($paginator)
     {
@@ -180,17 +210,25 @@ class MCPHelper
         ];
     }
 
-    public static function formatResponseThread($responses)
+    /**
+     * @param iterable $responses   Conversations, oldest first.
+     * @param int      $maxChars    Truncate each body to this many characters (0 = no limit).
+     */
+    public static function formatResponseThread($responses, $maxChars = 0)
     {
         $thread = [];
         foreach ($responses as $response) {
             $entry = [
                 'id'        => $response->id,
                 'type'      => $response->conversation_type,
-                'content'   => self::htmlToText($response->content),
                 'source'    => $response->source,
                 'created_at' => self::toIso8601($response->created_at),
             ];
+            $entry = array_merge($entry, self::truncatedContent(self::htmlToMarkdown($response->content), $maxChars));
+
+            if ($response->relationLoaded('attachments') && !$response->attachments->isEmpty()) {
+                $entry['attachments'] = self::formatAttachments($response->attachments);
+            }
 
             if ($response->relationLoaded('person') && $response->person) {
                 $entry['person'] = [
@@ -203,6 +241,57 @@ class MCPHelper
         }
 
         return $thread;
+    }
+
+    /**
+     * ['content' => ...], plus truncated/full_length when it was cut.
+     *
+     * @param string $text
+     * @param int    $maxChars 0 = no limit.
+     * @return array
+     */
+    public static function truncatedContent($text, $maxChars = 0)
+    {
+        $maxChars = (int) $maxChars;
+        $length   = mb_strlen($text);
+
+        if ($maxChars <= 0 || $length <= $maxChars) {
+            return ['content' => $text];
+        }
+
+        return [
+            'content'     => rtrim(mb_substr($text, 0, $maxChars)) . "\u{2026}",
+            'truncated'   => true,
+            'full_length' => $length,
+        ];
+    }
+
+    /**
+     * Attachment metadata with a freshly signed download URL.
+     *
+     * @param iterable $attachments
+     * @return array
+     */
+    public static function formatAttachments($attachments)
+    {
+        $items = [];
+        foreach ($attachments as $attachment) {
+            if ($attachment->status !== 'active') {
+                continue;
+            }
+
+            $expires = \FluentSupport\App\Models\Attachment::signedUrlExpiry();
+            $items[] = [
+                'id'             => (int) $attachment->id,
+                'title'          => $attachment->title,
+                'file_type'      => $attachment->file_type,
+                'file_size'      => (int) $attachment->file_size,
+                'url'            => $attachment->signedUrl($expires),
+                'url_expires_at' => gmdate('c', $expires),
+            ];
+        }
+
+        return $items;
     }
 
     public static function formatCustomerForMCP($customer)
@@ -268,7 +357,7 @@ class MCPHelper
 
         try {
             if (is_object($value) && isset($value->date)) {
-                // WPFluent sometimes returns a DateTimeImmutable-style object.
+                // WPFluent sometimes returns a DateTime-like plain object.
                 $str = (string) $value->date;
                 if (self::isZeroDate($str)) {
                     return null;
@@ -284,14 +373,15 @@ class MCPHelper
                 if (self::isZeroDate($value)) {
                     return null;
                 }
-                $dt = new \DateTime($value);
+                // Stored dates are site time; PHP's default zone in WordPress is UTC.
+                $dt = new \DateTime($value, wp_timezone());
                 if ((int) $dt->format('Y') < 1) {
                     return null;
                 }
                 return $dt->format('c');
             }
         } catch (\Exception $e) {
-            // Malformed date string — return null rather than throwing.
+            // Malformed date: fall through to null.
         }
 
         return null;
@@ -303,11 +393,61 @@ class MCPHelper
         return $str === '' || strpos($str, '0000-00-00') === 0;
     }
 
-    public static function formatExtraWidgets($widgets)
+    /**
+     * Customer profile widgets (fluent_support/customer_extra_widgets) for MCP.
+     *
+     * MCP requests widgets with context format 'mcp' (see ProfileInfoService::
+     * getProfileExtraWidgets()). A widget then passes an 'mcp' array instead of
+     * body_html, and MCP returns it as `data`, so agents get fields, not prose:
+     *
+     *   if (ProfileInfoService::isMcpWidgetRequest($context)) {
+     *       $widgets['my_plugin'] = ['title' => 'Account', 'mcp' => ['plan' => 'paid', 'teams' => [...]]];
+     *   }
+     *
+     * It's untrusted integration output: only scalars are kept, tags are
+     * stripped, and depth, list sizes and string lengths are capped
+     * (sanitizeWidgetData()). Without 'mcp', body_html is sent as Markdown.
+     *
+     * @param array      $widgets
+     * @param array|null $onlyKeys Widget keys to keep (null = all).
+     * @return array
+     */
+    public static function formatExtraWidgets($widgets, $onlyKeys = null)
     {
         $formatted = [];
 
         foreach ($widgets as $key => $widget) {
+            if (!is_array($widget) || ($onlyKeys !== null && !in_array((string) $key, $onlyKeys, true))) {
+                continue;
+            }
+
+            if (isset($widget['mcp']) && is_array($widget['mcp'])) {
+                $formatted[$key] = [
+                    'title' => sanitize_text_field($widget['title'] ?? $widget['header'] ?? $key),
+                    'data'  => self::sanitizeWidgetData($widget['mcp']),
+                ];
+                continue;
+            }
+
+            // Structured widgets are already plain data.
+            // Same test as isStructuredWidget() in _StructuredWidget.vue: a non-empty list.
+            $structuredKeys = ['badges', 'stats', 'facts', 'sections', 'links'];
+            $isStructured = false;
+            foreach ($structuredKeys as $structuredKey) {
+                if (!empty($widget[$structuredKey]) && is_array($widget[$structuredKey])) {
+                    $isStructured = true;
+                    break;
+                }
+            }
+
+            if ($isStructured) {
+                $formatted[$key] = [
+                    'title' => sanitize_text_field($widget['title'] ?? $widget['header'] ?? $key),
+                    'data'  => self::sanitizeWidgetData(self::flattenItemBadges(array_intersect_key($widget, array_flip($structuredKeys)))),
+                ];
+                continue;
+            }
+
             if (!empty($widget['orders'])) {
                 $orders = [];
                 foreach ($widget['orders'] as $order) {
@@ -346,13 +486,11 @@ class MCPHelper
                 $data     = array_diff_key($widget, array_flip($skipKeys));
 
                 if (isset($data['body_html'])) {
-                    // Raw dashboard HTML (often with an inline <style> block) is
-                    // token-expensive and repeated on every fetch — plain-text it,
-                    // keeping links (e.g. "view order") instead of dropping them.
-                    // Don't clobber a summary the integration already curated.
+                    // Raw widget HTML is token-heavy, so send Markdown: tables and
+                    // lists keep their shape, links keep their targets.
+                    // A summary the integration already provides wins.
                     if (empty($data['summary'])) {
-                        $html             = $data['body_html'];
-                        $data['summary'] = self::htmlToTextWithLinks($html);
+                        $data['summary'] = self::htmlToMarkdown($data['body_html']);
                     }
                     unset($data['body_html']);
                 }
@@ -365,6 +503,77 @@ class MCPHelper
         }
 
         return $formatted;
+    }
+
+    /**
+     * sections[].items[].badge sits one level past WIDGET_MAX_DEPTH; keep its text.
+     *
+     * @param array $data
+     * @return array
+     */
+    private static function flattenItemBadges($data)
+    {
+        if (empty($data['sections']) || !is_array($data['sections'])) {
+            return $data;
+        }
+
+        foreach ($data['sections'] as $sectionKey => $section) {
+            if (empty($section['items']) || !is_array($section['items'])) {
+                continue;
+            }
+
+            foreach ($section['items'] as $itemKey => $item) {
+                if (is_array($item) && isset($item['badge']) && is_array($item['badge'])) {
+                    $data['sections'][$sectionKey]['items'][$itemKey]['badge'] = $item['badge']['text'] ?? null;
+                }
+            }
+        }
+
+        return $data;
+    }
+
+    // Counts the mcp array itself, so orders[] => items[] => {name, qty} fits.
+    const WIDGET_MAX_DEPTH  = 5;
+    const WIDGET_MAX_ITEMS  = 50;
+    const WIDGET_MAX_STRING = 500;
+
+    /**
+     * Keep scalars only, strip tags, cap depth, list sizes and string lengths.
+     *
+     * @param array $data
+     * @param int   $depth
+     * @return array
+     */
+    public static function sanitizeWidgetData($data, $depth = 1)
+    {
+        $clean = [];
+        foreach (array_slice($data, 0, self::WIDGET_MAX_ITEMS, true) as $key => $value) {
+            $key = is_int($key) ? $key : sanitize_key($key);
+            if ($key === '') {
+                continue;
+            }
+
+            if (is_array($value)) {
+                if ($depth < self::WIDGET_MAX_DEPTH) {
+                    $clean[$key] = self::sanitizeWidgetData($value, $depth + 1);
+                }
+            } elseif (is_bool($value) || is_int($value) || is_float($value) || $value === null) {
+                $clean[$key] = $value;
+            } elseif (is_string($value)) {
+                // Decode first, so encoded tags are stripped too.
+                $value = wp_strip_all_tags(html_entity_decode($value, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+                $value = trim(preg_replace('/[\x00-\x1F\x7F]+/u', ' ', $value));
+
+                // Links come from other sites: web addresses only.
+                if ($key === 'url' && !preg_match('#^https?://#i', $value)) {
+                    continue;
+                }
+
+                $clean[$key] = mb_substr($value, 0, self::WIDGET_MAX_STRING);
+            }
+        }
+
+        return $clean;
     }
 
     /**
@@ -405,8 +614,22 @@ class MCPHelper
     {
         $parsedown = new Parsedown();
         $parsedown->setSafeMode(false);
+        // Agents write emails: a single newline ("Thanks,\nJewel") is a line break.
+        $parsedown->setBreaksEnabled(true);
 
-        return $parsedown->text($content);
+        return self::escapeStrayAngleBrackets($parsedown->text($content));
+    }
+
+    // Escape a "<" that doesn't open a kses-allowed tag, so text like x<5 or List<String> isn't stripped as a tag.
+    private static function escapeStrayAngleBrackets($html)
+    {
+        $allowedTags = wp_kses_allowed_html('post');
+
+        return preg_replace_callback('/<(\/?)([a-zA-Z][a-zA-Z0-9-]*)?/', function ($match) use ($allowedTags) {
+            $tag = isset($match[2]) ? strtolower($match[2]) : '';
+
+            return ($tag !== '' && isset($allowedTags[$tag])) ? $match[0] : '&lt;' . substr($match[0], 1);
+        }, $html);
     }
 
     public static function htmlToText($html)
@@ -415,6 +638,10 @@ class MCPHelper
             return '';
         }
 
+        // Line breaks and block boundaries separate words; stripping them alone glues
+        // "Name</p><p>Pedro" into "NamePedro".
+        $html = preg_replace('#<br\s*/?>|</?(p|div|li|ul|ol|tr|td|th|h[1-6]|blockquote|pre|table|section|article|header|footer)\b[^>]*>#i', ' ', $html);
+
         $text = wp_strip_all_tags($html);
         $text = html_entity_decode($text, ENT_QUOTES, 'UTF-8');
         $text = preg_replace('/\s+/', ' ', $text);
@@ -422,103 +649,21 @@ class MCPHelper
         return trim($text);
     }
 
-    // Like htmlToText(), but keeps <a href> targets instead of dropping them —
-    // integration widgets (order/license links) lose meaning without the URL.
-    // Parses via DOMDocument (same approach as Emogrifier::createRawXmlDocument())
-    // rather than regex, so malformed/nested markup degrades gracefully.
-    public static function htmlToTextWithLinks($html)
+    /**
+     * HTML to Markdown for agents: keeps line breaks, lists, tables, code
+     * blocks and link targets that htmlToText() flattens.
+     *
+     * @param string $html
+     * @return string
+     */
+    public static function htmlToMarkdown($html)
     {
-        if (!$html) {
-            return '';
-        }
-
-        $dom = new \DOMDocument();
-        $dom->encoding = 'UTF-8';
-        $dom->strictErrorChecking = false;
-
-        $libXmlState = libxml_use_internal_errors(true);
-        $loaded      = $dom->loadHTML(
-            '<?xml encoding="UTF-8"?><div>' . $html . '</div>',
-            LIBXML_NOERROR | LIBXML_NOWARNING
-        );
-        libxml_clear_errors();
-        libxml_use_internal_errors($libXmlState);
-
-        if (!$loaded) {
-            return self::htmlToText($html);
-        }
-
-        // textContent doesn't know style/script are non-visible — drop them first,
-        // otherwise the CSS this whole fix exists to remove leaks back in.
-        foreach (['style', 'script'] as $tag) {
-            foreach (iterator_to_array($dom->getElementsByTagName($tag)) as $node) {
-                $node->parentNode->removeChild($node);
-            }
-        }
-
-        foreach (iterator_to_array($dom->getElementsByTagName('a')) as $anchor) {
-            $url  = trim($anchor->getAttribute('href'));
-            $text = trim($anchor->textContent);
-
-            if ($text !== '' && $url !== '') {
-                $replacement = "{$text} ({$url})";
-            } else {
-                $replacement = $text !== '' ? $text : $url;
-            }
-
-            // Pad with boundary spaces — otherwise adjacent anchors (no
-            // whitespace between them in source) run together, e.g.
-            // "...(url)Next link...". Collapsed back down below.
-            $anchor->parentNode->replaceChild($dom->createTextNode(" {$replacement} "), $anchor);
-        }
-
-        // block-level tags carry no implicit whitespace of their own — textContent
-        // concatenates "<div>$0.00</div><div>Free user</div>" as "$0.00Free user"
-        // with nothing between them. Insert a separator on BOTH sides of each one:
-        // "after" alone closes the gap between two sibling blocks, but misses text
-        // immediately preceding a nested block with no source whitespace, e.g.
-        // "<div>TextBefore<p>TextAfter</p></div>" would still squash to
-        // "TextBeforeTextAfter" with an after-only separator. Newline for most
-        // block tags, but just a space for td/th — those sit inside a <tr> that
-        // already gets a newline, and a full break between them would wrongly
-        // split a label from its value (e.g. "Credits" / "19,790"). Any resulting
-        // doubled-up separators (two adjacent blocks each contributing one) are
-        // collapsed by the normalization pass below.
-        $cellTags = ['td' => true, 'th' => true];
-        $separatorTags = array_merge(array_keys($cellTags), [
-            'div', 'p', 'br', 'hr', 'li', 'tr', 'table', 'ul', 'ol',
-            'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-            'section', 'article', 'header', 'footer', 'blockquote',
-        ]);
-
-        // A single unioned XPath query, not one getElementsByTagName() call per
-        // tag — that would re-traverse the whole DOM once per tag name.
-        $xpath = new \DOMXPath($dom);
-        $query = implode(' | ', array_map(fn($tag) => "//{$tag}", $separatorTags));
-        foreach (iterator_to_array($xpath->query($query)) as $node) {
-            $separator = isset($cellTags[$node->tagName]) ? ' ' : "\n";
-            $node->parentNode->insertBefore($dom->createTextNode($separator), $node);
-            $node->parentNode->insertBefore($dom->createTextNode($separator), $node->nextSibling);
-        }
-
-        // /u so \s also matches multi-byte whitespace (e.g. &nbsp; / U+00A0),
-        // which PCRE's \s ignores in byte mode. Collapse horizontal whitespace
-        // first, then fold the line breaks we just inserted down to one each —
-        // this keeps the block boundaries as real newlines instead of squashing
-        // them into a single space along with everything else.
-        $text = preg_replace('/[^\S\n]+/u', ' ', $dom->textContent);
-        $text = preg_replace('/ *\n */u', "\n", $text);
-        $text = preg_replace('/\n{2,}/u', "\n", $text);
-
-        return trim($text);
+        return HtmlToMarkdown::convert($html);
     }
 
     /**
-     * Return a structured WP_Error whose message is a JSON-encoded error envelope.
-     *
-     * The MCP adapter forwards only the WP_Error message string to the agent,
-     * dropping error_data. By encoding into the message the agent receives a
-     * machine-readable structure it can branch on (code, fields, next_step, retryable).
+     * WP_Error whose message is a JSON error envelope. The MCP adapter forwards
+     * only the message, not error_data, so the structure has to live there.
      *
      * Supported $details keys:
      *   fields    => string[]  Input parameter names that caused the error.
@@ -533,18 +678,12 @@ class MCPHelper
     }
 
     /**
-     * Resolve and authorize an explicit agent-assignment target for an MCP tool.
+     * The gate every MCP path uses before assigning a ticket to a specific agent:
+     * checks fst_assign_agents, that the agent exists, and, when a ticket is given,
+     * that the agent isn't restricted from its mailbox.
      *
-     * Enforces the fst_assign_agents capability, validates the agent exists, and
-     * — when a ticket is supplied — that the agent isn't restricted from the
-     * ticket's mailbox. This is the single gate every MCP path uses before
-     * assigning a ticket to a specific agent.
-     *
-     * @param int         $agentId   The requested agent ID.
-     * @param Ticket|null $ticket    Ticket the agent will be assigned to, for the
-     *                               mailbox-restriction check; null skips it (e.g.
-     *                               bulk assign, where each ticket is checked in
-     *                               the loop, or ticket creation).
+     * @param int         $agentId
+     * @param Ticket|null $ticket    Null skips the mailbox check (bulk assign checks per ticket).
      * @param string      $fieldName Input field name to report in error details.
      * @return Agent|\WP_Error  The resolved agent, or a WP_Error to return as-is.
      */
@@ -574,22 +713,13 @@ class MCPHelper
     }
 
     /**
-     * Assign $ticket to $targetAgent and fire the canonical side effects: the
-     * assignment internal-note conversation (TicketService::onAgentChange) and
-     * the fluent_support/agent_assigned_to_ticket hook.
+     * Assign the ticket and fire the assignment side effects if the assignee changed.
+     * Always saves, so callers can stage other field changes on the model first.
+     * Authorize $targetAgent first with resolveAssignmentTarget() (self-assignment may skip it).
      *
-     * Always persists the ticket — so callers may set other field changes on the
-     * model first and let this save them in one write — but only fires the
-     * assignment side effects when the assignee actually changes. Callers must
-     * authorize $targetAgent first (see resolveAssignmentTarget);
-     * self-assignment may skip that gate.
-     *
-     * When called inside a DB transaction that can roll back, pass
-     * $deferSideEffects = true so the non-transactional side effects (assignment
-     * email, webhooks) do NOT fire before the transaction commits. The caller
-     * must then invoke fireAgentAssignmentSideEffects() after a successful
-     * commit — capturing $ticket->agent_id BEFORE this call as the previous
-     * agent id, since this method overwrites it.
+     * Inside a transaction, pass $deferSideEffects and call fireAgentAssignmentSideEffects()
+     * after commit, so emails and webhooks don't fire for a rolled-back change. Capture the
+     * previous agent_id before calling, since this overwrites it.
      *
      * @return bool True if the assignee changed, false if it was already $targetAgent.
      */
@@ -613,17 +743,13 @@ class MCPHelper
     }
 
     /**
-     * Fire the canonical assignment side effects: the assignment internal-note
-     * conversation (TicketService::onAgentChange) and the
-     * fluent_support/agent_assigned_to_ticket hook (which sends the assignment
-     * email synchronously). These are NOT transactional — only call this after
-     * the assignment has been durably committed. $ticket must already carry the
-     * new agent (its 'agent' relation loaded).
+     * Add the assignment note and fire fluent_support/agent_assigned_to_ticket.
+     * Not transactional, so call only after the assignment is committed.
+     * $ticket must have the new 'agent' relation loaded.
      */
     public static function fireAgentAssignmentSideEffects(Ticket $ticket, Agent $actingAgent, $previousAgentId)
     {
-        (new TicketService())->onAgentChange($ticket, $actingAgent);
-        do_action('fluent_support/agent_assigned_to_ticket', $ticket->agent, $ticket, $actingAgent, $previousAgentId);
+        (new TicketService())->afterAgentAssigned($ticket, $actingAgent, $previousAgentId);
     }
 
     public static function formatDuration($seconds)

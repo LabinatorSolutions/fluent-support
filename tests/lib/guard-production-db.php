@@ -2,19 +2,13 @@
 /**
  * Refuses to let a destructive runner touch anything but a throwaway database.
  *
- * Include this at the very top of any runner that drops/recreates tables or
- * databases (Codeception WPLoader bootstrap, lab provisioners, mutation
- * harnesses). Convention is not protection — the day a config file points at
- * the real site, this is the only thing standing between the suite and the
- * production data it promised to protect.
- *
+ * Include at the top of any runner that drops or recreates tables or databases.
  * Adapt the two patterns to your suite's naming and nothing else.
  */
 
 function suite_guard_against_production_db(string $dbName, string $tablePrefix): void
 {
-    // The throwaway DB and prefix your suite provisions — e.g. Codeception's
-    // WPLoader database. Anything that doesn't match is treated as real.
+    // Anything that doesn't match these is treated as a real site.
     $allowedDbPattern = '/^[a-z0-9_]*test[a-z0-9_]*$/i'; // e.g. fftest, wp_test
     $allowedPrefixPattern = '/^[a-z0-9]+test_/i';        // e.g. fftest_
 

@@ -1,15 +1,31 @@
 <template>
-    <div style="width: 100%; height: 400px">
+    <div style="width: 100%; height: 400px" v-loading="fetching && !!chartData">
         <bar-chart-base
             v-if="chartData"
             :chartData="chartData"
-            :chartOptions="chartOptions"
         ></bar-chart-base>
+        <el-skeleton v-else-if="fetching" animated style="height: 100%;" aria-busy="true">
+            <template #template>
+                <div style="display: flex; align-items: flex-end; gap: 16px; height: 100%; padding: 12px 24px 24px 16px; box-sizing: border-box;">
+                    <el-skeleton-item variant="rect" style="flex: 1; height: 55%;" />
+                    <el-skeleton-item variant="rect" style="flex: 1; height: 80%;" />
+                    <el-skeleton-item variant="rect" style="flex: 1; height: 40%;" />
+                    <el-skeleton-item variant="rect" style="flex: 1; height: 95%;" />
+                    <el-skeleton-item variant="rect" style="flex: 1; height: 65%;" />
+                    <el-skeleton-item variant="rect" style="flex: 1; height: 30%;" />
+                    <el-skeleton-item variant="rect" style="flex: 1; height: 70%;" />
+                    <el-skeleton-item variant="rect" style="flex: 1; height: 85%;" />
+                    <el-skeleton-item variant="rect" style="flex: 1; height: 50%;" />
+                    <el-skeleton-item variant="rect" style="flex: 1; height: 60%;" />
+                    <el-skeleton-item variant="rect" style="flex: 1; height: 90%;" />
+                    <el-skeleton-item variant="rect" style="flex: 1; height: 45%;" />
+                </div>
+            </template>
+        </el-skeleton>
     </div>
 </template>
 
 <script type="text/babel">
-import each from "lodash/each";
 import BarChartBase from "./BarChartBase";
 
 export default {
@@ -20,59 +36,10 @@ export default {
     },
     data() {
         return {
-            fetching: false,
+            fetching: true,
             stats: {},
             chartData: false,
             maxCumulativeValue: 0,
-            chartOptions: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        type: "linear",
-                        position: "left",
-                        grid: {
-                            drawOnChartArea: true,
-                            color: "#E1E4EA",
-                        },
-                        border: {
-                            display: false,
-                            dash: [4, 4],
-                        },
-                        ticks: {
-                            callback: function (value) {
-                                if (Math.floor(value) === value) {
-                                    return value;
-                                }
-                            },
-                        },
-                        beginAtZero: true,
-                    },
-                    x: {
-                        grid: {
-                            drawOnChartArea: false,
-                        },
-                        ticks: {
-                            autoSkip: true,
-                            maxTicksLimit: 10,
-                        },
-                    },
-                },
-                layout: {
-                    padding: {
-                        left: 16,
-                        right: 24,
-                        top: 12,
-                        bottom: 24,
-                    },
-                },
-                datasets: {
-                    bar: {
-                        barThickness: 8,
-                        categoryPercentage: 0.7,
-                    },
-                },
-            },
         };
     },
     mounted() {
@@ -99,6 +66,8 @@ export default {
                 agent_group_id: this.agent_group_id,
             }).then((response) => {
                 this.setupChartItems(response.stats);
+            }).always(() => {
+                this.fetching = false;
             });
         },
         setupChartItems(stats) {
@@ -108,7 +77,7 @@ export default {
             };
 
             const statData = [];
-            each(stats, (count, label) => {
+            Object.entries(stats || {}).forEach(([label, count]) => {
                 chartData.labels.push(label);
                 statData.push(parseInt(count));
             });

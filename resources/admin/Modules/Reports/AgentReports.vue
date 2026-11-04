@@ -3,12 +3,13 @@
         <!-- Personal View (is_personal = true) -->
         <MyPerformanceReport 
             v-if="is_personal" 
+            v-loading="loading && !first_loading"
             :reports="reports" 
-            :loading="loading" 
+            :loading="first_loading" 
         />
 
         <!-- Non-Personal View (is_personal = false) -->
-        <div v-if="!is_personal && !loading" class="fs_agent_report_summary_wrapper">
+        <div v-if="!is_personal && !first_loading" class="fs_agent_report_summary_wrapper">
             <div class="fs_report_table_container">
                 <div class="fs_table_header">
                     <div class="fs_box_actions">
@@ -89,11 +90,12 @@
                             <template #default="scope">
                                 <template v-if="scope.row.active_stat">
                                     <ul style="margin: 0; padding: 0; list-style: none;">
-                                        <li>{{ $t('Waiting Tickets') }}: {{ scope.row.active_stat.waiting_tickets }}
-                                        </li>
-                                        <li>{{ $t('Average Waiting') }}: {{ scope.row.active_stat.average_waiting }}
-                                        </li>
-                                        <li>{{ $t('Max Waiting') }}: {{ scope.row.active_stat.max_waiting }}</li>
+                                        <!-- translators: %s is the number of tickets waiting for this agent's reply -->
+                                        <li>{{ $t('Waiting Tickets: %s', scope.row.active_stat.waiting_tickets) }}</li>
+                                        <!-- translators: %s is the average time tickets have been waiting, e.g. 3 hours -->
+                                        <li>{{ $t('Average Waiting: %s', scope.row.active_stat.average_waiting) }}</li>
+                                        <!-- translators: %s is the longest time a ticket has been waiting, e.g. 2 days -->
+                                        <li>{{ $t('Max Waiting: %s', scope.row.active_stat.max_waiting) }}</li>
                                     </ul>
                                 </template>
                             </template>
@@ -113,7 +115,7 @@
                         <div class="fs_agent_summary_dialog_header">
                             <p class="fs_agent_summary_title">{{ $t('exclude_or_include_in_summary') }}</p>
                             <p class="fs_dialog_description_wrapper">
-                                {{$t("If you don't select any agents then all the agents report will be displayed here otherwise it will show only selected agents report.")}}
+                                {{ $t("If you don't select any agents, the report shows all agents. Otherwise, it shows only the selected agents.") }}
                             </p>
                         </div>
                     </template>
@@ -171,21 +173,28 @@
 
             </div>
         </div>
-        <div class="fs_box_body fs_skeleton_loader" v-if="loading">
-            <el-skeleton :rows="5" animated/>
+        <div v-if="!is_personal && first_loading" class="fs_report_table_container">
+            <div class="fs_table_header">
+                <div class="fs_box_actions">
+                    <span class="fs_table_title">{{ $t('Agents Report Summary') }}</span>
+                </div>
+            </div>
+            <TableSkeleton :rows="5" :columns="['260px', 1, 1, 1, 1, '220px']" avatar />
         </div>
     </div>
 </template>
 
 <script type="text/babel">
-import each from "lodash/each";
+import { each } from "lodash-es";
 import MyPerformanceReport from "./MyPerformanceReport";
+import TableSkeleton from "@/admin/Components/TableSkeleton.vue";
 import { formatDateRangeForAPI, handleCheckAllChange as handleCheckAllChangeUtil, handleColumnChanges as handleColumnChangesUtil } from "./Utils/reportHelpers";
 
 export default {
     name: "AgentReports",
     components: {
         MyPerformanceReport,
+        TableSkeleton,
     },
     props: {
         url: String,
@@ -209,6 +218,7 @@ export default {
             imageErrors: {},
             reports: [],
             loading: false,
+            first_loading: true,
             sorts: {
                 prop: "responses",
                 order: "descending",
@@ -357,6 +367,7 @@ export default {
                 })
                 .always(() => {
                     this.loading = false;
+                    this.first_loading = false;
                 });
         },
 
@@ -472,20 +483,6 @@ export default {
     overflow: hidden;
 }
 
-.fs_summary_settings_icon {
-    margin-right: 10px;
-    margin-top: 2px;
-    cursor: pointer;
-}
-
-.fs_summary_export_icon {
-    margin-left: 17px;
-    margin-top: 2px;
-    cursor: pointer;
-    color: var(--fs-text-red);
-    font-size: 18px;
-}
-
 .fs_summary_export_items {
     display: flex;
     flex-wrap: wrap;
@@ -494,11 +491,6 @@ export default {
 .fs_summary_export_items label {
     margin-top: 10px;
     width: 45%;
-}
-
-.fs_skeleton_loader {
-    padding: 20px;
-    background: var(--fs-bg-primary);
 }
 </style>
 

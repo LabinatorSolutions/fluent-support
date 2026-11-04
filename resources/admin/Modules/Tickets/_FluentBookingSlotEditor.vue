@@ -13,7 +13,8 @@
         <div class="fs_fluent_booking_slot_editor_body">
             <div class="fs_fluent_booking_slot_editor_header">
                 <strong>{{ $t('Available times') }}</strong>
-                <span>{{ draftSlotIds.length }} {{ $t('selected') }}</span>
+                <!-- translators: %s is the number of selected time slots -->
+                <span>{{ $t('%s selected', draftSlotIds.length) }}</span>
             </div>
             <div class="fs_fluent_booking_slot_editor_links">
                 <el-button class="fs_outline_btn" text @click="selectAll">

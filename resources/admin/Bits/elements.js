@@ -86,7 +86,10 @@ import {
     Link,
     Star,
     DataAnalysis,
-    Calendar
+    Calendar,
+    Promotion,
+    VideoPause,
+    WarningFilled
 } from '@element-plus/icons-vue';
 
 const icons = [
@@ -160,7 +163,10 @@ const icons = [
     Link,
     Star,
     DataAnalysis,
-    Calendar
+    Calendar,
+    Promotion,
+    VideoPause,
+    WarningFilled
 ];
 
 const app = createApp({});

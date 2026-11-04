@@ -26,7 +26,9 @@ class EmailNotificationHandler
         // Let's send welcome email to customer if enabled
         $emailSettings = (new Settings())->getBoxEmailSettings($mailbox, 'ticket_created_email_to_customer');
 
-        if ($this->shouldSendEmail($emailSettings, 'ticket_created_email_to_customer', $ticket, $customer)) {
+        // Blocked customers get no email; the admin copy below still goes out.
+        if ($customer && $customer->canReceiveNotifications()
+            && $this->shouldSendEmail($emailSettings, 'ticket_created_email_to_customer', $ticket, $customer)) {
             $subject = apply_filters('fluent_support/parse_smartcode_data', $emailSettings['email_subject'], [
                 'customer' => $customer,
                 'business' => $mailbox,
@@ -42,29 +44,17 @@ class EmailNotificationHandler
                 'email_type' => 'ticket_created_email_to_customer'
             ]);
 
-            $headers = $mailbox->getMailerHeader();
+            $headers = self::automatedHeaders($mailbox->getMailerHeader());
 
             $headers = apply_filters('fluent_support/mail_to_customer_header', $headers, [
                 'cc_email'  => $ticket->getSettingsValue('cc_email', []),
-                'hook_type' => 'ticket_created_email_to_customer'
+                'hook_type' => 'ticket_created_email_to_customer',
+                'ticket'    => $ticket
             ]);
 
-            $attachments = [];
+            $files = $emailSettings['send_attachments'] == 'yes' ? $ticket->attachments : null;
 
-            if ($emailSettings['send_attachments'] == 'yes' && ($files = $ticket->attachments)) {
-                foreach ($files as $file) {
-                    if ($file->driver == 'local') {
-                        $filePath = $file->file_path;
-                    } else {
-                        $filePath = Arr::get($file->settings, 'local_temp_path');
-                    }
-                    if (file_exists($filePath)) {
-                        $attachments[] = $filePath;
-                    }
-                }
-            }
-
-            Mailer::send($customer->email, $subject, $emailBody, $headers, $attachments);
+            Mailer::sendWithFiles($customer->email, $subject, $emailBody, $headers, $files);
         }
 
         // let's send email to admin if enabled
@@ -94,26 +84,11 @@ class EmailNotificationHandler
                 'email_type' => 'ticket_created_email_to_admin'
             ]);
 
-            $headers = $mailbox->getMailerHeader();
+            $headers = self::automatedHeaders($mailbox->getMailerHeader());
 
-            $attachments = [];
+            $files = $emailSettings['send_attachments'] == 'yes' ? $ticket->attachments : null;
 
-            if ($emailSettings['send_attachments'] == 'yes' && ($files = $ticket->attachments)) {
-                foreach ($files as $file) {
-
-                    if ($file->driver == 'local') {
-                        $filePath = $file->file_path;
-                    } else {
-                        $filePath = Arr::get($file->settings, 'local_temp_path');
-                    }
-                    if (file_exists($filePath)) {
-                        $attachments[] = $filePath;
-                    }
-
-                }
-            }
-
-            Mailer::send($mailTo, $subject, $emailBody, $headers, $attachments);
+            Mailer::sendWithFiles($mailTo, $subject, $emailBody, $headers, $files, false);
         }
     }
 
@@ -163,27 +138,16 @@ class EmailNotificationHandler
             ]);
 
 
-            $headers = $mailbox->getMailerHeader();
+            // Written by the agent, so the From name follows the inbox's From name setting.
+            $headers = $mailbox->getMailerHeader($agent);
             $headers = apply_filters('fluent_support/mail_to_customer_header', $headers, [
                 'cc_email'  => $response->getSettingsValue('cc_email', []),
-                'hook_type' => 'ticket_replied_by_agent_email_to_customer'
+                'hook_type' => 'ticket_replied_by_agent_email_to_customer',
+                'ticket'    => $ticket
             ]);
-            $attachments = [];
+            $files = $emailSettings['send_attachments'] == 'yes' ? $response->attachments : null;
 
-            if ($emailSettings['send_attachments'] == 'yes' && ($files = $response->attachments)) {
-                foreach ($files as $file) {
-                    if ($file->driver == 'local') {
-                        $filePath = $file->file_path;
-                    } else {
-                        $filePath = Arr::get($file->settings, 'local_temp_path');
-                    }
-                    if (file_exists($filePath)) {
-                        $attachments[] = $filePath;
-                    }
-                }
-            }
-
-            Mailer::send($customer->email, $subject, $emailBody, $headers, $attachments);
+            Mailer::sendWithFiles($customer->email, $subject, $emailBody, $headers, $files);
         }
     }
 
@@ -226,10 +190,11 @@ class EmailNotificationHandler
                 'email_type' => 'ticket_closed_by_agent_email_to_customer'
             ]);
 
-            $headers = $mailbox->getMailerHeader();
+            $headers = self::automatedHeaders($mailbox->getMailerHeader());
             $headers = apply_filters('fluent_support/mail_to_customer_header', $headers, [
                 'cc_email'  => $ticket->getSettingsValue('cc_email', []),
-                'hook_type' => 'ticket_closed_by_agent_email_to_customer'
+                'hook_type' => 'ticket_closed_by_agent_email_to_customer',
+                'ticket'    => $ticket
             ]);
             Mailer::send($customer->email, $subject, $emailBody, $headers);
         }
@@ -277,23 +242,10 @@ class EmailNotificationHandler
                 'email_type' => 'ticket_replied_by_customer_email_to_admin'
             ]);
 
-            $headers = $mailbox->getMailerHeader();
-            $attachments = [];
+            $headers = self::automatedHeaders($mailbox->getMailerHeader());
+            $files = $emailSettings['send_attachments'] == 'yes' ? $response->attachments : null;
 
-            if ($emailSettings['send_attachments'] == 'yes' && ($files = $response->attachments)) {
-                foreach ($files as $file) {
-                    if ($file->driver == 'local') {
-                        $filePath = $file->file_path;
-                    } else {
-                        $filePath = Arr::get($file->settings, 'local_temp_path');
-                    }
-                    if (file_exists($filePath)) {
-                        $attachments[] = $filePath;
-                    }
-                }
-            }
-
-            Mailer::send($emailTo, $subject, $emailBody, $headers, $attachments);
+            Mailer::sendWithFiles($emailTo, $subject, $emailBody, $headers, $files, false);
         }
     }
 
@@ -349,7 +301,7 @@ class EmailNotificationHandler
                 'email_type' => 'ticket_agent_on_change'
             ]);
 
-            $headers = $mailbox->getMailerHeader();
+            $headers = self::automatedHeaders($mailbox->getMailerHeader());
 
             Mailer::send($emailTo, $subject, $emailBody, $headers);
         }
@@ -359,7 +311,7 @@ class EmailNotificationHandler
     {
         $mailbox = $ticket->mailbox;
 
-        if (!$mailbox) {
+        if (!$mailbox || !$customer || !$customer->canReceiveNotifications()) {
             return;
         }
 
@@ -383,24 +335,15 @@ class EmailNotificationHandler
                 'email_type' => 'ticket_created_by_agent_email_to_customer'
             ]);
 
-            $headers = $mailbox->getMailerHeader();
+            $headers = apply_filters('fluent_support/mail_to_customer_header', self::automatedHeaders($mailbox->getMailerHeader()), [
+                'hook_type' => 'ticket_created_by_agent_email_to_customer',
+                'cc_email'  => [],
+                'ticket'    => $ticket
+            ]);
 
-            $attachments = [];
+            $files = $emailSettings['send_attachments'] == 'yes' ? $ticket->attachments : null;
 
-            if ($emailSettings['send_attachments'] == 'yes' && ($files = $ticket->attachments)) {
-                foreach ($files as $file) {
-                    if ($file->driver == 'local') {
-                        $filePath = $file->file_path;
-                    } else {
-                        $filePath = Arr::get($file->settings, 'local_temp_path');
-                    }
-                    if (file_exists($filePath)) {
-                        $attachments[] = $filePath;
-                    }
-                }
-            }
-
-            Mailer::send($customer->email, $subject, $emailBody, $headers, $attachments);
+            Mailer::sendWithFiles($customer->email, $subject, $emailBody, $headers, $files);
         }
     }
 
@@ -441,9 +384,13 @@ class EmailNotificationHandler
                 'email_type' => 'ticket_created_by_agent_on_behalf_email_to_customer'
             ]);
 
-            $headers = $mailbox->getMailerHeader();
+            $headers = apply_filters('fluent_support/mail_to_customer_header', $mailbox->getMailerHeader($agent), [
+                'hook_type' => 'ticket_created_by_agent_on_behalf_email_to_customer',
+                'cc_email'  => [],
+                'ticket'    => $ticket
+            ]);
 
-            $attachments = [];
+            $files = null;
 
             if ($emailSettings['send_attachments'] == 'yes') {
                 $files = $response->attachments;
@@ -453,20 +400,9 @@ class EmailNotificationHandler
                 if ((!$files || $files->isEmpty()) && $ticket->attachments) {
                     $files = $ticket->attachments;
                 }
-
-                foreach ($files as $file) {
-                    if ($file->driver == 'local') {
-                        $filePath = $file->file_path;
-                    } else {
-                        $filePath = Arr::get($file->settings, 'local_temp_path');
-                    }
-                    if (file_exists($filePath)) {
-                        $attachments[] = $filePath;
-                    }
-                }
             }
 
-            Mailer::send($customer->email, $subject, $emailBody, $headers, $attachments);
+            Mailer::sendWithFiles($customer->email, $subject, $emailBody, $headers, $files);
         }
     }
 
@@ -493,7 +429,7 @@ class EmailNotificationHandler
 
         $data['email_footer'] = $footerText;
 
-        $emailTypeForCustomerFooter = ['ticket_created_email_to_customer', 'ticket_replied_by_agent_email_to_customer', 'ticket_closed_by_agent_email_to_customer'];
+        $emailTypeForCustomerFooter = ['ticket_created_email_to_customer', 'ticket_replied_by_agent_email_to_customer', 'ticket_closed_by_agent_email_to_customer', 'ticket_created_by_agent_on_behalf_email_to_customer'];
 
         if (defined('FLUENTSUPPORTPRO') && in_array($data['email_type'], $emailTypeForCustomerFooter)
             && !is_null($data['business']->email_footer)) {
@@ -513,6 +449,27 @@ class EmailNotificationHandler
         }
 
         return apply_filters('fluent_support/should_send_notification', true, 'email', $emailType, $ticket, $person);
+    }
+
+    /**
+     * Mark a system-generated email (confirmations, closed notices, agent alerts) so
+     * autoresponders don't answer it (RFC 3834 Auto-Submitted, and Outlook's
+     * X-Auto-Response-Suppress). An answer would come back through email piping and
+     * could start a mail loop. Replies an agent writes are not marked.
+     *
+     * @param array $headers
+     * @return array
+     */
+    public static function automatedHeaders($headers)
+    {
+        if (!apply_filters('fluent_support/mark_automated_emails', true)) {
+            return $headers;
+        }
+
+        $headers[] = 'Auto-Submitted: auto-generated';
+        $headers[] = 'X-Auto-Response-Suppress: All';
+
+        return $headers;
     }
 
     public function getMailerHeaderWithCc($headers, $info)

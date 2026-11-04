@@ -75,13 +75,31 @@ class Vite
         }
 
         if ($isViteScript) {
-            if (strpos($tag, 'type="module"') !== false || strpos($tag, "type='module'") !== false) {
-                return $tag;
-            }
-            $tag = preg_replace('/<script\s+/', '<script type="module" crossorigin ', $tag);
+            return $this->toModuleTag($tag);
         }
 
         return $tag;
+    }
+
+    /**
+     * Mark the <script src> in a script_loader_tag string as an ES module.
+     *
+     * $tag also holds the handle's translations and inline before/after
+     * scripts (WP_Scripts::do_item()); those stay classic scripts. The opt-out
+     * attributes keep Cloudflare Rocket Loader and LiteSpeed from moving or
+     * combining the file: start.js loads its route chunks by relative URL.
+     */
+    private function toModuleTag($tag): string
+    {
+        return (string) preg_replace_callback('/<script\b([^>]*\bsrc=[^>]*)>/i', function ($matches) {
+            $attributes = $matches[1];
+            if (preg_match('/\btype=["\']module["\']/i', $attributes)) {
+                return $matches[0];
+            }
+            $attributes = preg_replace('/\stype=["\'][^"\']*["\']/i', '', $attributes);
+
+            return '<script type="module" crossorigin data-cfasync="false" data-no-optimize="1"' . $attributes . '>';
+        }, $tag, 1);
     }
 
     private static function getInstance(): Vite
@@ -153,11 +171,7 @@ class Vite
     private function addModuleToScript($tag, $handle, $src): string
     {
         if (in_array($handle, $this->moduleScripts)) {
-            if ($this->usingDevMode() || strpos($src, 'assets/') !== false) {
-                $tag = '<script type="module" crossorigin src="' . esc_url($src) . '" id="' . esc_attr($handle) . '-js"></script>' . "\n";
-            } else {
-                $tag = '<script type="module" src="' . esc_url($src) . '" id="' . esc_attr($handle) . '-js"></script>' . "\n";
-            }
+            return $this->toModuleTag($tag);
         }
         return $tag;
     }

@@ -17,15 +17,6 @@ use FluentSupport\App\Services\Includes\UploadService;
 use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\Framework\Support\Arr;
 
-/**
- *  Helper - REST API Helper Class
- *
- *  App helper for REST API
- *
- * @package FluentSupport\App\Services
- *
- * @version 1.0.0
- */
 class Helper
 {
     public static function FluentSupport($module = null)
@@ -34,10 +25,10 @@ class Helper
     }
 
     /**
-     * Get agent information by user id
-     * The function will get user id as parameter or get id from session and return agent information
-     * @param null $userId
-     * @return false | Agent
+     * Agent for the given user, or for the current user when $userId is null.
+     *
+     * @param int|null $userId
+     * @return false|Agent|null
      */
     public static function getAgentByUserId($userId = null)
     {
@@ -51,8 +42,28 @@ class Helper
     }
 
     /**
-     * This function will return the list of ticket priorities list for customer
+     * The email belongs to support staff: an agent, or a WP user who is an agent or
+     * an administrator. Such people are never offered or created as customers.
      *
+     * @param string $email
+     * @return bool
+     */
+    public static function isSupportStaffEmail($email)
+    {
+        if (!$email) {
+            return false;
+        }
+
+        if (Agent::where('email', $email)->exists()) {
+            return true;
+        }
+
+        $user = get_user_by('email', $email);
+
+        return $user && (user_can($user, 'manage_options') || Agent::where('user_id', $user->ID)->exists());
+    }
+
+    /**
      * @return mixed
      */
     public static function customerTicketPriorities()
@@ -65,8 +76,6 @@ class Helper
     }
 
     /**
-     * This function will return the list of ticket priorities list for Admin
-     *
      * @return mixed
      */
     public static function adminTicketPriorities()
@@ -80,8 +89,6 @@ class Helper
 
 
     /**
-     * This function will return ticket status group
-     *
      * @return mixed
      */
     public static function ticketStatusGroups()
@@ -96,8 +103,6 @@ class Helper
     }
 
     /**
-     * This function will return custom ticket status group
-     *
      * @return mixed
      */
     public static function changeableTicketStatuses()
@@ -111,8 +116,6 @@ class Helper
     }
 
     /**
-     * This function will return ticket status list
-     *
      * @return mixed
      */
     public static function ticketStatuses()
@@ -145,7 +148,7 @@ class Helper
             $mimes = array_merge($mimes, $mimesGroup['mimes']);
         }
 
-        return apply_filters('fluent_support/accepted_ticket_mimes', $mimes);
+        return apply_filters('fluent_support/accepted_ticket_mimes', array_values(array_unique($mimes)));
     }
 
     public static function getAcceptedMimeHeadings()
@@ -197,7 +200,6 @@ class Helper
                     'application/csv',
                     'application/txt',
                     'text/csv',
-                    'text/plain',
                     'text/comma-separated-values',
                     'text/anytext',
                 ]
@@ -226,49 +228,64 @@ class Helper
                     'application/json',
                     'application/jsonml+json'
                 ]
+            ],
+            // Uploads of .md are stored as text/plain (see FileSystem::allowTicketMimes); the
+            // markdown types are what mail clients declare on an emailed .md attachment.
+            'text'      => [
+                'title' => __('Text/Markdown', 'fluent-support'),
+                'mimes' => [
+                    'text/plain',
+                    'text/markdown',
+                    'text/x-markdown'
+                ]
             ]
         ]);
     }
 
     /**
-     * getOption method will return settings using key
-     * This method will get key as parameter, fetch data from database, beautify the data and return
-     * @param $key
-     * @param string $default
+     * @param string $key
+     * @param mixed $default Returned when the option is missing, corrupt, or not an
+     *                       array while $default is one. A stored "0", "" or [] is returned.
      * @return mixed|string
      */
     public static function getOption($key, $default = '')
     {
-        //Get settings from meta table using the key
         $data = Meta::where('object_type', 'option')
             ->where('key', $key)
             ->first();
 
-        if ($data) {
-            $value = static::safeUnserialize($data->value);
-            if ($value) {
-                return $value;
-            }
+        if (!$data) {
+            return $default;
         }
 
-        return $default;
+        $value = static::safeUnserialize($data->value);
+
+        // A corrupt serialized row unserializes to false; b:0; is a stored false.
+        if ($value === false && $data->value !== 'b:0;') {
+            return $default;
+        }
+
+        // Callers that pass an array default read keys from the result.
+        if (is_array($default) && !is_array($value)) {
+            return $default;
+        }
+
+        return $value;
     }
 
     /**
-     * updateOption method will update or insert settings
-     * This method will get key and value as parameter, check exists or not. If exist update value by key, else insert value for the key
-     * @param $key
-     * @param $value
+     * Upsert an option row in the meta table.
+     *
+     * @param string $key
+     * @param mixed $value
      * @return mixed
      */
     public static function updateOption($key, $value)
     {
-        //Get settings from meta table using the key
         $data = Meta::where('object_type', 'option')
             ->where('key', $key)
             ->first();
 
-        //If data is available, update existing data and return
         if ($data) {
             return Meta::where('id', $data->id)
                 ->update([
@@ -276,7 +293,6 @@ class Helper
                 ]);
         }
 
-        //If newly submit, create new record and return
         return Meta::insert([
             'object_type' => 'option',
             'key'         => $key,
@@ -293,8 +309,7 @@ class Helper
     }
 
     /**
-     * getIntegrationOption method will return the integration settings by integration key
-     * @param $key
+     * @param string $key
      * @param string $default
      * @return mixed|string
      */
@@ -315,9 +330,10 @@ class Helper
     }
 
     /**
-     * updateIntegrationOption method will update existing settings or create new settings by integration key
-     * @param $key
-     * @param $value
+     * Upsert an integration settings row.
+     *
+     * @param string $key
+     * @param mixed $value
      * @return mixed
      */
     public static function updateIntegrationOption($key, $value)
@@ -499,7 +515,6 @@ class Helper
     }
 
     /**
-     * getPortalBaseUrl will get the portal page id and return link of the page
      * @return mixed
      */
     public static function getPortalBaseUrl()
@@ -550,24 +565,90 @@ class Helper
         return apply_filters('fluent_support/portal_admin_base_url', admin_url('admin.php?page=fluent-support/#/'));
     }
 
-    public static function getBusinessSettings($key = null)
+    /**
+     * Global business settings, or one of them. $default applies only to a key
+     * missing from the stored settings and their built-in defaults.
+     *
+     * @param string|null $key
+     * @param mixed $default
+     * @return mixed
+     */
+    public static function getBusinessSettings($key = null, $default = null)
     {
         static $settings;
 
-        if ($settings && $key) {
-            return Arr::get($settings, $key);
+        if (!$settings) {
+            $settings = (new Settings())->globalBusinessSettings();
         }
-
-        if ($settings) {
-            return $settings;
-        }
-
-        $settings = (new Settings())->globalBusinessSettings();
 
         if ($key) {
-            return Arr::get($settings, $key);
+            return Arr::get($settings, $key, $default);
         }
+
         return $settings;
+    }
+
+    /**
+     * Fields the "Custom Registration Form Field" setting can select. Their
+     * keys are written to user meta, so the stored setting is limited to these.
+     *
+     * @return array key => label
+     */
+    public static function getCustomRegistrationFieldOptions()
+    {
+        return [
+            'address_line_1' => 'Address Line 1',
+            'address_line_2' => 'Address Line 2',
+            'city'           => 'City',
+            'zip'            => 'Zip Code',
+            'state'          => 'State',
+            'country'        => 'Country',
+        ];
+    }
+
+    /**
+     * Registration field keys that may be written to user meta. Keys outside
+     * the setting's options are dropped before the filter runs, and keys
+     * WordPress treats as authority are dropped even when a filter adds them.
+     *
+     * @return array
+     */
+    public static function getCustomRegistrationFieldKeys()
+    {
+        $keys = array_intersect(
+            (array) self::getBusinessSettings('custom_registration_form_field'),
+            array_keys(self::getCustomRegistrationFieldOptions())
+        );
+
+        $keys = apply_filters('fluent_support/custom_registration_form_fields_key', array_values($keys));
+
+        if (!is_array($keys)) {
+            return [];
+        }
+
+        return array_values(array_filter($keys, function ($key) {
+            return is_string($key) && $key !== '' && !self::isProtectedUserMetaKey($key);
+        }));
+    }
+
+    /**
+     * Whether a user meta key holds roles, capabilities, sessions or plugin
+     * permissions. meta_key compares case-insensitively and ignores trailing
+     * spaces in MySQL, so the check does too.
+     *
+     * @param string $key
+     * @return bool
+     */
+    public static function isProtectedUserMetaKey($key)
+    {
+        $key = strtolower(trim((string) $key));
+
+        if (in_array($key, ['session_tokens', strtolower(\FluentSupport\App\Modules\PermissionManager::META_KEY)], true)) {
+            return true;
+        }
+
+        // {prefix}capabilities and {prefix}user_level, for every site prefix.
+        return (bool) preg_match('/(capabilities|user_level)$/', $key);
     }
 
     public static function isAgentFeedbackEnabled()
@@ -646,9 +727,6 @@ class Helper
 
     public static function getCurrentAgent()
     {
-        // If user is logged in then return the agent by user id.
-        // This `get_current_user_id` function is WP function and
-        // it returns user id if user is logged in.
         if (get_current_user_id()) {
             return Agent::where('user_id', get_current_user_id())->first();
         }
@@ -656,17 +734,9 @@ class Helper
 
     public static function getCurrentCustomer()
     {
-        // If user is logged in then return the customer by user id.
-        // This `get_current_user_id` function is WP function and
-        // it returns user id if user is logged in.
-        if (get_current_user_id()) { //if user is logged in
-            // Ordered for the same reason getCurrentPerson() and
-            // Customer::getCustomerFromData() are: the user_id column carries a
-            // plain index, not a unique one, so one account can have more than
-            // one customer record. Without an order the record that wins is
-            // whatever the storage engine returns first, and this helper could
-            // disagree with the other two about which record a request belongs
-            // to.
+        if (get_current_user_id()) {
+            // user_id is not unique, so order by id to pick the same record as
+            // getCurrentPerson() and CustomerService::find().
             return Customer::where('user_id', get_current_user_id())
                 ->orderBy('id', 'ASC')
                 ->first();
@@ -675,9 +745,6 @@ class Helper
 
     public static function getCurrentPerson()
     {
-        // If user is logged in then return the person(agent/customer) by user id.
-        // This `get_current_user_id` function is WP function and
-        // it returns user id if user is logged in.
         if (get_current_user_id()) {
             return Person::where('user_id', get_current_user_id())
                 ->orderBy('id', 'ASC')
@@ -689,6 +756,29 @@ class Helper
     public static function getCustomerByID($customerid)
     {
         return Customer::where('id', $customerid)->first();
+    }
+
+    // Decode entities to characters before kses, which does not know HTML5-only
+    // names like &epsi; and mangles their leading & to &amp;. Entities that decode to
+    // anything containing markup (incl. two-char ones like &nvlt;) stay encoded.
+    public static function decodeNonMarkupEntities($content)
+    {
+        // An array or object (a malformed request) would cast to "Array" and log a warning.
+        if (!is_scalar($content) && $content !== null) {
+            return '';
+        }
+
+        return preg_replace_callback('/&(?:[a-zA-Z][a-zA-Z0-9]*|#[0-9]+|#[xX][0-9a-fA-F]+);/', function ($match) {
+            $char = html_entity_decode($match[0], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+            return strpbrk($char, '<>&"\'') === false ? $char : $match[0];
+        }, (string) $content);
+    }
+
+    /** Single-callable form of decodeNonMarkupEntities() + wp_kses_post(), for use as a request sanitize-rule value. */
+    public static function sanitizeHtmlContent($content)
+    {
+        return wp_kses_post(self::decodeNonMarkupEntities($content));
     }
 
     /** @internal Not called from core controllers — available for Pro/hook usage. */
@@ -739,8 +829,7 @@ class Helper
     }
 
     /**
-     * getFluentCrmContactData method will get information from fluent crm using user email
-     * @param $customer
+     * @param Customer $customer
      * @return array|false
      */
     public static function getFluentCrmContactData($customer)
@@ -748,7 +837,6 @@ class Helper
         if (!defined('FLUENTCRM')) {
             return false;
         }
-        //Get contact info from FluentCRM using customer email
         $contact = \FluentCrmApi('contacts')->getContactByUserRef($customer->email);
         if ($contact) {
             $tags = $contact->tags;
@@ -756,7 +844,6 @@ class Helper
             $urlBase = apply_filters('fluentcrm_menu_url_base', admin_url('admin.php?page=fluentcrm-admin#/'));
             $crmProfileUrl = $urlBase . 'subscribers/' . $contact->id;
 
-            //Return contact data
             return [
                 'id'            => $contact->id,
                 'first_name'    => $contact->first_name,
@@ -784,23 +871,6 @@ class Helper
 
         return !empty($settings['api_key']);
     }
-
-    public static function fluentBotIntegrationStatus()
-    {
-        // Include object_id and order by id desc to always read the latest row; the
-        // write path (saveFluentBotSettings) does not prune siblings, so duplicates
-        // may exist and a non-deterministic read can return stale state.
-        $meta = Meta::where([
-            'object_type' => 'fluent_bot_settings',
-            'object_id'   => 1,
-            'key'         => '_fs_fluent_bot_config'
-        ])->orderByDesc('id')->first();
-
-        $settings = static::safeUnserialize($meta ? $meta->value : null);
-
-        return isset($settings['isEnabled']) && filter_var($settings['isEnabled'], FILTER_VALIDATE_BOOLEAN);
-    }
-
 
     public static function showTicketSummaryAdminBar()
     {
@@ -864,12 +934,26 @@ class Helper
     {
         if (defined('FLUENT_AUTH_PLUGIN_PATH')) {
             $settings = \FluentAuth\App\Helpers\Helper::getAuthFormsSettings();
-            if ($settings['enabled'] == 'yes') {
+            if ($settings['enabled'] == 'yes' || \FluentSupport\App\Modules\Auth\FluentAuthBridge::shouldAdopt()) {
                 return 'fluent_auth';
             }
         }
 
         return 'fluent_support';
+    }
+
+    /**
+     * Whether visitors may create an account, per WordPress's own registration setting.
+     *
+     * @return bool
+     */
+    public static function isSignupEnabled()
+    {
+        if (is_multisite()) {
+            return in_array(get_site_option('registration'), ['user', 'all'], true);
+        }
+
+        return (bool)get_option('users_can_register');
     }
 
     /** @internal Not called from core controllers — available for Pro/hook usage. */
@@ -896,9 +980,7 @@ class Helper
             return $driver;
         }
 
-        // Now guess the driver and save it
-
-        // check if dropbox is enabled
+        // No driver saved yet: use the first enabled one and remember it.
         $dropboxSettings = self::getIntegrationOption('dropbox_settings', null);
         if ($dropboxSettings) {
             $dropBoxEnabled = Meta::where('object_type', 'enabled_upload_drivers')
@@ -913,7 +995,6 @@ class Helper
             }
         }
 
-        // check if google drive is enabled
         $googleDriveSettings = self::getIntegrationOption('google_drive_settings', null);
 
         if ($googleDriveSettings) {
@@ -929,7 +1010,6 @@ class Helper
             }
         }
 
-        // check if cloudflare r2 is enabled
         $cloudflareR2Settings = self::getIntegrationOption('cloudflare_r2_settings', null);
 
         if ($cloudflareR2Settings) {
@@ -945,7 +1025,6 @@ class Helper
             }
         }
 
-        // check if amazon s3 is enabled
         $amazonS3Settings = self::getIntegrationOption('amazon_s3_settings', null);
 
         if ($amazonS3Settings) {
@@ -1209,6 +1288,11 @@ class Helper
                 'icon' => 'fileUpload',
             ],
             [
+                'title' => __('Remote Portal', 'fluent-support'),
+                'route_name' => 'remote_portal',
+                'icon' => 'remotePortal',
+            ],
+            [
                 'title' => __('Auto Close Settings', 'fluent-support'),
                 'route_name' => 'auto_close',
                 'icon' => 'autoClose',
@@ -1239,6 +1323,24 @@ class Helper
                     [
                         'title'      => __('MCP for AI Agents', 'fluent-support'),
                         'route_name' => 'mcp_settings',
+                    ],
+                ],
+            ],
+            [
+                'title'    => __('System Admin Tools', 'fluent-support'),
+                'icon'     => 'systemTools',
+                'children' => [
+                    [
+                        'title'      => __('Cron Job Monitor', 'fluent-support'),
+                        'route_name' => 'cron_monitor',
+                    ],
+                    [
+                        'title'      => __('Database Health', 'fluent-support'),
+                        'route_name' => 'database_health',
+                    ],
+                    [
+                        'title'      => __('Data Cleanup', 'fluent-support'),
+                        'route_name' => 'data_cleanup',
                     ],
                 ],
             ],
@@ -1285,8 +1387,8 @@ class Helper
     {
         $settings = self::getIntegrationOption($settingName, null);
         if ($settings) {
-            $status = Arr::get($settings, 'status', false);
-            return $status ? true : false;
+            // status is stored as 'yes'/'no', and 'no' is truthy.
+            return Arr::get($settings, 'status') === 'yes';
         }
         return false;
     }
@@ -1295,8 +1397,7 @@ class Helper
     {
         $settings = self::getIntegrationOption($settingName, null);
         if ($settings) {
-            $enabled = Arr::get($settings, 'status', false);
-            return $enabled ? true : false;
+            return Arr::get($settings, 'status') === 'yes';
         }
         return false;
     }
@@ -1317,6 +1418,17 @@ class Helper
     {
         $page = isset($data['page']) ? intval($data['page']) : 1;
         $perPage = isset($data['per_page']) ? intval($data['per_page']) : 10;
+
+        if (!AIActivityLogs::tableExists()) {
+            return [
+                'data'         => [],
+                'total'        => 0,
+                'per_page'     => $perPage,
+                'current_page' => $page,
+                'last_page'    => 1,
+                'settings'     => static::getSettings()['ai_activity_settings'],
+            ];
+        }
 
         $activitiesQuery = AIActivityLogs::with([
             'person' => function ($query) {
@@ -1397,8 +1509,7 @@ class Helper
     }
 
     /**
-     * Check if activity logs are disabled for a given option key
-     * @param string $optionKey The option key to check
+     * @param string $optionKey
      * @return bool
      */
     public static function areLogsDisabled($optionKey)
@@ -1424,7 +1535,7 @@ class Helper
         }
 
         if (empty($_SERVER['REMOTE_ADDR'])) {
-            // It's a local cli request
+            // CLI request.
             return '127.0.0.1';
         }
 
@@ -1432,16 +1543,14 @@ class Helper
         $remoteAddr = isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR'])) : '';
 
         if (isset($_SERVER["HTTP_CF_CONNECTING_IP"])) {
-            //If it's a valid Cloudflare request
+            // Only trust CF-Connecting-IP when the request really came from Cloudflare.
             if (self::isCfIp($remoteAddr)) {
-                //Use the CF-Connecting-IP header.
                 $ipAddress = sanitize_text_field(wp_unslash($_SERVER['HTTP_CF_CONNECTING_IP']));
             } else {
-                //If it isn't valid, then use REMOTE_ADDR.
                 $ipAddress = $remoteAddr;
             }
         } else if ($remoteAddr == '127.0.0.1') {
-            // most probably it's local reverse proxy
+            // Likely a local reverse proxy.
             if (isset($_SERVER["HTTP_CLIENT_IP"])) {
                 $ipAddress = sanitize_text_field(wp_unslash($_SERVER["HTTP_CLIENT_IP"]));
             } else if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
@@ -1472,15 +1581,10 @@ class Helper
     }
 
     /**
-     * Atomically increments the counter for $rateLimitKey and reports whether the
-     * limit is now exceeded. On sites with a persistent external object cache
-     * (Redis/Memcached), wp_cache_incr() is a real atomic increment, so concurrent
-     * requests can't race past the limit. Without one, this falls back to a plain
-     * transient read/write (same best-effort behavior as the rest of this codebase's
-     * rate limiters, e.g. AuthController::incrementLoginAttempts).
+     * Count this request against $rateLimitKey and return true if the limit is exceeded.
      *
-     * Note the counter is incremented before it is compared, so the returned value
-     * already accounts for the current request.
+     * With a persistent object cache the increment is atomic. Without one it falls
+     * back to a best-effort transient read/write.
      */
     public static function hitRateLimit($rateLimitKey, $limit, $window = null)
     {
@@ -1493,8 +1597,7 @@ class Helper
             }
             $attempts = wp_cache_incr($rateLimitKey, 1, $group);
 
-            // Fail closed: if the cache backend couldn't increment (evicted key, hiccup),
-            // treat the request as rate-limited rather than silently letting it through.
+            // Fail closed if the cache couldn't increment.
             if ($attempts === false) {
                 return true;
             }
@@ -1505,24 +1608,16 @@ class Helper
         $now = time();
         $record = get_transient($rateLimitKey);
 
-        // A record without a live deadline means the window is over (or the record predates
-        // this format), so the count starts again. Anything else keeps the deadline it was
-        // created with.
-        //
-        // The `<=` must not be loosened to `<`: it is what guarantees the TTL below is at
-        // least 1. A request landing exactly on the deadline would otherwise compute a TTL
-        // of 0, and set_transient() reads 0 as "never expires" — wedging this limiter shut
-        // permanently.
+        // Keep `<=`: it guarantees the TTL below is at least 1. A TTL of 0 makes
+        // set_transient() never expire, which would lock the limiter forever.
         if (!is_array($record) || empty($record['expires']) || $record['expires'] <= $now) {
             $record = ['count' => 0, 'expires' => $now + $window];
         }
 
         $record['count']++;
 
-        // The TTL is the time left until the original deadline, never the full window:
-        // set_transient() rewrites expiry on every call, so passing $window here would let
-        // rejected requests push the deadline forward and keep a tripped limiter tripped
-        // for as long as traffic kept arriving.
+        // Use the time left, not $window. set_transient() resets expiry on every call,
+        // so a full window would let ongoing traffic keep the limiter tripped.
         set_transient($rateLimitKey, $record, $record['expires'] - $now);
 
         return $record['count'] > $limit;
@@ -1552,11 +1647,8 @@ class Helper
             '198.41.128.0/17'
         );
         $validCFRequest = false;
-        //Make sure that the request came via Cloudflare.
         foreach ($cloudflareIPRanges as $range) {
-            //Use the ip_in_range function from Joomla.
             if (self::ipInRange($ip, $range)) {
-                //IP is valid. Belongs to Cloudflare.
                 return true;
             }
         }
@@ -1637,17 +1729,8 @@ class Helper
     }
 
     /**
-     * Build a fluentsupport.com upgrade/pricing link tagged with UTM params
-     * per the standard "Upgrade to Pro" link spec:
-     *   utm_source  = fluent-support (fixed vocabulary, never the wp.org slug)
-     *   utm_medium  = free_plugin | pro_plugin (acquisition vs cross-sell)
-     *   utm_campaign= upgrade_pro (override via $args['campaign'])
-     *   utm_content = the exact placement, e.g. feature_lock_dropbox, upgrade_page
-     *   utm_term    = plugin version that generated the link
-     *
-     * This is the single source of truth for upgrade URLs. The admin SPA does
-     * not rebuild these client-side; it re-points utm_content on the URL this
-     * method localizes into appVars (see the $upgradeUrl mixin in start.js).
+     * Upgrade/pricing link with UTM params. The admin SPA doesn't build its own;
+     * it swaps utm_content on the URL localized into appVars ($upgradeUrl in start.js).
      *
      * @param string $content The utm_content placement.
      * @param array  $args    Optional: 'campaign', 'base_url', plus any utm_* override.
@@ -1662,14 +1745,13 @@ class Helper
 
         $params = [
             'utm_source'   => 'fluent-support',
-            // Same constant Menu.php uses for appVars.has_pro — keep the two in sync.
+            // Keep in sync with appVars.has_pro in Menu.php.
             'utm_medium'   => defined('FLUENTSUPPORTPRO_PLUGIN_VERSION') ? 'pro_plugin' : 'free_plugin',
             'utm_campaign' => $args['campaign'],
             'utm_content'  => $content,
             'utm_term'     => FLUENT_SUPPORT_VERSION,
         ];
 
-        // Drop any blank params (e.g. a missing version) so they never hit the URL.
         $params = array_filter($params, function ($value) {
             return $value !== '' && $value !== null;
         });
@@ -1688,25 +1770,19 @@ class Helper
 
     public static function tempImageMoveUploadDir($ticketId, $contentType, $replyId = null, $personId = null)
     {
-        // Fetch content based on the content type
         $content = self::getContentByType($ticketId, $contentType , $replyId);
         if (empty($content)) {
             return;
         }
 
-        // Extract image URLs from the content
         $imageUrls = self::extractImageUrls($content);
         if (empty($imageUrls)) {
             return;
         }
 
-        // Move images to the upload directory and update content
         self::moveImagesAndUpdateContent($imageUrls, $ticketId, $contentType, $content, $replyId, $personId);
     }
 
-    /**
-     * Fetch content based on the content type.
-     */
     private static function getContentByType($ticketId, $contentType, $replyId)
     {
         if ($contentType == 'ticket-create') {
@@ -1718,9 +1794,6 @@ class Helper
         return $conversation ? $conversation->content : null;
     }
 
-    /**
-     * Extract image URLs from the content.
-     */
     private static function extractImageUrls($content)
     {
         preg_match_all('/<img[^>]+src=(["\'])(.*?)\1/i', (string) $content, $matches);
@@ -1728,11 +1801,10 @@ class Helper
     }
 
     /**
-     * Move images to the upload directory and update content.
+     * Move temp images into the ticket's folder and rewrite their URLs in the content.
      */
     private static function moveImagesAndUpdateContent($imageUrls, $ticketId, $contentType, $content, $replyId, $personId)
     {
-        // Get the current site's upload directory
         $uploadDirInfo = wp_upload_dir();
         $uploadsDir = $uploadDirInfo['basedir'];
         $tempDir = $uploadsDir . '/fluent-support/temp_files/';
@@ -1745,26 +1817,20 @@ class Helper
                 continue;
             }
 
-            // Build the absolute path for the temporary file
             $imageRelativePath = $tempDir . basename($imageUrl);
             $absolutePath = $imageRelativePath;
 
-            // Move the file to the ticket-specific folder
             $newFileInfo = UploadService::copyFileTicketFolder($absolutePath, $ticketId);
 
-            // Check if the move was successful
             if (empty($newFileInfo['file_path'])) {
-                continue; // Skip if the file couldn't be copied
+                continue;
             }
 
-            // Ensure the new URL is correctly constructed
             $newFileInfo['url'] = trailingslashit($uploadDirInfo['baseurl']) . 'fluent-support/ticket_' . $ticketId . '/' . basename($newFileInfo['file_path']);
 
-            // Replace the old URL with the new one in the content
             $content = str_replace($imageUrl, $newFileInfo['url'], $content);
         }
 
-        // Save the updated content
         self::saveUpdatedContent($ticketId, $contentType, $content, $replyId);
     }
 
@@ -1805,7 +1871,7 @@ class Helper
 
     private static function finalizeSignedTempImage($attachment, $ticketId, $contentType, $replyId, $personId)
     {
-        if (!$attachment || $attachment->driver !== 'local') {
+        if (!$attachment || $attachment->status === \FluentSupport\App\Services\Storage\StorageManager::STATUS_DELETING) {
             return false;
         }
 
@@ -1829,17 +1895,22 @@ class Helper
             return $attachment->ticket_id ? self::getAttachmentReferenceUrl($attachment) : false;
         }
 
-        if (!$attachment->file_path || !file_exists($attachment->file_path)) {
-            return false;
+        // Already pushed to remote storage when it was pasted: nothing to move,
+        // but it must be marked inline or the abandoned-upload cleanup deletes it.
+        if ($attachment->driver === 'local') {
+            if (!$attachment->file_path || !file_exists($attachment->file_path)) {
+                return false;
+            }
+
+            $newFileInfo = UploadService::copyFileTicketFolder($attachment->file_path, $ticketId);
+            if (empty($newFileInfo['file_path'])) {
+                return false;
+            }
+
+            $attachment->file_path = $newFileInfo['file_path'];
+            $attachment->full_url = $newFileInfo['url'];
         }
 
-        $newFileInfo = UploadService::copyFileTicketFolder($attachment->file_path, $ticketId);
-        if (empty($newFileInfo['file_path'])) {
-            return false;
-        }
-
-        $attachment->file_path = $newFileInfo['file_path'];
-        $attachment->full_url = $newFileInfo['url'];
         $attachment->ticket_id = $attachment->ticket_id ?: $ticketId;
         $attachment->status = 'inline';
 
@@ -1926,9 +1997,6 @@ class Helper
         return $contents;
     }
 
-    /**
-     * Save the updated content based on the content type.
-     */
     private static function saveUpdatedContent($ticketId, $contentType, $content, $replyId)
     {
         if ($contentType == 'ticket-create') {
@@ -1947,10 +2015,8 @@ class Helper
     }
 
     /**
-     * Throw a ValidationException with a safe error message.
-     * In debug mode the real exception message is used; in production a generic message is returned.
-     * Throwing instead of returning ensures the error bypasses the framework's HTTP exception
-     * wrapper (which would prepend a status-code prefix to the message).
+     * Throw a ValidationException carrying the exception's message, or a generic one if empty.
+     * Throwing skips the framework's HTTP exception wrapper, which would prefix a status code.
      *
      * @param \Throwable $e The original exception.
      * @throws \FluentSupport\Framework\Validator\ValidationException Always thrown.
@@ -1959,25 +2025,31 @@ class Helper
     {
         $message = $e->getMessage() ?: __('Something went wrong. Please try again later.', 'fluent-support');
 
-        // ValidationException carries the message through the framework's JSON error
-        // handler — it is never echoed directly. $e is the chained previous exception,
-        // not output. phpcs:disable covers the multi-line constructor call.
+        // Missing records are 404 and an exception thrown with 401/403/404/409
+        // keeps that status; anything else is a 422 as before. The body is the same.
+        $status = 422;
+        if ($e instanceof \FluentSupport\Framework\Database\Orm\ModelNotFoundException) {
+            $status = 404;
+        } elseif (in_array((int) $e->getCode(), [401, 403, 404, 409], true)) {
+            $status = (int) $e->getCode();
+        }
+
+        // The message goes out through the framework's JSON error handler, never echoed.
+        // phpcs:disable covers the multi-line constructor call.
         // phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped
         throw new \FluentSupport\Framework\Validator\ValidationException(
-            '', 422, ($e instanceof \Exception ? $e : null), ['message' => $message]
+            '', $status, ($e instanceof \Exception ? $e : null), ['message' => $message]
         );
         // phpcs:enable WordPress.Security.EscapeOutput.ExceptionNotEscaped
     }
 
     /**
-     * Safely unserialize data.
-     *
      * @param string $data The serialized data.
      * @return mixed The unserialized data or the original data if not serialized.
      */
     public static function safeUnserialize($data)
     {
-        if (is_serialized($data)) { // Don't attempt to unserialize data that wasn't serialized going in.
+        if (is_serialized($data)) {
             return @unserialize(trim($data), ['allowed_classes' => false]);
         }
 

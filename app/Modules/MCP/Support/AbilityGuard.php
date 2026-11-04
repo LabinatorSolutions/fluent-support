@@ -13,12 +13,8 @@ class AbilityGuard
     ];
 
     /**
-     * Per-ability permission requirements.
-     *
-     * any_of — passes if the user holds at least one of the listed caps.
-     * all_of — every listed cap must be held individually.
-     *
-     * Both keys may be present; both must pass.
+     * Per-ability caps. any_of needs one of the caps, all_of needs every cap.
+     * When both are set, both must pass.
      */
     private static function capabilities()
     {
@@ -26,40 +22,43 @@ class AbilityGuard
             'fluent-support/list-tickets'         => ['any_of' => ['fst_view_tickets']],
             'fluent-support/get-ticket'           => ['any_of' => ['fst_view_tickets']],
             'fluent-support/create-ticket'        => ['any_of' => self::MANAGE_TICKET_CAPS],
-            'fluent-support/reply-to-ticket'      => ['any_of' => self::MANAGE_TICKET_CAPS],
+            // Draft-only agents may call it; ResponseTools forces draft mode for them.
+            'fluent-support/reply-to-ticket'      => ['any_of' => array_merge(self::MANAGE_TICKET_CAPS, ['fst_draft_reply'])],
             'fluent-support/close-ticket'         => ['any_of' => self::MANAGE_TICKET_CAPS],
-            'fluent-support/reopen-ticket'        => ['any_of' => self::MANAGE_TICKET_CAPS],
             'fluent-support/update-ticket'        => ['any_of' => self::MANAGE_TICKET_CAPS],
             'fluent-support/delete-ticket'        => ['any_of' => self::MANAGE_TICKET_CAPS, 'all_of' => ['fst_delete_tickets']],
             'fluent-support/get-ticket-activity'  => ['any_of' => ['fst_view_tickets']],
             'fluent-support/merge-tickets'        => ['any_of' => ['fst_merge_tickets']],
             'fluent-support/add-internal-note'    => ['any_of' => self::MANAGE_TICKET_CAPS],
-            'fluent-support/assign-ticket'        => ['any_of' => self::MANAGE_TICKET_CAPS, 'all_of' => ['fst_assign_agents']],
+            // Own drafts and notes only (row gate in ResponseTools).
+            'fluent-support/update-response'      => ['any_of' => array_merge(self::MANAGE_TICKET_CAPS, ['fst_draft_reply'])],
+            'fluent-support/delete-response'      => ['any_of' => array_merge(self::MANAGE_TICKET_CAPS, ['fst_draft_reply'])],
+            // Approvers publish any draft; managers their own (checked in the tool).
+            'fluent-support/publish-draft-reply'  => ['any_of' => array_merge(self::MANAGE_TICKET_CAPS, ['fst_approve_draft_reply'])],
             'fluent-support/tag-ticket'           => ['any_of' => self::MANAGE_TICKET_CAPS],
-            'fluent-support/create-tag'           => ['any_of' => self::MANAGE_TICKET_CAPS],
             'fluent-support/get-customer-tickets' => ['any_of' => ['fst_sensitive_data']],
             'fluent-support/get-support-context'  => ['any_of' => ['fst_view_tickets']],
+            'fluent-support/get-ticket-views'     => ['any_of' => ['fst_view_tickets']],
             'fluent-support/list-saved-replies'   => ['any_of' => ['fst_manage_saved_replies']],
-            'fluent-support/create-saved-reply'   => ['any_of' => ['fst_manage_saved_replies']],
-            'fluent-support/update-saved-reply'   => ['any_of' => ['fst_manage_saved_replies']],
-            'fluent-support/delete-saved-reply'   => ['any_of' => ['fst_manage_saved_replies']],
             'fluent-support/get-support-insights' => ['any_of' => ['fst_view_all_reports']],
             'fluent-support/search-customers'     => ['any_of' => ['fst_sensitive_data']],
             'fluent-support/get-mentions'         => ['any_of' => ['fst_view_tickets']],
-            'fluent-support/list-workflows'       => ['any_of' => ['fst_manage_workflows']],
+            'fluent-support/update-customer'      => ['any_of' => ['fst_sensitive_data']],
+            // Same as the admin route: a ticket manager who also holds Split Ticket.
+            'fluent-support/split-ticket'         => ['any_of' => self::MANAGE_TICKET_CAPS, 'all_of' => ['fst_split_ticket']],
+            // Prompts: they only return instructions; the tools they name check their own caps.
+            'fluent-support/triage-queue'         => ['any_of' => ['fst_view_tickets']],
+            'fluent-support/draft-reply'          => ['any_of' => ['fst_view_tickets']],
+            'fluent-support/summarize-ticket'     => ['any_of' => ['fst_view_tickets']],
+            'fluent-support/support-report'       => ['any_of' => ['fst_view_all_reports']],
             'fluent-support/bulk-action'          => ['any_of' => self::MANAGE_TICKET_CAPS],
         ];
     }
 
     /**
-     * Returns a permission_callback closure for the given ability name.
-     *
-     * Only checks that the user is authenticated. Capability enforcement
-     * is deferred to wrapExecuteCallback() in AbilitiesRegistrar so that
-     * all denials — both auth and cap — return structured JSON via
-     * MCPHelper::error() rather than the adapter's plain "Permission denied".
-     *
-     * Fails closed for unknown abilities.
+     * permission_callback for an ability. Only checks login and fails closed for
+     * unknown abilities. Caps are checked in AbilitiesRegistrar::wrapExecuteCallback()
+     * so denials come back as structured errors, not the adapter's "Permission denied".
      */
     public static function callbackFor($abilityName)
     {
@@ -76,6 +75,22 @@ class AbilityGuard
         $caps = self::capabilities()[$abilityName] ?? null;
 
         if ($caps === null) {
+            return false;
+        }
+
+        return self::checkCaps($caps);
+    }
+
+    /**
+     * Whether the current user has these caps: any_of needs one, all_of needs every
+     * one. Pro's tools pass their own caps here so both plugins check the same way.
+     *
+     * @param array{any_of?: string[], all_of?: string[]} $caps
+     * @return bool
+     */
+    public static function checkCaps(array $caps)
+    {
+        if (empty($caps['any_of']) && empty($caps['all_of'])) {
             return false;
         }
 

@@ -2,6 +2,7 @@
 
 namespace FluentSupport\App\Services;
 
+use FluentSupport\App\Services\Tickets\ResponseService;
 use Exception;
 use FluentSupport\App\Models\Conversation;
 
@@ -13,16 +14,15 @@ class FluentBoardsService
         $urlBase = admin_url('admin.php?page=fluent-boards#/');
         $boardsProfileUrl = $urlBase . 'boards/' . $task->board_id . '/tasks/' . $task->id;
 
-        $internalNote = 'A new task has been created for this ticket in Fluent Boards. You can view and manage it at the following link:<br><a href="' . $boardsProfileUrl . '">here</a>';
+        $internalNote = sprintf(
+            /* translators: an activity line shown after the agent's name ("Sarah created a Fluent Boards task for this ticket"); %s is the link to the task */
+            __('created a Fluent Boards task for this ticket. %s', 'fluent-support'),
+            '<a href="' . esc_url($boardsProfileUrl) . '">' . esc_html__('View task', 'fluent-support') . '</a>'
+        );
 
         $agent = Helper::getAgentByUserId(get_current_user_id());
 
-        Conversation::create([
-            'ticket_id'         => $task->source_id,
-            'person_id'         => $agent->id,
-            'conversation_type' => 'internal_info',
-            'content'           => $internalNote
-        ]);
+        ResponseService::addActivity($task->source_id, $agent, $internalNote);
     }
 
     public function addComment($task)

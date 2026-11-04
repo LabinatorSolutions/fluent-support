@@ -18,6 +18,21 @@ class AIActivityLogs extends Model
         });
     }
 
+    /**
+     * The table is created when an AI integration is first turned on, not on
+     * activation, so readers check for it first.
+     *
+     * @return bool
+     */
+    public static function tableExists()
+    {
+        global $wpdb;
+
+        $table = $wpdb->prefix . 'fs_ai_activity_logs';
+
+        return $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $wpdb->esc_like($table))) === $table;
+    }
+
     public function person()
     {
         $class = __NAMESPACE__ . '\Person';

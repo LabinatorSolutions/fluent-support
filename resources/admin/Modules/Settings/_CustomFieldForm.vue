@@ -162,7 +162,7 @@
 </template>
 
 <script type="text/babel">
-import each from 'lodash/each';
+import { each } from 'lodash-es';
 
 export default {
     name: 'FieldForm',

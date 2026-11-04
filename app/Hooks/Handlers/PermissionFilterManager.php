@@ -10,7 +10,6 @@ class PermissionFilterManager
     public function init()
     {
         add_action('fluent_support/tickets_query_by_permission_ref', array($this, 'filterAgentTickets'), 10, 2);
-        add_action('fluent_support\main_tickets_query', array($this, 'filterAgentTicketsByMailboxes'), 10, 2);
     }
 
     public function filterAgentTickets($ticketsQuery, $userId = false)
@@ -20,7 +19,10 @@ class PermissionFilterManager
         (new AgentTicketAccess())->applyVisibilityScope($ticketsQuery, $agent);
     }
 
-    public function filterAgentTicketsByMailboxes($ticketsQuery, $args = [] )
+    /**
+     * @deprecated TicketQuery applies the mailbox restrictions itself.
+     */
+    public function filterAgentTicketsByMailboxes($ticketsQuery, $args = [])
     {
         (new AgentTicketAccess())->applyMailboxRestrictionScope($ticketsQuery);
     }

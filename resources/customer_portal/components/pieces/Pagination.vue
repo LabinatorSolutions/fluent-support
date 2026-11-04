@@ -2,7 +2,8 @@
     <div class="fs_pagination_container">
         <div class="fs_pagination_left">
             <span class="fs_page_text">
-                {{ $t('Page') }} {{ pagination.current_page }} {{ $t('of') }} {{ Math.ceil(pagination.total / pagination.per_page) }}
+                <!-- translators: %1$s is the current page number, %2$s the total number of pages -->
+                {{ $t('Page %1$s of %2$s', pagination.current_page, Math.ceil(pagination.total / pagination.per_page)) }}
             </span>
             <el-select
                 v-model="pagination.per_page"

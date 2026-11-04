@@ -28,15 +28,9 @@
 </template>
 
 <script type="text/babel">
-// Modular echarts/core import instead of the aggregate entry point, which registers every chart type/component.
-import * as echarts from "echarts/core";
-import { BarChart } from "echarts/charts";
-import { TooltipComponent, GridComponent, DataZoomComponent } from "echarts/components";
-import { SVGRenderer } from "echarts/renderers";
+import echarts from "./echarts";
 import Theme from "@/admin/Bits/Theme";
 import IconPack from "@/admin/Components/IconPack";
-
-echarts.use([BarChart, TooltipComponent, GridComponent, DataZoomComponent, SVGRenderer]);
 
 // Tooltip formatter inserts raw HTML — escape values before concatenating.
 const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (char) => ({
@@ -225,11 +219,11 @@ export default {
             this.renderChart();
         });
         window.addEventListener("resize", this.handleResize);
-        window.addEventListener("fs-theme-changed", this.handleThemeChange);
+        window.addEventListener("fluent_theme_changed", this.handleThemeChange);
     },
     beforeUnmount() {
         window.removeEventListener("resize", this.handleResize);
-        window.removeEventListener("fs-theme-changed", this.handleThemeChange);
+        window.removeEventListener("fluent_theme_changed", this.handleThemeChange);
         if (this.chartInstance) {
             this.chartInstance.dispose();
             this.chartInstance = null;

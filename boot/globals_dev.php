@@ -27,3 +27,15 @@ if (!function_exists('fluent_support_gql')) {
         return $result;
     }
 }
+
+if (!function_exists('dd')) {
+    function dd()
+    {
+        foreach (func_get_args() as $arg) {
+            echo "<pre>";
+            print_r($arg);
+            echo "</pre>";
+        }
+        die();
+    }
+}

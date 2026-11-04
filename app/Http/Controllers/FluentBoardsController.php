@@ -76,7 +76,7 @@ class FluentBoardsController extends Controller
                 'stage_id'       => $request->getSafe('stage_id', 'intval'),
                 'crm_contact_id' => $request->getSafe('crm_contact_id', 'intval') ?: null,
                 'title'          => $request->getSafe('title', 'sanitize_text_field'),
-                'description'    => $request->getSafe('description', 'wp_kses_post'),
+                'description'    => $request->getSafe('description', '\FluentSupport\App\Services\Helper::sanitizeHtmlContent'),
                 'source'         => $request->getSafe('source', 'sanitize_text_field'),
                 'started_at'     => $request->getSafe('started_at', 'sanitize_text_field'),
                 'due_at'         => $request->getSafe('due_at', 'sanitize_text_field'),

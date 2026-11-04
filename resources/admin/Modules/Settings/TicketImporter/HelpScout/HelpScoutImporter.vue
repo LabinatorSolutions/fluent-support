@@ -1,7 +1,7 @@
 <template>
     <div class="fs_helpscout_importer">
         <div class="fs_helpscout_intro">
-            <p>{{ $t('Please copy and paste this url:') }} <code><strong>{{ appVars.rest.url + '/public/authorize' }}</strong></code> {{ $t('in your HelpScout Redirection URL. This is required as you have to authorize your app before start importing.') }}</p>
+            <p>{{ $t('Help_Scout_Redirect_Url_Help') }} <code><strong>{{ appVars.rest.url + '/public/authorize' }}</strong></code></p>
         </div>
         <el-form :data="settings" label-position="top">
             <el-form-item :label="$t('App ID')" class="fs_form_item">
@@ -13,7 +13,8 @@
                         <el-input class="fs_text_input" v-model="settings.app_secret" :placeholder="$t('App Secret')" />
                         <span class="fs_input_help">
                             <el-icon><InfoFilled /></el-icon>
-                            {{ $t('Click on the') }} <strong>{{ $t('Get Authorized') }}</strong> {{ $t('button to get the authorization code.') }}
+                            <!-- translators: %s is the label of the Get Authorized button -->
+                            {{ $t('Click the "%s" button to get the authorization code.', $t('Get Authorized')) }}
                         </span>
                     </div>
                     <div class="fs_button_container">
@@ -34,7 +35,7 @@
                         </span>
                     </div>
                     <div class="fs_button_container">
-                        <el-button class="fs_subtle_btn" @click="getAccessToken" :disabled="!settings.code">
+                        <el-button class="fs_subtle_btn" @click="getAccessToken" v-loading="requesting_token" :disabled="!settings.code || requesting_token">
                             {{ $t('Request Token') }}
                         </el-button>
                     </div>
@@ -62,7 +63,7 @@
             <el-checkbox
                 v-if="Object.keys(previously_imported).length > 0 && settings.mailbox_id == previously_imported.mailbox_id"
                 v-model="start_from_previous_migration"
-                :label="$t('An incomplete migration exists. Would you like to resume from the previous one?') + ' (' + previously_imported.completed + '% ' + $t('completed') + ')'"
+                :label="resumeMigrationLabel"
                 size="large"
             />
             <div class="fs_importer_actions">
@@ -95,38 +96,46 @@ export default {
         return {
             mailboxes: {},
             start_from_previous_migration: false,
+            requesting_token: false,
         }
+    },
+    computed: {
+        resumeMigrationLabel() {
+            // translators: %s is how much of the previous migration finished, as a percentage, e.g. "40%"
+            return this.$t('An incomplete migration exists (%s completed). Would you like to resume from the previous one?', this.previously_imported.completed + '%');
+        },
     },
     methods: {
         authorize() {
-            let url = 'https://secure.helpscout.net/authentication/authorizeClientApplication?client_id='+ this.settings.app_id +'&state=' + this.settings.app_secret;
+            // state comes back in the redirect URL, so it must never carry the App Secret.
+            const state = Array.from(window.crypto.getRandomValues(new Uint8Array(16)), b => b.toString(16).padStart(2, '0')).join('');
+            const url = 'https://secure.helpscout.net/authentication/authorizeClientApplication?client_id=' + encodeURIComponent(this.settings.app_id) + '&state=' + state;
             window.open(url, '_blank');
         },
 
         getAccessToken() {
-            let url = 'https://api.helpscout.net/v2/oauth2/token?grant_type=authorization_code&code=' + this.settings.code +'&client_id='+ this.settings.app_id +'&client_secret=' + this.settings.app_secret;
-            const request = {
-                url: url,
-                method: 'POST',
-                body: JSON.stringify({
-                    grant_type: 'authorization_code',
-                    code: this.settings.code,
-                    client_id: this.settings.app_id,
-                    client_secret: this.settings.app_secret,
-                }),
-            };
-
-            jQuery.ajax(request).done(response=> {
-                this.settings.access_token = response.access_token;
-                this.settings.refresh_token = response.refresh_token;
-                this.settings.token_type = response.token_type;
-                this.settings.expires_in = response.expires_in;
-                if (this.settings.access_token) {
-                    this.getMailboxes();
-                }
-            }).fail(error => {
-                this.$handleError(error);
+            // The server swaps the code for a token, so the App Secret stays out of browser URLs.
+            this.requesting_token = true;
+            this.$post('ticket_importer/helpscout/token', {
+                app_id: this.settings.app_id,
+                app_secret: this.settings.app_secret,
+                code: this.settings.code
             })
+                .then(response => {
+                    this.settings.access_token = response.access_token;
+                    this.settings.refresh_token = response.refresh_token;
+                    this.settings.token_type = response.token_type;
+                    this.settings.expires_in = response.expires_in;
+                    if (this.settings.access_token) {
+                        this.getMailboxes();
+                    } else {
+                        this.requesting_token = false;
+                    }
+                })
+                .catch(error => {
+                    this.requesting_token = false;
+                    this.$handleError(error);
+                });
         },
         getMailboxes() {
             const that = this;
@@ -142,6 +151,8 @@ export default {
                 that.mailboxes = response._embedded.mailboxes;
             }).fail(error => {
                 this.$handleError(error);
+            }).always(() => {
+                this.requesting_token = false;
             });
         },
         handleCancel() {

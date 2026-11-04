@@ -26,7 +26,7 @@
         <div>
             <div class="fs_fbs_date_range">
                 <div class="fs_start_date_picker">
-                    <label for="ticket-content" class="fs_fbs_input_label fs_field_label">{{ $t("Start date ") }}</label>
+                    <label for="ticket-content" class="fs_fbs_input_label fs_field_label">{{ $t('Start date') }}</label>
                     <el-date-picker
                         v-model="startDate"
                         class="fs_date_picker fs_text_input"
@@ -36,7 +36,7 @@
                     />
                 </div>
                 <div class="fs_end_date_picker">
-                    <label for="ticket-content" class="fs_fbs_input_label fs_field_label">{{ $t("End date ") }}</label>
+                    <label for="ticket-content" class="fs_fbs_input_label fs_field_label">{{ $t('End date') }}</label>
                     <el-date-picker
                         v-model="endDate"
                         type="date"
@@ -60,20 +60,19 @@
 
             <div class="fs_fbs_button_container">
                 <div class="fs_text_right">
-                    <el-button class="fs_filled_btn" :disabled="!isAddButtonEnabled" @click="createTask" type="success">
+                    <el-button class="fs_filled_btn" :disabled="!isAddButtonEnabled || loading" v-loading="loading" @click="createTask" type="success">
                         {{ $t('Create Task') }}
                     </el-button>
                 </div>
                 </div>
             </div>
         </div>
-    <div v-else>
-        <el-skeleton :rows="5" animated/>
-    </div>
+    <FormSkeleton v-else :fields="5" />
 </template>
 
 <script type="text/babel">
 import WpEditor from '../../Pieces/_wp_editor';
+import FormSkeleton from '@/admin/Components/FormSkeleton.vue';
 
 export default {
     name: 'FluentBoardsIntegration',
@@ -88,7 +87,8 @@ export default {
         }
     },
     components: {
-        WpEditor
+        WpEditor,
+        FormSkeleton
     },
     data() {
         return {
@@ -133,6 +133,7 @@ export default {
                 });
         },
         createTask() {
+            this.loading = true;
             this.$post('tickets/fluent-boards/stages', {
                 source_id: this.task.id,
                 title: this.task.title,

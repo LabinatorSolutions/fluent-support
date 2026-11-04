@@ -38,7 +38,7 @@
                         trigger="click"
                         placement="bottom-start"
                         width="240"
-                        popper-class="fs_popover"
+                        popper-class="fs_popover fs_portal_sort_popover"
                         :disabled="appVars.customer_status === 'inactive'"
                     >
                         <div class="fs_popover_item">
@@ -96,7 +96,7 @@
             <div class="fs_search_filter">
                 <el-input
                     v-model="localSearchQuery"
-                    :placeholder="$t('Search') + '...'"
+                    :placeholder="$t('Search...')"
                     clearable
                     @keyup.enter="fetchTickets"
                     @input="onSearchInput"
@@ -148,8 +148,8 @@ export default {
     methods: {
         updateStatusFilter(status) {
             this.localStatusFilter = status;
+            // Tickets.vue watches the status filter and refetches from page 1
             this.$emit('update:statusFilter', status);
-            this.fetchTickets();
         },
         fetchTickets() {
             this.$emit('fetch-tickets', {
@@ -166,6 +166,13 @@ export default {
     watch: {
         localSearchQuery(newVal) {
             this.$emit('update:search', newVal);
+        },
+        // Tickets.vue can reset these (the empty list's "Clear search" / "View all tickets")
+        search(newVal) {
+            this.localSearchQuery = newVal;
+        },
+        statusFilter(newVal) {
+            this.localStatusFilter = newVal;
         }
     }
 };

@@ -5,41 +5,38 @@ namespace FluentSupport\App\Hooks\Handlers;
 use FluentSupport\App\App;
 use FluentSupport\Framework\Support\Arr;
 use FluentSupport\App\Services\Blocks\BlockAttributes;
+use FluentSupport\App\Vite;
 
 class BlockEditorHandler
 {
     public function init()
     {
-        $app = App::getInstance();
+        // The editor preview draws the portal's markup, so the block's editor style
+        // depends on the portal CSS (added below; block.json takes one style before WP 6.1)
+        if (is_rtl()) {
+            wp_register_style('fluent-support-portal-preview', App::getInstance()['url.assets'] . 'portal/css/app-rtl.css', [], FLUENT_SUPPORT_VERSION);
+        } else {
+            wp_register_style('fluent-support-portal-preview', Vite::getEnqueuePath('portal/css/app.css'), [], FLUENT_SUPPORT_VERSION);
+        }
 
-        $assets = $app['url.assets'];
+        // block.json (built by npm run build:block) holds the metadata and
+        // registers index.js / index.css with the dependencies in index.asset.php
+        $blockType = register_block_type(BlockAttributes::blockDir(), array(
+            'render_callback' => array($this, 'renderBlock'),
+        ));
 
-        wp_register_script(
-            'fluent-support/customer-portal',
-            $assets . 'block-editor/js/fs_block.js',
-            array('wp-blocks', 'wp-components', 'wp-block-editor', 'wp-element'),
-            FLUENT_SUPPORT_VERSION,
-            true
-        );
+        if (!$blockType) {
+            return;
+        }
 
-        wp_register_style(
-            'fluent-support/customer-portal-block-style',
-            $assets . 'block-editor/css/fs_block.css',
-            array(),
-            FLUENT_SUPPORT_VERSION
-        );
+        $editorStyle = wp_styles()->query(generate_block_asset_handle($blockType->name, 'editorStyle'), 'registered');
+        if ($editorStyle) {
+            $editorStyle->deps[] = 'fluent-support-portal-preview';
+        }
 
-        wp_localize_script('fluent-support/customer-portal', 'fluent_support_vars', [
+        wp_localize_script(generate_block_asset_handle($blockType->name, 'editorScript'), 'fluent_support_vars', [
             'rest' => $this->getRestInfo(),
         ]);
-
-        register_block_type('fluent-support/customer-portal', array(
-            'api_version'     => 3,
-            'editor_script'   => 'fluent-support/customer-portal',
-            'editor_style'    => 'fluent-support/customer-portal-block-style',
-            'render_callback' => array($this, 'renderBlock'),
-            'attributes'      => BlockAttributes::CustomerPortalAttributes(),
-        ));
     }
 
     protected function getRestInfo()
@@ -76,6 +73,7 @@ class BlockEditorHandler
 
         $param .= " attributes='" . esc_attr( base64_encode( wp_json_encode( $attributes, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) ) ) . "'";
 
-        return do_shortcode("[fluent_support_portal $param]");
+        // Wrapper attributes carry the block class and any "Additional CSS class(es)" set in the editor
+        return '<div ' . get_block_wrapper_attributes() . '>' . do_shortcode("[fluent_support_portal $param]") . '</div>';
     }
 }

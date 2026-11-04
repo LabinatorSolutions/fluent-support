@@ -17,9 +17,33 @@
         </div>
 
         <template v-if="has_pro">
-            <div class="fs_ai_skeleton" v-if="loading">
-                <el-skeleton :animated="true" :rows="5" />
-            </div>
+            <el-skeleton v-if="loading" animated class="fs_ai_sections_wrapper">
+                <template #template>
+                    <div class="fs_ai_section">
+                        <div class="fs_ai_toggle_row">
+                            <el-skeleton-item variant="rect" style="width: 40px; height: 20px; border-radius: 10px;" />
+                            <div class="fs_ai_toggle_text" style="flex: 1;">
+                                <el-skeleton-item variant="text" style="width: 120px;" />
+                                <el-skeleton-item variant="text" style="width: 60%;" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fs_ai_section" v-for="section in 2" :key="section">
+                        <div class="fs_ai_section_head">
+                            <el-skeleton-item variant="text" style="width: 110px;" />
+                        </div>
+                        <div class="fs_ai_field_row">
+                            <div class="fs_ai_field_label">
+                                <el-skeleton-item variant="text" style="width: 90px;" />
+                                <el-skeleton-item variant="text" style="width: 70%;" />
+                            </div>
+                            <div class="fs_ai_field_input">
+                                <el-skeleton-item variant="rect" style="width: 100%; height: 36px; border-radius: var(--fs-radius-md, 8px);" />
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </el-skeleton>
 
             <div class="fs_ai_sections_wrapper" v-else>
                 <!-- Enable AI -->
@@ -88,8 +112,9 @@
                                 :placeholder="isKeySaved ? $t('Enter a new key to replace the saved one') : $t('Enter your API key')"
                                 class="fs_ai_input fs_text_input"
                             />
-                            <p v-if="isKeySaved" style="margin-top: 6px; font-size: 12px; color: #6b7280;">
-                                {{ $t('A key ending in') }} <strong>{{ apiKey.slice(-4) }}</strong> {{ $t('is saved.') }}
+                            <p v-if="isKeySaved" style="margin-top: 6px; font-size: 12px; color: var(--fs-gray-600, #6b7280);">
+                                <!-- translators: %s is the last four characters of the saved API key -->
+                                {{ $t('A key ending in %s is saved.', apiKey.slice(-4)) }}
                             </p>
                         </div>
                     </div>

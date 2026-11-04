@@ -1,13 +1,13 @@
 <template>
     <div>
-        <div v-if="!fetching" class="fs_table_container" style="width: 100%; margin: 0;">
+        <div class="fs_table_container" style="width: 100%; margin: 0;">
             <div class="fs_table_header">
                 <div class="fs_box_actions">
                     <div class="fs_ticket_orders fs_table_search_field">
                         <el-input
-                            @keyup.enter="getGroups"
+                            @keyup.enter="searchGroups"
                             clearable
-                            @clear="getGroups"
+                            @clear="searchGroups"
                             :placeholder="$t('Search...')"
                             v-model="search"
                             class="fs_text_input fs_table_search_input"
@@ -26,8 +26,9 @@
                     </el-button>
                 </div>
             </div>
-            <div style="overflow: hidden; width: 100%;">
-            <div class="fs_table_wrapper fs_agent_groups_table" style="overflow-x: auto;">
+            <TableSkeleton v-if="first_loading" :rows="5" :columns="['150px', '120px', '120px', '200px']" />
+            <div v-else style="overflow: hidden; width: 100%;">
+            <div class="fs_table_wrapper fs_agent_groups_table" style="overflow-x: auto;" v-loading="fetching">
                 <el-table
                     :data="groups"
                     row-class-name="fs_table_row"
@@ -82,6 +83,8 @@
                                     <el-button
                                         class="fs_action_button"
                                         @click="openEditModal(scope.row)"
+                                        :loading="opening_group_id === scope.row.id"
+                                        :disabled="!!opening_group_id"
                                         text
                                         icon="EditPen"
                                     />
@@ -100,7 +103,7 @@
                 </el-table>
             </div>
             </div>
-            <div class="fs_pagination_wrapper" v-if="groups.length">
+            <div class="fs_pagination_wrapper" v-if="!first_loading && groups.length">
                 <span class="fs_pagination_left">
                     <p>Page {{ pagination.current_page }} of {{ Math.ceil(pagination.total / pagination.per_page) }}</p>
                     <pagination
@@ -118,9 +121,6 @@
                     />
                 </span>
             </div>
-        </div>
-        <div class="fs_box_body fs_skeleton_loader" v-else>
-            <el-skeleton class="fs_box_wrapper" :rows="5" animated />
         </div>
 
         <el-dialog
@@ -246,12 +246,14 @@
 <script type="text/babel">
 import Pagination from "../../Pieces/Pagination";
 import TableEmptyStateImage from "@/admin/Components/TableEmptyStateImage.vue";
+import TableSkeleton from "@/admin/Components/TableSkeleton.vue";
 
 export default {
     name: "agent-groups",
     components: {
         Pagination,
-        TableEmptyStateImage
+        TableEmptyStateImage,
+        TableSkeleton
     },
     data() {
         return {
@@ -261,7 +263,9 @@ export default {
                 per_page: 10,
                 total: 0,
             },
-            fetching: true,
+            fetching: false,
+            first_loading: true,
+            opening_group_id: null,
             saving: false,
             group_modal: false,
             editing_group: false,
@@ -305,7 +309,13 @@ export default {
             })
             .always(() => {
                 this.fetching = false;
+                this.first_loading = false;
             });
+        },
+
+        searchGroups() {
+            this.pagination.current_page = 1;
+            this.getGroups();
         },
 
         openCreateModal() {
@@ -320,6 +330,7 @@ export default {
 
         openEditModal(group) {
             this.editing_group = null;
+            this.opening_group_id = group.id;
             this.$get(`agent-groups/${group.id}`)
                 .then((response) => {
                     this.freshAgents = response.agents || [];
@@ -336,6 +347,9 @@ export default {
                 })
                 .catch((errors) => {
                     this.$handleError(errors);
+                })
+                .always(() => {
+                    this.opening_group_id = null;
                 });
         },
 

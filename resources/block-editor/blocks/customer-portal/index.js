@@ -1,23 +1,12 @@
-const { registerBlockType } = wp.blocks;
-const { __ } = wp.i18n;
+import { registerBlockType } from '@wordpress/blocks';
+import metadata from './block.json';
 import Edit from './edit';
 import icons from '../utils/icons';
-registerBlockType('fluent-support/customer-portal', {
-    apiVersion: 3,
-    title: __('Customer Portal'),
-    description: __('Customer Portal Page'),
-    category: 'design',
+
+// Name, attributes, supports and assets live in block.json. The block is
+// dynamic: PHP renders it (BlockEditorHandler::renderBlock), so save() is null.
+registerBlockType(metadata.name, {
     icon: icons.fluentSupport,
-    keywords: [__('fluent'), __('fluent support'), __('support'), __('tickets')],
-    supports: {
-        html: true
-    },
-    /**
-     * @see ./attributes.js
-     */
-    /**
-     * @see ./edit.js
-     */
     edit: function (props) {
         const { attributes, setAttributes } = props;
         return (
@@ -27,8 +16,7 @@ registerBlockType('fluent-support/customer-portal', {
             />
         );
     },
-    save: function (props) {
+    save: function () {
         return null;
     },
 } );
-

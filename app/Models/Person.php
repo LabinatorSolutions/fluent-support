@@ -40,7 +40,6 @@ class Person extends Model
 
 
     /**
-     * $searchable Columns in table to search
      * @var array
      */
     protected $searchable = [
@@ -50,7 +49,6 @@ class Person extends Model
     ];
 
     /**
-     * Local scope to filter subscribers by search/query string
      * @param ModelQueryBuilder $query
      * @param string $search
      * @return ModelQueryBuilder
@@ -84,7 +82,6 @@ class Person extends Model
     }
 
     /**
-     * Local scope to filter subscribers by search/query string
      * @param ModelQueryBuilder $query
      * @param array $statuses
      * @return ModelQueryBuilder

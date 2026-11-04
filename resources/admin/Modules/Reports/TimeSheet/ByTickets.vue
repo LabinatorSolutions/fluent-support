@@ -1,6 +1,6 @@
 <template>
-    <div class="fs_time_sheet" v-if="isLoaded">
-        <div class="fs_table_wrapper fs_scrollable_table">
+    <div class="fs_time_sheet" v-if="has_loaded">
+        <div v-loading="!isLoaded" class="fs_table_wrapper fs_scrollable_table">
             
             <el-table 
                 :data="tasks"
@@ -38,18 +38,19 @@
         </div>
     </div>
     <div class="fs_time_sheet_skeleton" v-else>
-        <el-skeleton :animated="true" :rows="10" />
+        <TableSkeleton :rows="8" :columns="['120px', 1, 1, 1, 1, 1, 1, '160px']" />
     </div>
 </template>
 
 <script type="text/babel">
 import TicketDateSheetPop from './_TicketDateSheetPop.vue';
+import TableSkeleton from "@/admin/Components/TableSkeleton.vue";
 import Modal from "@/admin/Pieces/Modal.vue";
 import {timesheetUtils} from "@/admin/Modules/Reports/TimeSheet/Pieces/TimeSheetUtils";
 
 export default {
     name: 'ByTickets',
-    components: {Modal, TicketDateSheetPop},
+    components: {Modal, TicketDateSheetPop, TableSkeleton},
     props: {
         date_range: {
             type: Array,
@@ -82,7 +83,16 @@ export default {
     },
     data() {
         return {
+            // Stays true after the first load, so later fetches keep the table and show an overlay.
+            has_loaded: this.isLoaded
         };
+    },
+    watch: {
+        isLoaded(value) {
+            if (value) {
+                this.has_loaded = true;
+            }
+        }
     },
     methods: {
         getTicketTotal(ticket) {

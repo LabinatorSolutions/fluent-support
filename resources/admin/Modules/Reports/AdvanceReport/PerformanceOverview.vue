@@ -66,7 +66,7 @@
                                     <div class="fs_dropdown_search" @click.stop>
                                         <el-input
                                             v-model="agentSearchQuery"
-                                            :placeholder="$t('Search agents') + '...'"
+                                            :placeholder="$t('Search agents...')"
                                             clearable
                                             size="small"
                                             class="fs_text_input"
@@ -222,7 +222,6 @@
                     <div class="fs_chart_container" style="height: 400px;">
                         <bar-chart-base
                             :chartData="growthChartData"
-                            :chartOptions="growthChartOptions"
                         ></bar-chart-base>
                     </div>
                 </div>
@@ -267,7 +266,8 @@
                         <bar-chart-base
                             v-if="hourlyActivityChartData"
                             :chartData="hourlyActivityChartData"
-                            :chartOptions="hourlyActivityChartOptions"
+                            stacked
+                            :bar-radius="3"
                         ></bar-chart-base>
                     </div>
                 </div>
@@ -307,7 +307,7 @@ import {
     isSameDateRange
 } from "../Utils/reportHelpers";
 import dayjs from "dayjs";
-import debounce from "lodash/debounce";
+import { debounce } from "lodash-es";
 
 const AGENT_CHIP_VISIBLE_LIMIT = 3;
 
@@ -365,96 +365,7 @@ export default {
                 "response-chart": this.$t("Response Stats"),
             },
             growthData: { tickets: {}, resolved: {}, responses: {} },
-            growthChartOptions: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        type: "linear",
-                        position: "left",
-                        grid: {
-                            drawOnChartArea: true,
-                            color: "#E1E4EA"
-                        },
-                        border: {
-                            display: false,
-                            dash: [4, 4]
-                        },
-                        ticks: {
-                            callback: function (value) {
-                                if (Math.floor(value) === value) {
-                                    return value;
-                                }
-                            }
-                        },
-                        beginAtZero: true
-                    },
-                    x: {
-                        grid: {
-                            drawOnChartArea: false
-                        },
-                        ticks: {
-                            autoSkip: true,
-                            maxTicksLimit: 10
-                        }
-                    }
-                },
-                layout: {
-                    padding: {
-                        left: 16,
-                        right: 24,
-                        top: 12,
-                        bottom: 24
-                    }
-                },
-                datasets: {
-                    bar: {
-                        barThickness: 8,
-                        categoryPercentage: 0.7
-                    }
-                }
-            },
-            hourlyActivityChartData: null,
-            hourlyActivityChartOptions: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    x: {
-                        stacked: true,
-                        grid: {
-                            drawOnChartArea: false
-                        }
-                    },
-                    y: {
-                        stacked: true,
-                        beginAtZero: true,
-                        grid: {
-                            drawOnChartArea: true
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                },
-                layout: {
-                    padding: {
-                        left: 8,
-                        right: 16,
-                        top: 12,
-                        bottom: 8
-                    }
-                },
-                datasets: {
-                    bar: {
-                        // Same bar width as the Agents Statistics chart above.
-                        barThickness: 8,
-                        categoryPercentage: 0.7,
-                        borderRadius: 3
-                    }
-                }
-            }
+            hourlyActivityChartData: null
         };
     },
     computed: {
@@ -481,7 +392,8 @@ export default {
                 const team = this.teamOptions.find(item => item.id === this.selectedTeamIds[0]);
                 return team ? team.name : this.$t("All Teams");
             }
-            return this.selectedTeamIds.length + " " + this.$t("Teams");
+            // translators: %s is the number of teams selected in the filter
+            return this.$_n("%s Team", "%s Teams", this.selectedTeamIds.length);
         },
         formattedDateRange() {
             return formatDateRangeForDisplay(this.localDateRange);
@@ -491,11 +403,11 @@ export default {
             const singleAgent = this.selectedAgents.length === 1;
             if (isDaily) {
                 const label = singleAgent ? this.$t("Daily Activity") : this.$t("Daily Team Activity");
-                return `${label} — ${this.formattedDateRange}`;
+                return this.formattedDateRange ? `${label} (${this.formattedDateRange})` : label;
             }
             const label = singleAgent ? this.$t("Hourly Activity") : this.$t("Hourly Team Activity");
             const dayLabel = this.localDateRange && this.localDateRange[0] ? dayjs(this.localDateRange[0]).format("MMM D, YYYY") : "";
-            return `${label} — ${dayLabel}`;
+            return dayLabel ? `${label} (${dayLabel})` : label;
         },
         totalResponses() {
             return this.selectedAgents.reduce((sum, agent) => sum + agent.responses, 0);

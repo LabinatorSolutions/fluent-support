@@ -3,67 +3,59 @@
 namespace FluentSupport\App\Hooks\Handlers;
 
 use FluentSupport\App\Models\Attachment;
+use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Ticket;
+use FluentSupport\App\Modules\PermissionManager;
+use FluentSupport\App\Modules\CustomerPortal\PortalService;
 use FluentSupport\App\Services\EmailClaimService;
 use FluentSupport\App\Services\Helper;
+use FluentSupport\App\Services\Storage\StorageManager;
 use FluentSupport\Framework\Support\Arr;
 
 /**
- * ExternalPages - Handles public-facing ticket and attachment viewing
- *
+ * Public ticket, attachment and email-claim pages.
  */
 class ExternalPages
 {
     public function route()
     {
-        // Verify this is a GET request for security
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- REQUEST_METHOD is server-controlled, sanitized for comparison only
         $requestMethod = isset($_SERVER['REQUEST_METHOD']) ? sanitize_text_field(wp_unslash($_SERVER['REQUEST_METHOD'])) : '';
         if ($requestMethod !== 'GET') {
-            wp_die('Invalid request method', 'Method Not Allowed', ['response' => 405]);
+            wp_die(esc_html__('Invalid request method', 'fluent-support'), esc_html__('Method Not Allowed', 'fluent-support'), ['response' => 405]);
         }
 
-        // Rate limiting check
         $this->checkRateLimit();
-        // Validate required parameter exists and sanitize
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Public endpoint uses hash validation instead of nonces
         if (!isset($_REQUEST['fs_view'])) {
-            wp_die('Missing required parameter', 'Bad Request', ['response' => 400]);
+            wp_die(esc_html__('Missing required parameter', 'fluent-support'), esc_html__('Bad Request', 'fluent-support'), ['response' => 400]);
         }
 
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Public endpoint uses hash validation instead of nonces
         $route = isset($_REQUEST['fs_view']) ? sanitize_text_field(wp_unslash($_REQUEST['fs_view'])) : '';
 
         if (empty($route)) {
-            wp_die('Missing required parameter', 'Bad Request', ['response' => 400]);
+            wp_die(esc_html__('Missing required parameter', 'fluent-support'), esc_html__('Bad Request', 'fluent-support'), ['response' => 400]);
         }
 
-        // Validate route value
         $methodMaps = [
             'ticket'      => 'handleTicketView',
             'email_claim' => 'handleEmailClaim'
         ];
 
         if (isset($methodMaps[$route])) {
-            // For public endpoints, verify security using ticket hash validation instead of nonces
-            // This is appropriate for public endpoints that must work without user authentication
             $this->verifyPublicEndpointSecurity($route);
             $this->{$methodMaps[$route]}();
         } else {
-            wp_die('Invalid route', 'Not Found', ['response' => 404]);
+            wp_die(esc_html__('Invalid route', 'fluent-support'), esc_html__('Not Found', 'fluent-support'), ['response' => 404]);
         }
     }
 
     /**
-     * Request or confirm a move of the customer's support address onto the
-     * address their WordPress account now holds.
+     * Request or confirm moving the support address to the WP account's email.
      *
-     * Two steps arrive here. `fs_claim_action=send` asks for the confirmation
-     * mail and is nonced, because following it sends email and a bare GET with
-     * an effect is a link somebody can put in front of a signed-in customer.
-     * `fs_claim=<token>` is the link out of that mail; it carries its own
-     * signature, so no nonce applies, but it does require being signed in as
-     * the account that asked for it.
+     * `fs_claim_action=send` sends mail, so it needs a nonce. `fs_claim=<token>` is
+     * the signed link from that mail and still requires the requesting account.
      *
      * @return void
      */
@@ -72,7 +64,7 @@ class ExternalPages
         $baseUrl = Helper::getPortalBaseUrl();
 
         if (!$baseUrl) {
-            wp_die('Invalid route', 'Not Found', ['response' => 404]);
+            wp_die(esc_html__('Invalid route', 'fluent-support'), esc_html__('Not Found', 'fluent-support'), ['response' => 404]);
         }
 
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- routing only; the send branch verifies a nonce and the confirm branch verifies a signature
@@ -90,8 +82,7 @@ class ExternalPages
         }
 
         if (!get_current_user_id()) {
-            // Reading the mail is only half the proof. Send them through login
-            // and back to the same link, so confirming still needs the account.
+            // The mailbox alone isn't enough proof, so require login too.
             $returnUrl = add_query_arg([
                 'fs_view'  => 'email_claim',
                 'fs_claim' => $token
@@ -158,65 +149,61 @@ class ExternalPages
     }
 
     /**
-     * Display the attachment.
-     *
-     * Uses the new rewrite endpoint to get an attachment ID
-     * and display the attachment if the currently logged in user
-     * has the authorization to.
+     * Serve an attachment by its `fst_file` hash and signature.
      *
      * @return void
      * @since 3.2.0
      */
     public function view_attachment()
     {
-        // Verify this is a GET request for security
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- REQUEST_METHOD is server-controlled, sanitized for comparison only
         $requestMethod = isset($_SERVER['REQUEST_METHOD']) ? sanitize_text_field(wp_unslash($_SERVER['REQUEST_METHOD'])) : '';
         if ($requestMethod !== 'GET') {
-            wp_die('Invalid request method', 'Method Not Allowed', ['response' => 405]);
+            wp_die(esc_html__('Invalid request method', 'fluent-support'), esc_html__('Method Not Allowed', 'fluent-support'), ['response' => 405]);
         }
 
-        // Rate limiting check
         $this->checkRateLimit();
 
-        // Validate required parameter exists and sanitize
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Public endpoint uses signature validation instead of nonces
         if (!isset($_REQUEST['fst_file'])) {
-            wp_die('Missing required parameter', 'Bad Request', ['response' => 400]);
+            wp_die(esc_html__('Missing required parameter', 'fluent-support'), esc_html__('Bad Request', 'fluent-support'), ['response' => 400]);
         }
 
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Public endpoint uses signature validation instead of nonces
         $attachmentHash = isset($_REQUEST['fst_file']) ? sanitize_text_field(wp_unslash($_REQUEST['fst_file'])) : '';
 
         if (empty($attachmentHash)) {
-            wp_die('Invalid Attachment Hash', 'Bad Request', ['response' => 400]);
+            wp_die(esc_html__('Invalid attachment hash.', 'fluent-support'), esc_html__('Bad Request', 'fluent-support'), ['response' => 400]);
         }
 
         $attachment = $this->getAttachmentByHash($attachmentHash);
 
-        if (!$attachment) {
-            wp_die('Invalid Attachment Hash', 'Not Found', ['response' => 404]);
+        // Rows waiting for the delete job belong to deleted tickets and replies.
+        if (!$attachment || $attachment->status === StorageManager::STATUS_DELETING) {
+            wp_die(esc_html__('Invalid attachment hash.', 'fluent-support'), esc_html__('Not Found', 'fluent-support'), ['response' => 404]);
         }
 
-        // Inline attachments (paste images embedded in ticket/email content) are publicly accessible
-        // without a signature because they are already shared with customers via email.
-        // Other attachments require HMAC signature validation.
+        // Inline (pasted) images skip the signature because they are already embedded in emails.
+        // A missing or expired signature (e.g. an old email) falls back to who is opening it.
         if ($attachment->status !== 'inline' && !$this->validateAttachmentSignature($attachment)) {
-            $dieMessage = esc_html__('Sorry, Your secure sign is invalid, Please reload the previous page and get new signed url', 'fluent-support');
-            wp_die(esc_html($dieMessage), 'Forbidden', ['response' => 403]);
-        }
+            if (!$this->canViewWithoutSignature($attachment)) {
+                if (!get_current_user_id()) {
+                    $this->redirectToLogin($attachment);
+                }
 
-        //If external file, redirect to the secure download URL
-        if ('local' !== $attachment->driver) {
-            $fileUrl = apply_filters('fluent_support/external_attachment_url', $attachment->full_url, $attachment);
-            if (!empty($fileUrl)) {
-                $this->redirectToExternalAttachment($fileUrl);
-            } else {
-                die('File could not be found');
+                $dieMessage = esc_html__('Sorry, you do not have access to this file.', 'fluent-support');
+                wp_die(esc_html($dieMessage), esc_html__('Forbidden', 'fluent-support'), ['response' => 403]);
             }
+
+            // Served by who is asking, not by the URL: keep shared caches out of it.
+            nocache_headers();
+            header('Cache-Control: private, no-store, max-age=0');
         }
 
-        //Handle Local file
+        if ('local' !== $attachment->driver) {
+            StorageManager::serve($attachment);
+        }
+
         if (!file_exists($attachment->file_path)) {
             die('File could not be found');
         }
@@ -230,7 +217,6 @@ class ExternalPages
 
     private function validateAttachmentSignature($attachment)
     {
-        // Sanitize and validate secure_sign input - don't trust any input
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Public endpoint uses signature validation instead of nonces
         if (!isset($_REQUEST['secure_sign'])) {
             return false;
@@ -243,25 +229,124 @@ class ExternalPages
             return false;
         }
 
-        // Use HMAC-SHA256 for secure signature verification
-        $sign = hash_hmac('sha256', $attachment->id . '|' . gmdate('YmdH'), wp_salt('secure_auth'));
-        return hash_equals($sign, $secureSign);
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Public endpoint uses signature validation instead of nonces
+        $expires = isset($_REQUEST['expires']) ? sanitize_text_field(wp_unslash($_REQUEST['expires'])) : '';
+
+        if ($expires === '') {
+            // Legacy URL signed for the current UTC hour only.
+            return hash_equals(Attachment::legacySignature($attachment->id, gmdate('YmdH')), $secureSign);
+        }
+
+        if (!ctype_digit($expires) || (int) $expires < time()) {
+            return false;
+        }
+
+        // Email links are also bound to the ticket hash, so rotating it (customer change) revokes them.
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Public endpoint uses signature validation instead of nonces
+        if (isset($_REQUEST['sv']) && $_REQUEST['sv'] === '3') {
+            $ticketHash = $attachment->ticket_id ? (string) Ticket::where('id', $attachment->ticket_id)->value('hash') : '';
+            return hash_equals(Attachment::ticketSignature($attachment->id, (int) $expires, $ticketHash), $secureSign);
+        }
+
+        return hash_equals(Attachment::signature($attachment->id, (int) $expires), $secureSign);
+    }
+
+    /**
+     * Access check for a link whose signature is missing or has expired:
+     *  - an agent who can access the ticket (any attachment, notes included);
+     *  - the customer who owns the ticket and may still use the portal, or a matching
+     *    hash-signed ticket link when those are on, for attachments customers can see;
+     *  - the uploader, for a temporary upload (not on a ticket yet, or on a reply or
+     *    note still being written).
+     */
+    private function canViewWithoutSignature($attachment)
+    {
+        $ticket = $attachment->ticket_id ? Ticket::find($attachment->ticket_id) : null;
+
+        if ($attachment->ticket_id && !$ticket) {
+            return false;
+        }
+
+        if ($ticket && get_current_user_id() && Helper::getCurrentAgent()) {
+            return PermissionManager::canAccessTicket($ticket);
+        }
+
+        // Not on a ticket yet, or a reply or note still being written: only the uploader.
+        if (!$ticket || $attachment->status === 'in-active') {
+            $person = Helper::getCurrentPerson();
+            return $person && $attachment->person_id && $attachment->person_id == $person->id;
+        }
+
+        if (!$this->isVisibleToCustomer($attachment)) {
+            return false;
+        }
+
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Public endpoint uses hash validation instead of nonces
+        $ticketHash = isset($_REQUEST['fst_ticket']) ? sanitize_text_field(wp_unslash($_REQUEST['fst_ticket'])) : '';
+        if ($ticketHash && $ticket->hash && Helper::isPublicSignedTicketEnabled()
+            && hash_equals((string) $ticket->hash, $ticketHash)) {
+            return true;
+        }
+
+        $customer = get_current_user_id() ? Helper::getCurrentCustomer() : null;
+        if (!$customer || $ticket->customer_id != $customer->id) {
+            return false;
+        }
+
+        // Same rules as the portal (blocked customers, add-on filters).
+        try {
+            PortalService::assertCanAccess($customer, $ticket);
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Ticket-level files and files on replies customers see; never notes or drafts.
+     */
+    private function isVisibleToCustomer($attachment)
+    {
+        if (!$attachment->conversation_id) {
+            return true;
+        }
+
+        $type = Conversation::where('id', $attachment->conversation_id)
+            ->where('ticket_id', $attachment->ticket_id)
+            ->value('conversation_type');
+
+        return in_array($type, ['response', 'ticket_merge_activity', 'ticket_split_activity'], true);
+    }
+
+    private function redirectToLogin($attachment)
+    {
+        // Back to the same file; after login the access check lets them in.
+        $currentUrl = add_query_arg(['fst_file' => $attachment->file_hash], site_url('/index.php'));
+
+        /**
+         * Where to send a logged-out visitor whose attachment link has expired.
+         *
+         * @param string $loginUrl
+         * @param string $currentUrl The attachment URL to return to.
+         */
+        $loginUrl = apply_filters('fluent_support/attachment_login_url', wp_login_url($currentUrl), $currentUrl);
+
+        wp_safe_redirect($loginUrl);
+        exit();
     }
 
     private function handleInvalidTicket()
     {
-        // Validate required parameter exists and sanitize
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Public endpoint uses hash validation instead of nonces
         if (!isset($_REQUEST['ticket_id'])) {
-            wp_die('Missing ticket ID parameter', 'Bad Request', ['response' => 400]);
+            wp_die(esc_html__('Missing ticket ID parameter', 'fluent-support'), esc_html__('Bad Request', 'fluent-support'), ['response' => 400]);
         }
 
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Public endpoint uses hash validation instead of nonces
         $ticketId = isset($_REQUEST['ticket_id']) ? absint($_REQUEST['ticket_id']) : 0;
 
-        // Validate ticket ID is positive integer
         if ($ticketId <= 0) {
-            wp_die('Invalid ticket ID', 'Bad Request', ['response' => 400]);
+            wp_die(esc_html__('Invalid ticket ID', 'fluent-support'), esc_html__('Bad Request', 'fluent-support'), ['response' => 400]);
         }
 
         $ticket = Ticket::wherePublicIdentifier($ticketId)->first();
@@ -275,10 +360,9 @@ class ExternalPages
 
     private function handleValidTicket()
     {
-        // Validate required parameters exist and sanitize
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Public endpoint uses hash validation instead of nonces
         if (!isset($_REQUEST['support_hash']) || !isset($_REQUEST['ticket_id'])) {
-            wp_die('Missing required parameters', 'Bad Request', ['response' => 400]);
+            wp_die(esc_html__('Missing required parameters', 'fluent-support'), esc_html__('Bad Request', 'fluent-support'), ['response' => 400]);
         }
 
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Public endpoint uses hash validation instead of nonces
@@ -286,14 +370,12 @@ class ExternalPages
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Public endpoint uses hash validation instead of nonces
         $ticketId = isset($_REQUEST['ticket_id']) ? absint($_REQUEST['ticket_id']) : 0;
 
-        // Validate hash format (should be alphanumeric)
         if (empty($ticketHash) || !preg_match('/^[a-zA-Z0-9]+$/', $ticketHash)) {
-            wp_die('Invalid ticket hash format', 'Bad Request', ['response' => 400]);
+            wp_die(esc_html__('Invalid ticket hash format', 'fluent-support'), esc_html__('Bad Request', 'fluent-support'), ['response' => 400]);
         }
 
-        // Validate ticket ID is positive integer
         if ($ticketId <= 0) {
-            wp_die('Invalid ticket ID', 'Bad Request', ['response' => 400]);
+            wp_die(esc_html__('Invalid ticket ID', 'fluent-support'), esc_html__('Bad Request', 'fluent-support'), ['response' => 400]);
         }
 
         $ticket = Ticket::where('hash', $ticketHash)
@@ -303,11 +385,9 @@ class ExternalPages
         if (!$ticket) {
             $this->showInvalidPortalMessage();
         } elseif (get_current_user_id()) {
-            // Only redirect if user is logged in (to clean up URL)
             $this->redirectToTicketView($ticket);
         }
-        // If not logged in, let the page load normally with the hash parameters
-        // The frontend will handle displaying the ticket based on the URL
+        // Logged-out visitors stay on the signed URL; the portal app reads the hash from it.
     }
 
     private function showInvalidPortalMessage()
@@ -324,18 +404,16 @@ class ExternalPages
 
     private function redirectToExternalAttachment($redirectUrl)
     {
-        // This redirect is required to serve attachments stored on third-party services (Google Drive, Dropbox).
-        // Safe and intentional: not a malicious or undesired redirect.
+        // Not wp_safe_redirect: remote attachments (Drive, Dropbox) live on other hosts.
         wp_redirect($redirectUrl, 307);
         exit();
     }
 
-    // Helper method to serve an attachment
     private function serveLocalAttachment($attachment)
     {
         $file_path = realpath($attachment->file_path);
         $uploads     = wp_upload_dir();
-        $uploads_dir = realpath($uploads['basedir']); // Ensures both paths are absolute
+        $uploads_dir = realpath($uploads['basedir']);
 
         if (!$file_path || !$uploads_dir || strpos($file_path, $uploads_dir) !== 0 || !file_exists($file_path)) {
             wp_die(esc_html__('File not found or access denied', 'fluent-support'), 403);
@@ -358,34 +436,24 @@ class ExternalPages
         die();
     }
 
-    /**
-     * Verify security for public endpoints
-     * This implements a custom security mechanism appropriate for public endpoints
-     * that need to work without user authentication while maintaining security
-     */
     private function verifyPublicEndpointSecurity($route)
     {
         switch ($route) {
             case 'ticket':
-                // For ticket viewing, we need at least ticket_id
-                // support_hash is required only when public signed tickets are enabled
+                // support_hash is only required when signed ticket links are enabled.
                 // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Public endpoint uses hash validation instead of nonces
                 if (!isset($_REQUEST['ticket_id'])) {
-                    wp_die('Missing ticket ID parameter', 'Bad Request', ['response' => 400]);
+                    wp_die(esc_html__('Missing ticket ID parameter', 'fluent-support'), esc_html__('Bad Request', 'fluent-support'), ['response' => 400]);
                 }
-
-                // Additional validation will be done in handleValidTicket/handleInvalidTicket
                 break;
 
             default:
-                // For any other routes, ensure basic security
                 break;
         }
     }
 
     /**
-     * Basic rate limiting for public endpoints
-     * Prevents abuse of public ticket/attachment viewing
+     * 30 requests per minute per IP on the public endpoints.
      */
     private function checkRateLimit()
     {
@@ -394,12 +462,11 @@ class ExternalPages
         $requests = get_transient($transient_key);
 
         if ($requests === false) {
-            // First request in this minute
-            set_transient($transient_key, 1, 60); // 60 seconds
+            set_transient($transient_key, 1, 60);
         } else {
             $requests++;
-            if ($requests > 30) { // Max 30 requests per minute per IP
-                wp_die('Rate limit exceeded. Please try again later.', 'Too Many Requests', ['response' => 429]);
+            if ($requests > 30) {
+                wp_die(esc_html__('Rate limit exceeded. Please try again later.', 'fluent-support'), esc_html__('Too Many Requests', 'fluent-support'), ['response' => 429]);
             }
             set_transient($transient_key, $requests, 60);
         }

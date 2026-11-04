@@ -29,10 +29,6 @@
  *     POST (`/mark-all-read`, `/{id}/mark-read`) and is deliberately absent here.
  *   - `tickets/{id}/live_activity` GET registers agent presence server-side on some
  *     builds. It is kept (the admin app polls it constantly) but flagged here.
- *
- * Known frontend defect, intentionally NOT in this manifest:
- *   resources/admin/Modules/Settings/CustomFields/CustomFields.vue:17 calls
- *   `this.$get('')` — an empty route hitting `GET {rest.url}/` with no handler.
  */
 
 $dateRange = ['2026-08-02', '2026-08-08'];
@@ -53,9 +49,6 @@ return [
         'label' => 'mailboxes: tickets of a mailbox',
         'route' => '/mailboxes/{id}/tickets',
         'needs' => 'mailbox',
-        'skip'  => 'KNOWN-FAILURE FS-SMOKE-004: MailBoxService::getTickets reads ' .
-            '$filters[customer_id|product_id|ticket_title] without isset — undefined array ' .
-            'key warnings when the filters are omitted. See tests/FIX-PLAN.md.',
     ],
     [
         // MoveTicket.vue sends the full simple-filter payload against this route.
@@ -79,15 +72,10 @@ return [
         ],
     ],
     [
-        'label' => 'mailboxes: email settings',
-        'route' => '/mailboxes/{id}/email_settings',
-        'needs' => 'mailbox',
-    ],
-    [
         'label'  => 'mailboxes: email settings (single email type)',
         'route'  => '/mailboxes/{id}/email_settings',
         'needs'  => 'mailbox',
-        'params' => ['email_type' => 'ticket_created'],
+        'params' => ['email_type' => 'ticket_created_email_to_customer'],
     ],
     [
         'label' => 'mailboxes: email configs',
@@ -259,6 +247,10 @@ return [
         ],
     ],
     [
+        'label' => 'tickets: sidebar view counts',
+        'route' => '/tickets/sidebar-counts',
+    ],
+    [
         'label' => 'tickets: label search list',
         'route' => '/tickets/label-search',
     ],
@@ -401,14 +393,6 @@ return [
         'label' => 'tickets: ping',
         'route' => '/tickets/ping',
     ],
-    [
-        'label' => 'tickets: ticket essentials',
-        'route' => '/tickets/ticket-essentials',
-    ],
-    [
-        'label' => 'tickets: agent insights',
-        'route' => '/tickets/agent-insights',
-    ],
 
     // ---- widgets ----
     [
@@ -490,10 +474,6 @@ return [
 
     // ---- settings ----
     [
-        'label' => 'settings: get settings',
-        'route' => '/settings',
-    ],
-    [
         'label'  => 'settings: global business settings (with fields)',
         'route'  => '/settings',
         'params' => ['settings_key' => 'global_business_settings', 'with' => ['fields']],
@@ -504,26 +484,13 @@ return [
         'params' => ['settings_key' => '_internal_notification_settings', 'with' => ['fields']],
     ],
     [
-        'label'  => 'settings: global email settings (with fields)',
-        'route'  => '/settings',
-        'params' => ['settings_key' => 'global_email_settings', 'with' => ['fields']],
-    ],
-    [
         'label' => 'settings: integration settings list',
         'route' => '/settings/integration-settings',
     ],
     [
-        'label' => 'settings: single integration',
-        'route' => '/settings/integration',
-    ],
-    [
         'label'  => 'settings: single integration (slack key)',
         'route'  => '/settings/integration',
-        'params' => ['integration_key' => 'slack'],
-    ],
-    [
-        'label' => 'settings: slack integration',
-        'route' => '/settings/slack-integration',
+        'params' => ['integration_key' => 'slack_settings'],
     ],
     [
         'label' => 'settings: pages list',
@@ -554,14 +521,6 @@ return [
         'route' => '/settings/settings-menu',
     ],
     [
-        'label' => 'settings: fluent bot integration',
-        'route' => '/settings/fluent-bot-integration',
-    ],
-    [
-        'label' => 'settings: fluent bot presets',
-        'route' => '/settings/fluent-bot-presets',
-    ],
-    [
         'label' => 'settings: MCP status',
         'route' => '/settings/mcp',
     ],
@@ -573,6 +532,21 @@ return [
         'label'  => 'settings: MCP config snippets (local dev)',
         'route'  => '/settings/mcp/config-snippets',
         'params' => ['local_dev' => 'yes'],
+    ],
+
+    // ---- system tools ----
+    [
+        'label' => 'system tools: cron status',
+        'route' => '/system-tools/cron',
+    ],
+    [
+        'label' => 'system tools: database health',
+        'route' => '/system-tools/database',
+    ],
+    [
+        'label'  => 'system tools: cleanup counts',
+        'route'  => '/system-tools/cleanup',
+        'params' => ['days_before' => 30, 'selected_logs' => ['activity_logs']],
     ],
 
     // ---- agents ----
@@ -610,45 +584,6 @@ return [
 
     // ---- reports ----
     [
-        'label' => 'reports: overall reports',
-        'route' => '/reports',
-    ],
-    [
-        'label' => 'reports: tickets growth',
-        'route' => '/reports/tickets-growth',
-    ],
-    [
-        'label'  => 'reports: tickets growth (date range)',
-        'route'  => '/reports/tickets-growth',
-        'params' => ['date_range' => $dateRange],
-    ],
-    [
-        'label'  => 'reports: tickets growth (date range + agent)',
-        'route'  => '/reports/tickets-growth',
-        'needs'  => 'agent',
-        'params' => ['date_range' => $dateRange, 'agent_id' => '{agent_id}', 'type' => 'agent'],
-    ],
-    [
-        'label' => 'reports: tickets resolve growth',
-        'route' => '/reports/tickets-resolve-growth',
-    ],
-    [
-        'label'  => 'reports: tickets resolve growth (date range + agent type)',
-        'route'  => '/reports/tickets-resolve-growth',
-        'needs'  => 'agent',
-        'params' => ['date_range' => $dateRange, 'agent_id' => '{agent_id}', 'type' => 'agent'],
-    ],
-    [
-        'label' => 'reports: response growth',
-        'route' => '/reports/response-growth',
-    ],
-    [
-        'label'  => 'reports: response growth (date range + agent type)',
-        'route'  => '/reports/response-growth',
-        'needs'  => 'agent',
-        'params' => ['date_range' => $dateRange, 'agent_id' => '{agent_id}', 'type' => 'agent'],
-    ],
-    [
         'label' => 'reports: agents summary',
         'route' => '/reports/agents-summary',
     ],
@@ -681,15 +616,6 @@ return [
         ],
     ],
     [
-        'label' => 'reports: ticket response stats',
-        'route' => '/reports/ticket-response-stats',
-    ],
-    [
-        'label'  => 'reports: ticket response stats (date range)',
-        'route'  => '/reports/ticket-response-stats',
-        'params' => ['date_range' => $dateRange],
-    ],
-    [
         'label' => 'reports: stats',
         'route' => '/reports/stats',
     ],
@@ -719,10 +645,6 @@ return [
 
     // ---- my-reports ----
     [
-        'label' => 'my-reports: agent overall reports',
-        'route' => '/my-reports',
-    ],
-    [
         'label' => 'my-reports: tickets resolve growth',
         'route' => '/my-reports/tickets-resolve-growth',
     ],
@@ -751,48 +673,6 @@ return [
     ],
 
     // ---- product-reports ----
-    [
-        'label' => 'product-reports: tickets growth',
-        'route' => '/product-reports/tickets-growth',
-    ],
-    [
-        'label'  => 'product-reports: tickets growth (date range + product)',
-        'route'  => '/product-reports/tickets-growth',
-        'needs'  => 'product',
-        'params' => ['date_range' => $dateRange, 'product_id' => '{product_id}', 'type' => 'product'],
-    ],
-    [
-        'label' => 'product-reports: tickets resolve growth',
-        'route' => '/product-reports/tickets-resolve-growth',
-    ],
-    [
-        'label'  => 'product-reports: tickets resolve growth (date range + product)',
-        'route'  => '/product-reports/tickets-resolve-growth',
-        'needs'  => 'product',
-        'params' => ['date_range' => $dateRange, 'product_id' => '{product_id}', 'type' => 'product'],
-    ],
-    [
-        'label' => 'product-reports: response growth',
-        'route' => '/product-reports/response-growth',
-        'skip'  => 'KNOWN-FAILURE FS-SMOKE-001: Reporting::getResponseGrowthChart builds ' .
-            '$type."_id" without a guard — a request without ?type= dies with SQL error ' .
-            "\"Unknown column '_id'\". See tests/FIX-PLAN.md.",
-    ],
-    [
-        'label'  => 'product-reports: response growth (date range + product)',
-        'route'  => '/product-reports/response-growth',
-        'needs'  => 'product',
-        'params' => ['date_range' => $dateRange, 'product_id' => '{product_id}', 'type' => 'product'],
-    ],
-    [
-        'label' => 'product-reports: products summary',
-        'route' => '/product-reports/product-reports-summary',
-    ],
-    [
-        'label'  => 'product-reports: products summary (from/to)',
-        'route'  => '/product-reports/product-reports-summary',
-        'params' => ['from' => '2026-08-02', 'to' => '2026-08-08'],
-    ],
 
     // ---- mailbox-reports ----
     [
@@ -818,9 +698,6 @@ return [
     [
         'label' => 'mailbox-reports: response growth',
         'route' => '/mailbox-reports/response-growth',
-        'skip'  => 'KNOWN-FAILURE FS-SMOKE-001: Reporting::getResponseGrowthChart builds ' .
-            '$type."_id" without a guard — a request without ?type= dies with SQL error ' .
-            "\"Unknown column '_id'\". See tests/FIX-PLAN.md.",
     ],
     [
         'label'  => 'mailbox-reports: response growth (date range + mailbox)',
@@ -828,54 +705,8 @@ return [
         'needs'  => 'mailbox',
         'params' => ['date_range' => $dateRange, 'mailbox_id' => '{mailbox_id}', 'type' => 'mailbox'],
     ],
-    [
-        'label' => 'mailbox-reports: mailboxes summary',
-        'route' => '/mailbox-reports/mailbox-reports-summary',
-    ],
-    [
-        'label'  => 'mailbox-reports: mailboxes summary (from/to + mailbox)',
-        'route'  => '/mailbox-reports/mailbox-reports-summary',
-        'needs'  => 'mailbox',
-        'params' => ['from' => '2026-08-02', 'to' => '2026-08-08', 'mailbox_id' => '{mailbox_id}'],
-    ],
 
     // ---- agent-group-reports ----
-    [
-        'label' => 'agent-group-reports: tickets growth',
-        'route' => '/agent-group-reports/tickets-growth',
-    ],
-    [
-        'label'  => 'agent-group-reports: tickets growth (date range)',
-        'route'  => '/agent-group-reports/tickets-growth',
-        'params' => ['date_range' => $dateRange],
-    ],
-    [
-        'label' => 'agent-group-reports: tickets resolve growth',
-        'route' => '/agent-group-reports/tickets-resolve-growth',
-    ],
-    [
-        'label'  => 'agent-group-reports: tickets resolve growth (date range)',
-        'route'  => '/agent-group-reports/tickets-resolve-growth',
-        'params' => ['date_range' => $dateRange],
-    ],
-    [
-        'label' => 'agent-group-reports: response growth',
-        'route' => '/agent-group-reports/response-growth',
-    ],
-    [
-        'label'  => 'agent-group-reports: response growth (date range)',
-        'route'  => '/agent-group-reports/response-growth',
-        'params' => ['date_range' => $dateRange],
-    ],
-    [
-        'label' => 'agent-group-reports: agent groups summary',
-        'route' => '/agent-group-reports/agent-groups-summary',
-    ],
-    [
-        'label'  => 'agent-group-reports: agent groups summary (from/to)',
-        'route'  => '/agent-group-reports/agent-groups-summary',
-        'params' => ['from' => '2026-08-02', 'to' => '2026-08-08'],
-    ],
 
     // ---- customers ----
     [
@@ -903,6 +734,16 @@ return [
         'params' => ['search' => 'john', 'order_by' => 'id', 'order_type' => 'ASC'],
     ],
     [
+        'label'  => 'customers: index (sorted by last activity)',
+        'route'  => '/customers',
+        'params' => ['per_page' => 20, 'page' => 1, 'sort_by' => 'last_response_at', 'sort_type' => 'ASC'],
+    ],
+    [
+        'label'  => 'customers: index (has open tickets)',
+        'route'  => '/customers',
+        'params' => ['per_page' => 20, 'page' => 1, 'has_open_tickets' => 'yes', 'status' => 'active'],
+    ],
+    [
         'label' => 'customers: customer fields',
         'route' => '/customers/customerField/{customer_id}',
         'needs' => 'customer',
@@ -923,6 +764,12 @@ return [
         'route'  => '/customers/{customer_id}',
         'needs'  => 'customer',
         'params' => ['with' => ['widgets', 'tickets', 'fluentcrm_profile']],
+    ],
+    [
+        'label'  => 'customers: get one (with ticket_stats)',
+        'route'  => '/customers/{customer_id}',
+        'needs'  => 'customer',
+        'params' => ['with' => ['ticket_stats']],
     ],
 
     // ---- customer-portal ----
@@ -948,8 +795,8 @@ return [
         'route' => '/customer-portal/tickets/{ticket_id}',
         'needs' => 'ticket',
         // The smoke identity is the lab admin, who has no fs_persons customer
-        // row; the portal answers 422 "No customer found" for such users.
-        'ok'    => [200, 422],
+        // row; the portal answers 404, as for any ticket the caller can't see.
+        'ok'    => [200, 404],
     ],
     [
         'label' => 'customer-portal: me',
@@ -962,59 +809,6 @@ return [
         'label' => 'public: helpscout authorize callback',
         'route' => '/public/authorize',
         'ok'    => [200, 302, 400, 401, 403, 422],
-    ],
-
-    // ---- fluent-bot ----
-    [
-        'label' => 'fluent-bot: preset prompts',
-        'route' => '/fluent-bot/preset-prompts',
-        'skip'  => 'KNOWN-FAILURE FS-SMOKE-003: FluentBotHelper::getPresetPrompts(string $type) ' .
-            'receives null when ?type= is omitted — uncaught TypeError. See tests/FIX-PLAN.md.',
-    ],
-    [
-        'label'  => 'fluent-bot: preset prompts (createResponse + provider)',
-        'route'  => '/fluent-bot/preset-prompts',
-        'params' => ['type' => 'createResponse', 'provider' => 'openai'],
-    ],
-    [
-        'label'  => 'fluent-bot: preset prompts (modifyResponse)',
-        'route'  => '/fluent-bot/preset-prompts',
-        'params' => ['type' => 'modifyResponse', 'provider' => 'openai'],
-    ],
-    [
-        'label' => 'fluent-bot: runtime config',
-        'route' => '/fluent-bot/runtime-config',
-    ],
-    [
-        'label' => 'fluent-bot: chat id for ticket',
-        'route' => '/fluent-bot/{id}/chat-id',
-        'needs' => 'ticket',
-    ],
-    [
-        'label' => 'fluent-bot: chat messages',
-        'route' => '/fluent-bot/{id}/chat-messages',
-        'needs' => 'ticket',
-    ],
-    [
-        'label'  => 'fluent-bot: chat messages (scoped to product)',
-        'route'  => '/fluent-bot/{id}/chat-messages',
-        'needs'  => 'ticket',
-        'params' => ['product_id' => '{product_id}'],
-    ],
-    [
-        'label' => 'fluent-bot: resume chat stream',
-        'route' => '/fluent-bot/{id}/chat-stream',
-        'skip'  => 'server-sent-events endpoint; a smoke request would block on the open stream',
-    ],
-    [
-        'label' => 'fluent-bot: conversations',
-        'route' => '/fluent-bot/{id}/conversations',
-        'needs' => 'ticket',
-    ],
-    [
-        'label' => 'fluent-bot: context selection',
-        'route' => '/fluent-bot/{id}/context-selection',
-        'needs' => 'ticket',
     ],
 
     // ---- activity-logger ----
@@ -1053,16 +847,10 @@ return [
     [
         'label' => 'ai-activity-logger: activities',
         'route' => '/ai-activity-logger',
-        'skip'  => 'KNOWN-FAILURE FS-SMOKE-002: fs_ai_activity_logs table does not exist — ' .
-            'AIActivityLogsMigrator is not registered in database/DBMigrator.php, so fresh ' .
-            'activations never create it. See tests/FIX-PLAN.md.',
     ],
     [
         'label'  => 'ai-activity-logger: activities (paginated + date range)',
         'route'  => '/ai-activity-logger',
-        'skip'   => 'KNOWN-FAILURE FS-SMOKE-002: fs_ai_activity_logs table does not exist — ' .
-            'AIActivityLogsMigrator is not registered in database/DBMigrator.php, so fresh ' .
-            'activations never create it. See tests/FIX-PLAN.md.',
         'params' => [
             'per_page' => 10,
             'page'     => 1,
@@ -1226,6 +1014,12 @@ return [
         'needs'             => 'workflow',
         'requires_constant' => 'FLUENTSUPPORTPRO',
     ],
+    [
+        'label'             => 'workflows: latest runs of a workflow',
+        'route'             => '/workflows/{workflow_id}/runs',
+        'needs'             => 'workflow',
+        'requires_constant' => 'FLUENTSUPPORTPRO',
+    ],
 
     // ---- email-box (pro) ----
     [
@@ -1279,35 +1073,31 @@ return [
 
     // ---- settings (pro) ----
     [
-        'label'             => 'settings: discord integration',
-        'route'             => '/settings/discord-integration',
-        'requires_constant' => 'FLUENTSUPPORTPRO',
-    ],
-    [
-        'label'             => 'settings: discord integration (integration_key)',
-        'route'             => '/settings/discord-integration',
-        'params'            => ['integration_key' => 'discord'],
-        'requires_constant' => 'FLUENTSUPPORTPRO',
-    ],
-    [
         'label'             => 'settings: incoming webhook',
         'route'             => '/settings/incoming-webhook',
         'requires_constant' => 'FLUENTSUPPORTPRO',
     ],
     [
-        'label'             => 'settings: twilio integration',
-        'route'             => '/settings/twilio-integration',
-        'requires_constant' => 'FLUENTSUPPORTPRO',
-    ],
-    [
-        'label'             => 'settings: twilio integration (integration_key)',
-        'route'             => '/settings/twilio-integration',
-        'params'            => ['integration_key' => 'twilio'],
-        'requires_constant' => 'FLUENTSUPPORTPRO',
-    ],
-    [
         'label'             => 'settings: auto close',
         'route'             => '/settings/auto-close',
+        'requires_constant' => 'FLUENTSUPPORTPRO',
+    ],
+    [
+        'label'             => 'settings: remote portal',
+        'route'             => '/settings/remote-portal',
+        'requires_constant' => 'FLUENTSUPPORTPRO',
+    ],
+    [
+        'label'             => 'remote portal: ping (connector only)',
+        'route'             => '/remote-portal/ping',
+        // Only the user who connected the main site passes RemotePortalPolicy; the smoke admin is not that user.
+        'ok'                => [403],
+        'requires_constant' => 'FLUENTSUPPORTPRO',
+    ],
+    [
+        'label'             => 'remote portal: portal config (connector only)',
+        'route'             => '/remote-portal/portal-config',
+        'ok'                => [403],
         'requires_constant' => 'FLUENTSUPPORTPRO',
     ],
     [
@@ -1336,6 +1126,18 @@ return [
         'params'            => ['integration_key' => 'google_drive'],
         'requires_constant' => 'FLUENTSUPPORTPRO',
     ],
+    [
+        'label'             => 'settings: upload integration (amazon s3 driver)',
+        'route'             => '/settings/upload_integration',
+        'params'            => ['integration_key' => 'amazon_s3'],
+        'requires_constant' => 'FLUENTSUPPORTPRO',
+    ],
+    [
+        'label'             => 'settings: upload integration (s3-compatible driver)',
+        'route'             => '/settings/upload_integration',
+        'params'            => ['integration_key' => 's3_compatible'],
+        'requires_constant' => 'FLUENTSUPPORTPRO',
+    ],
 
     // ---- public (pro) ----
     [
@@ -1358,20 +1160,6 @@ return [
     ],
 
     // ---- integrations/fluentcrm (pro) ----
-    [
-        'label'             => 'integrations/fluentcrm: search subscribers',
-        'route'             => '/integrations/fluentcrm/subscribers',
-        // 400 "FluentCRM is not installed" when the sibling is absent.
-        'ok'                => [200, 400, 404],
-        'requires_constant' => 'FLUENTSUPPORTPRO',
-    ],
-    [
-        'label'             => 'integrations/fluentcrm: search subscribers (query term)',
-        'route'             => '/integrations/fluentcrm/subscribers',
-        'params'            => ['search' => 'john'],
-        'ok'                => [200, 400, 404],
-        'requires_constant' => 'FLUENTSUPPORTPRO',
-    ],
 
     // ---- tickets (pro) ----
     [
@@ -1404,8 +1192,6 @@ return [
     [
         'label'             => 'ai: preset prompts',
         'route'             => '/ai/preset-prompts',
-        'skip'              => 'KNOWN-FAILURE FS-SMOKE-003: AIHelper::getPresetPrompts(string $type) ' .
-            'receives null when ?type= is omitted — uncaught TypeError. See tests/FIX-PLAN.md.',
         'requires_constant' => 'FLUENTSUPPORTPRO',
     ],
     [
@@ -1466,8 +1252,8 @@ return [
     ],
 
     // ---- advanced-reports (pro) ----
-    // from/to are validated by DateRangeValidationTrait: YYYY-MM-DD, from <= to,
-    // and a span of at most one year.
+    // from/to are Y-m-d dates; the audit endpoints also need from <= to and a
+    // span of at most one year.
     [
         'label'             => 'advanced-reports: ticket overview',
         'route'             => '/advanced-reports/ticket-overview',

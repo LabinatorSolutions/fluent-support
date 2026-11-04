@@ -12,12 +12,61 @@ abstract class BaseAIProvider
     public function __construct(string $apiKey, string $model)
     {
         $this->apiKey = $apiKey;
-        $this->model  = $model;
+        $this->model  = $this->resolveModel($model);
     }
 
     abstract public function getProviderName(): string;
 
     abstract public function getAvailableModels(): array;
+
+    /**
+     * The model used when "Default" is selected or the saved model is no longer offered.
+     */
+    abstract protected function getRecommendedModel(): string;
+
+    public function getDefaultModel(): string
+    {
+        return apply_filters('fluent_support/ai_default_model', $this->getRecommendedModel(), $this->getProviderName());
+    }
+
+    /**
+     * The models list for the settings page, with the "Default" option first.
+     */
+    public function getModelOptions(): array
+    {
+        $models       = $this->getAvailableModels();
+        $defaultModel = $this->getDefaultModel();
+        $defaultLabel = $defaultModel;
+
+        foreach ($models as $model) {
+            if ($model['value'] === $defaultModel) {
+                $defaultLabel = $model['label'];
+                break;
+            }
+        }
+
+        array_unshift($models, [
+            'value' => 'default',
+            /* translators: %s: name of the AI model the plugin picks, e.g. "Claude Sonnet 5.5" */
+            'label' => sprintf(__('Default (currently %s)', 'fluent-support'), $defaultLabel),
+        ]);
+
+        return $models;
+    }
+
+    private function resolveModel(string $model): string
+    {
+        if ($model === '' || $model === 'default') {
+            return $this->getDefaultModel();
+        }
+
+        // A model removed from the list (usually retired by the provider) falls back to the default
+        if (!in_array($model, array_column($this->getAvailableModels(), 'value'), true)) {
+            return $this->getDefaultModel();
+        }
+
+        return $model;
+    }
 
     /**
      * @param int    $ticketId

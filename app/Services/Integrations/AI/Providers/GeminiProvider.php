@@ -14,17 +14,21 @@ class GeminiProvider extends BaseAIProvider
         return 'Gemini';
     }
 
+    protected function getRecommendedModel(): string
+    {
+        return 'gemini-3.8-flash';
+    }
+
     public function getAvailableModels(): array
     {
         $models = [
-            ['value' => 'gemini-3.7-flash',      'label' => 'Gemini 3.7 Flash (Recommended)'],
+            ['value' => 'gemini-4-argon',        'label' => 'Gemini 4 Argon (Most Powerful)'],
+            ['value' => 'gemini-3.8-flash',      'label' => 'Gemini 3.8 Flash'],
+            ['value' => 'gemini-3.7-flash',      'label' => 'Gemini 3.7 Flash'],
             ['value' => 'gemini-3.6-flash',      'label' => 'Gemini 3.6 Flash'],
             ['value' => 'gemini-3.5-flash',      'label' => 'Gemini 3.5 Flash'],
             ['value' => 'gemini-3.5-flash-lite', 'label' => 'Gemini 3.5 Flash Lite (Fastest)'],
             ['value' => 'gemini-3.1-flash-lite', 'label' => 'Gemini 3.1 Flash Lite'],
-            ['value' => 'gemini-2.5-pro',        'label' => 'Gemini 2.5 Pro'],
-            ['value' => 'gemini-2.5-flash',      'label' => 'Gemini 2.5 Flash'],
-            ['value' => 'gemini-2.5-flash-lite', 'label' => 'Gemini 2.5 Flash Lite'],
         ];
 
         return apply_filters('fluent_support/supported_gemini_models', $models);

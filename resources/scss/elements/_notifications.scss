@@ -151,18 +151,6 @@
     padding-top: 14px;
 }
 
-.fs_notifications_view_all {
-    text-decoration: none;
-}
-
-.fs_notifications_view_all_button {
-    border-radius: 10px;
-    padding: 9px 16px;
-    border-color: var(--fs-border-default, #E1E4EA);
-    color: var(--fs-text-secondary, #525866);
-    font-weight: 500;
-}
-
 .fs_notifications_popover {
     width: min(500px, calc(100vw - 24px)) !important;
     padding: 16px 16px 14px;
@@ -192,6 +180,8 @@
     .fs_form_item:last-child,
     .el-form-item:last-child {
         margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: 0;
     }
 
     .fs_field_description {
@@ -201,12 +191,6 @@
         line-height: 16px;
         color: var(--fs-text-secondary, #525866);
         margin-left: 20px;
-    }
-
-    .fs_dialog_footer {
-        padding-top: 4px;
-        border-bottom: 0;
-        margin-bottom: 0;
     }
 
     .fs_inline_checkbox_label {
@@ -249,7 +233,7 @@
 .fs_notifications_page_list {
     display: flex;
     flex-direction: column;
-    background: var(--fs-bg-white, #FFFFFF);
+    background: var(--fs-bg-primary, #FFFFFF);
     border: 1px solid var(--fs-border-default, #E1E4EA);
     border-radius: 12px;
     overflow: hidden;

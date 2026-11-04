@@ -3,7 +3,7 @@ Contributors: techjewel, wpmanageninja, adreastrian
 Tags: wordpress support ticket, Support Ticket, support plugin, helpdesk, customer support plugin
 Requires at least: 5.6
 Tested up to: 7.1
-Stable tag: 2.4.0
+Stable tag: 2.5.0
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -286,6 +286,62 @@ No external connections are established, and all processing occurs within your o
 9. All Customers
 
 == Changelog ==
+= 2.5.0 (Date: November 2, 2026) =
+* Added: Scheduled Replies (Pro) — send later, then edit, send now or cancel
+* Added: System Admin Tools — Cron Job Monitor, Database Health and Data Cleanup
+* Added: Workflow editor shows each workflow as a flow of steps, with a run log (Pro)
+* Added: Site admins can edit customer messages to remove sensitive data
+* Added: Text/Markdown (.txt, .md) attachments
+* Improved: Email replies keep the ticket status, like portal replies (Pro)
+* Fixed: Report charts dropped the last day, and some counts were off
+* Fixed: Help Scout, Freshdesk and Zendesk migrations shifted afternoon times by 12 hours
+* Fixed: Timesheet filters and mailbox restrictions (Pro)
+* Fixed: Several workflow conditions and actions (Pro)
+* Fixed: Bulk replies lost formatting and links
+* Fixed: Emailed replies with only an attachment were rejected (Pro)
+* Fixed: UI and Dark Mode issues
+* Fixed: Security through ongoing audits and hardening.
+
+= 2.4.7 (Date: October 23, 2026) =
+* Added: Ticket list sidebar views with live counts (My Work, Needs Attention, Priority, Status, Saved Filters, Tags)
+* Added: Redesigned Customers list and profile with smart search, sorting and bulk block/unblock
+* Added: S3-compatible storage: DigitalOcean Spaces, Wasabi, Backblaze B2 and MinIO (Pro)
+* Added: "Default" AI model option that follows the recommended model
+* Improved: Faster admin; each page loads only its own code (about 73% less to download)
+* Improved: Dark Mode reworked across the plugin
+* Improved: Admin and Customer Portal now fit phones and tablets
+* Improved: Remote storage keeps Dropbox and Google Drive files private and delivers email attachments reliably (Pro)
+* Improved: Redesigned ticket activity, sidebar widgets and dashboard cards
+* Improved: AI reply drafts are shorter and in the customer's language (Pro)
+* Fixed: Piped emails showing raw HTML or entity text for some characters (Pro)
+* Fixed: Reply editor issues with saved drafts
+* Fixed: Wide images in a ticket getting cut off
+* Note: The Customer Portal ticket list is now a plain list (`.fs_ticket_list`, `.fs_ticket_item`) instead of a table, and the logout menu is a button. If your theme or custom CSS styled the old table markup, please review it
+* Note: Dropbox users may need to reconnect once to grant the new read permission (Pro)
+
+= 2.4.5 (Date: October 09, 2026) =
+* Added: Remote Portal (Pro) — serve the Customer Portal on your main site, connected with a one-time key
+* Added: Workflow triggers On Ticket Reopened, On Agent Response, On Agent Assigned and On Customer Feedback, plus Ticket Tags, Ticket Source, Agent Priority and Feedback conditions (Pro)
+* Added: Email piping handles auto-replies, bounces and automated mail with a loop guard, and threads replies by signed email references (Pro)
+* Added: Bulk actions to change priority or product, reopen tickets and remove tags
+* Added: Ticket view shortcuts for next/previous ticket and close, and a Ticket Stats sidebar widget
+* Added: Advanced filter by ticket source, and a "Waiting for your reply" badge in the Customer Portal
+* Added: Inbox From name can be the inbox name, the replying agent or a custom template
+* Added: MCP tools to edit, delete and publish draft replies, bulk reply, and a duplicate-reply guard
+* Added: `fluent_support/agent_feedback_received` action when a customer rates a reply
+* Improved: An agent reply is held for review when the customer wrote again while it was being typed
+* Improved: Agent signatures now come from the {{agent.signature}} smartcode in email templates
+* Improved: Customer Portal signup follows the WordPress "Anyone can register" setting and uses FluentAuth forms when available
+* Improved: Agent-initiated tickets read like an email from the agent
+* Improved: Faster dashboard, agent list and ticket view; all API dates in site time
+* Improved: Collapsible settings sidebar and translation coverage across the admin and portal
+* Fixed: Approved drafts are sent as their author, not the approver
+* Fixed: Importers calculate reply, first response and close times correctly
+* Fixed: Activity log cleanup deleted every log when retention was set to 0
+* Fixed: Auto-close without a response skipped close emails and workflows (Pro)
+* Fixed: Dropbox and Google Drive uploads failing after a token refresh (Pro)
+* Fixed: Security through ongoing audits and hardening.
+
 = 2.4.0 (Date: September 15, 2026) =
 * Added: Advanced Reports suite (Pro) — Ticket Overview, Agent Performance, Product Insight, Business Boxes and Activity reports with date-range filters and comparison charts
 * Added: AI Ticket Audit report (Pro) — audit tickets with OpenAI, Gemini or Anthropic and filter results by mood
@@ -499,378 +555,4 @@ No external connections are established, and all processing occurs within your o
 * Added: Multi-select option for product filtering in tickets.
 * Improved: Refined plugin performance for increased speed and efficiency.
 
-= 1.9.2 (Date: August 20, 2025) =
-* Added: Product assignment to tickets in Workflow Actions.
-* Added: Support for custom field data in Outgoing Webhooks.
-* Improved: Click-to-copy shortcode functionality on the Global Settings page.
-* Improved: Smart code selection dropdown in Email Settings with click-to-insert functionality in WP Editor.
-* Improved: Dash icon updated.
-* Fixed: CSRF issue fixed on Report Export – nonce verification.
-* Fixed: Error during AI activity log cleanup.
-
-= 1.9.1 (Date: July 15, 2025) =
-* Improved: After selecting the portal page, it now displays the page name along with the page ID.
-* Improved: Enhanced data validation when creating a customer through the "Create Ticket on Behalf of Customer" module.
-* Improved: Added a filter to control the display of bottom borders in email templates.
-* Fixed: Custom field “required” validation not working under certain conditions.
-* Fixed: Start date does not display correctly in the Paid Memberships Pro widget.
-* Fixed: Design conflict with the Blocksy theme in the customer portal.
-* Fixed: Translation issues across various modules.
-* Fixed: Agents unable to edit additional data fields.
-* Fixed: Custom fields do not render properly in the admin portal when creating a ticket on behalf of a customer.
-* Fixed: Selected product displayed as ID instead of name in view ticket module.
-* Fixed: Change customer option showed only the current customer ID instead of the full list.
-* Fixed: Workflow didn’t work when Fluent Community plugin was inactive.
-* Fixed: Attachment access issue on symlinked servers using realpath.
-
-= 1.9.0 (Date: May 28, 2025) =
-* Added: Integration with Fluent Community. (Pro)
-* Added: Informational replies on admin ticket responses.
-* Added: Help Scout, Freshdesk & Zendesk Ticket Migration Now Available in Free Version.
-* Improved: Internal note functionality now works for closed tickets.
-* Improved: Responses in closed tickets can now be edited.
-* Fixed: Error message shown for the Priority field when the Product is required in the customer portal.
-* Fixed: Fatal error triggered by the Share Essentials weekly cron job.
-* Fixed: Customer responses not displaying in agent response stats within agent reports.
-* Fixed: Incorrect ticket response count shown in today's stats.
-* Fixed: Broken media upload CSS in the page editor caused by the [fluent_support_admin_portal] shortcode.
-* Fixed: "Waiting For Reply" filter not working in advanced filtering.
-* Fixed: Responsive issues in the Agent Portal.
-
-= 1.8.8 (Date: Apr 22, 2025) =
-* Fixed: Ticket status was not displaying correctly on the ticket view page in the customer portal.
-* Fixed: File types, quantity limits, and file sizes were not displaying correctly in the customer portal.
-* Fixed: Missing translations in the customer portal.
-* Fixed: Changes to ticket form configurations were not reflecting in the customer portal.
-* Fixed: Removed unnecessary API call on the customer portal page.
-* Fixed: Custom field not updating correctly via REST API.
-* Fixed: Issue with Fluent Form and Fluent CRM integration.
-* Fixed: Issues with updating actions in the workflow.
-* Fixed: Issue with conflicting forms in the customer portal's registration and password reset process.
-
-= 1.8.7 (Date: Mar 20, 2025) =
-* Improvement: Enhanced and refined the Customer Portal UI/UX.
-* Improvement: New block editor for the updated Customer Portal layout.
-* Improvement: Resume options for incomplete Freshdesk ticket migrations.
-* Fixed: Images pasted directly are deleted after some time.
-* Fixed: Unable to edit customers with no name in the customer list.
-* Fixed: Attachment issue when creating a ticket from Fluent Forms.
-* Fixed: Issue with unchecking agent permissions.
-* Fixed: Missing option to delete custom fields during creation.
-* Fixed: Creating an action in a workflow also creates a duplicate action.
-* Fixed: Advanced filter does not work when a multi-select option is selected.
-* Fixed: Unable to assign users to a new business box if the current one is restricted to agents.
-* Fixed: Product not displaying in WooCommerce widget.
-* Fixed: Conditional logic for custom fields not working properly when creating a ticket from the admin portal.
-* Fixed: Direct copy-paste of images was not functioning properly in multisite.
-
-= 1.8.6 (Date: Feb 28, 2025) =
-* Fixed: Textdomain Consistency: Standardized all translation string textdomains across the plugin for better internationalization support.
-* Fixed: Enhanced Security: Implemented proper data escaping and improve overall plugin security.
-* Fixed: Media Protection: Reinforced security measures for attachment uploads by restricting direct access to image directories and implementing proper file path validation.
-
-= 1.8.5 (Date: Dec 26, 2024) =
-* Added: Agent Time Tracking (Pro)
-* Added: Saved search (Pro)
-* Added: Keyboard Shortcuts
-* Fixed: Issue where the Customer Portal's rich text editor reverted to a basic editor upon reload.
-* Fixed: Recaptcha functionality issue in the Customer Portal.
-* Fixed: WorkFlow action sequence title issue.
-* Fixed: Issue where embedded content appeared in preformatted form in the reply message after reloading.
-* Fixed: Compatibility issue with the Sequential Order Plugin.
-* Fixed: 404 error page not showing when an incorrect ticket number is entered in the ticket view URL.
-* Fixed: Error message displaying when the Customer Portal loads.
-* Fixed: Notes within a closed ticket becoming non-editable.
-* Fixed: Restricted agents being incorrectly assigned to a mailbox through the ticket dashboard's bulk action feature.
-* Fixed: Email verification message translation and verification message hooks not functioning properly.
-
-= 1.8.4 (Date: Sep 27, 2024) =
-* Hot-fix: Fixed issue with Activity logs cleanup
-
-= 1.8.3 (Date: Sep 25, 2024) =
-* Added: Workflow action sequence (Pro)
-* Added: Direct paste image in WP Editor
-* Fixed: Required sign not visible for product options marked as required during ticket creation
-* Fixed: Reply button toggle option not working in the admin portal
-* Fixed: Issue with the route URL on the All Tickets page
-* Fixed: Filter not refreshing in the Customer Portal after clicking the (❌) icon in the search field
-* Fixed: OpenAI routing issue resolved
-* Fixed: CSS issue related to ticket filter theme in the Customer Portal
-* Fixed: Responsive issue on the view ticket page
-* Fixed: After importing tickets from another SaaS platform, the agent is imported but not synchronized with the system
-
-= 1.8.1 (Date: Sep 10, 2024) =
-* Fixed - Email verification vulnerability issue in signup
-* Fixed - Customer portal ticket fetching vulnerability issue
-
-= 1.8.0 (Date: Aug 15, 2024) =
-* Added - Integration with OpenAI (Pro)
-* Added - Product Filter and sorting option in customer portal
-* Added - Email verification in sighup for customer
-* Added - Two-FA in signing for customer
-* Fixed - Freshdesk ticket migration issue
-* Fixed - Response message not being saved correctly in the auto-close settings
-* Fixed - Data remaining in the "Create Customer" form after creating a customer in the Customers module
-* Fixed - Form not resetting after creating a new ticket on behalf of a customer from the dashboard by support staff
-* Fixed - Shortcode always being pasted below the content
-* Fixed - Tickets still being deletable even when the "Delete Ticket" permission is unchecked
-* Fixed - Workflow issue when the ticket-closing condition is triggered
-
-= 1.7.90 (Date: May 28, 2024) =
-* Added - Activity Trends by Time of Day (Pro)
-* Added - Integration with Fluent Boards (Pro)
-* Added - Integrations Logs
-* Added - Upload ticket attachments to their respective ticket folders in Google Drive, organized accordingly (Pro)
-* Added - Duplicate or clone workflows (Pro)
-* Added - Required option  in product field (Pro)
-* Fixed - If the site language is not set to English, the workflow always defaults to manual mode
-* Fixed - Inbox identifier css issue in all tickets table
-* Fixed - If anyone choose View dashboard and draft_reply then it will not show any tickets
-* Fixed - Freshdesk ticket migration issue
-* Fixed - Zendesk ticket migration issue
-* Fixed - Clicking the "Import Tickets" button in the ticket migration module opens multiple modals simultaneously
-* Fixed - Issue with Bookmark
-* Fixed - When the file name is too long, the file will not upload during ticket creation or in responses
-* Fixed - If a restriction is applied to a specific business box, it still appears on the dashboard
-* Fixed - MemberPress integration to show separate lists for recurring and non-recurring subscriptions
-* Fixed - The WooCommerce widget is not shown on the 'View Customer' page
-
-= 1.7.80 (Date: April 3, 2024) =
-* Added - Restrict business boxes for specific agents
-* Added - Ticket search feature in customer portal
-* Added - MemberPress Integration
-* Added - Option to resume the migration process for the last incomplete ticket in Helpscout (Pro)
-* Added - Display the exact time of ticket or response creation upon hovering over it in the admin portal
-* Fixed - Attachment download issue in email piping
-* Fixed - BetterDocs integration issue
-* Fixed - Agent Only field isn't displaying into the ticket
-* Fixed - Draft Reply approve button issue with attachment
-* Fixed - There is an issue with exporting the agent report time
-* Fixed - The Gravatar image link is causing a PHP 8.2 deprecated issue
-* Fixed - The issue with the "Enable Reply from Telegram" button in Telegram
-* Fixed - The Auto Close Settings are not saving
-* Fixed - Helpscout ticket migration issue
-* Fixed - When responding to emails in German, create a new ticket instead of replying.
-
-= 1.7.72 (Date: January 10, 2024) =
-* Fixed - Notification integration settings issue
-* Fixed - Displaying an incorrect assigned agent name
-* Fixed - Links open in same tab issue
-* Fixed - Telegram reply issue
-* Fixed - Required functionality is not working in the conditional field
-* Fixed - Ticket status issue
-
-= 1.7.7 (Date: December 13, 2023) =
-* Added - Trigger Fluent CRM automation within workflow (Pro)
-* Added - Agent feedback in ticket response (Pro)
-* Added - Agent permission for save response as draft
-* Added - New shortcode for agent title signature in the inbox settings
-* Added - Custom registration field using hooks
-* Fixed - Agent can assign ticket without permission
-* Fixed - The time duration displayed for ticket creation and response creation is inconsistent
-* Fixed - Open a new thread in email for every response created
-* Fixed - Translation issue
-* MySQL orderby security issue fixed
-
-= 1.7.6 (Date: November 07, 2023) =
-* Improved File Upload
-* Improved UI
-
-= 1.7.5 (Date: November 01, 2023) =
-* Fixed - Update and delete customer profile issue
-* Fixed - Reset avatar issue for customer and agent
-* Fixed - Ticket id not included in outgoing webhook
-* Fixed - Update and delete issue in saved reply
-
-= 1.7.4 (Date: October 31, 2023) =
-* Added - Gutenberg block editor support for customer portal
-* Added - Option to set additional fields in register form
-* Added - Agent assigns permission for support staff
-* Fixed - Added a few missing translations
-* Fixed - "not contain" condition does not work in the workflow
-* Fixed - Ticket delete button is only shown in the Pro version
-* Fixed - Freshdesk migrator issue fixing
-* Fixed - File upload and view issue for 3rd party
-* Improved - Ticket ordering in the customer portal
-* Improved - Implemented 404 page for invalid ticket id
-
-
-= 1.7.3 (Date: August 23, 2023) =
-* Added - Option to delete ticket from inside view ticket
-* Added - Re-design permission page
-* Added - Report by Product(Pro)
-* Added - Report by Business Inbox(Pro)
-* Added - Support RTL email template
-* Fixed - Hide agent performance report from dashboard if the user doesn't have permission
-* Fixed - Tickets page - search not working in some case
-* Fixed - Issue in Customer Fields required with conditions(Pro)
-* Fixed - Save as draft in reply ticket not working
-* Fixed - Manage Customer - upload avatar for customer not working
-* Fixed - Add media button is not working for wp-editor
-* Fixed - Attachment not working from email for 3rd party(Pro)
-* Fixed - The issues in inner sidebar while route changing
-
-= 1.7.2 (Date: July 17, 2023) =
-* Fixed - Create ticket issue for required fields
-* Fixed - Edit button in draft mode
-* Fixed - Add cc or Discard cc button not showing
-
-= 1.7.1 (Date: July 15, 2023) =
-* File Attachment view issue fixed
-* remove error_log for debugging
-
-= 1.7.0 (Date: July 14, 2023) =
-* Added - Effortless draft mode and auto save functionality
-* Added - Option to set maximum file upload limit
-* Added - Option to set dedicated business box for webhook(Pro)
-* Added - Option to set as default business box
-* Added - Option to set business box in the customer portal shortcode
-* Added - Option to upload file in the ticket create form
-* Added - Business box added in the workflow action and condition list (Pro)
-* Added - Option to merge multiple tickets at the same time
-* Added - Summary by agent report on the dashboard
-* Added - Email CC support(Pro)
-* Added - Support file attachment upload in third party (Google Drive and Dropbox)(Pro)
-* Added - Zendesk migrator(Pro)
-* Fixed - Exception handled in route issue
-* Fixed - Edit reply issue
-* Fixed - Workflow action ordering issue (Pro)
-* Fixed - Custom field required in conditional form (Pro)
-* Fixed - Conditional form rendering issue (Pro)
-* Fixed - Ticket create using API endpoint (Pro)
-* Fixed - Freshdesk migrator issue (Pro)
-* More improvements
-
-= 1.6.9 (Date: March 16, 2023) =
-* Added - Google reCAPTCHA support
-* Added - Custom field required or optional (Pro)
-* Added - Custom field in the workflow condition (Pro)
-* Added - Saved replies templates in auto ticket close module (Pro)
-* Added - Saved replies templates in the workflow (Pro)
-* Fixed - Fluent CRM widget missing issue (Pro)
-* Fixed - Ticket merge popup issue (Pro)
-* Fixed - Delete action of manual workflow (Pro)
-* More improvements
-
-= 1.6.8 (Date: February 14, 2023) =
-* Added - notify user when agent create a ticket on behalf of them
-* Fixed - custom fields issues while creating ticket from Fluent Forms
-* Fixed - issue with Shortcode
-* Fixed - issue on ticket close
-* Fixed - Issue with telegram reply (Pro)
-* Fixed - Support staff not assigned to ticket via workflow (Pro)
-* Fixed - Frontend agent portal issues (Pro)
-* Added - Migrate Tickets from Freshdesk (Pro)
-* Added - Toggle to stop auto close bookmarked tickets (Pro)
-* More Bug Fixes and Improvements
-
-
-= 1.6.7 (Date: November 24, 2022) =
-* Migrate Tickets from JS Help Desk
-* Agent Assignee Record on Activity
-* Dynamic Dashboard
-* Agent Summary Exporter (Pro)
-* Migrate Tickets from Help Scout (Pro)
-* WooCommerce Purchase History Widget Redesigned (Pro)
-* Bug Fixes and Improvements
-
-= 1.6.6 (Date: October, 2022) =
-* Activity Log Filters
-* Active Tickets for Products
-* Waiting Tickets stat on Dashboard
-* Hourly Reports for tickets activity
-* New Trigger – Ticket Closed on Automation (Pro)
-* Close Ticket Silently (without triggering emails)
-* Migrate Tickets from Awesome Support
-* Migrate Tickets from SupportCandy
-* Bug Fixes and Improvements
-
-= 1.6.5 (Date: August 24, 2022) =
-* Added Auto Close Ticket Module based on ticket inactivity days (Pro)
-* Improved Saved Replies. Now you can add more replies (Pro)
-* Styling Improvements
-* Fixed Few minor issues on integrations
-
-= 1.6.2 (Date: August 22, 2022) =
-* Fixed fiw minor bugs regarding data sanitizations
-* Saved Replies issues Fixed
-* All external links are will open in new tab
-* Auto Linking linkable contents
-* Create new ticket flow improved from agent side
-
-= 1.6.1 (Date: August 19, 2022) =
-* Added - Ticket create action in FluentCRM
-* Added - FluentCRM list on ticket sidebar
-* Added - Fluent Support ticket summary in WP Dashboard toolbar
-* Added - Fluent Support ticket summary in WP Dashboard toolbar
-* Added - Fluent Support summary WP Dashboard Widget
-* Fixed - Customer ticket creation page disappear on page reload
-* Improvement - Security
-* Improvement - Code Base
-
-= 1.5.7 (Date: July 07, 2022) =
-* Added - Customer Logout Feature
-* Added - Customer Password Reset Feature
-* Added - Avatar Reset Feature
-* Improvement - Code Base
-
-= 1.5.6 (Date: May 26, 2022) =
-* Improvement - Code Base
-* Fixed - Image alignment issue in email template
-* Fixed - Editor issue inside modal popup
-* Fixed - Customer avatar doesn't display in customer portal
-* Fixed - Customer WP Profile Update doesn't Reflect in Fluent Support Customer Profile
-
-= 1.5.5 (Date: March 02, 2022) =
-* Added - GDPR compliance and WordPress Data-Export API
-* Added - Today's stats of tickets
-* Added - Attachment support in email notification
-* Added - Ticket moving feature from one mailbox to another
-* Fixed - Conflict while creating ticket from agent-end in some specific servers
-
-= 1.5.4 (Date: January 19, 2022) =
-* Added - Email notification on ticket assign
-* Added - Ticket priority selection in Fluent Forms integration
-* Added - Customer profile picture changing option in agent area
-* Added - Customer registration on ticket creation from agent area
-* Added - WordPress user registration on ticket creation from agent area
-* Added - Plugin PHP API
-* Added - Ticket customer changing option from agent dashboard
-* Added - Missing translations
-* Authentication Improvements
-* Fixed - Attachment issue
-* Fixed - Email notification not sending to customer when agent reply to a ticket
-
-= 1.5.3 (Date: November 22, 2021) =
-* Preview text issue fixed
-* Support for Non-Latin chars
-* Customer Delete Feature added
-
-= 1.5.2 (Date: November 17, 2021) =
-* File upload bug issue fixed
-* Ticket priority display issue fixed fixed
-
-= 1.5.1 (Date: November 16, 2021) =
-* Fix Registration shortcode fixed
-
-= 1.5.0 (Date: November 16, 2021) =
-* Save notifications improvement
-* Enforcing hook names convention
-* The final release for public launch
-
-= 1.4.6 (Date: November 15, 2021) =
-* UI & UX Improvements
-* Added Signup and Login Form
-* Fully Translation Ready
-
-= 1.4.2 (Date: November 14, 2021) =
-* UI Improvements
-* Data Syncing Issue Fixed
-
-= 1.4.1 (Date: November 13, 2021) =
-* Remove Fluent Forms Dependencies
-* Deep integration with FluentCRM
-* UI Improvements
-
-= 1.4.0 (Date: November 12, 2021) =
-* Initial Release
+The full changelog for every version is at [docs.fluentsupport.com/change-log](https://docs.fluentsupport.com/change-log).

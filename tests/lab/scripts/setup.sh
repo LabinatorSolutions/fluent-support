@@ -50,6 +50,16 @@ printf 'Activating Fluent Support (free, then pro)...\n'
 wp_cli plugin activate fluent-support >/dev/null
 wp_cli plugin activate fluent-support-pro >/dev/null
 
+# WooCommerce backs the pro WooCommerce widget suite (86), which skips without it.
+printf 'Installing WooCommerce...\n'
+wp_cli plugin is-installed woocommerce || wp_cli plugin install woocommerce >/dev/null
+wp_cli plugin activate woocommerce >/dev/null
+
+# FluentCRM backs the FluentCRM settings E2E spec, which fails without it.
+printf 'Installing FluentCRM...\n'
+wp_cli plugin is-installed fluent-crm || wp_cli plugin install fluent-crm >/dev/null
+wp_cli plugin activate fluent-crm >/dev/null
+
 printf 'Seeding lab fixtures...\n'
 wp_cli eval-file wp-content/plugins/fluent-support/tests/lab/seed.php
 

@@ -17,8 +17,10 @@ class FileSystem
     }
 
     /**
-     * Read file content from custom upload dir of this application
-     * @return string [path]
+     * Read a file from the plugin's upload dir. Only the basename of $file is used.
+     *
+     * @param string $file
+     * @return string|false
      */
     public function _get($file)
     {
@@ -30,8 +32,7 @@ class FileSystem
     }
 
     /**
-     * Get custom upload dir name of this application
-     * @return string [directory path]
+     * @return string Absolute path of the plugin's upload dir.
      */
     public function _getDir()
     {
@@ -41,8 +42,8 @@ class FileSystem
     }
 
     /**
-     * Get absolute path of file using custom upload dir name of this application
-     * @return string [file path]
+     * @param string $file
+     * @return string
      */
     public function _getAbsolutePathOfFile($file)
     {
@@ -50,7 +51,6 @@ class FileSystem
     }
 
     /**
-     * Upload files into custom upload dir of this application
      * @return array
      */
     public function _uploadFromRequest()
@@ -59,7 +59,6 @@ class FileSystem
     }
 
     /**
-     * Upload files into custom upload dir of this application
      * @param array $files
      * @return array
      */
@@ -84,7 +83,9 @@ class FileSystem
             }
 
             $extraData = Arr::only($filesArray, ['name', 'size']);
+            add_filter('upload_mimes', [self::class, 'allowTicketMimes']);
             $uploadsData = \wp_handle_upload($filesArray, $uploadOverrides);
+            remove_filter('upload_mimes', [self::class, 'allowTicketMimes']);
             $uploadedFiles[] = array_merge($extraData, $uploadsData);
         }
 
@@ -107,16 +108,52 @@ class FileSystem
     public function _putAsContent($fileName, $fileContent)
     {
         add_filter('upload_dir', [$this, '_setCustomUploadDir']);
+        add_filter('upload_mimes', [self::class, 'allowTicketMimes']);
         $item = wp_upload_bits($fileName, null, $fileContent);
+        remove_filter('upload_mimes', [self::class, 'allowTicketMimes']);
         remove_filter('upload_dir', [$this, '_setCustomUploadDir']);
         return $item;
     }
 
     /**
-     * Copy a file from custom upload directory of this application
-     * @param string $source file path
-     * @param int $ticketId
-     * @return array | boolean
+     * upload_mimes callback, added only around the plugin's own writes so the rest of
+     * the site (Media Library, other plugins) keeps core's list. Core has no JSON or
+     * Markdown entry. Markdown maps to text/plain because wp_check_filetype_and_ext()
+     * reads a Markdown file's real type as text/plain and refuses any other mapping.
+     * Whether a ticket accepts the file is still decided by the accepted file types setting.
+     *
+     * @param array $mimes
+     * @return array
+     */
+    public static function allowTicketMimes($mimes)
+    {
+        if (!isset($mimes['json'])) {
+            $mimes['json'] = 'application/json';
+        }
+
+        if (!isset($mimes['md|markdown'])) {
+            $mimes['md|markdown'] = 'text/plain';
+        }
+
+        return $mimes;
+    }
+
+    /**
+     * The types the plugin's own writes accept for the current user: WordPress's
+     * list plus allowTicketMimes(). For checks made before or after a write.
+     *
+     * @return array
+     */
+    public static function ticketMimeTypes()
+    {
+        return self::allowTicketMimes(get_allowed_mime_types());
+    }
+
+    /**
+     * Copy a file into the current sub dir of the plugin's upload dir.
+     *
+     * @param string $source Absolute file path
+     * @return array|false
      */
     public function _copy($source)
     {
@@ -150,7 +187,7 @@ class FileSystem
             $directory .= $folderName;
             if (!is_dir($directory)) {
                 @mkdir($directory, 0755);
-                // we should add index.php file to prevent directory listing
+                // Blank index.html prevents directory listing.
                 @file_put_contents($directory . DIRECTORY_SEPARATOR . 'index.html', '');
             }
         }
@@ -174,7 +211,8 @@ class FileSystem
     }
 
     /**
-     * Delete a file from custom upload directory of this application
+     * Only each file's basename is used.
+     *
      * @param array $files
      * @return void
      */
@@ -190,7 +228,7 @@ class FileSystem
     }
 
     /**
-     * Register filters for custom upload dir
+     * Route the next wp_handle_upload() into the plugin's upload dir.
      */
     public function _overrideUploadDir()
     {
@@ -210,7 +248,8 @@ class FileSystem
     }
 
     /**
-     * Set plugin's custom upload dir
+     * upload_dir filter callback.
+     *
      * @param array $param
      * @return array $param
      */
@@ -235,7 +274,6 @@ class FileSystem
 
         if (!is_dir($param['path'])) {
             @mkdir($param['path'], 0755);
-            // we should add index.php file to prevent directory listing
             @file_put_contents($param['basedir'] . $folderName . '/index.html', '');
         }
 
@@ -243,7 +281,8 @@ class FileSystem
     }
 
     /**
-     * Rename the uploaded file name before saving
+     * Prefix uploaded file names with a random token.
+     *
      * @param array $file
      * @return array $file
      */

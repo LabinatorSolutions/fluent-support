@@ -35,13 +35,12 @@ function _manually_load_plugin() {
 	require dirname( dirname( __FILE__ ) ) . '/fluent-support.php';
 	require dirname( dirname( __FILE__ ) ) . '/../fluent-support-pro/fluent-support-pro.php';
 
-	// Activation normally creates the fs_* tables. Nothing activates the plugin in
-	// the test run, and the app queries fs_meta while booting on plugins_loaded,
-	// so the schema has to exist before that hook fires.
+	// Nothing activates the plugin here, but boot queries fs_meta on
+	// plugins_loaded, so create the schema first.
 	\FluentSupport\Database\DBMigrator::run();
 
-	// The Application instance is only handed out through this action, and tests
-	// need it to construct framework Request objects.
+	// The Application instance is only exposed through this action. Tests need
+	// it to build framework Request objects.
 	add_action( 'fluent_support_loaded', function ( $app ) {
 		$GLOBALS['fluent_support_test_app'] = $app;
 	} );
@@ -52,10 +51,8 @@ tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
 // Start up the WP testing environment.
 require "{$_tests_dir}/includes/bootstrap.php";
 
-// These controllers only ever run inside a REST request. Controller::validate()
-// checks REST_REQUEST to decide whether to rethrow a ValidationException or hand it
-// to the exception handler, which responds and calls die() with a zero exit status —
-// that would end a test run silently green. Defining it keeps failures observable.
+// Without REST_REQUEST, Controller::validate() hands a ValidationException to the
+// exception handler, which calls die() with exit 0 and ends the run silently green.
 if ( ! defined( 'REST_REQUEST' ) ) {
 	define( 'REST_REQUEST', true );
 }

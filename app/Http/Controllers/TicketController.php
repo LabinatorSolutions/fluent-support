@@ -2,63 +2,56 @@
 
 namespace FluentSupport\App\Http\Controllers;
 
+use FluentSupport\App\Modules\Auth\AuthService;
 use FluentSupport\App\Models\Agent;
-use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Meta;
+use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\Framework\Http\Request\Request;
 use FluentSupport\Framework\Support\Arr;
 use FluentSupport\App\Http\Requests\TicketRequest;
-use FluentSupport\App\Http\Requests\TicketResponseRequest;
-use FluentSupport\App\Models\Conversation;
-use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Product;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Services\FluentCRMServices;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\ProfileInfoService;
 use FluentSupport\App\Services\TicketHelper;
-use FluentSupport\App\Services\TicketQueryService;
+use FluentSupport\App\Modules\Customers\CustomerService;
 use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Tickets\AgentTicketAccess;
-use FluentSupport\App\Services\Tickets\ResponseService;
+use FluentSupport\App\Services\Tickets\TicketFormatter;
+use FluentSupport\App\Services\Tickets\TicketQuery;
 use FluentSupport\App\Models\AgentGroup;
 use FluentSupport\App\Services\Tickets\TicketService;
+use FluentSupport\App\Services\Tickets\TicketStats;
 use FluentSupport\App\Services\Integrations\FluentBooking\FluentBookingService;
 
 /**
- *  TicketController class for REST API related to ticket
- * This class is responsible for getting / inserting/ modifying data for all request related to ticket
- * @package FluentSupport\App\Http\Controllers
- *
- * @version 1.0.0
+ * Agent-side REST endpoints for tickets.
  */
 class TicketController extends Controller
 {
     /**
-     * This `me` method will return the current user profile info
+     * Most tickets one bulk request may change. Above the largest list page
+     * size (150), so a full page always fits.
+     */
+    const MAX_BULK_TICKETS = 200;
+
+    /**
+     * Current user's profile, permissions and optionally the portal settings.
+     *
      * @param Request $request
      * @return array
      */
     public function me(Request $request)
     {
         $user = wp_get_current_user();
-        $requestData = $request->all();
-        $sanitizedRequest = [];
-        foreach ($requestData as $key => $value) {
-            if (is_array($value)) {
-                $sanitizedRequest[$key] = map_deep($value, 'sanitize_text_field');
-            } else {
-                $sanitizedRequest[$key] = sanitize_text_field($value);
-            }
-        }
 
         $settings = [
             'user_id'     => $user->ID,
             'email'       => $user->user_email,
             'person'      => Helper::getAgentByUserId($user->ID),
             'permissions' => PermissionManager::currentUserPermissions(),
-            'request'     => $sanitizedRequest
         ];
 
         if ($request->getSafe('with_portal_settings', 'sanitize_text_field')) {
@@ -83,42 +76,12 @@ class TicketController extends Controller
     }
 
     /**
-     * index method will return the list of ticket based on the selected filter
      * @param Request $request
      * @return array
      */
     public function index(Request $request)
     {
-        //Selected filter type, either simple or Advanced
-        $filterType = $request->getSafe('filter_type', 'sanitize_text_field', 'simple');
-
-        /*Prepare Query Arguments*/
-        $queryArgs = [
-            'with'        => [],
-            'filter_type' => $filterType,
-            'sort_by'     => sanitize_sql_orderby($request->getSafe('order_by', 'sanitize_text_field', 'id')),
-            'sort_type'   => $request->getSafe('order_type', 'sanitize_text_field', 'DESC') == 'DESC' ? 'DESC' : 'ASC',
-        ];
-
-        //If the selected filter type is advanced
-        if ($filterType == 'advanced') {
-            $advanced_filters = map_deep($request->get('advanced_filters', []), 'sanitize_text_field');
-            //Get the selected query params for advanced filter
-            $queryArgs['filters_groups_raw'] = json_decode($advanced_filters, true);
-        } else {
-            //Selected filter type is simple
-            $queryArgs['simple_filters'] = map_deep($request->get('filters', []), 'sanitize_text_field');
-            $queryArgs['search'] = trim($request->getSafe('search', 'sanitize_text_field', ''));
-
-            if ($customerId = $request->getSafe('customer_id', 'intval')) {
-                $queryArgs['customer_id'] = $customerId;
-            }
-        }
-        /*End Prepare Query Arguments*/
-
-        $ticketsModel = (new TicketQueryService($queryArgs))->getModel();
-
-        $ticketsModel = $ticketsModel->with([
+        $tickets = TicketQuery::fromRequest($request->all())->query()->with([
             'customer'         => function ($query) {
                 $query->select(['first_name', 'last_name', 'email', 'id', 'avatar']);
             }, 'agent'         => function ($query) {
@@ -130,16 +93,20 @@ class TicketController extends Controller
             'preview_response' => function ($query) {
                 $query->latest('id');
             }
-        ]);
+        ])->paginate();
 
-        // apply filters by access level
-        do_action_ref_array('fluent_support/tickets_query_by_permission_ref', [&$ticketsModel, false]);
+        TicketFormatter::listRows($tickets);
 
-        $tickets = $ticketsModel->paginate();
+        /**
+         * Filter a page of the ticket list before it is returned.
+         *
+         * @param \FluentSupport\Framework\Pagination\LengthAwarePaginator $tickets
+         */
+        $tickets = apply_filters('fluent_support/tickets_list', $tickets);
 
         $perPage = $request->getSafe('per_page', 'intval', 15);
 
-        // Load live activity for small page sizes (board/kanban view)
+        // Small pages come from the board view, which shows live activity.
         if ($perPage < 15) {
             TicketHelper::loadBatchLiveActivities($tickets);
         }
@@ -150,38 +117,46 @@ class TicketController extends Controller
     }
 
     /**
-     * createTicket method will create new ticket as well as customer or WP user
+     * Counts for the ticket list sidebar views, limited to tickets the current agent can see.
+     *
+     * @return array
+     */
+    public function getSidebarCounts()
+    {
+        $agent = Helper::getAgentByUserId();
+
+        if (!$agent) {
+            return $this->sendError([
+                'message' => __('Sorry, you do not have permission to view tickets.', 'fluent-support')
+            ], 403);
+        }
+
+        return [
+            'counts' => (new TicketStats())->getSidebarCounts($agent)
+        ];
+    }
+
+    /**
+     * Create a ticket, creating the customer and optionally a WP user first.
+     *
      * @param TicketRequest $request
      * @return array
      */
     public function createTicket(TicketRequest $request)
     {
         try {
-            //Sanitize and validate request data via TicketRequest
             $data = $request->sanitize();
             $ticketData = $data['ticket'];
             $maybeNewCustomer = Arr::get($data, 'newCustomer', []);
 
-            //Include attachments if provided
             if (!empty($data['attachments'])) {
                 $ticketData['attachments'] = $data['attachments'];
             }
 
-            /*
-             * If customer_id is not provided, attempt to create a new customer
-             * This handles WP user creation and customer creation
-             */
             if (empty($ticketData['customer_id'])) {
-                $createdUserId = false;
-
-                //If user selected create WP user during ticket creation
-                if (Arr::get($ticketData, 'create_wp_user') == 'yes' && !empty($maybeNewCustomer['username'])) {
-                    //Check if username already in use, if not create new user
-                    if (!username_exists($maybeNewCustomer['username'])) {
-                        $authController = new AuthController();
-                        $createdUserId = $authController->createUser($maybeNewCustomer);
-                        $authController->maybeUpdateUser($createdUserId, $maybeNewCustomer);
-                    }
+                // findOrCreate() below links the new customer to this user by email.
+                if (Arr::get($ticketData, 'create_wp_user') == 'yes' && !empty($maybeNewCustomer['username']) && !username_exists($maybeNewCustomer['username'])) {
+                    AuthService::createUser($maybeNewCustomer);
                 }
 
                 $email = Arr::get($maybeNewCustomer, 'email');
@@ -191,36 +166,31 @@ class TicketController extends Controller
                     ]);
                 }
 
-                //Check if customer already exists by email
-                $existingCustomer = Customer::where('email', $email)->first();
-
-                if ($existingCustomer) {
-                    $ticketData['customer_id'] = $existingCustomer->id;
-                } else {
-                    //Create the customer now
-                    $customerData = Arr::only($maybeNewCustomer, (new Customer())->getFillable());
-                    $customerData['user_id'] = $createdUserId;
-                    $customerData = array_filter($customerData);
-
-                    $createCustomer = Customer::create($customerData);
-
-                    do_action('fluent_support/customer_created', $createCustomer);
-
-                    if (!$createCustomer) {
-                        return $this->sendError([
-                            'message' => __('Customer could not be created', 'fluent-support')
-                        ]);
-                    }
-
-                    $ticketData['customer_id'] = $createCustomer->id;
+                // An existing customer with this email is reused as it is; a new one gets the
+                // form's name and email and is linked to the WordPress user with the email
+                // (made just above when asked). Nothing else the request sends is written.
+                $customer = CustomerService::find(['email' => $email])
+                    ?: CustomerService::findOrCreate(Arr::only($maybeNewCustomer, ['first_name', 'last_name', 'email']));
+                if (!$customer || !$customer->exists) {
+                    return $this->sendError([
+                        'message' => __('Customer could not be created', 'fluent-support')
+                    ]);
                 }
+                $ticketData['customer_id'] = $customer->id;
             }
 
-            //Get customer information from db
+            // Creating a ticket for another agent is an assignment.
+            if (!PermissionManager::currentUserCan('fst_assign_agents')) {
+                unset($ticketData['agent_id']);
+            }
+
             $customer = Customer::findOrFail($ticketData['customer_id']);
 
-            //Sanitize, store ticket, handle attachments, fire hooks
             $createdTicket = (new TicketService())->storeTicket($ticketData, $customer);
+            // Loaded when the ticket was created with an agent.
+            if ($createdTicket->relationLoaded('agent')) {
+                TicketFormatter::person($createdTicket->agent);
+            }
 
             return [
                 'message' => __('Ticket has been created successfully', 'fluent-support'),
@@ -234,52 +204,71 @@ class TicketController extends Controller
     }
 
     /**
-     * getTicket method will return ticket information by ticket id
      * @param Request $request
-     * @param $ticket_id
+     * @param int $ticket_id
      * @return array
      */
     public function getTicket(Request $request, $ticket_id)
     {
         try {
-            //Get logged in agent information
             $agent = Helper::getAgentByUserId();
 
-            $ticketWith = $request->get('with');
-            $ticketWith = is_array($ticketWith) ? map_deep($ticketWith, 'sanitize_text_field') : null;
+            $defaultWith = ['customer', 'agent', 'product', 'mailbox', 'tags', 'attachments' => function ($q) {
+                $q->where('status', 'active');
+            }];
 
-            if (!$ticketWith) {
-                $ticketWith = ['customer', 'agent', 'product', 'mailbox', 'tags', 'attachments' => function ($q) {
-                    $q->where('status', 'active');
-                }];
+            // `with` may only narrow the default relations. The access check covers this
+            // ticket alone, so a nested name like customer.tickets would expose tickets
+            // outside the agent's scope.
+            $requestedWith = $request->get('with');
+            $ticketWith = [];
+            if (is_array($requestedWith)) {
+                foreach ($requestedWith as $relation) {
+                    if (!is_string($relation)) {
+                        continue;
+                    }
+                    if (isset($defaultWith[$relation])) {
+                        $ticketWith[$relation] = $defaultWith[$relation];
+                    } elseif (in_array($relation, $defaultWith, true)) {
+                        $ticketWith[] = $relation;
+                    }
+                }
             }
 
-            //Get ticket by id
+            if (!$ticketWith) {
+                $ticketWith = $defaultWith;
+            }
+
             $ticket = Ticket::with($ticketWith)->findOrFail($ticket_id);
 
-            //Eager load responses with their nested relations to avoid N+1 queries
-            $ticket->load(['responses' => function ($q) {
-                $q->with([
-                    'person',
-                    'ccinfo',
-                    'attachments' => function ($q) {
-                        $q->where('status', 'active');
-                    }
-                ]);
+            $responseWith = [
+                'person',
+                'ccinfo',
+                'attachments' => function ($q) {
+                    $q->where('status', 'active');
+                }
+            ];
+
+            $ticket->load(['responses' => function ($q) use ($responseWith) {
+                $q->with($responseWith);
             }]);
 
-            //Check if ticket is in a restricted mailbox
+            $scheduledRows = Conversation::where('ticket_id', $ticket->id)
+                ->where('conversation_type', 'schedule')
+                ->with($responseWith)
+                ->get();
+            $renderedRows = $ticket->responses->concat($scheduledRows);
+
             $restrictedBusinessBoxes = PermissionManager::getRestrictedMailboxIds();
 
             if (in_array($ticket->mailbox_id, $restrictedBusinessBoxes)) {
-                throw new \Exception(esc_html__('Ticket cannot be fetched due to restricted mailbox', 'fluent-support'));
+                throw new \Exception(esc_html__('Ticket cannot be fetched due to restricted mailbox', 'fluent-support'), 403);
             }
 
             $this->ensureCanAccessTicket($ticket);
 
-            //If ticket has customer, set custom fields and profile url
             if ($ticket->customer) {
-                $customFieldsKey = apply_filters('fluent_support/custom_registration_form_fields_key', Helper::getBusinessSettings('custom_registration_form_field'));
+                $customFieldsKey = Helper::getCustomRegistrationFieldKeys();
                 $ticket->customer->custom_field_keys = $customFieldsKey;
 
                 if ($ticket->customer->user_id) {
@@ -297,12 +286,10 @@ class TicketController extends Controller
                 $ticket->customer->profile_edit_url = $ticket->customer->getUserProfileEditUrl();
             }
 
-            //If ticket is closed, load closed by person
             if ($ticket->status == 'closed') {
                 $ticket->load('closed_by_person');
             }
 
-            //Load agent feedback ratings if pro is active and feature is enabled
             if (defined('FLUENTSUPPORTPRO_PLUGIN_VERSION') && Helper::isAgentFeedbackEnabled()) {
                 $responseIds = $ticket->responses->pluck('id')->toArray();
                 $feedbacks = Meta::where('object_type', 'conversation_meta')
@@ -319,15 +306,14 @@ class TicketController extends Controller
             }
 
             $contents = ['ticket' => $ticket->content];
-            foreach ($ticket->responses as $response) {
+            foreach ($renderedRows as $response) {
                 $contents['response_' . $response->id] = $response->content;
             }
 
             $contents = Helper::refreshSignedAttachmentUrlsInContents($contents, $ticket->id);
             $ticket->content = $contents['ticket'];
 
-            //Format response content
-            foreach ($ticket->responses as $response) {
+            foreach ($renderedRows as $response) {
                 $responseKey = 'response_' . $response->id;
                 if (isset($contents[$responseKey])) {
                     $response->content = $contents[$responseKey];
@@ -345,7 +331,6 @@ class TicketController extends Controller
                 } else {
                     $responseContent = links_add_target(make_clickable(wpautop($responseContent, false)));
                 }
-
 
                 $response->content = apply_filters(
                     'fluent_support/response_content_after_render',
@@ -380,10 +365,8 @@ class TicketController extends Controller
                 $ticket
             );
 
-            //Get last activity by agent
             $ticket->live_activity = TicketHelper::getActivity($ticket->id, $agent->id);
 
-            //Get all carbon copy customer
             $ccInfo = $ticket->getSettingsValue('cc_email', []);
             $ticket->carbon_copy = !empty($ccInfo) ? implode(', ', $ccInfo) : '';
 
@@ -391,17 +374,30 @@ class TicketController extends Controller
                 $ticket->custom_fields = $ticket->customData('admin', true);
             }
 
-            // Load agent info if ticket was created on behalf of customer
+            // Set when an agent opened the ticket on the customer's behalf.
             if ($ticket->created_by) {
                 $ticket->load('created_by_person');
                 if ($ticket->created_by_person) {
-                    $isAgentInitiated = strpos($ticket->content, __(' initialized this ticket', 'fluent-support')) !== false;
+                    $isAgentInitiated = $ticket instanceof Ticket && $ticket->isAgentInitiated();
                     $ticket->created_by_agent = [
                         'id'        => $ticket->created_by_person->id,
                         'full_name' => $ticket->created_by_person->full_name,
                         'agent_initiated' => $isAgentInitiated,
                     ];
                 }
+                $ticket->unsetRelation('created_by_person');
+            }
+
+            foreach ($renderedRows as $response) {
+                TicketFormatter::person($response->person);
+            }
+
+            if ($ticket->relationLoaded('agent')) {
+                TicketFormatter::person($ticket->agent);
+            }
+
+            if ($ticket->relationLoaded('closed_by_person')) {
+                TicketFormatter::person($ticket->closed_by_person);
             }
 
             $data = [
@@ -421,7 +417,14 @@ class TicketController extends Controller
                 $data['fluentcrm_profile'] = Helper::getFluentCrmContactData($ticket->customer);
             }
 
-            return $data;
+            /**
+             * Filter the ticket view response.
+             *
+             * @param array $data
+             * @param \FluentSupport\Framework\Database\Orm\Model $ticket The viewed ticket
+             * @param \FluentSupport\Framework\Support\Collection $scheduledRows Rendered unsent scheduled replies, left out of `responses`
+             */
+            return apply_filters('fluent_support/ticket_view_data', $data, $ticket, $scheduledRows);
         } catch (\Exception $e) {
             return $this->sendError([
                 'message' => Helper::getSafeErrorMessage($e)
@@ -435,7 +438,7 @@ class TicketController extends Controller
             $ticket = Ticket::findOrFail($ticket_id);
 
             if (in_array($ticket->mailbox_id, PermissionManager::getRestrictedMailboxIds())) {
-                throw new \Exception(esc_html__('Ticket cannot be fetched due to restricted mailbox', 'fluent-support'));
+                throw new \Exception(esc_html__('Ticket cannot be fetched due to restricted mailbox', 'fluent-support'), 403);
             }
 
             $this->ensureCanAccessTicket($ticket);
@@ -508,66 +511,10 @@ class TicketController extends Controller
         return $restrictions;
     }
 
-    /**
-     * createResponse method will create response by agent for the ticket
-     * @param Request $request
-     * @param Ticket $ticket
-     * @param int $ticket_id
-     * @return array
-     * @throws \FluentSupport\Framework\Validator\ValidationException
-     */
-    public function createResponse(TicketResponseRequest $request, $ticket_id)
-    {
-        $data = $request->sanitize();
-
-        try {
-            $convoType = Arr::get($data, 'conversation_type', 'response');
-            $isDraft = $convoType === 'draft_response';
-
-            if (!$isDraft) {
-                $this->ensureCanManageTickets();
-            }
-
-            //Get logged-in agent information
-            $agent = Helper::getAgentByUserId();
-
-            if (!$agent) {
-                return $this->sendError([
-                    'message' => __('Sorry, You do not have permission. Please add yourself as support agent first', 'fluent-support')
-                ]);
-            }
-
-            $ticket = Ticket::findOrFail($ticket_id);
-
-            $this->ensureCanAccessTicket($ticket);
-
-            $responseData = (new ResponseService())->createResponse($data, $agent, $ticket);
-
-            $responseData['response']->content = Helper::refreshSignedAttachmentUrls($responseData['response']->content, $ticket->id);
-            $responseData['response']->load([
-                'attachments' => function ($q) {
-                    $q->where('status', 'active');
-                }
-            ]);
-            $responseData['response']->content = wp_specialchars_decode(wpautop($responseData['response']->content, false));
-
-            return [
-                'message'     => __('Response has been added', 'fluent-support'),
-                'response'    => $responseData['response'],
-                'ticket'      => $responseData['ticket'],
-                'update_data' => $responseData['update_data']
-            ];
-        } catch (\Exception $e) {
-            return $this->sendError([
-                'message' => Helper::getSafeErrorMessage($e)
-            ]);
-        }
-    }
-
     public function getFluentBookingEventTypes()
     {
         try {
-            // All FluentBooking endpoints require manage permission; view-only agents cannot call a meeting.
+            // All FluentBooking endpoints need manage permission. View-only agents can't book meetings.
             $this->ensureCanManageTickets();
 
             $service = new FluentBookingService();
@@ -587,12 +534,10 @@ class TicketController extends Controller
     public function createFluentBookingLink(Request $request, $ticket_id)
     {
         try {
-            // All FluentBooking endpoints require manage permission; view-only agents cannot call a meeting.
             $this->ensureCanManageTickets();
 
             $ticket = Ticket::with('customer')->findOrFail($ticket_id);
 
-            // Enforces per-ticket visibility (e.g. own-tickets-only agents cannot access unassigned tickets).
             $this->ensureCanAccessTicket($ticket);
 
             $eventId = $request->getSafe('event_type_id', 'intval');
@@ -604,7 +549,7 @@ class TicketController extends Controller
             return (new FluentBookingService())->createBookingLink(
                 $ticket,
                 $eventId,
-                $request->getSafe('message', 'wp_kses_post'),
+                wp_kses_post(Helper::decodeNonMarkupEntities($request->get('message'))),
                 $request->get('selected_slots', []),
                 $request->getSafe('timezone', 'sanitize_text_field', '')
             );
@@ -618,12 +563,10 @@ class TicketController extends Controller
     public function getFluentBookingAvailability(Request $request, $ticket_id)
     {
         try {
-            // All FluentBooking endpoints require manage permission; view-only agents cannot call a meeting.
             $this->ensureCanManageTickets();
 
             $ticket = Ticket::with('customer')->findOrFail($ticket_id);
 
-            // Enforces per-ticket visibility (e.g. own-tickets-only agents cannot access unassigned tickets).
             $this->ensureCanAccessTicket($ticket);
 
             $eventId = $request->getSafe('event_type_id', 'intval');
@@ -653,12 +596,10 @@ class TicketController extends Controller
     public function getFluentBookingMeetings($ticket_id)
     {
         try {
-            // All FluentBooking endpoints require manage permission; view-only agents cannot call a meeting.
             $this->ensureCanManageTickets();
 
             $ticket = Ticket::with('customer')->findOrFail($ticket_id);
 
-            // Enforces per-ticket visibility (e.g. own-tickets-only agents cannot access unassigned tickets).
             $this->ensureCanAccessTicket($ticket);
 
             return [
@@ -672,160 +613,15 @@ class TicketController extends Controller
     }
 
     /**
-     * createDraft method will create draft by agent for the ticket
+     * The customer's other tickets, plus extra profile widgets on request.
+     *
      * @param Request $request
-     * @param Ticket $ticket
      * @param int $ticket_id
-     * @return array
-     * @throws \FluentSupport\Framework\Validator\ValidationException
-     */
-    public function createOrUpdatDraft(TicketResponseRequest $request, $ticket_id)
-    {
-        $data = $request->sanitize();
-
-        try {
-            //Get logged-in agent information
-            $agent = Helper::getAgentByUserId();
-
-            if (!$agent) {
-                return $this->sendError([
-                    'message' => __('Sorry, You do not have permission. Please add yourself as support agent first', 'fluent-support')
-                ]);
-            }
-
-            $ticket = Ticket::findOrFail($ticket_id);
-
-            $this->ensureCanAccessTicket($ticket);
-
-            $key = 'ticket_no_' . $ticket_id . '_agent_id_' . $agent->id . '_response_draft';
-            $previousDraft = Meta::where('key', $key)->first();
-
-            if ($data['draftID'] || $previousDraft) {
-                Meta::where('key', $key)->update([
-                    'value' => maybe_serialize($data)
-                ]);
-
-                return [
-                    'message' => __('Draft has been updated', 'fluent-support'),
-                    'draftID' => $data['draftID']
-                ];
-            }
-
-            $draftID = Meta::insertGetId([
-                'object_type' => '_fs_auto_draft',
-                'object_id'   => $ticket_id,
-                'key'         => $key,
-                'value'       => maybe_serialize($data)
-            ]);
-
-            return [
-                'message' => __('Draft has been added', 'fluent-support'),
-                'draftID' => $draftID
-            ];
-        } catch (\Exception $e) {
-            return $this->sendError([
-                'message' => Helper::getSafeErrorMessage($e)
-            ]);
-        }
-    }
-
-    public function getDraft($ticket_id)
-    {
-        try {
-            //Get logged-in agent information
-            $agent = Helper::getAgentByUserId();
-
-            if (!$agent) {
-                return $this->sendError([
-                    'message' => __('Sorry, You do not have permission. Please add yourself as support agent first', 'fluent-support')
-                ]);
-            }
-
-            $ticket = Ticket::findOrFail($ticket_id);
-
-            $this->ensureCanAccessTicket($ticket);
-
-            $key = 'ticket_no_' . $ticket_id . '_agent_id_' . $agent->id . '_response_draft';
-
-            $draft = Meta::where([
-                'object_type' => '_fs_auto_draft',
-                'key'         => $key,
-            ])->first();
-
-            if ($draft) {
-                $draft->value = Helper::safeUnserialize($draft->value);
-            }
-
-            return [
-                'draft' => $draft
-            ];
-        } catch (\Exception $e) {
-            return $this->sendError([
-                'message' => Helper::getSafeErrorMessage($e)
-            ]);
-        }
-    }
-
-    public function deleteDraft($draft_id)
-    {
-        $draft_id = intval($draft_id);
-
-        try {
-            $agent = Helper::getAgentByUserId();
-
-            if (!$agent) {
-                return $this->sendError([
-                    'message' => __('You do not have permission to perform this action', 'fluent-support'),
-                ]);
-            }
-
-            $draft = Meta::where('id', $draft_id)
-                ->where('object_type', '_fs_auto_draft')
-                ->first();
-
-            if (!$draft) {
-                return $this->sendError([
-                    'message' => __('Draft not found', 'fluent-support'),
-                ]);
-            }
-
-            // Authorize the ticket this draft belongs to (closes the mailbox/visibility
-            // dimension for managers deleting other agents' drafts).
-            $ticket = Ticket::findOrFail($draft->object_id);
-
-            $this->ensureCanAccessTicket($ticket);
-
-            // Verify ownership: draft key contains agent_id, only managers can delete others' drafts
-            $isOwnDraft = strpos($draft->key, '_agent_id_' . $agent->id . '_') !== false;
-
-            if (!$isOwnDraft && !PermissionManager::canManageTickets()) {
-                return $this->sendError([
-                    'message' => __('You do not have permission to delete this draft', 'fluent-support'),
-                ]);
-            }
-
-            $draft->delete();
-
-            return [
-                'message' => __('Discard draft successfully', 'fluent-support'),
-            ];
-        } catch (\Exception $e) {
-            return $this->sendError([
-                'message' => Helper::getSafeErrorMessage($e)
-            ]);
-        }
-    }
-
-    /**
-     * getTicketWidgets method generate additional information for a ticket by  customer
-     * @param Ticket $ticket
-     * @param $ticket_id
      * @return array
      */
     public function getTicketWidgets(Request $request, $ticket_id)
     {
         try {
-            //Get ticket with customer by ticket id
             $ticket = Ticket::with('customer')->findOrFail($ticket_id);
 
             $this->ensureCanAccessTicket($ticket);
@@ -834,15 +630,12 @@ class TicketController extends Controller
             $page    = max(1, absint($request->get('page', 1)));
             $offset  = ($page - 1) * $perPage;
 
-            $baseQuery = Ticket::where('id', '!=', $ticket_id)
-                ->where('customer_id', $ticket->customer_id);
-
-            (new AgentTicketAccess())->applyAccessScope($baseQuery);
+            $baseQuery = (new TicketQuery(['customer_id' => $ticket->customer_id, 'exclude_id' => $ticket_id, 'sort_by' => false]))->query();
 
             $total = $baseQuery->count();
 
             $otherTickets = (clone $baseQuery)
-                ->select(['id', 'title', 'status', 'created_at'])
+                ->select(['id', 'title', 'status', 'ticket_number', 'serial_number', 'created_at', 'updated_at'])
                 ->latest('id')
                 ->limit($perPage)
                 ->offset($offset)
@@ -867,10 +660,8 @@ class TicketController extends Controller
     }
 
     /**
-     * updateTicketProperty method will update ticket property
      * @param Request $request
-     * @param Ticket $ticket
-     * @param $ticket_id
+     * @param int $ticket_id
      * @return array
      */
     public function updateTicketProperty(Request $request, $ticket_id)
@@ -884,60 +675,24 @@ class TicketController extends Controller
             $propName = $request->getSafe('prop_name', 'sanitize_text_field');
             $propValue = $request->getSafe('prop_value', 'sanitize_text_field');
 
-            // This generic endpoint may only touch a fixed set of
-            // ticket columns. Previously prop_name was assigned straight onto the
-            // model ($ticket->{$propName} = $propValue), letting a caller rewrite
-            // ownership, mailbox, privacy, hash, serial_number, created_by and
-            // other sensitive columns and bypass $fillable entirely. Every
-            // property is now allowlisted and its value validated/capability-
-            // gated below; anything else is rejected outright.
+            // prop_name is assigned straight onto the model, so it must be allowlisted.
             if (!in_array($propName, $this->updatableTicketProperties(), true)) {
                 throw new \Exception(esc_html__('This ticket property cannot be updated.', 'fluent-support'), 403);
             }
 
             $propValue = $this->sanitizeTicketProperty($ticket, $propName, $propValue);
 
-            $prevValue = $ticket->{$propName};
-
-            if ($propName && $propValue !== null && $prevValue != $propValue) {
-                $ticket->{$propName} = $propValue;
-                $ticket->save();
-
-                // Log an internal note for status changes so the activity is
-                // traceable, mirroring the close/reopen flows.
-                if ($propName === 'status') {
-                    $statuses = Helper::ticketStatuses();
-                    $fromLabel = isset($statuses[$prevValue]) ? $statuses[$prevValue] : $prevValue;
-                    $toLabel = isset($statuses[$propValue]) ? $statuses[$propValue] : $propValue;
-
-                    $internalNote = sprintf(
-                        /* translators: 1: previous status, 2: new status */
-                        __('Ticket status changed from %1$s to %2$s', 'fluent-support'),
-                        esc_html($fromLabel),
-                        esc_html($toLabel)
-                    );
-
-                    Conversation::create([
-                        'ticket_id'         => $ticket->id,
-                        'person_id'         => $assigner->id,
-                        'conversation_type' => 'internal_info',
-                        'content'           => $internalNote
-                    ]);
-                }
-            }
-
             $updateData = [];
-
-            if ($propName == 'product_id') {
-                $ticket->load('product');
-                $updateData['product'] = $ticket->product;
-            } else if ($propName == 'agent_id') {
-                $previousAgentId = (int) $prevValue;
+            if ($propName == 'agent_id') {
+                (new TicketService())->assignAgent($ticket, Agent::findOrFail($propValue), $assigner);
                 $ticket->load('agent');
                 $updateData['agent'] = $ticket->agent;
-                $updateData['assigner'] = (new TicketService())->onAgentChange($ticket, $assigner);
-                if ($prevValue != $ticket->{$propName}) {
-                    do_action('fluent_support/agent_assigned_to_ticket', $ticket->agent, $ticket, $assigner, $previousAgentId);
+                $updateData['assigner'] = $assigner;
+            } else {
+                (new TicketService())->change($ticket, [$propName => $propValue], $assigner);
+                if ($propName == 'product_id') {
+                    $ticket->load('product');
+                    $updateData['product'] = $ticket->product;
                 }
             }
 
@@ -959,11 +714,52 @@ class TicketController extends Controller
     }
 
     /**
+     * Replaces the ticket's opening message. Site admins only (AgentTicketPolicy),
+     * to remove sensitive data the customer sent.
+     *
+     * @param Request $request
+     * @param int $ticket_id
+     * @return array
+     */
+    public function updateTicketContent(Request $request, $ticket_id)
+    {
+        try {
+            $ticket = Ticket::findOrFail($ticket_id);
+
+            $this->ensureCanAccessTicket($ticket);
+
+            // Input is already unslashed. Unslashing again strips real backslashes.
+            $content = wp_kses_post(Helper::decodeNonMarkupEntities((string) $request->get('content')));
+
+            if (!trim(wp_strip_all_tags($content)) && stripos($content, '<img') === false) {
+                throw new \Exception(esc_html__('The message cannot be empty.', 'fluent-support'), 422);
+            }
+
+            (new TicketService())->updateContent($ticket, $content, Helper::getAgentByUserId());
+
+            return [
+                'message'  => __('The opening message has been updated', 'fluent-support'),
+                'response' => ['content' => $ticket->content],
+            ];
+        } catch (\Exception $e) {
+            return $this->sendError([
+                'message' => Helper::getSafeErrorMessage($e)
+            ]);
+        }
+    }
+
+    /**
      * The only ticket columns that may be changed through updateTicketProperty.
-     * This mirrors exactly what the admin UI edits (agent, title, mailbox,
-     * product, status and the two priority fields). Ownership, audit,
-     * public-identifier and other sensitive columns are intentionally absent
-     * and must go through their dedicated workflows.
+     * This mirrors exactly what the admin UI edits here (agent, title, product,
+     * status and the two priority fields). Ownership, audit, public-identifier
+     * and other sensitive columns are intentionally absent and must go through
+     * their dedicated workflows.
+     *
+     * mailbox_id is deliberately NOT listed: moving a ticket between mailboxes
+     * has to fire fluent_support/before_move_tickets and
+     * fluent_support/tickets_moved, which only MailBoxService::moveTickets()
+     * does. Assigning the column here would move the ticket silently, so the
+     * mailbox switcher posts to mailboxes/{id}/move_tickets instead.
      *
      * @return array
      */
@@ -972,7 +768,6 @@ class TicketController extends Controller
         return [
             'agent_id',
             'title',
-            'mailbox_id',
             'product_id',
             'status',
             'priority',
@@ -981,10 +776,8 @@ class TicketController extends Controller
     }
 
     /**
-     * Validate and normalize a single ticket-property update. Each allowlisted
-     * property is checked against its own value domain and capability, so a
-     * caller can neither set an out-of-range value nor perform a change the UI
-     * gates behind a stronger permission.
+     * Validate a property update against its allowed values and the
+     * capability the UI requires for it.
      *
      * @param Ticket $ticket
      * @param string $propName  Already confirmed to be in the allowlist.
@@ -995,21 +788,9 @@ class TicketController extends Controller
     protected function sanitizeTicketProperty(Ticket $ticket, $propName, $propValue)
     {
         switch ($propName) {
-            case 'title':
-                $propValue = trim(sanitize_text_field($propValue));
-                if ($propValue === '') {
-                    throw new \Exception(esc_html__('Ticket title cannot be empty.', 'fluent-support'), 422);
-                }
-                return $propValue;
-
             case 'status':
-                // Mirror the ticket-view status dropdown, which is built from
-                // changeable_ticket_statuses. The dropdown submits the group
-                // KEY as the status value (getTicketStatus in ViewTicket.vue
-                // keys the options by group name and el-option binds :value to
-                // that key), and only groups with a non-empty value list are
-                // shown. Validate against those same keys so the endpoint honors
-                // the fluent_support/changeable_ticket_statuses filter exactly.
+                // The status dropdown in ViewTicket.vue submits the group key from
+                // changeable_ticket_statuses and hides empty groups. Match that.
                 $allowedStatuses = [];
                 foreach (Helper::changeableTicketStatuses() as $statusKey => $statusGroup) {
                     if (!empty($statusGroup)) {
@@ -1021,88 +802,46 @@ class TicketController extends Controller
                     throw new \Exception(esc_html__('Invalid ticket status.', 'fluent-support'), 422);
                 }
 
-                // This route only assigns the column and saves, so closing or
-                // reopening here would skip TicketService's closure fields, hooks and cleanup.
-                // Use closeTicket() / reOpenTicket(); the status dropdown already does.
+                // The ticket view closes and reopens with its own buttons.
                 if ($propValue === 'closed' || $ticket->status === 'closed') {
                     throw new \Exception(esc_html__('Closing or reopening a ticket must use the dedicated close and re-open actions.', 'fluent-support'), 422);
                 }
 
                 return $propValue;
 
-            case 'priority':
-                if (!array_key_exists($propValue, Helper::adminTicketPriorities())) {
-                    throw new \Exception(esc_html__('Invalid ticket priority.', 'fluent-support'), 422);
-                }
-                return $propValue;
-
-            case 'client_priority':
-                if (!array_key_exists($propValue, Helper::customerTicketPriorities())) {
-                    throw new \Exception(esc_html__('Invalid client priority.', 'fluent-support'), 422);
-                }
-                return $propValue;
-
             case 'product_id':
-                $productId = (int) $propValue;
-                if (!$productId || !Product::where('id', $productId)->exists()) {
+                // The sidebar has no "no product" choice.
+                if (!(int) $propValue) {
                     throw new \Exception(esc_html__('Invalid product.', 'fluent-support'), 422);
                 }
-                return $productId;
+                return (int) $propValue;
 
             case 'agent_id':
                 if (!PermissionManager::currentUserCan('fst_assign_agents')) {
                     throw new \Exception(esc_html__('Permission denied to assign agent', 'fluent-support'), 403);
                 }
 
-                $agentId = (int) $propValue;
-                $agent = Agent::findOrFail($agentId);
+                $agent = Agent::findOrFail((int) $propValue);
                 $restrictedBoxes = (new AgentTicketAccess())->getRestrictedMailboxIds($agent);
 
                 if (in_array((int) $ticket->mailbox_id, $restrictedBoxes, true)) {
                     throw new \Exception(esc_html__('Agent is restricted for this mailbox ticket', 'fluent-support'), 403);
                 }
-                return $agentId;
+                return (int) $propValue;
 
-            case 'mailbox_id':
-                // The admin UI only exposes the mailbox switcher to agents with
-                // fst_manage_settings; enforce the same gate on the API so the
-                // permission can't be bypassed by calling the endpoint directly.
-                if (!PermissionManager::currentUserCan('fst_manage_settings')) {
-                    throw new \Exception(esc_html__('Permission denied to move this ticket to another mailbox.', 'fluent-support'), 403);
-                }
-
-                $mailboxId = (int) $propValue;
-                $restrictedBoxes = array_map('intval', PermissionManager::getRestrictedMailboxIds());
-
-                if (!MailBox::where('id', $mailboxId)->exists() || in_array($mailboxId, $restrictedBoxes, true)) {
-                    throw new \Exception(esc_html__('Invalid or restricted mailbox.', 'fluent-support'), 422);
-                }
-
-                // Preserve the agent/mailbox compatibility invariant that the
-                // agent_id branch enforces on assignment: a ticket must not be
-                // moved into a mailbox its currently assigned agent is restricted
-                // from, which would otherwise persist an assignment the assign
-                // flow would have rejected.
-                if ($ticket->agent_id) {
-                    $assignedAgent = Agent::find($ticket->agent_id);
-                    if ($assignedAgent) {
-                        $agentRestrictedBoxes = (new AgentTicketAccess())->getRestrictedMailboxIds($assignedAgent);
-                        if (in_array($mailboxId, $agentRestrictedBoxes, true)) {
-                            throw new \Exception(esc_html__('The assigned agent is restricted from the selected mailbox. Reassign the ticket before moving it.', 'fluent-support'), 403);
-                        }
-                    }
-                }
-                return $mailboxId;
+            case 'title':
+            case 'priority':
+            case 'client_priority':
+                // Checked by TicketService::change().
+                return $propValue;
         }
 
-        // Unreachable: updateTicketProperty already rejected non-allowlisted
-        // properties before calling this method. Fail closed regardless.
+        // Unreachable after the allowlist check. Fail closed anyway.
         throw new \Exception(esc_html__('This ticket property cannot be updated.', 'fluent-support'), 403);
     }
 
     /**
-     * closeTicket method close the ticket by id
-     * @param Ticket $ticket
+     * @param Request $request
      * @param int $ticket_id
      * @return array
      */
@@ -1114,11 +853,14 @@ class TicketController extends Controller
 
             $this->ensureCanAccessTicket($ticket);
 
-            $closeSilently = $request->getSafe('close_ticket_silently', 'sanitize_text_field');
+            $closeSilently = $request->getSafe('close_ticket_silently', 'sanitize_text_field') === 'yes' ? 'yes' : 'no';
+
+            $ticket = (new TicketService())->close($ticket, $agent, '', $closeSilently);
+            TicketFormatter::closedBy($ticket);
 
             return [
                 'message' => __('Ticket has been closed', 'fluent-support'),
-                'ticket'  => (new TicketService())->close($ticket, $agent, '', $closeSilently)
+                'ticket'  => $ticket
             ];
         } catch (\Exception $e) {
             return $this->sendError([
@@ -1128,9 +870,7 @@ class TicketController extends Controller
     }
 
     /**
-     * reOpenTicket method will reopen a closed ticket
-     * @param Request $request
-     * @param $ticket_id
+     * @param int $ticket_id
      * @return array
      */
     public function reOpenTicket($ticket_id)
@@ -1153,10 +893,7 @@ class TicketController extends Controller
     }
 
     /**
-     * doBulkActions method is responsible for bulk action
-     * This function will get ticket ids and action as parameter and perform action based on the selection
      * @param Request $request
-     * @param Ticket $ticket
      * @return array|string[]|void
      * @throws \Exception
      */
@@ -1164,16 +901,22 @@ class TicketController extends Controller
     {
         try {
             $action = $request->getSafe('bulk_action', 'sanitize_text_field');
-            $ticketIds = array_map('intval', $request->get('ticket_ids', null, []));
+            $ticketIds = array_map('intval', (array) $request->get('ticket_ids', null, []));
+
+            if (count($ticketIds) > self::MAX_BULK_TICKETS) {
+                throw new \Exception(sprintf(
+                    /* translators: %d is the most tickets one bulk action can change */
+                    esc_html__('You can change at most %d tickets at a time.', 'fluent-support'),
+                    (int) self::MAX_BULK_TICKETS
+                ), 422);
+            }
 
             $agent = Helper::getAgentByUserId();
             $query = Ticket::whereIn('id', $ticketIds);
 
-            //Scope selected tickets to what the agent can access, matching the
-            //per-ticket ensureCanAccessTicket() check on the single-ticket routes
+            // Same access rules as ensureCanAccessTicket() on single-ticket routes.
             (new AgentTicketAccess())->applyAccessScope($query, $agent);
 
-            //If bulk action is close tickets
             if ($action == 'close_tickets') {
                 $tickets = $query->get();
                 $tickets->each(function ($ticket) use ($agent) {
@@ -1221,19 +964,13 @@ class TicketController extends Controller
                 $restrictedBoxes = (new AgentTicketAccess())->getRestrictedMailboxIds($assignAgent);
 
                 $tickets->each(function ($ticket) use ($assignAgent, $agent, $restrictedBoxes, &$assignedCount, &$skippedCount) {
-                    $previousAgentId = (int) $ticket->agent_id;
-
-                    //Skip ticket if mailbox is restricted for the agent
                     if (!empty($ticket->mailbox_id) && in_array((int) $ticket->mailbox_id, $restrictedBoxes, true)) {
                         $skippedCount++;
                         return;
                     }
 
-                    $ticket->agent_id = $assignAgent->id;
-                    $ticket->save();
+                    (new TicketService())->assignAgent($ticket, $assignAgent, $agent);
                     $assignedCount++;
-
-                    do_action('fluent_support/agent_assigned_to_ticket', $assignAgent, $ticket, $agent, $previousAgentId);
                 });
 
                 $assignedMessage = sprintf(
@@ -1272,7 +1009,6 @@ class TicketController extends Controller
                 $currentCounts = [];
 
                 foreach ($tickets as $ticket) {
-                    $previousAgentId = (int) $ticket->agent_id;
                     $selectedAgent = $group->getLeastLoadedAgent(
                         $ticket->mailbox_id, $currentCounts
                     );
@@ -1282,14 +1018,9 @@ class TicketController extends Controller
                         continue;
                     }
 
-                    $ticket->agent_id = $selectedAgent->id;
-                    $ticket->save();
+                    (new TicketService())->assignAgent($ticket, $selectedAgent, $agent, true);
                     $assignedCount++;
-                    $currentCounts[$selectedAgent->id]++;
-
-                    as_enqueue_async_action('fluent_support/async_agent_assigned_to_ticket', [
-                        $selectedAgent->id, $ticket->id, $agent->id, $previousAgentId
-                    ], 'fluent-support');
+                    $currentCounts[$selectedAgent->id] = ($currentCounts[$selectedAgent->id] ?? 0) + 1;
                 }
 
                 return [
@@ -1308,11 +1039,70 @@ class TicketController extends Controller
                 $tags = array_filter(array_map('absint', $tagIds));
 
                 $query->get()->each(function ($ticket) use ($tags) {
-                    $ticket->applyTags($tags);
+                    (new TicketService())->addTags($ticket, $tags);
                 });
 
                 return [
                     'message' => __('Selected tags has been added to tickets', 'fluent-support')
+                ];
+            } else if ($action == 'remove_tags') {
+                $tagIds = $request->get('tag_ids', null);
+                $tags = array_filter(array_map('absint', is_array($tagIds) ? $tagIds : []));
+
+                if (!$tags) {
+                    throw new \Exception(esc_html__('Please select tags to remove', 'fluent-support'), 422);
+                }
+
+                $query->get()->each(function ($ticket) use ($tags) {
+                    (new TicketService())->removeTags($ticket, $tags);
+                });
+
+                return [
+                    'message' => __('Selected tags have been removed from the tickets', 'fluent-support')
+                ];
+            } else if ($action == 'change_priority') {
+                $priority = $request->getSafe('priority', 'sanitize_text_field');
+
+                if (!array_key_exists($priority, Helper::adminTicketPriorities())) {
+                    throw new \Exception(esc_html__('Invalid ticket priority.', 'fluent-support'), 422);
+                }
+
+                return [
+                    'message' => sprintf(
+                        /* translators: %d is the number of tickets whose priority changed */
+                        __('Priority changed on %d tickets.', 'fluent-support'),
+                        $this->bulkSetProperty($query, 'priority', $priority)
+                    )
+                ];
+            } else if ($action == 'change_product') {
+                $productId = $request->getSafe('product_id', 'intval');
+
+                if (!$productId || !Product::where('id', $productId)->exists()) {
+                    throw new \Exception(esc_html__('Invalid product.', 'fluent-support'), 422);
+                }
+
+                return [
+                    'message' => sprintf(
+                        /* translators: %d is the number of tickets whose product changed */
+                        __('Product changed on %d tickets.', 'fluent-support'),
+                        $this->bulkSetProperty($query, 'product_id', $productId)
+                    )
+                ];
+            } else if ($action == 'reopen_tickets') {
+                // Only closed tickets reopen; the rest are left as they are.
+                $tickets = $query->where('status', 'closed')->get();
+                $ticketService = new TicketService();
+
+                foreach ($tickets as $ticket) {
+                    $ticketService->reopen($ticket, $agent);
+                }
+
+                return [
+                    'message' => sprintf(
+                        /* translators: %d is the number of tickets reopened */
+                        __('%d tickets have been reopened.', 'fluent-support'),
+                        count($tickets)
+                    )
                 ];
             }
 
@@ -1325,7 +1115,31 @@ class TicketController extends Controller
     }
 
     /**
-     * deleteTicket method will delete a ticket
+     * Set one column on every ticket the bulk query matches, skipping tickets
+     * that already have the value.
+     *
+     * @param \FluentSupport\Framework\Database\Orm\Builder $query
+     * @param string $column
+     * @param mixed $value
+     * @return int Number of tickets changed.
+     */
+    protected function bulkSetProperty($query, $column, $value)
+    {
+        $changed = 0;
+        $tickets = new TicketService();
+        $agent = Helper::getAgentByUserId();
+
+        /** @var Ticket $ticket */
+        foreach ($query->get() as $ticket) {
+            if ($tickets->change($ticket, [$column => $value], $agent)) {
+                $changed++;
+            }
+        }
+
+        return $changed;
+    }
+
+    /**
      * @param int $ticket_id
      * @return array
      */
@@ -1349,310 +1163,10 @@ class TicketController extends Controller
     }
 
     /**
-     * doBulkReplies method will create response for bulk tickets
-     * This function will get ticket ids, content, attachment etc and create response for tickets
-     * @param Request $request
-     * @param Conversation $conversation
-     * @return array
-     * @throws \Exception
-     */
-    public function doBulkReplies(Request $request)
-    {
-        try {
-            // Sanitize all request data before validation
-            $requestData = $request->all();
-            $data = [];
-            foreach ($requestData as $key => $value) {
-                if (is_array($value)) {
-                    if ($key === 'ticket_ids') {
-                        $data[$key] = array_map('intval', $value);
-                    } elseif ($key === 'content') {
-                        $data[$key] = wp_kses_post($value);
-                    } else {
-                        $data[$key] = map_deep($value, 'sanitize_text_field');
-                    }
-                } else {
-                    $data[$key] = sanitize_text_field($value);
-                }
-            }
-
-            $this->validate($data, [
-                'content'    => 'required',
-                'ticket_ids' => 'required|array'
-            ]);
-
-            //Get logged in agent information
-            $agent = Helper::getAgentByUserId();
-            $ticketIds = array_filter($data['ticket_ids'], 'absint');
-
-            $query = Ticket::whereIn('id', $ticketIds)->where('status', '!=', 'closed');
-
-            // Scope to tickets the agent may access (visibility + mailbox restrictions).
-            (new AgentTicketAccess())->applyAccessScope($query, $agent);
-
-            $tickets = $query->get();
-
-            if ($tickets->isEmpty()) {
-                throw new \Exception(esc_html__('Sorry no tickets found based on your filter and bulk actions', 'fluent-support'));
-            }
-
-            $responseData = [
-                'content'           => wp_kses_post(Arr::get($data, 'content', '')),
-                'conversation_type' => 'response',
-                'close_ticket'      => Arr::get($data, 'close_ticket'),
-            ];
-
-            //If request with file attachments
-            $attachmentHashes = Arr::get($data, 'attachments', []);
-            $attachments = false;
-            if ($attachmentHashes) {
-                $attachments = Attachment::whereNull('ticket_id')
-                    ->orderBy('id', 'asc')
-                    ->whereIn('file_hash', $attachmentHashes)
-                    ->get();
-            }
-
-            $responseService = new ResponseService();
-
-            foreach ($tickets as $ticket) {
-                if ($attachments) {
-                    $responseData['attachments'] = [];
-                    $attachmentRecords = [];
-                    foreach ($attachments as $attachment) {
-                        $fileHash = bin2hex(random_bytes(16));
-                        $attachmentRecords[] = [
-                            'ticket_id'  => $ticket->id,
-                            'file_path'  => $attachment->file_path,
-                            'full_url'   => $attachment->full_url,
-                            'title'      => $attachment->title,
-                            'driver'     => $attachment->driver,
-                            'file_size'  => $attachment->file_size,
-                            'status'     => $attachment->status,
-                            'file_hash'  => $fileHash,
-                        ];
-                        $responseData['attachments'][] = $fileHash;
-                    }
-                    if ($attachmentRecords) {
-                        Attachment::insert($attachmentRecords);
-                    }
-                }
-
-                $responseService->createResponse($responseData, $agent, $ticket);
-            }
-
-            return [
-                'message' => __('Response has been added to the selected tickets', 'fluent-support')
-            ];
-        } catch (\Exception $e) {
-            return $this->sendError([
-                'message' => Helper::getSafeErrorMessage($e)
-            ]);
-        }
-    }
-
-    /**
-     * deleteResponse method will remove a response from ticket by ticket id and response id
-     * @param Request $request
-     * @param Conversation $conversation
-     * @param $ticket_id
-     * @param $response_id
-     * @return array
-     */
-    public function deleteResponse($ticket_id, $response_id)
-    {
-        try {
-            $ticket = Ticket::findOrFail($ticket_id);
-
-            if (in_array($ticket->mailbox_id, PermissionManager::getRestrictedMailboxIds())) {
-                throw new \Exception(esc_html__('Ticket cannot be fetched due to restricted mailbox', 'fluent-support'));
-            }
-
-            // The caller must have access to this specific ticket (visibility +
-            // ownership + mailbox), not merely a global manage capability.
-            $this->ensureCanAccessTicket($ticket);
-
-            // Deleting a response always requires the explicit delete capability,
-            // mirroring deleteTicket(). Assignment alone is not sufficient.
-            if (!PermissionManager::currentUserCan('fst_delete_tickets')) {
-                throw new \Exception(
-                    esc_html__('Sorry, you do not have permission to delete this response.', 'fluent-support')
-                );
-            }
-
-            $response = Conversation::where('id', $response_id)
-                ->where('ticket_id', $ticket_id)
-                ->firstOrFail();
-
-            $response->delete();
-            $response->ccinfo()->delete();
-
-            return [
-                'message' => __('Selected response has been deleted', 'fluent-support')
-            ];
-        } catch (\Exception $e) {
-            return $this->sendError([
-                'message' => Helper::getSafeErrorMessage($e)
-            ]);
-        }
-    }
-
-    /**
-     * updateResponse method will update ticket response using ticket and response id
+     * Agents currently viewing the ticket.
+     *
      * @param Request $request
      * @param int $ticket_id
-     * @param int $response_id
-     * @return array
-     * @throws \Exception
-     */
-    public function updateResponse(TicketResponseRequest $request, $ticket_id, $response_id)
-    {
-        try {
-            $ticket = Ticket::findOrFail($ticket_id);
-
-            if (in_array($ticket->mailbox_id, PermissionManager::getRestrictedMailboxIds())) {
-                throw new \Exception(esc_html__('Ticket cannot be fetched due to restricted mailbox', 'fluent-support'));
-            }
-
-            // The caller must have access to this specific ticket (visibility +
-            // ownership + mailbox), not merely a global manage capability.
-            $this->ensureCanAccessTicket($ticket);
-
-            $response = Conversation::where('id', $response_id)
-                ->where('ticket_id', $ticket_id)
-                ->with('person')
-                ->firstOrFail();
-            $agent = Helper::getAgentByUserId();
-
-            // Only agent-authored conversation types may be edited here. Customer
-            // replies and system entries must not be rewritten via this endpoint.
-            $editableTypes = ['response', 'draft_response', 'note', 'internal_info'];
-            if (!in_array($response->conversation_type, $editableTypes, true)) {
-                throw new \Exception(
-                    esc_html__('This response type cannot be edited.', 'fluent-support')
-                );
-            }
-
-            // Customer messages share the 'response' type but are authored by a
-            // customer person; they are never editable by an agent.
-            if ($response->person && $response->person->person_type !== 'agent') {
-                throw new \Exception(
-                    esc_html__('Sorry, you do not have permission to update this response.', 'fluent-support')
-                );
-            }
-
-            $isDraft = $response->conversation_type == 'draft_response';
-            $isAuthor = (int) $response->person_id === (int) $agent->id;
-            $canApproveDraft = PermissionManager::currentUserCan('fst_approve_draft_reply');
-
-            if ($isDraft && !$isAuthor) {
-                // Another agent's draft can only be edited/approved by an approver.
-                if (!$canApproveDraft) {
-                    throw new \Exception(
-                        esc_html__('Sorry, You do not have permission to approve this draft response', 'fluent-support')
-                    );
-                }
-            } elseif (!$isAuthor && !PermissionManager::currentUserCan('fst_manage_other_tickets')) {
-                // Editing another agent's response requires manage-others capability.
-                throw new \Exception(
-                    esc_html__('Sorry, you do not have permission to update this response.', 'fluent-support')
-                );
-            }
-
-            // Request input is already unslashed at the boundary; unslashing again
-            // would strip literal backslashes out of the edited reply.
-            $content = wp_kses_post($request->getSafe('content', 'wp_kses_post'));
-            $response->content = $content;
-
-            if ($isDraft && !$isAuthor && $canApproveDraft) {
-                $response = $this->approveDraftConversation($ticket, $response, $agent, $content);
-            } else {
-                $response->save();
-            }
-
-            return [
-                'message'  => __('Selected response has been updated', 'fluent-support'),
-                'response' => $response
-            ];
-        } catch (\Exception $e) {
-            return $this->sendError([
-                'message' => Helper::getSafeErrorMessage($e)
-            ]);
-        }
-    }
-
-    public function approveDraftResponse(TicketResponseRequest $request, $ticket_id, $response_id)
-    {
-        try {
-            if (!PermissionManager::currentUserCan('fst_approve_draft_reply')) {
-                throw new \Exception(
-                    esc_html__('You do not have permission to approve draft responses.', 'fluent-support')
-                );
-            }
-
-            $ticket = Ticket::findOrFail($ticket_id);
-
-            $this->ensureCanAccessTicket($ticket);
-
-            $response = Conversation::where('id', $response_id)
-                ->where('ticket_id', $ticket_id)
-                ->where('conversation_type', 'draft_response')
-                ->firstOrFail();
-
-            $person = Helper::getAgentByUserId();
-
-            $response = $this->approveDraftConversation(
-                $ticket,
-                $response,
-                $person,
-                wp_kses_post($request->getSafe('content', 'wp_kses_post'))
-            );
-
-            return [
-                'message'  => __('Draft response has been successfully approved.', 'fluent-support'),
-                'response' => $response,
-            ];
-        } catch (\Exception $e) {
-            return $this->sendError([
-                'message' => Helper::getSafeErrorMessage($e)
-            ]);
-        }
-    }
-
-    protected function approveDraftConversation($ticket, $response, $person, $content)
-    {
-        $resetWaitingSince = apply_filters('fluent_support/reset_waiting_since', true, $content);
-
-        $response->content = $content;
-        $response->conversation_type = 'response';
-        $response->created_at = current_time('mysql');
-        $response->save();
-
-        if ($person->person_type == 'agent' && $ticket->status == 'new') {
-            $ticket->status = 'active';
-            if ($ticket->created_at) {
-                $ticket->first_response_time = strtotime(current_time('mysql')) - strtotime($ticket->created_at);
-            } else {
-                $ticket->first_response_time = 300;
-            }
-        }
-
-        if ($resetWaitingSince) {
-            $ticket->last_agent_response = current_time('mysql');
-            $ticket->waiting_since = current_time('mysql');
-        }
-
-        $ticket->response_count += 1;
-        $ticket->save();
-
-        do_action('fluent_support/response_added_by_' . $person->person_type, $response, $ticket, $person);
-
-        return $response;
-    }
-
-    /**
-     * getLiveActivity method will return the activity in a ticket by agents
-     * @param Request $request
-     * @param $ticket_id
      * @return array
      */
     public function getLiveActivity(Request $request, $ticket_id)
@@ -1675,9 +1189,10 @@ class TicketController extends Controller
     }
 
     /**
-     * removeLiveActivity method will remove activities that
+     * Remove the current agent from the ticket's live activity.
+     *
      * @param Request $request
-     * @param $ticket_id
+     * @param int $ticket_id
      * @return array
      */
     public function removeLiveActivity(Request $request, $ticket_id)
@@ -1701,9 +1216,8 @@ class TicketController extends Controller
     }
 
     /**
-     * addTag method will add tag in ticket by ticket id
      * @param Request $request
-     * @param $ticket_id
+     * @param int $ticket_id
      * @return array
      */
     public function addTag(Request $request, $ticket_id)
@@ -1713,7 +1227,7 @@ class TicketController extends Controller
 
             $this->ensureCanAccessTicket($ticket);
 
-            $ticket->applyTags($request->getSafe('tag_id', 'intval'));
+            (new TicketService())->addTags($ticket, $request->getSafe('tag_id', 'intval'));
 
             return [
                 'message' => __('Tag has been added to this ticket', 'fluent-support'),
@@ -1727,9 +1241,10 @@ class TicketController extends Controller
     }
 
     /**
-     * detachTag method will remove all tags from tickets
-     * @param $ticket_id
-     * @param $tag_id
+     * Remove one tag from the ticket.
+     *
+     * @param int $ticket_id
+     * @param int $tag_id
      * @return array
      */
     public function detachTag($ticket_id, $tag_id)
@@ -1739,7 +1254,7 @@ class TicketController extends Controller
 
             $this->ensureCanAccessTicket($ticket);
 
-            $ticket->detachTags($tag_id);
+            (new TicketService())->removeTags($ticket, $tag_id);
 
             return [
                 'message' => __('Tag has been removed from this ticket', 'fluent-support'),
@@ -1753,9 +1268,8 @@ class TicketController extends Controller
     }
 
     /**
-     * changeTicketCustomer method will update customer in a ticket
-     * This method will get ticket id and customer id as parameter, it will replace existing customer id with new
      * @param Request $request
+     * @param int $ticket_id
      * @return array
      */
     public function changeTicketCustomer(Request $request, $ticket_id)
@@ -1767,9 +1281,8 @@ class TicketController extends Controller
             return $this->sendError(__('Invalid customer selected.', 'fluent-support'));
         }
 
-        // Rebinding a ticket to another customer exposes that customer's private
-        // data (profile, custom fields) through the ticket, so it requires the same
-        // sensitive-data capability that gates the customer routes.
+        // The ticket would expose the new customer's profile data, so this
+        // needs the same capability as the customer routes.
         if (!PermissionManager::currentUserCan('fst_sensitive_data')) {
             return $this->sendError(__('You do not have permission to change the ticket customer.', 'fluent-support'));
         }
@@ -1779,20 +1292,11 @@ class TicketController extends Controller
 
             $this->ensureCanAccessTicket($ticket);
 
-            $targetCustomer = Customer::where('id', $newCustomerId)
-                ->where('person_type', 'customer')
-                ->first();
-
-            if (!$targetCustomer) {
-                return $this->sendError(__('Invalid customer selected.', 'fluent-support'));
-            }
-
             if ($ticket->customer_id == $newCustomerId) {
                 return $this->sendError(__('Customer already assigned to this ticket.', 'fluent-support'));
             }
 
-            $ticket->customer_id = $newCustomerId;
-            $ticket->save();
+            (new TicketService())->change($ticket, ['customer_id' => $newCustomerId], Helper::getAgentByUserId());
 
             return ['message' => __('Customer has been updated', 'fluent-support')];
 
@@ -1804,9 +1308,8 @@ class TicketController extends Controller
     }
 
     /**
-     * getTicketCustomData method will return the custom data by ticket id
      * @param Request $request
-     * @param $ticket_id
+     * @param int $ticket_id
      * @return array|array[]
      */
     public function getTicketCustomData(Request $request, $ticket_id)
@@ -1825,7 +1328,7 @@ class TicketController extends Controller
 
             return [
                 'custom_data'     => (object)$ticket->customData(),
-                'rendered_fields' => \FluentSupportPro\App\Services\CustomFieldsService::getRenderedPublicFields($ticket->customer, 'admin')
+                'rendered_fields' => apply_filters('fluent_support/custom_fields_rendered', [], $ticket->customer, 'admin')
             ];
         } catch (\Exception $e) {
             return $this->sendError([
@@ -1835,8 +1338,6 @@ class TicketController extends Controller
     }
 
     /**
-     * syncFluentCrmTags method will synchronize the tags with Fluent CRM by contact id
-     *This function will get contact id and tags as parameter, get existing tags from crm and updated added/removed tags
      * @param Request $request
      * @param FluentCRMServices $fluentCRMServices
      * @return array
@@ -1848,7 +1349,6 @@ class TicketController extends Controller
             'tags'       => $request->get('tags', null)
         ];
 
-        // Sanitize tags array if it's an array
         if (is_array($data['tags'])) {
             $data['tags'] = array_map('intval', $data['tags']);
         }
@@ -1863,8 +1363,6 @@ class TicketController extends Controller
     }
 
     /**
-     * This `syncFluentCrmLists` method will synchronize the lists with Fluent CRM by contact id
-     *  This method will get contact id and lists as parameter, get existing lists from crm and updated added/removed lists
      * @param Request $request
      * @param FluentCRMServices $fluentCRMServices
      * @return array
@@ -1877,7 +1375,6 @@ class TicketController extends Controller
             'lists'      => $request->get('lists', null, [])
         ];
 
-        // Sanitize lists array if it's an array
         if (is_array($data['lists'])) {
             $data['lists'] = array_map('intval', $data['lists']);
         }
@@ -1889,19 +1386,6 @@ class TicketController extends Controller
                 'message' => Helper::getSafeErrorMessage($e)
             ]);
         }
-    }
-
-    /**
-     * Get ticket essentials data based on the provided types.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return array The ticket essentials data.
-     */
-    public function getTicketEssentials(Request $request)
-    {
-        $type = $request->getSafe('type', 'sanitize_text_field');
-
-        return TicketHelper::getTicketEssentials($type);
     }
 
     public function fetchLabelSearch()

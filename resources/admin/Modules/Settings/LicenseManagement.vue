@@ -9,14 +9,15 @@
                     <el-button
                         text
                         icon="Refresh"
+                        :loading="fetching"
                         @click="fetchLicense()"
                     >
                     </el-button>
                 </div>
             </div>
 
-            <div v-if="!fetching" class="fs_box_body">
-                <div v-loading="verifying" :class="'fs_license_' + status">
+            <div v-if="!first_loading" class="fs_box_body">
+                <div v-loading="verifying || fetching" :class="'fs_license_' + status">
                     <!--
                       Every field below is guarded: an older Fluent Support Pro
                       does not send expires_human, license_key_masked or
@@ -77,7 +78,8 @@
                         <div class="fs_license_card_footer">
                             <div class="fs_license_checked">
                                 <span v-if="licenseData.last_checked_human">
-                                    {{ $t('Last checked') }}: {{ licenseData.last_checked_human }}
+                                    <!-- translators: %s is how long ago the license was last checked, e.g. "5 minutes ago" -->
+                                    {{ $t('Last checked: %s', licenseData.last_checked_human) }}
                                 </span>
                                 <a href="#" @click.prevent="fetchLicense()">{{ $t('Refresh') }}</a>
                                 <a
@@ -115,7 +117,7 @@
                                     {{ showCard ? $t('Activate a different license key') : $t("Customer Support Plugin for WordPress") }}
                                 </h3>
                                 <p v-if="!showCard" class="fs_license_form_description">
-                                    {{ $t("Please Provide a license key of FluentSupport") }}
+                                    {{ $t("Please provide your Fluent Support license key.") }}
                                 </p>
                             </div>
                             <div class="fs_license_input_wrapper">
@@ -132,8 +134,8 @@
                                             @click="verifyLicense()"
                                             class="fs_license_verify_btn"
                                         >
-                                            <svg width="17" height="9" viewBox="0 0 17 9" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M8.93775 5.25411C8.7467 6.36417 8.14642 7.36226 7.25544 8.05136C6.36445 8.74046 5.24749 9.07049 4.12507 8.9763C3.00264 8.88211 1.9563 8.37055 1.19262 7.5426C0.428933 6.71465 0.00339216 5.63048 1.87515e-06 4.50411C-0.00102824 3.37507 0.422395 2.28689 1.18626 1.45548C1.95013 0.62407 2.99862 0.11018 4.12371 0.0157691C5.2488 -0.0786414 6.36827 0.253328 7.26001 0.945811C8.15176 1.63829 8.75061 2.64069 8.93775 3.75411H16.5V5.25411H15V8.25411H13.5V5.25411H12V8.25411H10.5V5.25411H8.93775ZM4.5 7.50411C5.29565 7.50411 6.05871 7.18804 6.62132 6.62544C7.18393 6.06283 7.5 5.29976 7.5 4.50411C7.5 3.70847 7.18393 2.9454 6.62132 2.38279C6.05871 1.82019 5.29565 1.50411 4.5 1.50411C3.70435 1.50411 2.94129 1.82019 2.37868 2.38279C1.81607 2.9454 1.5 3.70847 1.5 4.50411C1.5 5.29976 1.81607 6.06283 2.37868 6.62544C2.94129 7.18804 3.70435 7.50411 4.5 7.50411V7.50411Z" fill="#525866"/>
+                                            <svg class="fs_icon_secondary" width="17" height="9" viewBox="0 0 17 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M8.93775 5.25411C8.7467 6.36417 8.14642 7.36226 7.25544 8.05136C6.36445 8.74046 5.24749 9.07049 4.12507 8.9763C3.00264 8.88211 1.9563 8.37055 1.19262 7.5426C0.428933 6.71465 0.00339216 5.63048 1.87515e-06 4.50411C-0.00102824 3.37507 0.422395 2.28689 1.18626 1.45548C1.95013 0.62407 2.99862 0.11018 4.12371 0.0157691C5.2488 -0.0786414 6.36827 0.253328 7.26001 0.945811C8.15176 1.63829 8.75061 2.64069 8.93775 3.75411H16.5V5.25411H15V8.25411H13.5V5.25411H12V8.25411H10.5V5.25411H8.93775ZM4.5 7.50411C5.29565 7.50411 6.05871 7.18804 6.62132 6.62544C7.18393 6.06283 7.5 5.29976 7.5 4.50411C7.5 3.70847 7.18393 2.9454 6.62132 2.38279C6.05871 1.82019 5.29565 1.50411 4.5 1.50411C3.70435 1.50411 2.94129 1.82019 2.37868 2.38279C1.81607 2.9454 1.5 3.70847 1.5 4.50411C1.5 5.29976 1.81607 6.06283 2.37868 6.62544C2.94129 7.18804 3.70435 7.50411 4.5 7.50411V7.50411Z" fill="currentColor"/>
                                             </svg>
 
                                             <span>{{ $t("Verify License") }}</span>
@@ -162,7 +164,7 @@
                     </div>
 
                     <p v-if="showCard && !showForm" class="fs_license_switch">
-                        {{ $t('Have a new license Key?') }}
+                        {{ $t('Have a new license key?') }}
                         <a href="#" class="fs_license_purchase_link" @click.prevent="showNewLicenseInput = true">{{ $t('Click here') }}</a>
                     </p>
 
@@ -170,7 +172,25 @@
             </div>
 
             <div class="fs_box_body fs_skeleton_loader" v-else>
-                <el-skeleton :rows="4" animated />
+                <el-skeleton animated>
+                    <template #template>
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+                            <div style="width: 50%;">
+                                <el-skeleton-item variant="h3" style="width: 60%;" />
+                                <el-skeleton-item variant="text" style="width: 35%; margin-top: 8px;" />
+                            </div>
+                            <el-skeleton-item variant="button" style="width: 72px; height: 24px;" />
+                        </div>
+                        <div v-for="n in 4" :key="n" style="display: flex; justify-content: space-between; gap: 16px; margin-bottom: 16px;">
+                            <el-skeleton-item variant="text" style="width: 25%;" />
+                            <el-skeleton-item variant="text" style="width: 35%;" />
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 24px;">
+                            <el-skeleton-item variant="text" style="width: 40%;" />
+                            <el-skeleton-item variant="button" style="width: 100px;" />
+                        </div>
+                    </template>
+                </el-skeleton>
             </div>
         </div>
 
@@ -210,6 +230,7 @@ export default {
     data() {
         return {
             fetching: false,
+            first_loading: true,
             licenseData: {},
             verifying: false,
             licenseKey: "",
@@ -368,16 +389,14 @@ export default {
             let hint = "";
 
             if (days !== null && days !== undefined) {
-                if (days === -1) {
-                    hint = this.$t("expired 1 day ago");
-                } else if (days < 0) {
-                    hint = this.transWith("expired %d days ago", Math.abs(days));
+                if (days < 0) {
+                    // translators: %d is the number of days since the license expired
+                    hint = this.$_n("expired %d day ago", "expired %d days ago", Math.abs(days));
                 } else if (days === 0) {
                     hint = this.$t("expires today");
-                } else if (days === 1) {
-                    hint = this.$t("in 1 day");
                 } else {
-                    hint = this.transWith("in %d days", days);
+                    // translators: %d is the number of days until the license expires
+                    hint = this.$_n("in %d day", "in %d days", days);
                 }
             }
 
@@ -456,14 +475,10 @@ export default {
                 return {
                     type: "warning",
                     title: this.licenseData.expires_human
-                        ? this.transWith(
-                              "Your license expired on %s",
-                              this.licenseData.expires_human
-                          )
+                        // translators: %s is the date the license expired
+                        ? this.$t("Your license expired on %s", this.licenseData.expires_human)
                         : this.$t("Your license has expired."),
-                    description: this.$t(
-                        "You are in a grace period, so everything keeps working for now. Updates and support will end soon - renew your license to keep them."
-                    ),
+                    description: this.$t("License_Grace_Period_Help"),
                     action: this.renewAction,
                 };
             }
@@ -472,10 +487,8 @@ export default {
                 return {
                     type: "danger",
                     title: this.licenseData.expires_human
-                        ? this.transWith(
-                              "Your license expired on %s",
-                              this.licenseData.expires_human
-                          )
+                        // translators: %s is the date the license expired
+                        ? this.$t("Your license expired on %s", this.licenseData.expires_human)
                         : this.$t("Looks like your license has expired."),
                     description: this.$t(
                         "Renew your license to keep receiving plugin updates, new features and support."
@@ -507,15 +520,11 @@ export default {
             if (this.status === "valid" && this.subscriptionNeedsAttention) {
                 return {
                     type: "warning",
-                    title: this.transWith(
-                        "Your subscription is not active (%s)",
-                        this.subscriptionMeta.label
-                    ),
+                    // translators: %s is the subscription status, e.g. "Cancelled" or "Paused"
+                    title: this.$t("Your subscription is not active (%s)", this.subscriptionMeta.label),
                     description: this.licenseData.expires_human
-                        ? this.transWith(
-                              "Your license will not renew on its own. It expires on %s.",
-                              this.licenseData.expires_human
-                          )
+                        // translators: %s is the license expiry date
+                        ? this.$t("Your license will not renew on its own. It expires on %s.", this.licenseData.expires_human)
                         : "",
                     action: this.renewAction,
                 };
@@ -533,10 +542,8 @@ export default {
                     title:
                         this.licenseData.days_remaining === 0
                             ? this.$t("Your license expires today.")
-                            : this.transWith(
-                                  "Your license expires in %d days",
-                                  this.licenseData.days_remaining
-                              ),
+                            // translators: %d is the number of days until the license expires
+                            : this.$_n("Your license expires in %d day", "Your license expires in %d days", this.licenseData.days_remaining),
                     action: this.renewAction,
                 };
             }
@@ -545,17 +552,6 @@ export default {
         },
     },
     methods: {
-        // Translate a string that carries %s / %d placeholders, so translators
-        // get a full sentence instead of concatenated fragments.
-        transWith(key, ...args) {
-            let text = this.$t(key);
-
-            args.forEach((arg) => {
-                text = text.replace(/%[ds]/, arg);
-            });
-
-            return text;
-        },
         humanize(value) {
             if (!value) {
                 return "";
@@ -577,6 +573,7 @@ export default {
                 })
                 .always(() => {
                     this.fetching = false;
+                    this.first_loading = false;
                 });
         },
         async verifyLicense() {

@@ -53,6 +53,21 @@ class AgentTicketAccess
         return $query;
     }
 
+    /**
+     * The ticket list's scope, for counts that must match it: the visibility hook (add-ons
+     * may narrow it, as they narrow the list) and the agent's mailbox restrictions.
+     *
+     * @param object      $query
+     * @param object|null $agent The current user's agent; the visibility hook reads the current user.
+     * @return object
+     */
+    public function applyListScope($query, $agent = null)
+    {
+        do_action_ref_array('fluent_support/tickets_query_by_permission_ref', [&$query, false]);
+
+        return $this->applyMailboxRestrictionScope($query, $agent);
+    }
+
     public function applyVisibilityScope($query, $agent = null)
     {
         $agent = $agent ?: Helper::getAgentByUserId();
@@ -154,6 +169,14 @@ class AgentTicketAccess
 
         return $query->whereHas('ticket', function ($q) use ($restrictedBoxes) {
             $this->applyRestrictedMailboxFilter($q, $restrictedBoxes);
+        });
+    }
+
+    // Full access scope, for rows that reach their ticket through a `ticket` relation.
+    public function applyAccessScopeViaTicket($query, $agent = null, $restrictions = null)
+    {
+        return $query->whereHas('ticket', function ($q) use ($agent, $restrictions) {
+            $this->applyAccessScope($q, $agent, $restrictions);
         });
     }
 

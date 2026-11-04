@@ -12,7 +12,7 @@
                     </el-icon>
                 </slot>
                 <h3 class="fs_widget_title" v-if="!isHtml">{{ title }}</h3>
-                <h3 class="fs_widget_title" v-else v-html="title"></h3>
+                <h3 class="fs_widget_title" v-else v-html="safeTitle"></h3>
             </div>
             <el-icon class="fs_widget_toggle_icon">
                 <component :is="expanded ? 'ArrowUp' : 'ArrowDown'" />
@@ -23,6 +23,7 @@
 </template>
 
 <script>
+import { sanitizeWidgetHtml } from '@/common/domPurifyGuards';
 
 export default {
     name: 'WidgetHeader',
@@ -45,6 +46,10 @@ export default {
         isHtml() {
             // Check if title contains HTML tags
             return this.title && /<[^>]+>/.test(this.title);
+        },
+        // Titles come from third-party widget filters, same as body_html.
+        safeTitle() {
+            return sanitizeWidgetHtml(this.title);
         }
     },
     methods: {

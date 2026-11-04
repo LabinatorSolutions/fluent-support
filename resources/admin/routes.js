@@ -1,48 +1,56 @@
-import Dashboard from './Modules/Dashboard/Dashboard.vue';
-import Setup from './Components/Setup';
-import TicketsView from './Modules/Tickets/TicketsView';
-import AllTickets from './Modules/Tickets/AllTickets';
-import ViewTicket from './Modules/Tickets/ViewTicket';
+// Each page loads as its own chunk the first time its route opens.
+const Dashboard = () => import('./Modules/Dashboard/Dashboard.vue');
+const Setup = () => import('./Components/Setup');
+const TicketsView = () => import('./Modules/Tickets/TicketsView');
+const AllTickets = () => import('./Modules/Tickets/AllTickets');
+const ViewTicket = () => import('./Modules/Tickets/ViewTicket');
 
-import SettingsView from './Modules/Settings/SettingsView';
-import BusinessSettings from './Modules/Settings/BusinessSettings';
-import Products from './Modules/Settings/Products';
-import TicketTags from './Modules/Settings/TicketTags';
-import Agents from './Modules/Settings/SupportStaffs';
-import IntegrationView from './Modules/Settings/IntegrationView';
-import RecaptchaView from './Modules/Settings/RecaptchaView'
-import TicketFormConfig from "./Modules/Settings/TicketFormConfig";
-import CustomFields from "./Modules/Settings/CustomFields";
-import LicenseManagement from "./Modules/Settings/LicenseManagement";
-import FluentCRMIntegration from "./Modules/Settings/FluentCRMIntegration";
-import AutoCloseSettings from "./Modules/Settings/AutoCloseSettings";
-import UploadIntegrationView from './Modules/Settings/FileUploadSettings/UploadIntegrationView';
+const SettingsView = () => import('./Modules/Settings/SettingsView');
+const BusinessSettings = () => import('./Modules/Settings/BusinessSettings');
+const Products = () => import('./Modules/Settings/Products');
+const TicketTags = () => import('./Modules/Settings/TicketTags');
+const Agents = () => import('./Modules/Settings/SupportStaffs');
+const IntegrationView = () => import('./Modules/Settings/IntegrationView');
+const RecaptchaView = () => import('./Modules/Settings/RecaptchaView');
+const TicketFormConfig = () => import("./Modules/Settings/TicketFormConfig");
+const CustomFields = () => import("./Modules/Settings/CustomFields");
+const LicenseManagement = () => import("./Modules/Settings/LicenseManagement");
+const FluentCRMIntegration = () => import("./Modules/Settings/FluentCRMIntegration");
+const AutoCloseSettings = () => import("./Modules/Settings/AutoCloseSettings");
+const UploadIntegrationView = () => import('./Modules/Settings/FileUploadSettings/UploadIntegrationView');
 
-import Customers from './Modules/Customers/Customers';
-import SavedReplies from './Modules/SavedReplies/Replies';
-import CustomerPage from "./Modules/Customers/CustomerPage";
+const Customers = () => import('./Modules/Customers/Customers');
+const SavedReplies = () => import('./Modules/SavedReplies/Replies');
+const CustomerPage = () => import("./Modules/Customers/CustomerPage");
 
-import MailBoxRoot from './Modules/MailBoxes/MailBoxRoot';
-import ChooseMailBox from './Modules/MailBoxes/ChooseMailBox';
-import MailBoxSettings from './Modules/MailBoxes/MailBoxSettings';
-import MailBoxEmailSettings from './Modules/MailBoxes/BoxEmailSettings';
-import MailBoxEmailPiping from './Modules/MailBoxes/MailBoxEmailPiping';
+const MailBoxRoot = () => import('./Modules/MailBoxes/MailBoxRoot');
+const ChooseMailBox = () => import('./Modules/MailBoxes/ChooseMailBox');
+const MailBoxSettings = () => import('./Modules/MailBoxes/MailBoxSettings');
+const MailBoxEmailSettings = () => import('./Modules/MailBoxes/BoxEmailSettings');
+const MailBoxEmailPiping = () => import('./Modules/MailBoxes/MailBoxEmailPiping');
 
-import Report from './Modules/Reports/Report';
+const Report = () => import('./Modules/Reports/Report');
 
-import Workflows from './Modules/Workflows/AllWorkflows';
-import EditWorkFlow from './Modules/Workflows/EditWorkFlow';
+const Workflows = () => import('./Modules/Workflows/AllWorkflows');
+const EditWorkFlow = () => import('./Modules/Workflows/EditWorkFlow');
 
-import Activity from "./Modules/ActivityLogger/Activity";
-import NotificationsPage from './Modules/Notifications/NotificationsPage.vue';
+const Activity = () => import("./Modules/ActivityLogger/Activity");
+const NotificationsPage = () => import('./Modules/Notifications/NotificationsPage.vue');
 
-import IncomingWebhook from "./Modules/Settings/IncomingWebhook";
-import TicketImporter from "./Modules/Settings/TicketImporter/TicketImporter";
-import HelpScoutAuthorization from "./Modules/Settings/TicketImporter/HelpScout/HelpScoutAuthorization";
-import IntegrationStatuses from './Modules/Settings/IntegrationStatuses';
-import AIIntegration from "@/admin/Modules/Settings/AIIntegration.vue";
-import FluentBotIntegration from "@/admin/Modules/Settings/FluentBotIntegration.vue";
-import McpIntegration from "@/admin/Modules/Settings/McpIntegration.vue";
+const IncomingWebhook = () => import("./Modules/Settings/IncomingWebhook");
+const RemotePortal = () => import("./Modules/Settings/RemotePortal");
+const TicketImporter = () => import("./Modules/Settings/TicketImporter/TicketImporter");
+const HelpScoutAuthorization = () => import("./Modules/Settings/TicketImporter/HelpScout/HelpScoutAuthorization");
+const IntegrationStatuses = () => import('./Modules/Settings/IntegrationStatuses');
+const AIIntegration = () => import("@/admin/Modules/Settings/AIIntegration.vue");
+const McpIntegration = () => import("@/admin/Modules/Settings/McpIntegration.vue");
+const CronMonitor = () => import("@/admin/Modules/Settings/SystemTools/CronMonitor.vue");
+const DatabaseHealth = () => import("@/admin/Modules/Settings/SystemTools/DatabaseHealth.vue");
+const DataCleanup = () => import("@/admin/Modules/Settings/SystemTools/DataCleanup.vue");
+
+// The pages agents open most. start.js loads them in the background once the
+// app is idle, so opening them later needs no network request.
+export const warmRoutes = [Dashboard, TicketsView, AllTickets, ViewTicket];
 
 export default [
     {
@@ -149,6 +157,11 @@ export default [
                 component: IncomingWebhook
             },
             {
+                path: 'remote-portal',
+                name: 'remote_portal',
+                component: RemotePortal
+            },
+            {
                 path: 'auto-close',
                 name: 'auto_close',
                 component: AutoCloseSettings
@@ -171,15 +184,24 @@ export default [
                 props: true,
             },
             {
-                path: '/fluent_bot_integration',
-                name: 'fluent_bot_integration',
-                component: FluentBotIntegration,
-                props: true,
-            },
-            {
                 path: '/ai-agents',
                 name: 'mcp_settings',
                 component: McpIntegration,
+            },
+            {
+                path: 'cron-monitor',
+                name: 'cron_monitor',
+                component: CronMonitor
+            },
+            {
+                path: 'database-health',
+                name: 'database_health',
+                component: DatabaseHealth
+            },
+            {
+                path: 'data-cleanup',
+                name: 'data_cleanup',
+                component: DataCleanup
             },
 
         ]

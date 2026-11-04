@@ -5,7 +5,9 @@ namespace FluentSupport\App\Services\Integrations\FluentCrm;
 use FluentCrm\App\Models\Subscriber;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\Ticket;
+use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Helper;
+use FluentSupport\App\Services\Tickets\AgentTicketAccess;
 
 class FluentCRMWidgets
 {
@@ -30,13 +32,29 @@ class FluentCRMWidgets
 
     public function getSupportTickets($data, $subscriber)
     {
+        // CRM access isn't ticket access: require the single-ticket view gate, then list only openable tickets.
+        $agent = Helper::getAgentByUserId();
+
+        $canViewTickets = PermissionManager::userCan([
+            'fst_view_tickets',
+            'fst_draft_reply',
+            'fst_manage_own_tickets',
+            'fst_manage_unassigned_tickets',
+            'fst_manage_other_tickets'
+        ]);
+
+        if (!$agent || !$canViewTickets) {
+            return $data;
+        }
+
         $supportPerson = Customer::where('email', $subscriber->email)->first();
 
         if (!$supportPerson) {
             return $data;
         }
 
-        $tickets = Ticket::where('customer_id', $supportPerson->id)
+        $tickets = (new AgentTicketAccess())
+            ->applyAccessScope(Ticket::where('customer_id', $supportPerson->id), $agent)
             ->latest('id')
             ->paginate();
 
@@ -46,9 +64,11 @@ class FluentCRMWidgets
             $actionHTML = '<a target="_blank" href="' . $ticketUrl . '">' . __('View Ticket', 'fluent-support') . '</a>';
             $formattedTickets[] = [
                 'id'           => '#' . $ticket->id,
-                'title'        => $ticket->title,
+                // FluentCRM renders these columns as HTML.
+                'title'        => esc_html($ticket->title),
                 'status'       => '<span class="el-tag">' . $ticket->status . '</span>',
-                'Submitted at' => human_time_diff(strtotime($ticket->created_at), current_time('timestamp')) . __(' ago', 'fluent-support'),
+                /* translators: %s is a human-readable time difference, e.g. "2 hours" */
+                'Submitted at' => sprintf(__('%s ago', 'fluent-support'), human_time_diff(strtotime($ticket->created_at), current_time('timestamp'))),
                 'action'       => $actionHTML
             ];
         }

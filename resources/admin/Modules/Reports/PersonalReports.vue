@@ -34,7 +34,18 @@
             </div>
         </div>
     </div>
-    <div class="fs_stat_boxes_row" v-loading="loading">
+    <div v-if="first_loading" class="fs_stat_boxes_row fs_stat_boxes_row_4" aria-busy="true">
+        <div v-for="n in 4" :key="n" class="fs_stat_box">
+            <el-skeleton animated style="width: 100%;">
+                <template #template>
+                    <el-skeleton-item variant="rect" style="width: 32px; height: 32px; border-radius: 8px;" />
+                    <el-skeleton-item variant="text" style="width: 60%; margin-top: 12px;" />
+                    <el-skeleton-item variant="h3" style="width: 35%; margin-top: 8px;" />
+                </template>
+            </el-skeleton>
+        </div>
+    </div>
+    <div v-else class="fs_stat_boxes_row fs_stat_boxes_row_4" v-loading="loading">
         <StatBox
             v-for="(stat, index) in mergedReports"
             :key="index"
@@ -113,6 +124,7 @@ export default {
 
         return {
             loading: false,
+            first_loading: true,
             stat_loading: false,
             overall_reports: {},
             currently_showing: "resolve-chart",
@@ -146,7 +158,6 @@ export default {
                 'open_tickets': 'open_tickets',
                 'pending': 'new_tickets',
                 'replies': 'reply',
-                'total_replies': 'total_replies',
                 'resolved': 'closed_tickets',
             };
             const defaultIcon = 'new_tickets';
@@ -207,6 +218,7 @@ export default {
                 })
                 .always(() => {
                     this.loading = false;
+                    this.first_loading = false;
                 });
         },
 

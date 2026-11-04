@@ -137,7 +137,8 @@
 
                 <div class="fs_pagination_wrapper" v-if="filteredRows.length">
                     <div class="fs_pagination_left">
-                        <p>{{ $t("Page") }} {{ pagination.current_page }} {{ $t("of") }} {{ totalPages }}</p>
+                        <!-- translators: %1$s is the current page number, %2$s the total number of pages -->
+                        <p>{{ $t('Page %1$s of %2$s', pagination.current_page, totalPages) }}</p>
                         <pagination :pagination="pagination" layout="sizes" />
                     </div>
                     <div class="fs_pagination_right">

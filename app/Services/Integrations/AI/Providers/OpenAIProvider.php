@@ -14,23 +14,23 @@ class OpenAIProvider extends BaseAIProvider
         return 'OpenAI';
     }
 
+    protected function getRecommendedModel(): string
+    {
+        return 'gpt-6.1-sol';
+    }
+
     public function getAvailableModels(): array
     {
         $models = [
-            ['value' => 'gpt-4.1',              'label' => 'GPT-4.1'],
-            ['value' => 'gpt-4.1-mini',         'label' => 'GPT-4.1 Mini'],
-            ['value' => 'gpt-4.1-nano',         'label' => 'GPT-4.1 Nano'],
-            ['value' => 'gpt-4o',               'label' => 'GPT-4o'],
-            ['value' => 'gpt-4o-mini',          'label' => 'GPT-4o Mini'],
-            ['value' => 'gpt-4o-2024-08-06',    'label' => 'GPT-4o (2024-08-06)'],
-            ['value' => 'gpt-4o-mini-2024-07-18', 'label' => 'GPT-4o Mini (2024-07-18)'],
-            ['value' => 'gpt-4-turbo',          'label' => 'GPT-4 Turbo'],
-            ['value' => 'gpt-4',                'label' => 'GPT-4'],
-            ['value' => 'gpt-3.5-turbo',        'label' => 'GPT-3.5 Turbo'],
-            ['value' => 'o3',                   'label' => 'o3'],
-            ['value' => 'o3-mini',              'label' => 'o3-mini'],
-            ['value' => 'o4-mini',              'label' => 'o4-mini'],
-            ['value' => 'o1',                   'label' => 'o1'],
+            ['value' => 'gpt-6-astra',   'label' => 'GPT-6 Astra (Most Powerful)'],
+            ['value' => 'gpt-6.1-sol',   'label' => 'GPT-6.1 Sol'],
+            ['value' => 'gpt-6-sol',     'label' => 'GPT-6 Sol'],
+            ['value' => 'gpt-6-luna',    'label' => 'GPT-6 Luna (Fastest)'],
+            ['value' => 'gpt-5.6-sol',   'label' => 'GPT-5.6 Sol'],
+            ['value' => 'gpt-5.6-terra', 'label' => 'GPT-5.6 Terra'],
+            ['value' => 'gpt-5.6-luna',  'label' => 'GPT-5.6 Luna'],
+            ['value' => 'gpt-5.4-mini',  'label' => 'GPT-5.4 Mini'],
+            ['value' => 'gpt-5-mini',    'label' => 'GPT-5 Mini'],
         ];
 
         return apply_filters('fluent_support/supported_openai_models', $models);

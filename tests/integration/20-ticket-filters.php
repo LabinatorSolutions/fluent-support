@@ -2,14 +2,9 @@
 /**
  * GET /tickets filtering.
  *
- * Fixtures span two mailboxes, three statuses and two priorities. Every
- * assertion narrows the response to this suite's own four ticket IDs before
- * counting, so unrelated site data (seed rows, real tickets, fixtures from
- * the other integration files) can never make a filter look correct or
- * incorrect.
- *
- * A filter that is silently ignored returns the *other* fixtures too, which
- * is exactly what these scoped counts catch.
+ * Fixtures span two mailboxes, three statuses and two priorities. Assertions
+ * only look at this suite's four ticket IDs, so other site data can't skew
+ * them, and an ignored filter shows up as extra fixtures.
  */
 
 return function () {
@@ -58,16 +53,13 @@ return function () {
 
     /**
      * Return the IDs from a GET /tickets payload that are this suite's fixtures.
-     *
-     * Scoped to the four fixture IDs, not merely to the run marker: every file
-     * in one run shares a marker, so marker-only scoping would pick up tickets
-     * created by the other suites.
+     * Scoped by ID because every file in a run shares the marker.
      *
      * @param array<string,mixed> $result
      * @return array<int>|null null when the response was not usable
      */
     $ownedIdsIn = function ($result) use (&$ownedIds) {
-        // The controller returns a LengthAwarePaginator instance, not an array.
+        // The controller returns a paginator object, not an array.
         $payload = isset($result['data']['tickets']) ? $result['data']['tickets'] : null;
         if (is_object($payload)) {
             $payload = json_decode(json_encode($payload), true);

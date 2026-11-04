@@ -2,6 +2,7 @@
 
 namespace FluentSupport\App\Hooks\Handlers;
 
+use FluentSupport\App\Modules\Customers\CustomerService;
 use FluentSupport\App\App;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\Product;
@@ -19,8 +20,7 @@ class CustomerPortalHandler
     public function renderPortal($args = [])
     {
         /**
-         * This hook filter customer portal access permission error message.
-         * If a customer has no access to the portal, then the message will be displayed.
+         * Filter the message shown when a customer can't access the portal.
          * @param string $invalidPermissionMessage
          * @return string
          * @since 1.6.0
@@ -36,8 +36,7 @@ class CustomerPortalHandler
             $adminPortalUrl = Helper::getPortalAdminBaseUrl();
 
             /**
-             * This hook filter is responsible for generating error message
-             * when a support staff try to access customer portal
+             * Filter the message shown when support staff open the customer portal.
              * @param string $agentPermissionErrMessage
              * @return string
              * @since 1.6.0
@@ -86,8 +85,8 @@ class CustomerPortalHandler
 
             $loggedInMessage = str_replace('[fluent_support_portal]', '', $loggedInMessage);
 
-            // Pass portal's show-signup / show-reset-password to auth/login shortcodes
-            // by temporarily overriding defaults via the existing filter.
+            // Pass the portal's show-signup / show-reset-password through to the
+            // login shortcodes rendered inside the message.
             $overrideDefaults = function ($defaults) use ($args) {
                 $defaults['show-signup']         = Arr::get($args, 'show-signup', 'true');
                 $defaults['show-reset-password'] = Arr::get($args, 'show-reset-password', 'true');
@@ -106,27 +105,19 @@ class CustomerPortalHandler
     }
 
     /**
-     * Notice shown above the portal when the customer's support address no
-     * longer matches the address on their WordPress account.
+     * Notice for when the support address no longer matches the WP account email.
+     * Rendered outside the Vue mount point so the app doesn't replace it.
      *
-     * Rendered server side, outside the element the portal app mounts into, so
-     * it survives the Vue app taking over and needs no asset build.
+     * It says nothing about tickets on the other address, since anyone can point
+     * their account at an address they don't own and would learn who is a customer.
      *
-     * @param \FluentSupport\App\Models\Customer|null $customer Already resolved by the caller
-     *
-     * The notice deliberately says nothing about what is waiting on the other
-     * address. Somebody who points their account at an address they do not own
-     * sees this same notice, and a ticket count would tell them whether that
-     * person is a customer here.
-     *
+     * @param \FluentSupport\App\Models\Customer|null $customer
      * @return string
      */
     protected function renderEmailClaimNotice($customer = null)
     {
         $html = $this->renderEmailClaimResult();
 
-        // The caller already resolved this record; handing it over keeps the
-        // check free of an extra query on every portal render.
         $divergence = EmailClaimService::getDivergence($customer);
 
         if (!$divergence) {
@@ -244,7 +235,7 @@ class CustomerPortalHandler
             $onBehalf = $this->processCustomFields($customFields, $onBehalf);
         }
 
-        return Customer::maybeCreateCustomer($onBehalf);
+        return CustomerService::findOrCreate($onBehalf);
     }
 
     private function processCustomFields($customFields, $onBehalf)
@@ -346,12 +337,11 @@ class CustomerPortalHandler
             wp_enqueue_editor();
         }
 
-        // Inject Vite HMR client for dev mode
         add_action('wp_head', function () {
             Vite::injectViteClient();
         }, 1);
 
-        wp_enqueue_script('dompurify', $assets . 'libs/purify/purify.min.js', [], '3.4.13');
+        wp_enqueue_script('dompurify', $assets . 'libs/purify/purify.min.js', [], '3.4.16');
         wp_enqueue_script('fs_tk_customer_portal', Vite::getEnqueuePath('portal/js/app.js'), ['jquery'], FLUENT_SUPPORT_VERSION, true);
 
         if (is_rtl()) {

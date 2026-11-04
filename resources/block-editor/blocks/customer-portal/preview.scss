@@ -1,0 +1,81 @@
+// Editor-only additions to the portal preview. Everything else comes from the
+// portal CSS (assets/portal/css/app.css), registered as a block editor style.
+
+.fs_block_portal_preview .fs_client_portal {
+    // Themes usually supply these on the front end; the editor canvas does not
+    &,
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+
+    input,
+    textarea,
+    button {
+        font-family: inherit;
+    }
+
+    // Base layout of the WP editor chrome, from wp-includes/css/editor.css,
+    // which the portal relies on and the editor canvas does not load
+    .wp-editor-tools::after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+    .wp-switch-editor {
+        padding: 3px 8px;
+        background: var(--fs-bg-weak, #F5F7FA);
+        cursor: default;
+    }
+
+    // Sample avatars, drawn like the initials image the portal falls back to
+    .fs_block_avatar_initials {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--fs-bg-weak, #F5F7FA);
+        color: var(--fs-text-sub, #525866);
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    // Stand-in for the portal's TinyMCE editor (see CreateTicket/LandingPage.jsx)
+    .fs_block_editor_mock {
+        border: 1px solid var(--fs-border-soft, #E1E4EA);
+        overflow: hidden;
+    }
+
+    .fs_block_editor_mock_toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 4px;
+        padding: 8px 12px;
+        background: var(--fs-bg-weak, #F5F7FA);
+        border-bottom: 1px solid var(--fs-border-soft, #E1E4EA);
+        color: var(--fs-text-sub, #525866);
+        font-size: 13px;
+        line-height: 20px;
+    }
+
+    .fs_block_editor_mock_format {
+        min-width: 110px;
+        padding: 2px 8px;
+        margin-inline-end: 8px;
+        background: var(--fs-bg-white, #FFFFFF);
+        border-radius: 4px;
+    }
+
+    .fs_block_editor_mock_button {
+        min-width: 26px;
+        text-align: center;
+        font-weight: 600;
+    }
+
+    .fs_block_editor_mock_body {
+        height: 150px;
+        background: var(--fs-bg-white, #FFFFFF);
+    }
+}

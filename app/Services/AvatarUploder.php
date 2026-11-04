@@ -10,9 +10,9 @@ use FluentSupport\App\Services\Includes\FileSystem;
 class AvatarUploder
 {
     /**
-     * @param $file - file object
-     * @param int $userid - user id
-     * @param string $type - Customer or Agent
+     * @param array $file
+     * @param int $userid Person id
+     * @param string $type 'customer' or 'agent'
      * @throws Exception
      * @return array
      */
@@ -40,15 +40,14 @@ class AvatarUploder
     }
 
     /**
-     * This Method Will Validate The Extension Of The File
-     * @param $file - file object
+     * @param array $file
      * @throws Exception
      * @return bool
      */
     private function validateExtension($file)
     {
         /**
-         * Filter profile picture upload types
+         * Filter allowed profile picture extensions.
          * @param array $allowedExtension
          */
         $allowedExtension = apply_filters('fluent_support/allowed_customer_profile_picture_file_type',

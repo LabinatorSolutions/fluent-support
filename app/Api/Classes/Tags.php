@@ -5,13 +5,9 @@ namespace FluentSupport\App\Api\Classes;
 use FluentSupport\App\Models\TicketTag;
 
 /**
- *  Tags class for PHP API
+ * Ticket tags PHP API.
  *
  * Example Usage: $ticketTagsApi = FluentSupportApi('tags');
- *
- * @package FluentSupport\App\Api\Classes
- *
- * @version 1.0.0
  */
 class Tags
 {
@@ -30,16 +26,12 @@ class Tags
         $this->instance = $instance;
     }
 
-    /**
-     * getTags method will returns all available tags
-     */
     public function getTags()
     {
         return TicketTag::paginate();
     }
 
     /**
-     * getTag method returns a specific tag by id
      * @param int $id
      */
     public function getTag(int $id)
@@ -52,7 +44,6 @@ class Tags
     }
 
     /**
-     * createTag method will create a new tag
      * @param array $data
      */
     public function createTag(array $data)
@@ -64,7 +55,6 @@ class Tags
     }
 
     /**
-     * updateTag method will update tag by id
      * @param int $id
      * @param array $data
      */
@@ -77,7 +67,6 @@ class Tags
     }
 
     /**
-     * deleteTag method will delete tag by id
      * @param int $id
      */
     public function deleteTag(int $id)

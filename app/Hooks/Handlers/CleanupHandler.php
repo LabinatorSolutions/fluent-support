@@ -2,16 +2,14 @@
 
 namespace FluentSupport\App\Hooks\Handlers;
 
-use FluentSupport\App\Models\Activity;
-use FluentSupport\App\Models\AIActivityLogs;
 use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Meta;
 use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\Includes\FileSystem;
 use FluentSupport\App\Services\Integrations\Maintenance;
-use FluentSupport\Database\Migrations\NotificationsMigrator;
-use FluentSupport\Database\Migrations\NotificationUsersMigrator;
+use FluentSupport\App\Modules\SystemTools\DataCleanup;
+use FluentSupport\App\Services\Storage\StorageManager;
 
 class CleanupHandler
 {
@@ -21,6 +19,7 @@ class CleanupHandler
         $this->maybeDeleteOldTempFiles();
         $this->cleanAbandonedTempAttachments();
         $this->cleanExpiredAuthChallenges();
+        StorageManager::processDeleteQueue();
     }
 
     public function initDailyTasks()
@@ -34,7 +33,6 @@ class CleanupHandler
 
     protected function cleanLiveActivities()
     {
-        // Delete All Live Activity older than 24 hours
         $oldDateTime = gmdate('Y-m-d H:i:s', current_time('timestamp') - 86400);
 
         Meta::where('key', '_live_activity')
@@ -45,15 +43,11 @@ class CleanupHandler
 
     protected function cleanExpiredAuthChallenges()
     {
-        // Signup/2FA verification codes are only ever valid for a few minutes (see
-        // EmailVerificationHandler::CODE_TTL_SECONDS and TwoFaHandler::CODE_TTL_SECONDS);
-        // an hour is a generous margin so this never races a still-valid code.
+        // Codes live for minutes (see the CODE_TTL_SECONDS constants), so an hour
+        // never races a still-valid code.
         $oldDateTime = gmdate('Y-m-d H:i:s', current_time('timestamp') - HOUR_IN_SECONDS);
 
-        // Challenges issued by earlier versions were written with the query builder,
-        // which does not stamp created_at, so those rows are NULL and can never match
-        // the range check. They pre-date this upgrade and are long past their TTL, so
-        // they are purged alongside the expired ones.
+        // Older versions wrote these rows without created_at. They are long expired.
         Meta::whereIn('object_type', ['fs_login_hashes', 'fs_2fa'])
             ->where(function ($query) use ($oldDateTime) {
                 $query->where('created_at', '<', $oldDateTime)
@@ -66,19 +60,16 @@ class CleanupHandler
     {
         $settings = Helper::getOption('_activity_settings', []);
 
-        if (!$settings && empty($settings['delete_days'])) {
+        if (empty($settings['delete_days'])) {
             $settings['delete_days'] = 14;
         }
 
-        $oldDateTime = gmdate('Y-m-d H:i:s', current_time('timestamp') - ($settings['delete_days'] * 86400));
-
-        Activity::where('created_at', '<', $oldDateTime)->delete();
+        $this->deleteLogsOlderThan('activity_logs', $settings['delete_days']);
     }
 
     protected function cleanAIActivityLogs()
     {
-        if ((!defined('FLUENT_SUPPORT_PRO_DIR_FILE') || !Helper::openAIIntegrationStatus())
-            && !Helper::fluentBotIntegrationStatus()) {
+        if (!defined('FLUENT_SUPPORT_PRO_DIR_FILE') || !Helper::openAIIntegrationStatus()) {
             return;
         }
 
@@ -90,38 +81,29 @@ class CleanupHandler
             $defaultDays = (int)$settings['delete_days'];
         }
 
-        $oldDateTime = gmdate('Y-m-d H:i:s', current_time('timestamp') - ($defaultDays * 86400));
-
-        AIActivityLogs::where('created_at', '<', $oldDateTime)->delete();
+        $this->deleteLogsOlderThan('ai_activity_logs', $defaultDays);
     }
 
     protected function cleanInternalNotifications()
     {
-        global $wpdb;
+        $this->deleteLogsOlderThan('internal_notifications', 15);
+    }
 
-        $notificationsTable = $wpdb->prefix . NotificationsMigrator::$tableName;
-        $notificationUsersTable = $wpdb->prefix . NotificationUsersMigrator::$tableName;
+    /**
+     * DataCleanup deletes one chunk per call; the cron keeps going until the type is clean
+     * or the 20s budget is spent (the next run continues).
+     *
+     * @param string $type
+     * @param int    $days
+     */
+    protected function deleteLogsOlderThan($type, $days)
+    {
+        $cleanup = new DataCleanup();
 
-        if ($wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $notificationsTable)) !== $notificationsTable
-            || $wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $notificationUsersTable)) !== $notificationUsersTable) {
-            return;
-        }
-
-        $oldDateTime = gmdate('Y-m-d H:i:s', current_time('timestamp') - (15 * 86400));
-
-        $wpdb->query($wpdb->prepare(
-            "DELETE notification_users
-            FROM {$notificationUsersTable} AS notification_users
-            INNER JOIN {$notificationsTable} AS notifications
-                ON notification_users.notification_id = notifications.id
-            WHERE notifications.created_at < %s",
-            $oldDateTime
-        ));
-
-        $wpdb->query($wpdb->prepare(
-            "DELETE FROM {$notificationsTable} WHERE created_at < %s",
-            $oldDateTime
-        ));
+        $started = time();
+        do {
+            $result = $cleanup->deleteOlderThan([$type], $days);
+        } while ($result['has_more'] && (time() - $started) < 20);
     }
 
     public function maybeDeleteAttachmentsOnClose($ticket)
@@ -134,39 +116,12 @@ class CleanupHandler
 
     public function deleteTicketAttachments($ticket)
     {
-        $uploadDir = wp_upload_dir();
-        $dir = $uploadDir['basedir'] . '/' . FLUENT_SUPPORT_UPLOAD_DIR;
-
         $attachments = Attachment::where('ticket_id', $ticket->id)->get();
 
         if (!$attachments->isEmpty()) {
-            $ticketDir = $dir . '/ticket_' . $ticket->id;
-            if (is_dir($ticketDir)) {
-                $this->deleteDir($ticketDir);
-            }
-
-            foreach ($attachments as $attachment) {
-                if ($attachment->driver != 'local') {
-                    do_action('fluent_support/delete_remote_attachment_' . $attachment->driver, $attachment, $ticket->id);
-                } else if (file_exists($attachment->file_path)) {
-                    wp_delete_file($attachment->file_path);
-                }
-            }
-
+            Attachment::purgeAttachments($attachments, $ticket->id);
             Attachment::where('ticket_id', $ticket->id)->delete();
         }
-
-    }
-
-    private function deleteDir($dir)
-    {
-        if (!class_exists('\WP_Filesystem_Direct')) {
-            require_once(ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php');
-            require_once(ABSPATH . 'wp-admin/includes/class-wp-filesystem-direct.php');
-        }
-
-        $fileSystemDirect = new \WP_Filesystem_Direct(false);
-        $fileSystemDirect->rmdir($dir, true);
     }
 
     public function maybeMaintanceTask()
@@ -180,39 +135,26 @@ class CleanupHandler
     {
         $dir = FileSystem::getDir();
 
-        // loop through files in directory
         foreach (glob($dir . '/temp_files/*') as $filename) {
-            // check if file was created before last 2 hours
             if (time() - filectime($filename) >= 7200) { // 2 hours
-                wp_delete_file($filename); // delete file
+                wp_delete_file($filename);
             }
         }
     }
 
     /**
-     * An upload stays 'in-active' until its hash is submitted with a ticket or reply,
-     * at which point TicketService/ResponseService flip it to 'active' (or 'inline' for
-     * pasted images). A hash that is never submitted keeps its row forever, and
-     * UploaderController::checkAttachmentQuota() counts those rows against the
-     * per-ticket upload limit — so abandoned uploads permanently consume the quota.
+     * Uploads stay 'in-active' until submitted with a ticket or reply. Abandoned ones
+     * count against the upload quota, so drop them after the same 2 hours that
+     * maybeDeleteOldTempFiles() uses for the files.
      *
-     * maybeDeleteOldTempFiles() already deletes the underlying file at 2 hours, so
-     * these rows point at files that no longer exist. The same window is used here to
-     * keep the row lifetime aligned with the file lifetime.
-     *
-     * Rows with a NULL created_at are skipped rather than swept in: unlike the auth
-     * challenges above, they are not necessarily expired. TicketController's bulk reply
-     * writes clones with the query builder, which does not stamp created_at, and those
-     * rows are flipped to 'active' moments later in the same request. They also carry a
-     * ticket_id and no person_id, so they can never match the quota check anyway.
+     * NULL created_at rows are left alone: bulk reply writes them without a timestamp
+     * and activates them within the same request.
      */
     protected function cleanAbandonedTempAttachments()
     {
         $oldDateTime = gmdate('Y-m-d H:i:s', current_time('timestamp') - 7200); // 2 hours
 
-        // Bounded per run: purging touches the filesystem (and remote storage) per row,
-        // so a large first-run backlog drains over several hourly passes instead of
-        // stalling one cron tick.
+        // Each row hits the filesystem or remote storage, so drain a backlog over several runs.
         $attachments = Attachment::where('status', 'in-active')
             ->where('created_at', '<', $oldDateTime)
             ->limit(500)
@@ -222,11 +164,12 @@ class CleanupHandler
             return;
         }
 
-        // Removes the local temp file, or fires the remote-driver hook when the
-        // abandoned upload was already pushed to Dropbox/GDrive/etc.
         Attachment::purgeAttachments($attachments);
 
-        Attachment::whereIn('id', $attachments->pluck('id')->toArray())->delete();
+        // Rows of remote files stay marked `deleting` for the delete job.
+        Attachment::whereIn('id', $attachments->pluck('id')->toArray())
+            ->where('status', '!=', StorageManager::STATUS_DELETING)
+            ->delete();
     }
 
 
@@ -234,34 +177,52 @@ class CleanupHandler
     {
         global $wpdb;
 
-        // Get the timestamp for 7 days ago
         $cutoff_date = gmdate('Y-m-d H:i:s', strtotime("-{$days_old} days"));
 
-        // Get the group ID
         $group_id = $wpdb->get_var($wpdb->prepare(
             "SELECT group_id FROM {$wpdb->prefix}actionscheduler_groups WHERE slug = %s",
             $group_slug
         ));
 
         if (!$group_id) {
-            return false; // Group not found
+            return false;
         }
 
-        // Delete old actions and their associated logs
-        $deleted = $wpdb->query($wpdb->prepare("
-        DELETE a, l
-        FROM {$wpdb->prefix}actionscheduler_actions a
-        LEFT JOIN {$wpdb->prefix}actionscheduler_logs l ON a.action_id = l.action_id
-        WHERE a.group_id = %d
-        AND a.status IN ('complete', 'failed')
-        AND a.scheduled_date_gmt < %s", $group_id, $cutoff_date));
+        $actionsTable = $wpdb->prefix . 'actionscheduler_actions';
+        $logsTable = $wpdb->prefix . 'actionscheduler_logs';
+        $claimsTable = $wpdb->prefix . 'actionscheduler_claims';
 
-        // Clean up orphaned claims
-        $wpdb->query("
-        DELETE c
-        FROM {$wpdb->prefix}actionscheduler_claims c
-        LEFT JOIN {$wpdb->prefix}actionscheduler_actions a ON c.claim_id = a.claim_id
-        WHERE a.action_id IS NULL");
+        $deleted = 0;
+        $started = time();
+
+        // A batch at a time, and only our own actions, logs and claims.
+        do {
+            $rows = $wpdb->get_results($wpdb->prepare(
+                "SELECT action_id, claim_id FROM {$actionsTable}
+                WHERE group_id = %d AND status IN ('complete', 'failed') AND scheduled_date_gmt < %s
+                ORDER BY action_id ASC LIMIT 1000",
+                $group_id, $cutoff_date
+            ));
+            if (!$rows) {
+                break;
+            }
+
+            $actionIds = implode(',', array_map('intval', wp_list_pluck($rows, 'action_id')));
+            $claimIds = array_filter(array_map('intval', wp_list_pluck($rows, 'claim_id')));
+
+            $wpdb->query("DELETE FROM {$logsTable} WHERE action_id IN ({$actionIds})"); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- integer ids
+            $deleted += (int) $wpdb->query("DELETE FROM {$actionsTable} WHERE action_id IN ({$actionIds})"); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- integer ids
+
+            if ($claimIds) {
+                // Claims those actions held, once no action uses them.
+                $claimList = implode(',', array_unique($claimIds));
+                $wpdb->query(
+                    "DELETE c FROM {$claimsTable} c
+                    LEFT JOIN {$actionsTable} a ON a.claim_id = c.claim_id
+                    WHERE c.claim_id IN ({$claimList}) AND a.action_id IS NULL"
+                ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- integer ids
+            }
+        } while (count($rows) === 1000 && (time() - $started) < 20);
 
         return $deleted;
     }

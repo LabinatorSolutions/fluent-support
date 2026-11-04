@@ -4,7 +4,8 @@ namespace FluentSupport\App\Hooks\Handlers;
 
 use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Helper;
-use FluentSupport\App\Modules\Reporting\Reporting;
+use FluentSupport\App\Modules\Reports\ReportController;
+use FluentSupport\App\Modules\Reports\Reports;
 use FluentSupport\App\Services\Csv\CsvWriter;
 
 class DataExporter
@@ -19,16 +20,14 @@ class DataExporter
         $columns = $request->get('columns', []);
         $columns = is_array($columns) ? array_map('sanitize_text_field', $columns) : [];
         $agents = $request->get('agents', []);
-        // Normalize both caller shapes (array or comma-joined string) before agentSummary()'s explode(',', $agent).
-        $agentIds = is_array($agents) ? $agents : explode(',', (string) $agents);
-        $agents = implode(',', array_filter(array_map('intval', $agentIds)));
+        // An array or a comma-joined string.
+        $agentIds = array_filter(array_map('intval', is_array($agents) ? $agents : explode(',', (string) $agents)));
         if (empty($columns)) {
             $columns = Helper::getExportOptions();
         }
         $columns = $this->defineColumns($columns);
 
-        $reporting = new Reporting();
-        $data = $reporting->agentSummary($from_date, $to_date, $agents);
+        $data = Reports::agentSummary(ReportController::date($from_date), ReportController::date($to_date), $agentIds ?: null)->toArray();
 
         $csvWriter->insertOne(array_keys($columns));
 
@@ -92,14 +91,14 @@ class DataExporter
         $permission = 'fst_view_all_reports';
 
         if ( ! isset($_REQUEST['_wpnonce']) || ! wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['_wpnonce'])), 'fluent-support') ) {
-            wp_die('Security check failed');
+            wp_die(esc_html__('Security check failed.', 'fluent-support'));
         }
 
         if ( PermissionManager::currentUserCan($permission) ) {
             return true;
         }
 
-        wp_die('You do not have permission');
+        wp_die(esc_html__('You do not have permission to export this data.', 'fluent-support'));
     }
 
 }

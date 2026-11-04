@@ -48,6 +48,13 @@ export default {
             ],
         };
     },
+    mounted() {
+        // A change from another tab, another Fluent plugin or the FluentHub sidebar.
+        window.addEventListener('fluent_theme_changed', this.syncMode);
+    },
+    beforeUnmount() {
+        window.removeEventListener('fluent_theme_changed', this.syncMode);
+    },
     methods: {
         handleThemeChange(command) {
             if (this.currentTheme === command) {
@@ -55,6 +62,9 @@ export default {
             }
             this.currentTheme = command;
             Theme.apply(command);
+        },
+        syncMode() {
+            this.currentTheme = Theme.getCurrentTheme();
         },
     },
 };

@@ -22,7 +22,7 @@
                         :http-request="customUpload"
                     >
                         <div class="fs_upload_dragger">
-                            <img :src="appVars.asset_url + 'images/uploadIcon.svg'" alt="">
+                            <DynamicIcon name="UploadIcon"/>
                             <p class="fs_upload_dragger_text">
                                 {{ $t('Browse File') }}
                             </p>
@@ -37,7 +37,7 @@
                         <el-button
                             class="fs_outline_btn"
                         >
-                            <img :src="appVars.asset_url + 'images/attachmentIcon.svg'" alt="">
+                            <DynamicIcon name="AttachmentIcon"/>
                             {{ attachments.length }}
                         </el-button>
                         <template #dropdown>
@@ -78,7 +78,7 @@
                             class="fs_outline_btn"
                             @click="clearAllAttachments"
                         >
-                            <img :src="appVars.asset_url + 'images/deleteIcon.svg'" alt="">
+                            <DynamicIcon name="DeleteIcon"/>
                         </el-button>
                     </el-tooltip>
                 </div>
@@ -102,10 +102,15 @@
 </template>
 
 <script type="text/babel">
+import DynamicIcon from '@/admin/Components/Icons/DynamicIcon.vue';
 
 export default {
     name: 'AttachmentForm',
-    props: ['ticket', 'attachments', 'is_agent'],
+    components: {
+        DynamicIcon
+    },
+    // attachment_info: optional file details map owned by the parent, kept with the attachments it describes.
+    props: ['ticket', 'attachments', 'is_agent', 'attachment_info'],
     emits: ['upload-state-change'],
     computed: {
         acceptedTypes() {
@@ -139,7 +144,7 @@ export default {
             },
             error_message: '',
             showAttachmentList: false,
-            attachmentInfo: {},
+            attachmentInfo: this.attachment_info || {},
             pendingUploads: 0
         }
     },
@@ -158,14 +163,16 @@ export default {
         beforeUpload() {
             const maxFiles = parseInt(this.appVars.max_file_upload, 10);
             if ((this.attachments.length + this.uploadingCount) >= maxFiles) {
-                this.error_message = `${this.$t('You can upload maximum')} ${this.appVars.max_file_upload} ${this.$t('files')}`;
+                // translators: %s is the maximum number of files allowed per upload
+                this.error_message = this.$_n('You can upload a maximum of %s file.', 'You can upload a maximum of %s files.', this.appVars.max_file_upload);
                 return false;
             }
             return true;
         },
 
         handleExceed() {
-            this.error_message = `${this.$t('You can upload maximum')} ${this.appVars.max_file_upload} ${this.$t('files')}`;
+            // translators: %s is the maximum number of files allowed per upload
+            this.error_message = this.$_n('You can upload a maximum of %s file.', 'You can upload a maximum of %s files.', this.appVars.max_file_upload);
         },
 
         customUpload(options) {
@@ -314,7 +321,7 @@ export default {
             return this.formatFileSize(attachment.file_size || 0);
         },
         clearAllAttachments() {
-            this.attachmentInfo = {};
+            Object.keys(this.attachmentInfo).forEach(hash => delete this.attachmentInfo[hash]);
             this.attachments.splice(0, this.attachments.length);
             this.$refs.uploadRef?.clearFiles();
             this.showAttachmentList = false;
@@ -338,7 +345,8 @@ export default {
     gap: 4px;
 }
 
-.fs_upload_dragger img {
+.fs_upload_dragger img,
+.fs_upload_dragger svg {
     width: 20px;
     height: 20px;
     flex-shrink: 0;
@@ -347,7 +355,7 @@ export default {
 .fs_upload_dragger_text {
     margin: 0;
     font-size: 14px;
-    color: #606266;
+    color: var(--fs-text-secondary, #525866);
 }
 
 .fs_upload_dragger_text em {
@@ -380,37 +388,11 @@ export default {
     align-items: center;
 }
 
-
-.fs_attachment_count {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 12px;
-    border: 1px solid #409eff;
-    border-radius: 4px;
-    background: #409eff;
-    color: white;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    min-width: 50px;
-    justify-content: center;
-}
-
 .fs_attachment_help {
     margin: 0;
     font-size: 12px;
     color: #909399;
     flex: 1;
-}
-
-.fs_attachment_list {
-    margin-top: 12px;
-    border: 1px solid #e4e7ed;
-    border-radius: 8px;
-    background: white;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    overflow: hidden;
 }
 
 .fs_attachment_dropdown {

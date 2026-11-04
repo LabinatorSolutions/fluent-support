@@ -59,29 +59,9 @@
     flex-wrap: wrap;
     gap: 16px;
     width: 100%;
-
-    .fs_checkbox_item {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      min-width: 100px;
-
-      .el-checkbox__label {
-        font-weight: 400;
-        font-size: 14px;
-        line-height: 20px;
-        letter-spacing: -0.084px;
-        color: var(--fs-text-primary, #0e121b);
-      }
-    }
   }
 
   // Override Element Plus form styling
-  .el-form {
-    // display: flex;
-    // flex-direction: column;
-    // gap: 0;
-  }
 
   // Override Element Plus form item styling
   .el-form-item {

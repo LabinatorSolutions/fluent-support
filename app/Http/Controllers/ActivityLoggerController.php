@@ -7,16 +7,11 @@ use FluentSupport\App\Services\Helper;
 use FluentSupport\Framework\Http\Request\Request;
 
 /**
- *  ActivityLoggerController class for REST API
- * This class is responsible for getting data for all request related to activity and activity settings
- * @package FluentSupport\App\Http\Controllers
- *
- * @version 1.0.0
+ * Activity log endpoints and settings.
  */
 class ActivityLoggerController extends Controller
 {
     /**
-     * getActivities method will get information regarding all activity with users(agent/customer) and activity settings
      * @return \WP_REST_Response | array
      */
 
@@ -41,13 +36,12 @@ class ActivityLoggerController extends Controller
     }
 
     /**
-     * updateSettings method will update existing activity settings
      * @return \WP_REST_Response | array
      */
     public function updateSettings (Request $request, Activity $activity)
     {
         try {
-            // Get raw array - do not use sanitize_text_field on the whole object (it would turn array into empty string)
+            // Read raw: sanitize_text_field on the array would turn it into an empty string.
             $raw = $request->get('activity_settings', null);
             $settings = is_array($raw) ? $raw : [];
             $settings = [
@@ -64,7 +58,6 @@ class ActivityLoggerController extends Controller
     }
 
     /**
-     * getSettings method will get the list of activity settings and return
      * @return \WP_REST_Response | array
      */
     public function getSettings(Activity $activity)

@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import each from "lodash/each";
+import { each } from "lodash-es";
 import { timesheetUtils } from "@/admin/Modules/Reports/TimeSheet/Pieces/TimeSheetUtils";
 export default {
     name: "_UserAgentDateSheetPop",

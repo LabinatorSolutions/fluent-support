@@ -2,24 +2,11 @@
 /**
  * S0 lint — raw SQL must not contain unprefixed table-qualified identifiers.
  *
- * WHY THIS EXISTS
- * ---------------
- * In WPFluent, `where('fs_tickets.status', ...)`, `select('fs_x.col')`,
- * `join()` and `groupBy()` all pass through BaseGrammar::wrap(), which prepends
- * $wpdb->prefix. `raw()` / `selectRaw()` / `whereRaw()` DO NOT — the string is
- * handed to the driver verbatim. So this:
+ * WPFluent's where()/select()/join()/groupBy() prepend $wpdb->prefix via
+ * BaseGrammar::wrap(). raw()/selectRaw()/whereRaw() pass the string through
+ * verbatim, so `fs_tickets.status` in a selectRaw() is an unknown column.
  *
- *     ->selectRaw("SUM(CASE WHEN fs_tickets.status = 'open' ...)")
- *
- * produces `fs_tickets.status` while every other identifier in the same query
- * is correctly `wp_fs_tickets`, and MySQL throws
- * "Unknown column 'fs_tickets.status' in 'field list'".
- *
- * That bug class shipped on FluentCRM (2026-07-20) and killed two endpoints
- * for a week. php -l, PHPCS and code review all passed it. This rule is the
- * cheap guard: it fails at author time, in milliseconds, and explains the fix.
- *
- * THE FIX IT WANTS
+ * The fix:
  *     global $wpdb;
  *     $t = $wpdb->prefix . 'fs_tickets';
  *     ->selectRaw("SUM(CASE WHEN `{$t}`.`status` = 'open' ...)")
@@ -34,11 +21,9 @@
 
 $root = is_dir(__DIR__ . '/../../app') ? dirname(__DIR__, 2) : getcwd();
 
-// Default scan targets: the core plugin's app tree plus every registered
-// sibling's. A registered-but-absent sibling reports SKIP with its name —
-// silence would read as covered. An explicit path argument overrides all of
-// this, which is what the self-test uses to prove the rule still fires:
-//   php tests/lint/raw-sql-prefix.php tests/lint/fixtures   ->  must exit 1
+// Scans core app/ plus every registered sibling. A missing sibling reports
+// SKIP so it doesn't read as covered. A path argument overrides this; the
+// self-test uses it: `php tests/lint/raw-sql-prefix.php tests/lint/fixtures` must exit 1.
 $scanDirs = ['app'];
 $config = is_file(__DIR__ . '/../suite.config.php') ? require __DIR__ . '/../suite.config.php' : [];
 $skips = [];
@@ -75,7 +60,6 @@ $iterate = function ($dir) {
     foreach ($rii as $file) {
         if ($file->isFile() && strtolower($file->getExtension()) === 'php') {
             $path = $file->getPathname();
-            // Never lint vendored or scoped-vendor trees.
             if (strpos($path, '/vendor/') !== false || strpos($path, 'scoped-vendor') !== false) {
                 continue;
             }
@@ -96,10 +80,8 @@ foreach ($scanDirs as $dir) {
                 continue;
             }
 
-            // Only literals INSIDE each raw call's parentheses count. A
-            // grammar-wrapped select('fs_x.col') can share a line with an
-            // innocent ->raw('COUNT(*)') — correct code that line-granularity
-            // scanning would report as a violation.
+            // Only literals inside the raw call's parentheses count. A wrapped
+            // select('fs_x.col') can share a line with a harmless ->raw('COUNT(*)').
             $rawSpans = '';
             foreach ($rawCalls[0] as $rawCall) {
                 $openParen = strpos($line, '(', $rawCall[1]);
@@ -144,11 +126,8 @@ foreach ($scanDirs as $dir) {
                     continue;
                 }
 
-                // Prefix concatenated immediately before the literal:
+                // Prefix concatenated before the literal, outside the quotes:
                 //   $wpdb->prefix . 'fs_x.col'   or   $t . 'fs_x.col'
-                // The variable sits OUTSIDE the quotes, so the literal alone
-                // looks bare. Checking only the literal would report these as
-                // violations when they are correct.
                 $before = substr($rawSpans, 0, $literalOffset);
                 if (preg_match(
                     '/(?:\$wpdb->prefix|getTablePrefix\s*\(\s*\)|\$[a-zA-Z_][a-zA-Z0-9_]*)\s*\.\s*$/',

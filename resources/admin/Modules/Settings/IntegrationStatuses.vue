@@ -38,8 +38,25 @@
                 </div>
             </div>
         </div>
-        <div v-else class="fs_box_body fs_skeleton_loader">
-            <el-skeleton :animated="true" :rows="3" />
+        <div v-else class="fs_box_body fs_storage_integration_wrapper">
+            <el-skeleton animated class="fs_storage_integration_cards">
+                <template #template>
+                    <div v-for="n in 3" :key="n" class="fs_storage_integration_card">
+                        <div class="fs_storage_card_content">
+                            <div class="fs_storage_card_left">
+                                <el-skeleton-item variant="circle" style="width: 40px; height: 40px; flex-shrink: 0;" />
+                                <div class="fs_storage_card_info">
+                                    <el-skeleton-item variant="text" style="width: 30%; height: 18px; margin-bottom: 8px;" />
+                                    <el-skeleton-item variant="text" style="width: 80%;" />
+                                </div>
+                            </div>
+                            <div class="fs_storage_card_right">
+                                <el-skeleton-item variant="button" style="width: 100px;" />
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </el-skeleton>
         </div>
     </div>
 </template>

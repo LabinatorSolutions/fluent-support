@@ -24,10 +24,9 @@ $router->prefix('mailboxes')->withPolicy('AdminSettingsPolicy')->group(function 
 
 $router->prefix('tickets')->withPolicy('AgentTicketPolicy')->group(function ($router) {
 
-    $router->get('my_stats', 'AgentController@myStats');
-    $router->get('agent_performance', 'AgentController@agentPerformance');
     $router->get('/', 'TicketController@index');
     $router->post('/', 'TicketController@createTicket');
+    $router->get('/sidebar-counts', 'TicketController@getSidebarCounts');
     $router->get('/label-search', 'TicketController@fetchLabelSearch');
     $router->post('/label-search', 'TicketController@storeOrUpdateLabelSearch');
     $router->delete('/{label_search_id}/label-search', 'TicketController@deleteLabelSearch')->int('label_search_id');
@@ -36,28 +35,29 @@ $router->prefix('tickets')->withPolicy('AgentTicketPolicy')->group(function ($ro
     $router->get('/{ticket_id}', 'TicketController@getTicket')->int('ticket_id');
 
     $router->get('/{ticket_id}/widgets', 'TicketController@getTicketWidgets')->int('ticket_id');
-    $router->post('/{ticket_id}/responses', 'TicketController@createResponse')->int('ticket_id');
+    $router->post('/{ticket_id}/responses', 'ResponseController@createResponse')->int('ticket_id');
 
-    $router->post('/{ticket_id}/draft', 'TicketController@createOrUpdatDraft')->int('ticket_id');
-    $router->get('/{ticket_id}/draft', 'TicketController@getDraft')->int('ticket_id');
-    $router->delete('/{draft_id}/draft', 'TicketController@deleteDraft')->int('draft_id');
+    $router->post('/{ticket_id}/draft', 'ResponseController@createOrUpdatDraft')->int('ticket_id');
+    $router->get('/{ticket_id}/draft', 'ResponseController@getDraft')->int('ticket_id');
+    $router->delete('/{draft_id}/draft', 'ResponseController@deleteDraft')->int('draft_id');
 
     $router->get('/{ticket_id}/live_activity', 'TicketController@getLiveActivity')->int('ticket_id');
     $router->delete('/{ticket_id}/live_activity', 'TicketController@removeLiveActivity')->int('ticket_id');
 
-    $router->put('/{ticket_id}/responses/{response_id}', 'TicketController@updateResponse')
+    $router->put('/{ticket_id}/responses/{response_id}', 'ResponseController@updateResponse')
         ->int('ticket_id')
         ->int('response_id');
 
-    $router->put('/{ticket_id}/approve_draft_response/{response_id}', 'TicketController@approveDraftResponse')
+    $router->put('/{ticket_id}/approve_draft_response/{response_id}', 'ResponseController@approveDraftResponse')
         ->int('ticket_id')
         ->int('response_id');
 
-    $router->delete('/{ticket_id}/responses/{response_id}', 'TicketController@deleteResponse')
+    $router->delete('/{ticket_id}/responses/{response_id}', 'ResponseController@deleteResponse')
         ->int('ticket_id')
         ->int('response_id');
 
     $router->put('/{ticket_id}/property', 'TicketController@updateTicketProperty')->int('ticket_id');
+    $router->put('/{ticket_id}/content', 'TicketController@updateTicketContent')->int('ticket_id');
 
     $router->post('/{ticket_id}/tags', 'TicketController@addTag')->int('ticket_id');
     $router->delete('/{ticket_id}/tags/{tag_id}', 'TicketController@detachTag')->int('ticket_id')->int('tag_id');
@@ -73,8 +73,8 @@ $router->prefix('tickets')->withPolicy('AgentTicketPolicy')->group(function ($ro
     $router->post('/{ticket_id}/fluent-booking/booking-link', 'TicketController@createFluentBookingLink')->int('ticket_id');
     $router->get('/{ticket_id}/fluent-booking/meetings', 'TicketController@getFluentBookingMeetings')->int('ticket_id');
 
-    $router->post('bulk-actions', 'TicketController@doBulkActions'); // close_tickets | delete_tickets | assign_agent | assign_tags
-    $router->post('bulk-reply', 'TicketController@doBulkReplies');
+    $router->post('bulk-actions', 'TicketController@doBulkActions'); // close_tickets, delete_tickets, reopen_tickets, assign_agent, assign_agent_group, assign_tags, remove_tags, change_priority, change_product
+    $router->post('bulk-reply', 'ResponseController@doBulkReplies');
 
     $router->post('sync-fluentcrm-tags', 'TicketController@syncFluentCrmTags');
     $router->post('sync-fluentcrm-lists', 'TicketController@syncFluentCrmLists');
@@ -83,22 +83,12 @@ $router->prefix('tickets')->withPolicy('AgentTicketPolicy')->group(function ($ro
     $router->get('fluent-boards/stages/{board_id}', 'FluentBoardsController@getStages')->int('board_id');
     $router->post('fluent-boards/stages', 'FluentBoardsController@createTask');
 
-    $router->get('search-contact', 'CustomerController@searchContact');
 
-    $router->get('ping', 'AgentController@ping');
-    $router->get('ticket-essentials', 'TicketController@getTicketEssentials');
-    $router->get('agent-insights', 'AgentController@getAgentInsights');
 });
 
 $router->get('widgets', 'WidgetsController')->withPolicy('AgentTicketPolicy');
 
-$router->prefix('notifications')->withPolicy('AgentTicketPolicy')->group(function ($router) {
-    $router->get('/', 'NotificationController@index');
-    $router->get('/unread', 'NotificationController@unread');
-    $router->get('/unread-count', 'NotificationController@unreadCount');
-    $router->post('/mark-all-read', 'NotificationController@markAllRead');
-    $router->post('/{notification_id}/mark-read', 'NotificationController@markRead')->int('notification_id');
-});
+// notifications/*: app/Modules/Notifications/routes.php.
 
 $router->prefix('products')->withPolicy('AdminSettingsPolicy')->group(function ($router) {
     $router->get('/', 'ProductController@index');
@@ -109,21 +99,12 @@ $router->prefix('products')->withPolicy('AdminSettingsPolicy')->group(function (
     $router->delete('/{product_id}', 'ProductController@delete')->int('product_id');
 });
 
-$router->get('me', 'TicketController@me')->withPolicy('PortalPolicy');
-
-$router->get('options/countries', 'OptionsController@getCountries')->withPolicy('PortalPolicy');
-
-$router->post('ticket_file_upload', 'UploaderController@uploadTicketFiles')
-    ->withPolicy('PortalPolicy');
-
 $router->prefix('settings')->withPolicy('AdminSettingsPolicy')->group(function ($router) {
     $router->get('/', 'SettingsController@getSettings');
     $router->post('/', 'SettingsController@saveSettings');
     $router->get('/integration-settings', 'SettingsController@getIntegrationSettings');
     $router->get('/integration', 'IntegrationController@getSettings');
     $router->post('/integration', 'IntegrationController@saveSettings');
-    $router->get('/slack-integration', 'SlackController@getSettings');
-    $router->post('/slack-integration', 'SlackController@saveSettings');
     $router->get('/pages', 'SettingsController@getPages');
     $router->post('/setup', 'SettingsController@setupPortal');
     $router->post('/setup-installation', 'SettingsController@setupInstallation');
@@ -137,15 +118,12 @@ $router->prefix('settings')->withPolicy('AdminSettingsPolicy')->group(function (
     // Upload Settings
     $router->get('/remote-upload-settings', 'SettingsController@getRemoteUploadSettings');
     $router->post('/update-remote-upload-driver', 'SettingsController@updateRemoteUploadDriver');
+    $router->post('/remote-upload-options', 'SettingsController@updateRemoteUploadOptions');
+    $router->post('/remote-upload-retry', 'SettingsController@retryRemoteUploads');
 
     $router->get('/ai-integration', 'SettingsController@getAIProviderSettings');
     $router->post('/ai-integration', 'SettingsController@saveAIProviderSettings');
-    $router->post('/ai-integration/disconnect', 'SettingsController@disconnectAIProvider');
     $router->get('/settings-menu', 'SettingsController@getSettingsMenu');
-    $router->get('/fluent-bot-integration', 'SettingsController@getFluentBotSettings');
-    $router->post('/fluent-bot-integration', 'SettingsController@saveFluentBotSettings');
-    $router->get('/fluent-bot-presets', 'SettingsController@getFluentBotPresets');
-    $router->post('/fluent-bot-presets', 'SettingsController@saveFluentBotPresets');
 
     $router->get('/mcp', 'McpSettingsController@getStatus');
     $router->post('/mcp/toggle', 'McpSettingsController@toggle');
@@ -153,97 +131,12 @@ $router->prefix('settings')->withPolicy('AdminSettingsPolicy')->group(function (
     $router->get('/mcp/config-snippets', 'McpSettingsController@getConfigSnippets');
 });
 
-$router->prefix('agents')->withPolicy('AgentPolicy')->group(function ($router) {
-    $router->get('/', 'AgentController@index');
-    $router->post('/', 'AgentController@addAgent');
-    $router->put('/{agent_id}', 'AgentController@updateAgent')->int('agent_id');
-    $router->delete('/{agent_id}', 'AgentController@deleteAgent')->int('agent_id');
-    $router->post('/avatar/{agent_id}', 'AgentController@addOrUpdateProfileImage')->int('agent_id');
-    $router->post('/reset_avatar/{agent}', 'AgentController@resetAvatar')->int('agent');
-});
+// system-tools/*: app/Modules/SystemTools/routes.php.
+// customer-portal/*, me, options/countries and ticket_file_upload: app/Modules/CustomerPortal/routes.php.
 
-$router->prefix('agent-groups')->withPolicy('AdminSensitivePolicy')->group(function ($router) {
-    $router->get('/', 'AgentGroupController@index');
-    $router->post('/', 'AgentGroupController@create');
-    $router->get('/{group_id}', 'AgentGroupController@get')->int('group_id');
-    $router->put('/{group_id}', 'AgentGroupController@update')->int('group_id');
-    $router->delete('/{group_id}', 'AgentGroupController@delete')->int('group_id');
-});
-
-$router->prefix('reports')->withPolicy('ReportPolicy')->group(function ($router) {
-    $router->get('/stats', 'ReportingController@getStats');
-});
-
-$router->prefix('my-reports')->withPolicy('AgentTicketPolicy')->group(function ($router) {
-    $router->get('/', 'ReportingController@getAgentOverallReports');
-    $router->get('/tickets-resolve-growth', 'ReportingController@getAgentResolveChart');
-    $router->get('/response-growth', 'ReportingController@getAgentResponseChart');
-    $router->get('/my-summary', 'ReportingController@getPersonalSummary');
-});
-
-$router->prefix('customers')->withPolicy('CustomerPolicy')->group(function ($router) {
-    $router->get('/', 'CustomerController@index');
-    $router->post('/', 'CustomerController@create');
-    $router->get('/customerField/{customer_id}', 'CustomerController@customerField')->int('customer_id');
-
-    $router->get('/{customer_id}', 'CustomerController@getCustomer')->int('customer_id');
-    $router->put('/{customer_id}', 'CustomerController@update')->int('customer_id');
-
-    //We will remove this method.
-    $router->delete('/{customer_id}', 'CustomerController@delete')->int('customer_id');
-    $router->delete('/bulk-delete', 'CustomerController@bulkDelete');
-
-    $router->post('/profile_image/{customer_id}', 'CustomerController@addOrUpdateProfileImage')->int('customer_id');
-    $router->post('/reset_avatar/{customer}', 'CustomerController@resetAvatar')->int('customer');
-});
-
-$router->prefix('customer-portal')->withPolicy('PortalPolicy')->group(function ($router) {
-
-    $router->get('public_options', 'CustomerPortalController@getPublicOptions');
-    $router->get('custom-fields-rendered', 'CustomerPortalController@getCustomFieldsRender');
-
-    $router->get('tickets', 'CustomerPortalController@getTickets');
-    $router->post('tickets', 'CustomerPortalController@createTicket');
-
-    $router->get('tickets/{ticket_id}', 'CustomerPortalController@getTicket')->int('ticket_id');
-    $router->post('tickets/{ticket_id}/responses', 'CustomerPortalController@createResponse')->int('ticket_id');
-
-    $router->post('/tickets/{ticket_id}/close', 'CustomerPortalController@closeTicket')->int('ticket_id');
-    $router->post('/tickets/{ticket_id}/re-open', 'CustomerPortalController@reOpenTicket')->int('ticket_id');
-
-    $router->post('ticket_file_upload', 'UploaderController@uploadTicketFiles');
-
-    $router->get('me', 'TicketController@me');
-
-    $router->post('/tickets/{ticket_id}/agent-feedback', 'CustomerPortalController@agentFeedbackRating')->int('ticket_id');
-
-    $router->post('logout', 'CustomerPortalController@logout');
-});
-
+// Chat replies (public/telegram_bot_response, slack_response, twilio-response): Pro app/Modules/Chat/routes.php.
 $router->prefix('public')->withPolicy('PublicPolicy')->group(function ($router) {
-    $router->post('telegram_bot_response/{token}', 'ChatMessageParserController@handleTelegramWebhook')->alphaNumDash('token');
-    $router->post('slack_response/{token}', 'ChatMessageParserController@handleSlackEvent')->alphaNumDash('token');
     $router->get('/authorize', 'AuthorizeController@handleHelpScoutAuthorization');
-});
-
-$router->prefix('fluent-bot')->withPolicy('AgentTicketPolicy')->group(function ($router) {
-    $router->get('/preset-prompts', 'FluentBotController@getPresetPrompts');
-    $router->get('/runtime-config', 'FluentBotController@getRuntimeConfig');
-    $router->post('/{id}/feedback', 'FluentBotController@createFeedback')->int('id');
-    $router->delete('/{id}/feedback/{feedback_id}', 'FluentBotController@deleteFeedback')->int('id')->int('feedback_id');
-    $router->post('/{id}/generate-response', 'FluentBotController@generateResponse')->int('id');
-    $router->post('/{id}/generate-stream-response', 'FluentBotController@generateStreamResponse')->int('id');
-    $router->post('/{id}/get-ticket-summary', 'FluentBotController@getTicketSummary')->int('id');
-    $router->post('/{id}/get-ticket-tone', 'FluentBotController@getTicketTone')->int('id');
-    $router->get('/{id}/chat-id', 'FluentBotController@getChatId')->int('id');
-    $router->post('/{id}/chat-id', 'FluentBotController@saveChatId')->int('id');
-    $router->delete('/{id}/chat-id', 'FluentBotController@deleteChatId')->int('id');
-    $router->get('/{id}/chat-messages', 'FluentBotController@getChatMessages')->int('id');
-    $router->get('/{id}/chat-stream', 'FluentBotController@resumeChatStream')->int('id');
-    $router->get('/{id}/conversations', 'FluentBotController@getConversations')->int('id');
-    $router->post('/{id}/conversations/switch', 'FluentBotController@switchConversation')->int('id');
-    $router->get('/{id}/context-selection', 'FluentBotController@getContextSelection')->int('id');
-    $router->post('/{id}/context-selection', 'FluentBotController@saveContextSelection')->int('id');
 });
 
 $router->prefix('activity-logger')->withPolicy('ActivityLoggerPolicy')->group(function ($router) {
@@ -258,22 +151,7 @@ $router->prefix('ai-activity-logger')->withPolicy('ActivityLoggerPolicy')->group
     $router->get('/settings', 'AIActivityLoggerController@getSettings');
 });
 
-$router->post('signup', 'AuthController@signup')->withPolicy('PublicPolicy');
+// signup, login, two_fa, reset_pass: app/Modules/Auth/routes.php.
 
-$router->post('login', 'AuthController@handleLogin')->withPolicy('PublicPolicy');
+// ticket_importer/*: app/Modules/TicketImport/routes.php.
 
-$router->prefix('two_fa')->withPolicy('PublicPolicy')->group(function ($router) {
-    $router->post('/', 'TwofaController@verify2fa');
-});
-
-
-$router->post('reset_pass', 'AuthController@resetPassword')->withPolicy('PublicPolicy');
-
-$router->prefix('ticket_importer')->withPolicy('AdminSettingsPolicy')->group(function ($router) {
-    $router->get('/', 'TicketImportController@getStats');
-    $router->post('/import', 'TicketImportController@importTickets');
-    $router->delete('/delete', 'TicketImportController@deleteTickets');
-});
-
-$router->post('ticket_image_upload', 'UploaderController@uploadImage')
-    ->withPolicy('AgentTicketPolicy');

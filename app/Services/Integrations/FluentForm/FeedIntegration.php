@@ -2,13 +2,16 @@
 
 namespace FluentSupport\App\Services\Integrations\FluentForm;
 
+use FluentSupport\App\Modules\Customers\CustomerService;
 use FluentForm\App\Http\Controllers\IntegrationManagerController;
 use FluentSupport\App\App;
 use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Product;
-use FluentSupport\App\Models\Ticket;
+use FluentSupport\App\Services\Helper;
+use FluentSupport\App\Services\Includes\FileSystem;
+use FluentSupport\App\Services\Tickets\TicketService;
 use FluentSupport\Framework\Support\Arr;
 
 class FeedIntegration extends IntegrationManagerController
@@ -163,6 +166,7 @@ class FeedIntegration extends IntegrationManagerController
                 [
                     'component' => 'html_info',
                     'html_info' => '<h4>' . __('Please provide the ticket provider info. If user is logged in then it will use that info. For Public users you can set your customer info', 'fluent-support') . '</h4>'
+                        . '<p>' . __('When a logged-out visitor submits the form with the email of an existing customer, the ticket goes to that customer, but the submitted name and other fields only fill empty fields on the customer profile. Data already saved there is never changed.', 'fluent-support') . '</p>'
                 ],
                 [
                     'key'                => 'CustomerFields',
@@ -305,7 +309,7 @@ class FeedIntegration extends IntegrationManagerController
             'mailbox_id' => Arr::get($data, 'list_id'),
             // Feed settings and entry values are stored unslashed, so sanitize only.
             'title' => sanitize_text_field(Arr::get($data, 'ticket_title')),
-            'content' => wp_kses_post(Arr::get($data, 'ticket_content')),
+            'content' => wp_kses_post(Helper::decodeNonMarkupEntities(Arr::get($data, 'ticket_content'))),
             'attachments' => sanitize_text_field(Arr::get($data, 'ticket_attachments')),
             'client_priority' => strtolower(sanitize_text_field(Arr::get($data, 'client_priority', ''))),
             'priority' => strtolower(sanitize_text_field(Arr::get($data, 'client_priority', ''))),
@@ -329,11 +333,9 @@ class FeedIntegration extends IntegrationManagerController
         }
 
 
+        // Only a logged-in submitter proves who they are. A guest's email is
+        // unverified, so findOrCreate() lets it fill empty fields only.
         $user = get_user_by('ID', get_current_user_id());
-
-        if(!$user) {
-            $user = get_user_by('email', $customerData['email']);
-        }
 
         if($user) {
             $customerData['email'] = $user->user_email;
@@ -355,7 +357,7 @@ class FeedIntegration extends IntegrationManagerController
 
         $customerData['last_ip_address'] = $entry->ip;
 
-        $customer = Customer::maybeCreateCustomer($customerData);
+        $customer = CustomerService::findOrCreate($customerData);
 
         // Don't create a ticket if customer is blocked
         if($this->isBlockedCustomer($customerData['email'])) {
@@ -373,22 +375,9 @@ class FeedIntegration extends IntegrationManagerController
 
         $ticketData['customer_id'] = $customer->id;
 
-        $ticketData = apply_filters('fluent_support/create_ticket_data', $ticketData, $customer);
-        do_action('fluent_support/before_ticket_create', $ticketData, $customer);
-
-        $ticket = Ticket::create($ticketData);
-
-        if(defined('FLUENTSUPPORTPRO') && !empty($ticketData['custom_fields'])) {
-            $ticket->syncCustomFields($ticketData['custom_fields']);
-            /*
-             * This custom_fields is causing issues in all webhook to where we called $ticket->save()
-             * As we are calling $ticket->syncCustomFields() above, we don't need this anymore
-             * TODO: need to remove this line in future
-             */
-            //$ticket->custom_fields = $ticket->customData();
-        }
-
-        do_action('fluent_support/ticket_created', $ticket, $customer);
+        // The form's files are form uploads, attached below from their URLs; the
+        // shared create path only knows uploads made through Fluent Support.
+        $ticket = (new TicketService())->storeCustomerTicket(Arr::except($ticketData, ['attachments']), $customer);
 
         do_action('fluentform/log_data', [
             'title'            => $feed['settings']['name'],
@@ -435,7 +424,7 @@ class FeedIntegration extends IntegrationManagerController
                     } else {
                         $fileName = basename($attachment);
                         $filePath = $uploadDir['basedir'] . FLUENTFORM_UPLOAD_DIR . '/' . $fileName;
-                        $fileInfo = wp_check_filetype($filePath);
+                        $fileInfo = wp_check_filetype($filePath, FileSystem::ticketMimeTypes());
                         $fileType = (!empty($fileInfo['type'])) ? $fileInfo['type'] : '';
                         $fullUrl = $attachment;
                     }

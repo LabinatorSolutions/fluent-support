@@ -1,1 +1,0 @@
-../../../fluent-support-pro/tests/integration/93-pro-telegram-identity.php

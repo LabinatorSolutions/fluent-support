@@ -8,32 +8,115 @@ use FluentSupport\App\Models\Ticket;
 
 class ProfileInfoService
 {
-    public static function getProfileExtraWidgets( $customer )
+    /**
+     * @param object|array $customer
+     * @param array $context See widgetContext().
+     * @return array
+     */
+    public static function getProfileExtraWidgets($customer, $context = [])
     {
         $widgets = [];
         /*
          * Filter customer profile widgets
          *
+         * Integrations should build only what $context asks for:
+         *   - format 'html' (agent UI): stats / sections (preferred) or body_html, no 'mcp' key.
+         *   - format 'mcp' (AI agents via MCP): an 'mcp' array of plain data, no body_html.
+         *     body_html still works; it is converted to Markdown.
+         *   - keys: when set, only these widget keys are wanted. Skip the queries for any other.
+         * Use ProfileInfoService::wantsWidget() and isMcpWidgetRequest() to check.
+         *
+         * Structured widgets are drawn by the sidebar as badges, tiles, rows and lists,
+         * all as plain text. Every key is optional. Dates are ISO 8601 and shown
+         * relative ("9 months ago"); URLs must be absolute http(s):
+         *
+         *   $widgets['my_shop'] = [
+         *       'title'    => 'My Shop',
+         *       'icon'     => 'ShoppingBag', // see WIDGET_ICONS in _StructuredWidget.vue
+         *       'badges'   => [['text' => 'Subscribed', 'type' => 'success']], // success|warning|danger|info|primary
+         *       'stats_style' => 'summary', // optional: first stat as a hero figure, the rest on one line
+         *       'stats'    => [ // tiles, two per row (or the summary above)
+         *           ['label' => 'Lifetime Value', 'value' => '$748.00', 'url' => '...'],
+         *           ['label' => 'Last Order', 'value' => '2026-01-09T08:30:00+00:00', 'type' => 'date'],
+         *       ],
+         *       'facts'    => [ // compact label / value rows
+         *           ['label' => 'Location', 'value' => 'Berlin, Germany'],
+         *       ],
+         *       'sections' => [
+         *           ['label' => 'Recent Purchases', 'items' => [
+         *               ['title' => 'Pro Plan', 'subtitle' => '5 Sites', 'detail' => '3 renewals', 'url' => '...',
+         *                'meta' => '2026-01-09T08:30:00+00:00', 'meta_type' => 'date',
+         *                'subtitle_meta' => '2026-01-09T08:30:00+00:00', 'subtitle_meta_type' => 'date', // right of the subtitle, absolute date
+         *                'reference' => ['text' => '#WPMN-254380', 'url' => '...'],    // invoice / order reference, before the badge
+         *                'badge' => ['text' => 'active', 'type' => 'success'],
+         *                'info' => 'Next renewal Oct 27, 2026',   // tooltip shown when the item is hovered
+         *                'refunded' => true,                       // strikes the price through; pair with a danger badge
+         *                'related' => []],                       // orders folded under this one (renewals): title, meta, subtitle, subtitle_meta, reference, badge
+         *           ]],
+         *           ['label' => 'Tags', 'tags' => ['VIP', 'Agency']],
+         *       ],
+         *       'links'    => [['label' => 'View in My Shop', 'url' => '...']],
+         *   ];
+         *
          * @since v1.0.0
+         * @since v2.4.1 $context, structured widgets
          * @param array $widgets
          * @param object|array  $customer
+         * @param array $context ['format' => 'html'|'mcp', 'keys' => string[]|null]
          *
-         * @return void
+         * @return array
          */
-        $widgets = apply_filters('fluent_support/customer_extra_widgets', $widgets, $customer);
+        $widgets = apply_filters('fluent_support/customer_extra_widgets', $widgets, $customer, self::widgetContext($context));
         return $widgets;
     }
 
-    // This method is linked with 'profile_update' action & it will trigger when user update profile
+    /**
+     * Normalized context for fluent_support/customer_extra_widgets.
+     *
+     * @param array $context
+     * @return array ['format' => 'html'|'mcp', 'keys' => string[]|null]
+     */
+    public static function widgetContext($context = [])
+    {
+        $format = isset($context['format']) && $context['format'] === 'mcp' ? 'mcp' : 'html';
+        $keys   = isset($context['keys']) && is_array($context['keys'])
+            ? array_values(array_map('strval', $context['keys']))
+            : null;
+
+        return ['format' => $format, 'keys' => $keys];
+    }
+
+    /**
+     * Whether the caller wants this widget. Call it before running the widget's queries.
+     *
+     * @param array $context The filter's third argument.
+     * @param string $key Widget key, e.g. 'woo_purchases'.
+     * @return bool
+     */
+    public static function wantsWidget($context, $key)
+    {
+        return !is_array($context) || empty($context['keys']) || in_array((string) $key, $context['keys'], true);
+    }
+
+    /**
+     * Whether the caller wants structured 'mcp' data instead of body_html.
+     *
+     * @param array $context The filter's third argument.
+     * @return bool
+     */
+    public static function isMcpWidgetRequest($context)
+    {
+        return is_array($context) && isset($context['format']) && $context['format'] === 'mcp';
+    }
+
+    // Hooked to 'profile_update'.
     public function onWPProfileUpdate($userId, $userOldData, $userUpdatedData)
     {
         if (!$userId || !is_array($userUpdatedData)) {
             return false;
         }
 
-        // Matching on user_id only is what keeps this safe: a WordPress account
-        // can never reach a customer row it is not already linked to, so this
-        // can only ever rewrite the requester's own record.
+        // Match on user_id only, so an account can only rewrite customer rows already linked to it.
         $customers = Customer::where('user_id', $userId)->get();
 
         if (!$customers || count($customers) === 0) {
@@ -46,44 +129,23 @@ class ProfileInfoService
             return false;
         }
 
-        // wp_insert_user() takes slashed data, and profile_update hands that same
-        // array straight on, so a name like O'Brien arrives as O\'Brien. Written
-        // through unchanged it reaches the customer record with a literal
-        // backslash, which is what the customer then sees in the portal and on
-        // every notification addressed to them.
+        // profile_update passes wp_insert_user()'s slashed data (O\'Brien).
         $userUpdatedData = wp_unslash($userUpdatedData);
 
         $email = $userUpdatedData['user_email'];
 
-        // Any plugin calling wp_update_user() for any reason fires this hook, so
-        // most of the time the account address has not moved at all. Reading the
-        // pending-change meta and running a capability check on every one of
-        // those is work for nothing.
-        //
-        // It also keeps the administrator path honest. Without this, an
-        // administrator editing somebody's first name would move the support
-        // address onto whatever unverified address the account happened to be
-        // carrying, because the check below only compares the customer record to
-        // the account. Authority is granted for the change the actor actually
-        // made, not for a divergence somebody else created earlier.
-        // Unslashed on both sides. wp_insert_user() slashes the previous address
-        // on purpose -- "Slash current user email to compare it later with
-        // slashed new user email" -- so comparing it against the unslashed new
-        // one reads an address like o'brien@example.com as changed on every
-        // update, and an administrator editing only a name would move the
-        // support address onto it.
+        // Only check authority when this update actually changed the account email.
+        // Otherwise an admin editing a name would carry over an unverified address
+        // the account already had. Core slashes the old email, so unslash it too.
         $previousAccountEmail = is_object($userOldData) && isset($userOldData->user_email)
             ? wp_unslash($userOldData->user_email)
             : '';
 
-        // An unknown previous address falls through to the full check rather
-        // than silently skipping it.
+        // Unknown previous address: run the full check.
         $accountEmailMoved = !$previousAccountEmail
             || !self::isSameEmail($previousAccountEmail, $email);
 
-        // Only a proven change may move the address that support notifications
-        // and signed ticket links are delivered to. Names are cosmetic and are
-        // always synced.
+        // Only a proven change may move the email; names always sync.
         $changeReason = $accountEmailMoved ? self::provenEmailChangeReason($userId, $email) : '';
         $emailIsProven = (bool) $changeReason;
 
@@ -95,10 +157,8 @@ class ProfileInfoService
 
             $previousEmail = $customer->email;
 
-            // Never move this row onto an address another customer already
-            // holds. Duplicate emails make every later email-based match
-            // ambiguous, and mail piping would then thread onto whichever row
-            // happens to have the lower id.
+            // Don't take an address another customer holds. Duplicates make
+            // email matching (e.g. mail piping) ambiguous.
             $emailMoved = $emailIsProven
                 && !self::isSameEmail($previousEmail, $email)
                 && !self::isEmailHeldByAnotherCustomer($email, $customer->id);
@@ -119,13 +179,8 @@ class ProfileInfoService
     }
 
     /**
-     * How the email change being applied right now was authorised, or an empty
-     * string when it was not.
-     *
-     * Two paths count. The account holder can prove the new address by opening
-     * WordPress's confirmation link, and somebody with authority over the
-     * account can change it on their behalf. Everything else, which is most
-     * things, leaves the customer's contact address where it is.
+     * How the current email change was authorised: the owner confirmed it through
+     * WordPress's link, or someone who can edit the account made it. '' otherwise.
      *
      * @param int $userId
      * @param string $newEmail
@@ -145,31 +200,11 @@ class ProfileInfoService
     }
 
     /**
-     * Whether an administrator is changing this account's address on its
-     * owner's behalf.
+     * Whether someone else who can edit this WordPress account is changing its email.
+     * Editing your own account never counts.
      *
-     * Authority over the WordPress account is the test. Someone who may edit
-     * that account may also move the address Fluent Support writes to, on the
-     * basis that the customer record's address is derived from the account in
-     * the first place.
-     *
-     * Worth knowing what that admits on a WooCommerce store. WooCommerce grants
-     * edit_users to shop_manager through a user_has_cap filter and then narrows
-     * it, in wc_modify_map_meta_cap(), to accounts holding the 'customer' role,
-     * which is the population Fluent Support serves. A shop manager therefore
-     * passes this check for any customer, whether or not they hold a single
-     * Fluent Support permission, and can redirect that customer's support
-     * notifications. Narrowing this to holders of fst_sensitive_data, the
-     * permission CustomerPolicy uses to gate editing a customer record, would
-     * close that; it is a one-line change here.
-     *
-     * The address is authorised but still unproven, which is why this path
-     * rotates ticket hashes exactly as the verified one does, so links already
-     * delivered to the previous inbox stop working.
-     *
-     * Excluding the actor's own account matters: an administrator changing their
-     * own address goes through the same unverified endpoints as anybody else and
-     * gets no special treatment.
+     * On WooCommerce, shop_manager has edit_user over 'customer' accounts, so it passes
+     * this without any Fluent Support permission. Requiring fst_sensitive_data would close that.
      *
      * @param int $userId
      * @return bool
@@ -186,16 +221,11 @@ class ProfileInfoService
     }
 
     /**
-     * Whether the email change being applied to this user right now went through
-     * WordPress's own click-through confirmation.
+     * Whether this email change came from WordPress's confirmation link.
      *
-     * wp-admin/user-edit.php calls wp_update_user() and only deletes the
-     * _new_email meta afterwards, so the pending record is still readable while
-     * profile_update fires. The record on its own proves nothing: submitting the
-     * profile form writes it without any click, so an unverified change made
-     * through REST could arrive with a matching address already sitting in meta.
-     * Only the hash coming back in the request shows the link was opened from
-     * the inbox the mail was delivered to.
+     * _new_email is still readable while profile_update fires, but the profile form
+     * writes it without any click. Only the matching hash in the request proves the
+     * link was opened.
      *
      * @param int $userId
      * @param string $newEmail
@@ -203,12 +233,8 @@ class ProfileInfoService
      */
     public static function isWpConfirmedEmailChange($userId, $newEmail)
     {
-        // Mirrors the condition core applies the confirmed change under.
-        // wp-admin/user-edit.php runs the confirmation branch only when
-        // IS_PROFILE_PAGE is truthy, and that constant is defined nowhere but
-        // profile.php and user-edit.php, where it means "the user is editing
-        // their own account". Requiring it here means a replayed hash cannot be
-        // honoured from REST, WP-CLI, or an administrator editing somebody else.
+        // Core only applies a confirmed change on the user's own profile page
+        // (IS_PROFILE_PAGE). This stops a replayed hash via REST, WP-CLI or another admin.
         if (!defined('IS_PROFILE_PAGE') || !IS_PROFILE_PAGE) {
             return false;
         }
@@ -232,13 +258,8 @@ class ProfileInfoService
     }
 
     /**
-     * Apply the consequences of a customer's contact address moving to one that
-     * has been proven.
-     *
-     * Shared by every path that is allowed to move an address -- WordPress's own
-     * confirmation, an administrator with rights over the account, and the
-     * portal claim flow in EmailClaimService -- so a proven move has exactly one
-     * set of consequences however it was proven.
+     * Side effects of a proven email change. Shared by every path that can move
+     * the address, including EmailClaimService.
      *
      * @param \FluentSupport\App\Models\Customer $customer
      * @param string $previousEmail
@@ -247,9 +268,7 @@ class ProfileInfoService
      */
     public static function onProvenEmailChange($customer, $previousEmail, $reason = 'verified')
     {
-        // Signed ticket links already delivered to the previous inbox keep
-        // authorizing read, reply, close and reopen on these tickets until the
-        // hash they carry stops matching.
+        // Rotate hashes so signed links sent to the old inbox stop working.
         $tickets = Ticket::where('customer_id', $customer->id)->get();
 
         foreach ($tickets as $ticket) {
@@ -319,14 +338,10 @@ class ProfileInfoService
     }
 
     /**
-     * Adopt customer rows that already carry this address but are not linked to
-     * a WordPress account yet.
+     * Link unclaimed customer rows with this email to the new account.
      *
-     * Registration is one of the few moments where an address may be treated as
-     * belonging to the account: WordPress refuses to register an address that
-     * another user already holds, and the credentials it sends go to that inbox.
-     * A later email change carries no such proof, which is why binding is done
-     * here rather than on every profile update.
+     * Safe at registration because WordPress sends the credentials to that inbox.
+     * A later email change has no such proof, so we don't link then.
      *
      * @param int $userId
      * @return void

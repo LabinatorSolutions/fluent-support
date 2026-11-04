@@ -2,16 +2,14 @@
 /**
  * Customer deletion must not be reachable with the sensitive-data read grant.
  *
- * An agent holding only fst_sensitive_data (a read grant, labelled
- * "Access Private Data (Customers, Agents)" in the settings UI) must not be
- * able to delete customers. Customer deletion cascades into every ticket the
- * customer owns, plus the conversations and attachments on those tickets.
+ * fst_sensitive_data is a read grant, and deleting a customer cascades into all
+ * of their tickets, conversations and attachments.
  *
  * @package Fluent_Support
  */
 
 use FluentSupport\App\App;
-use FluentSupport\App\Http\Policies\CustomerPolicy;
+use FluentSupport\App\Modules\Customers\CustomerPolicy;
 use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\Framework\Http\Request\Request;
 
@@ -43,11 +41,7 @@ class CustomerDeletePolicyTest extends WP_UnitTestCase
     }
 
     /**
-     * Switch the current user.
-     *
-     * PermissionManager::currentUserPermissions() memoises its result in a
-     * static, which is fine for a single WordPress request but sticky inside a
-     * test process. Re-resolve it so each test sees its own actor.
+     * Switch the current user and refresh the static permission cache.
      *
      * @param int $userId
      * @return void
@@ -96,9 +90,7 @@ class CustomerDeletePolicyTest extends WP_UnitTestCase
     }
 
     /**
-     * The agent holds the module boundary, so the first check passes and the
-     * administrator check is what stops them. Pinning the message proves the
-     * request travelled through both layers rather than short-circuiting.
+     * The agent passes the module check and is stopped by the administrator check.
      */
     public function test_sensitive_data_agent_is_stopped_by_the_administrator_check()
     {
@@ -119,9 +111,7 @@ class CustomerDeletePolicyTest extends WP_UnitTestCase
     }
 
     /**
-     * A user without fst_sensitive_data never reaches the administrator check:
-     * deletion is a strict superset of read access, so the module boundary is
-     * evaluated first.
+     * Without fst_sensitive_data the module check stops the user first.
      */
     public function test_user_without_sensitive_data_is_stopped_by_the_module_boundary()
     {
@@ -141,7 +131,7 @@ class CustomerDeletePolicyTest extends WP_UnitTestCase
     }
 
     /**
-     * Opting out of the administrator requirement must open BOTH delete routes.
+     * Opting out of the administrator requirement must open both delete routes.
      */
     public function test_filter_lets_a_sensitive_data_agent_delete_without_admin_rights()
     {
@@ -176,10 +166,8 @@ class CustomerDeletePolicyTest extends WP_UnitTestCase
     }
 
     /**
-     * The agent-groups routes share AdminSensitivePolicy and also expose a
-     * controller method named delete(). Guarding customers must not silently
-     * change that boundary, which is why the customer guard lives on its own
-     * policy class instead of on AdminSensitivePolicy.
+     * Agent-group routes use AdminSensitivePolicy and have a delete() action, so
+     * the customer guard lives on its own policy and must not change theirs.
      */
     public function test_agent_group_delete_boundary_is_unchanged()
     {

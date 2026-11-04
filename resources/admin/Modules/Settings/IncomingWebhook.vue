@@ -7,12 +7,13 @@
                 </div>
             </div>
             <div
-                class="fs_box_body fs_skeleton_loader"
+                class="fs_box_body"
                 v-if="has_pro && webhook === ''"
             >
-                <el-skeleton :rows="5" animated />
+                <FormSkeleton :fields="2" :button="false" />
+                <TableSkeleton :rows="4" :columns="3" />
             </div>
-            <div class="fs_box_body" v-if="has_pro && webhook">
+            <div class="fs_box_body" v-if="has_pro && webhook" v-loading="loading">
                 <div class="fs_incoming_webhook_wrapper">
                     <div class="fs_webhook_settings">
                         <el-row class="fs_select_mailbox">
@@ -20,7 +21,7 @@
                                 <label class="fs_select_box_label">{{ $t("Select Business Box") }}</label>
                             </el-col>
                             <el-col :span="24" class="fs_mailbox_select_wrapper">
-                                <el-select v-model="mailbox"  class="fs_select_field" :placeholder="$t('Select')"
+                                <el-select v-model="mailbox"  class="fs_select_field" :placeholder="$t('Select')" :disabled="loading"
                                            @change="changeBusinessBox">
                                     <el-option
                                         v-for="box in mailboxes"
@@ -43,7 +44,7 @@
                                     :width="310"
                                     :title="
                                         $t(
-                                            'Are you sure to regenerate the webhook url? If you regenerate the url you have to change all your used webhook'
+                                            'Are you sure you want to regenerate the webhook URL? You will need to update every service that uses the current URL.'
                                         )
                                     "
                                     @confirm="updateWebhook"
@@ -52,12 +53,9 @@
                                         <el-button
                                             size="default"
                                             class="fs_refresh_btn"
+                                            :disabled="loading"
                                         >
-                                            <img
-                                                loading="lazy"
-                                                :src="appVars.asset_url + 'images/refresh.svg'"
-                                                class="fs_icon"
-                                            />
+                                            <DynamicIcon name="Refresh" class="fs_icon"/>
                                         </el-button>
                                     </template>
                                     <template #actions="{ confirm, cancel }">
@@ -82,7 +80,7 @@
                     <hr class="fs_divider" />
 
                     <div class="fs_webhook_info_table_wrapper">
-                        <p>{{ $t(" Fillable Fields") }}</p>
+                        <p>{{ $t("Fillable Fields") }}</p>
                         <el-table class="fs_webhook_info_table" :highlight-current-row="false" :data="fields">
                             <el-table-column prop="field" :label="$t('Field')" />
                             <el-table-column prop="field_key" :label="$t('Field Key')" />
@@ -91,23 +89,55 @@
                     </div>
                 </div>
             </div>
+            <div v-if="!has_pro" class="fs_box_body">
+                <ProShowcase
+                    :feature="$t('Incoming webhook')"
+                    :heading="$t('Turn requests from other tools into tickets')"
+                    :description="$t('incoming_webhook_promo_description')"
+                    :specifics="promoSpecifics"
+                    utm-content="feature_lock_incoming_webhook"
+                    docs-url="https://docs.fluentsupport.com/incoming-webhook"
+                >
+                    <template #preview>
+                        <div class="fs_pro_preview">
+                            <div class="fs_pro_preview_card fs_pro_preview_fields">
+                                <div class="fs_pro_preview_title">
+                                    <span class="fs_pro_preview_checkbox"></span>
+                                    {{ $t('Incoming webhook') }}
+                                </div>
+                                <div class="fs_pro_preview_row fs_pro_preview_reveal" style="--fs-row-index: 0">
+                                    <span class="fs_pro_preview_row_label">{{ $t('Request') }}</span>
+                                    <span class="fs_pro_preview_row_value">POST /webhook/billing</span>
+                                </div>
+                                <div class="fs_pro_preview_row fs_pro_preview_reveal" style="--fs-row-index: 1">
+                                    <span class="fs_pro_preview_row_label">{{ $t('Business box') }}</span>
+                                    <span class="fs_pro_preview_chip fs_pro_preview_chip_purple fs_pro_preview_chip_plain">{{ $t('Billing') }}</span>
+                                </div>
+                                <div class="fs_pro_preview_row fs_pro_preview_row_focal fs_pro_preview_reveal" style="--fs-row-index: 2">
+                                    <span class="fs_pro_preview_row_label">{{ $t('Result') }}</span>
+                                    <span class="fs_pro_preview_badge fs_pro_preview_badge_success">{{ $t('Ticket created') }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </ProShowcase>
+            </div>
         </div>
-        <NarrowPromo
-            v-if="!has_pro"
-            :heading="$t('use_webhook_to_create_ticket_from_external_site')"
-            :description="$t('pro_promo')"
-            :button-text="$t('Upgrade To Pro')"
-            utm-content="feature_lock_incoming_webhook"
-        />
     </div>
 </template>
 <script type="text/babel">
-import NarrowPromo from '@/admin/Components/NarrowPromo.vue';
+import ProShowcase from '@/admin/Components/ProShowcase.vue';
+import DynamicIcon from '@/admin/Components/Icons/DynamicIcon.vue';
+import FormSkeleton from '@/admin/Components/FormSkeleton.vue';
+import TableSkeleton from '@/admin/Components/TableSkeleton.vue';
 
 export default {
     name: 'IncomingWebhook',
     components: {
-        NarrowPromo
+        DynamicIcon,
+        ProShowcase,
+        FormSkeleton,
+        TableSkeleton
     },
     data() {
         return {
@@ -190,6 +220,15 @@ export default {
 
             ],
         };
+    },
+    computed: {
+        promoSpecifics() {
+            return [
+                this.$t('One secure URL for each business box'),
+                this.$t('Map the incoming fields to the ticket subject, message and customer'),
+                this.$t('Works with any form, app or script that can send a webhook')
+            ];
+        }
     },
     methods: {
         fetch() {

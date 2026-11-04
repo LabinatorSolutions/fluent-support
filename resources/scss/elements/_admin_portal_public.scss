@@ -18,7 +18,7 @@
     }
     .fst_front .fframe_body {
         margin-left: 0px;
-        background: var(--fs-bg-subtle,#F5F7FA);
+        background: var(--fs-global-component-bg, #F3F5FA);
     }
     .fs_tickets_view .fs_tk_inner_body {
         max-height: fit-content;
@@ -139,7 +139,7 @@
         min-height: 100vh;
     }
     .fs_nav_tab:hover {
-        background: var(--fs-bg-weak-50, #F5F7FA);
+        background: var(--fs-bg-subtle, #F5F7FA);
         box-shadow: none;
         color: var(--fs-text-secondary, #525866);
     }
@@ -147,7 +147,7 @@
         border-style: none;
     }
     .fs_nav_tab_active {
-        background: var(--fs-bg-weak-50, #F5F7FA);
+        background: var(--fs-bg-subtle, #F5F7FA);
         color: var(--fs-text-primary, #0E121B);
     }
     .fs_tk_inner_sidebar .fs_sidebar_header .fs_tickets_collapse_btn {
@@ -197,4 +197,10 @@
         overscroll-behavior: initial;
         overflow-y: auto;
     }
+}
+
+// On the front end the theme colors h1–h6 directly; use the app's heading color as in
+// wp-admin. :where() keeps this below any class-based heading rule.
+.fst_front :where(h1, h2, h3, h4, h5, h6) {
+    color: var(--fs-text-primary, #0E121B);
 }

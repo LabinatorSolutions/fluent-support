@@ -17,48 +17,43 @@
             <span class="fs_ticket_author" v-if="ticket.customer">by {{ ticket.customer.first_name || ticket.customer.email }}</span>
             <span class="fs_ticket_id">#{{ ticket.id }}</span>
             <span v-if="ticket.status === 'new'" class="fs_status_dot fs_status_dot_new"></span>
-            <el-tooltip
-                v-if="ticket.source"
-                effect="dark"
-                :content="ucFirst(ticket.source)"
-                placement="top"
-            >
-                <span class="fs_ticket_source">
-                    <img
-                        v-if="$getSourceIcon(ticket.source)"
-                        :src="$getSourceIcon(ticket.source)"
-                        :alt="ucFirst(ticket.source)"
-                    >
-                    <span v-else class="fs_ticket_source_text">{{ ucFirst(ticket.source) }}</span>
-                </span>
-            </el-tooltip>
+            <span v-if="ticket.source" v-tip="$sourceLabel(ticket.source)" class="fs_ticket_source">
+                <DynamicIcon
+                    v-if="$sourceIconName(ticket.source)"
+                    :name="$sourceIconName(ticket.source)"
+                    :label="$sourceLabel(ticket.source)"
+                />
+                <img
+                    v-else-if="$getSourceIcon(ticket.source)"
+                    :src="$getSourceIcon(ticket.source)"
+                    :alt="$sourceLabel(ticket.source)"
+                >
+                <span v-else class="fs_ticket_source_text">{{ $sourceLabel(ticket.source) }}</span>
+            </span>
         </div>
         
         <!-- Row 2: Status, Priority, Waiting Time (left) | Tags (right) -->
         <div class="fs_ticket_meta_row">
             <div class="fs_ticket_meta_left">
                 <!-- Status Badge -->
-                <el-tooltip v-if="ticket.status !== 'new'" effect="dark" :content="$t('Status') + ': ' + (appVars.ticket_statuses[ticket.status] || ticket.status)" placement="top" trigger="hover">
-                <span class="fs_status_badge" :class="`fs_status_${(ticket.status || '').toLowerCase()}`">
-                    {{ appVars.ticket_statuses[ticket.status] || ticket.status }}
+                <!-- translators: %s is a status label (a ticket status, or Published/Draft for a workflow) -->
+                <span v-if="ticket.status !== 'new'" v-tip="$t('Status: %s', appVars.ticket_statuses[ticket.status] || ticket.status)" class="fs_status_badge" :class="`fs_status_${(ticket.status || '').toLowerCase()}`">
+                {{ appVars.ticket_statuses[ticket.status] || ticket.status }}
                 </span>
-                </el-tooltip>
 
                 <!-- Priority -->
-                <el-tooltip v-if="ticket.client_priority" effect="dark" :content="$t('Client Priority') + ': ' + (appVars.client_priorities[ticket.client_priority] || ticket.client_priority)" placement="top" trigger="hover">
-                <span class="fs_priority_indicator">
-                    <span class="fs_priority_dot" :class="`fs_priority_dot_${(ticket.client_priority || 'normal').toLowerCase()}`"></span>
-                    <span class="fs_priority_text">{{ appVars.client_priorities[ticket.client_priority] || ticket.client_priority }}</span>
+                <!-- translators: %s is the priority the customer set on the ticket -->
+                <span v-if="ticket.client_priority" v-tip="$t('Client Priority: %s', appVars.client_priorities[ticket.client_priority] || ticket.client_priority)" class="fs_priority_indicator">
+                <span class="fs_priority_dot" :class="`fs_priority_dot_${(ticket.client_priority || 'normal').toLowerCase()}`"></span>
+                <span class="fs_priority_text">{{ appVars.client_priorities[ticket.client_priority] || ticket.client_priority }}</span>
                 </span>
-                </el-tooltip>
 
                 <!-- Waiting Time -->
-                <el-tooltip v-if="ticket.waiting_since" effect="dark" :content="$t('Waiting Time') + ': ' + ticket.waiting_since" placement="top" trigger="hover">
-                <span class="fs_waiting_time">
-                    <IconPack iconKey="clock" :width="16" :height="16" />
-                    <span class="fs_waiting_text">{{ $timeDiff(ticket.waiting_since) }}</span>
+                <!-- translators: %s is the date and time the ticket started waiting for a reply -->
+                <span v-if="ticket.waiting_since" v-tip="$t('Waiting Time: %s', ticket.waiting_since)" class="fs_waiting_time">
+                <IconPack iconKey="clock" :width="16" :height="16" />
+                <span class="fs_waiting_text">{{ $timeDiff(ticket.waiting_since) }}</span>
                 </span>
-                </el-tooltip>
             </div>
             
             <div class="fs_ticket_meta_right">
@@ -79,10 +74,12 @@
 <script>
 import TicketTags from '../Modules/Tickets/parts/_Tags';
 import IconPack from '../Components/IconPack';
+import DynamicIcon from '@/admin/Components/Icons/DynamicIcon.vue';
 
 export default {
     name: 'Ticket',
     components: {
+        DynamicIcon,
         TicketTags,
         IconPack
     },

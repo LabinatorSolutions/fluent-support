@@ -92,19 +92,8 @@ export default {
     margin: 20px 0;
 }
 
-.fs-modal-default-button {
-    float: right;
-}
 
-
-/*
- * The following styles are auto-applied to elements with
- * transition="modal" when their visibility is toggled
- * by Vue.js.
- *
- * You can easily play with the modal transition by editing
- * these styles.
- */
+/* <Transition name="fs-modal"> classes */
 
 .fs-modal-enter-from {
     opacity: 0;
@@ -120,12 +109,7 @@ export default {
     transform: scale(1.1);
 }
 
-/* Media queries
- *
- * For mobile devices, we adjust the modal's position and size.
- *
- * As we won't be using this modal everywhere in project so we did the media queries here.
- */
+/* Mobile */
 @media (max-width: 768px) {
     .fs-modal-container {
         min-width: unset;

@@ -3,8 +3,8 @@ import {defineComponent, getCurrentInstance, onBeforeMount, onMounted, onBeforeU
 import * as VueInstance from 'vue';
 
 import Rest from "@/admin/Bits/Rest.js";
-import VueTemplateLoader from '@/admin/Bits/DynamicTemplates/VueTemplateLoader.vue';
 import CollapsibleWidget from '@/admin/Modules/Tickets/parts/_CollapsibleWidget.vue';
+import { sanitizeWidgetHtml } from '@/common/domPurifyGuards';
 
 const emit = defineEmits(['change']);
 const props = defineProps({
@@ -59,6 +59,13 @@ const resolveComponents = (appComponents) => {
     });
 };
 
+// Server widgets may only name a component registered in JS; template strings from the server are never compiled.
+const isSafeServerWidget = (widget) => widget.type !== 'vue-template'
+    && (widget.type !== 'vue-component' || typeof widget.component === 'string');
+
+// Widget fields are spread onto the rendered component, so these would set raw DOM content.
+const DOM_CONTENT_KEYS = ['innerHTML', 'outerHTML', 'textContent', 'innerText'];
+
 const fetchWidgets = () => {
     const query = {
         filter: props.filter,
@@ -69,8 +76,12 @@ const fetchWidgets = () => {
         if (data && Array.isArray(data.widgets)) {
             // Keep JS hook widgets, replace server widgets
             const jsWidgets = widgets.value.filter(w => w._jsHook);
-            data.widgets.forEach((w, i) => assignWidgetId(w, 'srv_' + i));
-            widgets.value = jsWidgets.concat(data.widgets);
+            const serverWidgets = data.widgets.filter(isSafeServerWidget);
+            serverWidgets.forEach((w, i) => {
+                DOM_CONTENT_KEYS.forEach(key => delete w[key]);
+                assignWidgetId(w, 'srv_' + i);
+            });
+            widgets.value = jsWidgets.concat(serverWidgets);
         }
     });
 };
@@ -185,7 +196,7 @@ defineExpose({beforeUpdatingData, afterUpdatingData, getFormStates, resetForms})
 <template>
     <template v-for="widget in widgets" :key="widget._wid">
         <!-- Widgets with card wrapper (html, chart, form, or use_card=true) -->
-        <template v-if="(widget.type !== 'vue-component' && widget.type !== 'vue-template') || widget.use_card === true">
+        <template v-if="widget.type !== 'vue-component' || widget.use_card === true">
             <collapsible-widget
                 :title="widget.title || ''"
                 :icon="widget.icon || 'SetUp'"
@@ -193,7 +204,7 @@ defineExpose({beforeUpdatingData, afterUpdatingData, getFormStates, resetForms})
                 class="fs_sidebar_widget fs_dynamic_widget"
             >
                 <template v-if="widget.type === 'html'">
-                    <div v-html="widget.content"></div>
+                    <div v-html="sanitizeWidgetHtml(widget.content)"></div>
                 </template>
 
                 <template v-else-if="widget.type === 'vue-component'">
@@ -219,11 +230,6 @@ defineExpose({beforeUpdatingData, afterUpdatingData, getFormStates, resetForms})
             <template v-else-if="getDynamicComponentFromMap(widget.component)">
                 <component ref="componentRefs" :is="getDynamicComponentFromMap(widget.component)" v-bind="{...widget, data: data}" />
             </template>
-        </template>
-
-        <!-- Vue template string -->
-        <template v-else-if="widget.type === 'vue-template'">
-            <VueTemplateLoader :widget="widget" :data="data" />
         </template>
     </template>
 </template>

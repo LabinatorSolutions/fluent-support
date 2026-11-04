@@ -12,6 +12,16 @@
             </el-button>
         </template>
         <div class="fs_template_inserter">
+            <div class="fs_template_header">
+                <el-button
+                    class="fs_template_close"
+                    link
+                    :aria-label="$t('Close')"
+                    @click="visible = false"
+                >
+                    <el-icon><Close /></el-icon>
+                </el-button>
+            </div>
             <div class="fs_template_filters">
                 <div class="fs_filter_item">
                     <label class="fs_filter_label">{{$t('Product')}}</label>

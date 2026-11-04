@@ -57,14 +57,6 @@
         gap: 6px;
     }
 
-    .fs_logo {
-        width: 32px;
-        height: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
     .fs_brand_logo img{
         height: 32px;
     }
@@ -186,68 +178,8 @@
     }
 
     /* Checkbox Section */
-    .fs_checkbox_section {
-        margin-bottom: 20px;
-
-        .el-checkbox {
-            .el-checkbox__inner {
-                width: 16px;
-                height: 16px;
-                background: var(--fs-bg-strong);
-                border: none;
-                border-radius: 4px;
-
-                &::after {
-                    border: 2px solid white;
-                    border-left: 0;
-                    border-top: 0;
-                    height: 7px;
-                    left: 4px;
-                    top: 1px;
-                    width: 3px;
-                }
-            }
-
-            .el-checkbox__label {
-                font-size: 14px;
-                font-weight: 400;
-                line-height: 20px;
-                color: var(--fs-text-primary);
-                letter-spacing: -0.084px;
-                margin-left: 8px;
-            }
-        }
-    }
 
     /* Form Actions */
-    .fs_form_actions {
-        display: flex;
-        justify-content: center;
-        margin-top: 32px;
-
-        .fs_filled_btn {
-            background: var(--fs-bg-strong) !important;
-            border-color: var(--fs-bg-strong) !important;
-            color: var(--fs-text-white) !important;
-            padding: 12px 24px;
-            border-radius: var(--fs-radius-md-lg);
-            font-size: 14px;
-            font-weight: 500;
-            line-height: 20px;
-            min-width: 120px;
-
-            &:hover, &:focus {
-                background: var(--fs-bg-muted) !important;
-                border-color: var(--fs-bg-muted) !important;
-            }
-
-            &.is-loading {
-                background: var(--fs-btn-disabled) !important;
-                border-color: var(--fs-btn-disabled) !important;
-                cursor: not-allowed;
-            }
-        }
-    }
 
     /* Media Queries for Responsive Design */
     @media (max-width: 768px) {
@@ -290,11 +222,6 @@
         .fs_action_description {
             display: none;
         }
-
-        .fs_primary_action_btn {
-            width: 100%;
-            justify-content: center;
-        }
     }
 
     @media (max-width: 480px) {
@@ -332,21 +259,6 @@
 
         .fs_section_subtitle {
             font-size: 13px;
-        }
-    }
-
-    .suggest_box {
-        margin-bottom: 10px;
-        padding: 10px 20px;
-        border: 1px solid #0ebe7e;
-        border-radius: 5px;
-    }
-    .email_optin {
-        label {
-            font-weight: 500;
-            display: block;
-            margin-bottom: 10px;
-            font-size: 16px;
         }
     }
 
@@ -404,20 +316,13 @@
         text-decoration: none;
     }
 
-    .fs_external_icon {
-        width: 20px;
-        height: 20px;
-        color: var(--fs-text-primary, #0E121B);
-    }
-
     .fs_footer_actions {
         display: flex;
         gap: 8px;
         align-items: center;
     }
 
-    .fs_setup_content,
-    .fs_padded_24 {
+    .fs_setup_content {
         margin-bottom: 20px;
     }
 
@@ -427,16 +332,6 @@
     }
 
     /* Success/Completion page styles */
-    .fs_success_icon {
-        display: flex;
-        justify-content: center;
-        margin-bottom: 16px;
-
-        .fs_check_icon {
-            font-size: 48px;
-            color: var(--fs-status-active, #22c55e);
-        }
-    }
 
     .fs_completion_section {
         display: flex;
@@ -543,39 +438,6 @@
     }
 
     /* Primary Action Section */
-    .fs_primary_action_section {
-        display: flex;
-        justify-content: center;
-        margin-top: 32px;
-        padding-top: 20px;
-        border-top: 1px solid var(--fs-border-default, #E1E4EA);
-    }
-
-    .fs_primary_action_btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 12px 24px;
-        background: var(--fs-bg-strong, #0E121B);
-        color: var(--fs-text-white, #FFFFFF);
-        border-radius: var(--fs-radius-md, 8px);
-        text-decoration: none;
-        font-size: 14px;
-        font-weight: 500;
-        line-height: 20px;
-        transition: all 0.2s ease;
-
-        &:hover {
-            background: var(--fs-bg-muted, #1a1e2e);
-            color: var(--fs-text-white, #FFFFFF);
-            transform: translateY(-1px);
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
-        }
-
-        .el-icon {
-            font-size: 16px;
-        }
-    }
 
     /* Maintenance step specific styles */
     .fs_maintenance_form {
@@ -585,8 +447,7 @@
     }
 
     .fs_newsletter_section,
-    .fs_essentials_section,
-    .fs_fluentform_section {
+    .fs_essentials_section {
         display: flex;
         flex-direction: column;
         gap: 12px;

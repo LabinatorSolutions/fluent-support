@@ -1,8 +1,6 @@
 @use "~element-plus/theme-chalk/el-var.css";
-@use "~element-plus/theme-chalk/el-loading.css";
 @use "~element-plus/theme-chalk/el-icon.css";
 @use "~element-plus/theme-chalk/el-notification.css";
-@use "~element-plus/theme-chalk/el-message-box.css";
 @use "../scss/date.scss" as dateScss;
 
 /* ── Portal-scoped design tokens ─────────────────────────────────────────────
@@ -154,20 +152,13 @@
     --el-disabled-text-color:        #6B7280;
     --el-disabled-border-color:      #E1E4EA;
 
-    /* Table */
-    --el-table-bg-color:             #FFFFFF;
-    --el-table-tr-bg-color:          #FFFFFF;
-    --el-table-header-bg-color:      #F5F7FA;
-    --el-table-row-hover-bg-color:   #F5F7FA;
-    --el-table-border-color:         #E1E4EA;
-
     /* Skeleton */
     --el-skeleton-color:             #F5F7FA;
     --el-skeleton-to-color:          #E1E4EA;
 
-    /* Loading mask */
-    --el-mask-color:                 rgba(0, 0, 0, 0.5);
-    --el-mask-color-extra-light:     rgba(0, 0, 0, 0.2);
+    /* Loading mask: a light veil, so a reload keeps the list visible instead of flashing dark */
+    --el-mask-color:                 rgba(255, 255, 255, 0.7);
+    --el-mask-color-extra-light:     rgba(255, 255, 255, 0.3);
 }
 
 /* Dark Mode Support */
@@ -274,26 +265,16 @@ html.dark {
     --el-disabled-text-color:        #71717A;
     --el-disabled-border-color:      #3F3F46;
 
-    --el-table-bg-color:             #18181B;
-    --el-table-tr-bg-color:          #18181B;
-    --el-table-header-bg-color:      #27272A;
-    --el-table-row-hover-bg-color:   #27272A;
-    --el-table-border-color:         #3F3F46;
-
     --el-skeleton-color:             #27272A;
     --el-skeleton-to-color:          #3F3F46;
 
-    --el-mask-color:                 rgba(24, 24, 27, 0.85);
+    --el-mask-color:                 rgba(24, 24, 27, 0.7);
     --el-mask-color-extra-light:     rgba(24, 24, 27, 0.3);
 
     /* ─── El Plus: direct rule overrides ────────────────────────────────
        Only rules that fight El Plus hardcoded/inline styles belong here.
        Token remappings are handled by the scoped blocks above.
        ──────────────────────────────────────────────────────────────────── */
-    .el-table tr {
-        background-color: transparent;
-    }
-
     .el-skeleton {
         background: var(--fs-white , #18181B );
     }
@@ -389,28 +370,8 @@ html.dark {
         color: var(--fs-text-strong, #F4F4F5);
         border-color: var(--fs-border-soft, #3F3F46);
     }
-    .fs_client_portal .fs_ticket_wrapper .fs_tickets_container .fs_tickets_table {
+    .fs_client_portal .fs_ticket_wrapper .fs_tickets_container .fs_ticket_list_wrap {
         background: var(--fs-bg-white);
-    }
-    .fs_popover_item {
-        .fs_switch_button {
-            .el-radio-button {
-                .el-radio-button__inner {
-                    background-color: transparent;
-                    color: var(--fs-text-strong);
-                    border-color: var(--fs-border-soft);
-                }
-
-                &.is-active {
-                    .el-radio-button__inner {
-                        border-color: var(--fs-text-strong);
-                        background-color: var(--fs-text-strong);
-                        color: var(--fs-bg-white);
-                        box-shadow: none;
-                    }
-                }
-            }
-        }
     }
     }
 
@@ -455,6 +416,80 @@ html.dark {
     }
 }
 
+// The sort popover (popper-class="fs_portal_sort_popover" in _TicketFilter.vue) is teleported to
+// <body>, outside .fs_client_portal, so neither the portal's nested selectors nor its tokens reach it.
+// Light values are the fallbacks; html.dark above defines the dark ones for teleported poppers.
+html.dark .el-popper.fs_portal_sort_popover {
+    // The portal's dark Element Plus variables live on .fs_client_portal; repeat the ones the radios use.
+    --el-text-color-primary: #F4F4F5;
+    --el-text-color-regular: #A1A1AA;
+    --el-border-color: #3F3F46;
+    --el-fill-color-blank: #18181B;
+    --el-fill-color-light: #27272A;
+    background: var(--fs-bg-primary, #18181B);
+    border-color: var(--fs-border-default, #3F3F46);
+
+    .el-popper__arrow::before {
+        background: var(--fs-bg-primary, #18181B);
+        border-color: var(--fs-border-default, #3F3F46);
+    }
+}
+
+.fs_portal_sort_popover .fs_popover_item {
+    padding: 8px;
+
+    .fs_popover_title {
+        margin-top: 0;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--fs-text-primary, #0E121B);
+    }
+
+    .fs_radio_blocks {
+        margin-top: 10px;
+
+        .el-radio-group {
+            display: grid;
+        }
+
+        .el-radio__input.is-checked {
+            .el-radio__inner {
+                background: var(--fs-btn-primary-bg, #18181B);
+                border-color: var(--fs-btn-primary-bg, #18181B);
+            }
+
+            & + .el-radio__label {
+                color: var(--fs-text-primary, #0E121B);
+            }
+        }
+    }
+
+    hr {
+        margin: 12px 0;
+        border: 0;
+        border-top: 1px solid var(--fs-border-default, #E1E4EA);
+    }
+
+    .fs_switch_button {
+        display: flex;
+        margin: 12px 0;
+
+        .el-radio-button.is-active .el-radio-button__inner {
+            border-color: var(--fs-border-default, #E1E4EA);
+            background-color: var(--fs-bg-subtle, #F4F4F5);
+            color: var(--fs-text-primary, #0E121B);
+            box-shadow: none;
+        }
+    }
+
+    .fs_sorting_button .el-button {
+        background: var(--fs-btn-primary-bg, #18181B);
+        color: var(--fs-text-white, #FFFFFF);
+        border-color: var(--fs-btn-primary-bg, #18181B);
+        border-radius: 8px;
+    }
+}
+
 // Scoped to a unique popper-class (see _CustomFieldForm.vue) instead of the
 // bare Element Plus classes date.scss uses, so this sizing/mobile bottom-sheet
 // styling only applies to this custom-field picker — portal pages share the
@@ -462,6 +497,33 @@ html.dark {
 // own Element Plus date/time pickers.
 .fs_portal_daterange_popper {
     @include dateScss.fs-date-range-picker-panel($scoped: true);
+}
+
+// Narrow layout for the ticket list: meta drops under the title, date pushed to the far side.
+// Used for narrow viewports and for a narrow portal container (fs_customer_portal_mobile).
+@mixin fs_ticket_list_stacked {
+    .fs_ticket_list {
+        .fs_ticket_link {
+            flex-direction: column;
+            gap: var(--fs-spacing-sm);
+            padding: var(--fs-spacing-md);
+        }
+
+        .fs_ticket_main {
+            width: 100%;
+        }
+
+        .fs_ticket_meta {
+            width: 100%;
+            max-width: none;
+            justify-content: flex-start;
+        }
+
+        .fs_ticket_date {
+            flex-basis: auto;
+            margin-inline-start: auto;
+        }
+    }
 }
 
 #fluent_support_client_app {
@@ -535,14 +597,6 @@ html.dark {
             }
         }
 
-        .fs_actions_dropdown_btn {
-            &:hover {
-                background: rgba(var(--fs-border-soft-rgb), 0.5);
-                box-shadow: var(--fs-shadow-sm);
-                color: inherit;
-            }
-        }
-
         .wp-editor-tabs {
             border-radius: var(--fs-radius-md);
             border: 1px solid var(--fs-border-soft);
@@ -587,43 +641,6 @@ html.dark {
     .fs_ticket_wrapper {
         min-height: auto;
 
-        .fs_logout_container {
-            width: 100%;
-            display: flex;
-            justify-content: flex-end;
-            margin-bottom: var(--fs-spacing-md);
-
-            .fs_logout_button {
-                display: inline-block;
-
-                .fs_btn_logout {
-                    display: inline-flex;
-                    align-items: center;
-                    background: transparent;
-                    border: none;
-                    color: var(--fs-status-error);
-                    font-size: 14px;
-                    font-weight: 500;
-                    padding: 0;
-                    cursor: pointer;
-                    transition: color 0.2s ease;
-                    text-decoration: none;
-
-                    &:hover {
-                        color: var(--fs-status-error-hover);
-                    }
-
-                    .fs_logout_icon {
-                        margin-right: var(--fs-spacing-xs);
-                    }
-
-                    .fs_logout_text {
-                        text-decoration: underline;
-                    }
-                }
-            }
-        }
-
         .fs_tickets_container {
             background: var(--fs-white);
             border-radius: var(--fs-radius-xl);
@@ -633,19 +650,23 @@ html.dark {
 
             .fs_tickets_header {
                 display: flex;
+                flex-wrap: wrap;
                 justify-content: space-between;
                 align-items: center;
+                gap: var(--fs-spacing-sm);
                 padding: var(--fs-spacing-lg);
                 border-bottom: 1px solid var(--fs-border-light);
 
-                label {
+                .fs_tickets_heading {
+                    white-space: nowrap;
+                    font-family: inherit;
+                    letter-spacing: normal;
+                    text-transform: none;
                     font-size: var(--fs-text-xl);
                     font-weight: var(--fs-font-medium);
                     line-height: var(--fs-line-height-loose);
-                    text-align: left;
-                    text-underline-position: from-font;
-                    text-decoration-skip-ink: none;
                     margin: 0;
+                    padding: 0;
                     color: var(--fs-text-strong);
                 }
 
@@ -653,18 +674,32 @@ html.dark {
                     display: flex;
                     gap: var(--fs-spacing-xs);
 
-                    .fs_actions_dropdown {
-                        .fs_actions_dropdown_btn {
-                            border-radius: var(--fs-radius-md);
-                            padding: var(--fs-spacing-sm);
-                            border: 1px solid var(--fs-border-soft);
-                            transition: box-shadow 0.2s ease, background 0.2s ease;
+                    .fs_logout_btn {
+                        display: flex;
+                        align-items: center;
+                        gap: var(--fs-spacing-xs);
+                        height: auto;
+                        margin: 0;
+                        padding: var(--fs-spacing-sm) var(--fs-spacing-md);
+                        border-radius: var(--fs-radius-md);
+                        border: 1px solid var(--fs-border-soft);
+                        background: var(--fs-white);
+                        color: var(--fs-text-sub);
+                        font-size: var(--fs-text-sm);
+                        font-weight: var(--fs-font-medium);
+                        transition: box-shadow 0.2s ease, background 0.2s ease;
 
-                            &:hover {
-                                background: rgba(var(--fs-border-soft-rgb), 0.5);
-                                box-shadow: var(--fs-shadow-sm);
-                                color: inherit;
-                            }
+                        > span {
+                            display: inline-flex;
+                            align-items: center;
+                            gap: var(--fs-spacing-xs);
+                        }
+
+                        &:hover,
+                        &:focus-visible {
+                            background: rgba(var(--fs-border-soft-rgb), 0.5);
+                            box-shadow: var(--fs-shadow-sm);
+                            color: var(--fs-text-strong);
                         }
                     }
                 }
@@ -721,73 +756,6 @@ html.dark {
                         .fs_product_filter_head {
                             display: flex;
                             gap: var(--fs-spacing-sm);
-
-                            .fs_sorting {
-                                .fs_popover_item {
-                                    padding: var(--fs-spacing-sm);
-
-                                    .fs_popover_title {
-                                        margin-top: 0;
-                                        font-size: var(--fs-text-base);
-                                        font-weight: var(--fs-font-semibold);
-                                        color: var(--fs-text-strong);
-                                    }
-
-                                    .fs_radio_blocks {
-                                        margin-top: 10px;
-
-                                        .el-radio-group {
-                                            display: grid;
-
-                                            .el-radio__input {
-                                                &.is-checked {
-                                                    .el-radio__inner {
-                                                        background: var(--fs-primary);
-                                                        border-color: var(--fs-primary);
-                                                    }
-
-                                                    & + .el-radio__label {
-                                                        color: var(--fs-primary);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    .fs_switch_button {
-                                        display: flex;
-                                        margin: 16px 0px;
-
-                                        .el-radio-button {
-                                            line-height: 1.25rem;
-
-                                            &.is-active {
-                                                .el-radio-button__inner {
-                                                    border-color: var(--fs-border-input, #c0c2c4);
-                                                    background-color: var(--fs-bg-disabled, #d9dadc);
-                                                    color: var(--fs-text-dark, #253241);
-                                                    box-shadow: none;
-
-                                                    &:hover {
-                                                        color: var(--fs-text-dark, #253241);
-                                                    }
-                                                }
-                                            }
-
-                                        }
-
-                                    }
-
-                                    .fs_sorting_button {
-                                        .el-button {
-                                            background: var(--fs-primary);
-                                            color: var(--fs-btn-text);
-                                            border-color: var(--fs-primary);
-                                            border-radius: 8px;
-                                        }
-                                    }
-                                }
-                            }
 
                             @media screen and (max-width: 768px) {
                                 .fs_product_filter {
@@ -846,11 +814,6 @@ html.dark {
 
                     .fs_button_groups {
                         all: initial;
-                        * {
-                            all: unset;
-                            box-sizing: border-box;
-                        }
-
                         display: flex;
                         gap: 4px;
                         padding: 4px;
@@ -859,6 +822,11 @@ html.dark {
                         max-width: 250px;
                         font-family: inherit; // optional, you can set your own font
                         font-size: 14px;
+
+                        * {
+                            all: unset;
+                            box-sizing: border-box;
+                        }
 
                         .status-btn {
                             display: inline-block;
@@ -888,12 +856,6 @@ html.dark {
                             max-width: none;
                             justify-content: center;
                         }
-                    }
-
-                    .fs_filters_right {
-                        display: flex;
-                        align-items: center;
-                        gap: 8px;
                     }
 
                     .fs_sorting .el-button {
@@ -954,128 +916,217 @@ html.dark {
                 }
             }
 
-            .fs_tickets_table {
-                background: var(--fs-white, #18181B);
-                overflow: hidden;
-                padding: var(--fs-spacing-lg) var(--fs-spacing-md) var(--fs-spacing-md);
+            .fs_ticket_list_wrap {
+                position: relative;
+                margin-top: var(--fs-spacing-lg);
+                border-top: 1px solid var(--fs-border-light);
 
-                .el-table {
-                    overflow: hidden;
-                    .el-table__inner-wrapper{
-                        background: var(--fs-bg-weak);
-                        .el-table__header-wrapper,
-                        &:before{
-                            background: var(--fs-bg-weak);
-                        }
-                    }
-                    .el-table__header {
-                        table-layout: auto;
-                        width: 100% !important;
-                        border: none;
-                        margin: 0;
-                        thead {
-                            th {
-                                &:first-child {
-                                    border-top-left-radius: var(--fs-radius-md);
-                                    border-bottom-left-radius: var(--fs-radius-md);
-                                    overflow: hidden;
-                                }
+                // Room for the loading spinner and the empty message; a short list keeps its own height.
+                &.fs_ticket_list_wrap_tall {
+                    min-height: 120px;
+                }
 
-                                &:last-child {
-                                    border-top-right-radius: var(--fs-radius-md);
-                                    border-bottom-right-radius: var(--fs-radius-md);
-                                    overflow: hidden;
-                                }
-                            }
-                        }
+                .fs_ticket_list {
+                    transition: opacity 0.15s ease;
+                }
 
-                        th {
-                            background: var(--fs-bg-weak) !important;
-                            color: var(--fs-text-strong) !important;
-                            font-weight: 500;
-                            font-size: 14px;
-                            line-height: 20px;
-                            border: none;
-                        }
-                    }
+                // While reloading, the current list dims under the spinner. Both wait 150ms,
+                // so a quick reload shows no change; the new list comes back without delay.
+                &.fs_ticket_list_loading .fs_ticket_list {
+                    opacity: 0.5;
+                    pointer-events: none;
+                    transition: opacity 0.2s ease 0.15s;
+                }
 
-                    .el-table__body {
-                        width: 100% !important;
-                        border: none;
-                        margin: 0;
-                        .fs_ticket_row {
-                            background: var(--fs-white);
+                .fs_ticket_list_spinner {
+                    position: absolute;
+                    top: 48px;
+                    left: 0;
+                    right: 0;
+                    text-align: center;
+                    color: var(--fs-text-sub);
+                    animation: fs-portal-fade-in 0.2s ease 0.15s both;
 
-                            td {
-                                padding: 16px 24px;
-                                border-bottom: 1px solid var(--fs-bg-lighter);
-
-                                &.conversation-cell {
-                                    .fs_ticket_conversation {
-                                        text-decoration: none;
-
-                                        .fs_ticket_title {
-                                            display: flex;
-                                            align-items: center;
-                                            gap: 8px;
-                                            margin-bottom: 4px;
-                                            word-break: break-word;
-                                            color: var(--fs-text-strong, #0E121B);
-                                            strong {
-                                                font-size: 14px;
-                                                font-weight: 500;
-                                                line-height: 20px;
-                                                letter-spacing: -0.006em;
-                                            }
-
-                                            .fs_response_count {
-                                                flex-shrink: 0;
-                                                margin-top: 4px;
-                                                align-self: flex-start;
-                                                background: var(--fs-border-soft);
-                                                color: var(--fs-text-strong);
-                                                border-radius: 50%;
-                                                width: 16px;
-                                                height: 16px;
-                                                display: flex;
-                                                align-items: center;
-                                                justify-content: center;
-                                                font-size: 11px;
-                                                font-weight: 500;
-                                            }
-                                        }
-
-                                        .fs_ticket_preview {
-                                            color: var(--fs-text-light);
-                                            font-size: 12px;
-                                            font-weight: 400;
-                                            text-align: left;
-                                            text-underline-position: from-font;
-                                            text-decoration-skip-ink: none;
-                                            margin: 0;
-                                            max-height: 23px;
-                                            overflow: hidden;
-                                            text-overflow: ellipsis;
-                                        }
-                                    }
-                                }
-
-                                &.date-cell {
-                                    font-size: 14px;
-                                    font-weight: 400;
-                                    line-height: 20px;
-                                    text-align: left;
-                                    color: var(--fs-text-heading);
-                                    width: 20%;
-                                }
-
-                                &.fs_status_cell {
-                                    width: 20%;
-                                }
-                            }
-                        }
+                    .fs_spinner {
+                        width: 24px;
+                        height: 24px;
                     }
                 }
+            }
+
+            // Reset theme list and link styles; the portal is embedded in arbitrary themes.
+            .fs_ticket_list {
+                list-style: none;
+                margin: 0;
+                padding: 0;
+
+                .fs_ticket_item {
+                    list-style: none;
+                    margin: 0;
+                    padding: 0;
+                    border-bottom: 1px solid var(--fs-border-light);
+
+                    &::before,
+                    &::marker {
+                        content: none;
+                    }
+                }
+
+                .fs_ticket_link {
+                    display: flex;
+                    align-items: flex-start;
+                    justify-content: space-between;
+                    gap: var(--fs-spacing-md);
+                    padding: var(--fs-spacing-md) var(--fs-spacing-lg);
+                    color: inherit;
+                    text-decoration: none;
+                    box-shadow: none;
+                    transition: background 0.15s ease;
+
+                    &:hover {
+                        background: var(--fs-bg-weak);
+                        color: inherit;
+                    }
+
+                    &:focus-visible {
+                        outline: 2px solid var(--fs-border-focus);
+                        outline-offset: -2px;
+                    }
+                }
+
+                .fs_ticket_main {
+                    flex: 1;
+                    min-width: 0;
+                }
+
+                .fs_ticket_title {
+                    display: flex;
+                    align-items: flex-start;
+                    gap: var(--fs-spacing-sm);
+                    margin-bottom: var(--fs-spacing-xs);
+                    color: var(--fs-text-strong);
+                    word-break: break-word;
+
+                    strong {
+                        font-size: var(--fs-text-sm);
+                        font-weight: var(--fs-font-medium);
+                        line-height: 20px;
+                        letter-spacing: -0.006em;
+                    }
+                }
+
+                .fs_response_count {
+                    flex-shrink: 0;
+                    min-width: 18px;
+                    height: 18px;
+                    margin-top: 1px;
+                    padding: 0 5px;
+                    box-sizing: border-box;
+                    border-radius: var(--fs-radius-pill);
+                    background: var(--fs-border-soft);
+                    color: var(--fs-text-strong);
+                    font-size: 11px;
+                    font-weight: var(--fs-font-medium);
+                    line-height: 18px;
+                    text-align: center;
+                }
+
+                .fs_ticket_preview {
+                    margin: 0;
+                    color: var(--fs-text-light);
+                    font-size: var(--fs-text-xs);
+                    line-height: 18px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+
+                .fs_ticket_meta {
+                    display: flex;
+                    flex-wrap: wrap;
+                    align-items: center;
+                    justify-content: flex-end;
+                    gap: var(--fs-spacing-xs) var(--fs-spacing-sm);
+                    flex-shrink: 0;
+                    max-width: 45%;
+                }
+
+                .fs_waiting_on_you {
+                    padding: 2px var(--fs-spacing-sm);
+                    border-radius: var(--fs-radius-pill);
+                    background: var(--fs-status-info-bg, #EBF1FF);
+                    color: var(--fs-status-info, #335CFF);
+                    font-size: var(--fs-text-xs);
+                    font-weight: var(--fs-font-medium);
+                    line-height: 16px;
+                    white-space: nowrap;
+                }
+
+                .fs_ticket_date {
+                    flex-basis: 100%;
+                    color: var(--fs-text-light);
+                    font-size: var(--fs-text-xs);
+                    line-height: 16px;
+                    text-align: end;
+                    white-space: nowrap;
+                }
+            }
+
+            .fs_ticket_list_empty {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: var(--fs-spacing-xs);
+                padding: 48px var(--fs-spacing-lg);
+                text-align: center;
+
+                p {
+                    margin: 0;
+                    max-width: 420px;
+                    overflow-wrap: anywhere;
+                }
+
+                .fs_ticket_list_empty_title {
+                    color: var(--fs-text-strong);
+                    font-size: var(--fs-text-base);
+                    font-weight: var(--fs-font-medium);
+                }
+
+                .fs_ticket_list_empty_text {
+                    color: var(--fs-text-sub);
+                    font-size: var(--fs-text-sm);
+                }
+
+                .el-button {
+                    height: auto;
+                    margin: var(--fs-spacing-md) 0 0;
+                    padding: var(--fs-spacing-sm) var(--fs-spacing-md);
+                    border-radius: var(--fs-radius-md);
+                    font-size: var(--fs-text-sm);
+                    font-weight: var(--fs-font-medium);
+                }
+
+                .fs_ticket_list_empty_action {
+                    border: 1px solid var(--fs-border-soft);
+                    background: var(--fs-white);
+                    color: var(--fs-text-sub);
+
+                    &:hover,
+                    &:focus-visible {
+                        background: rgba(var(--fs-border-soft-rgb), 0.5);
+                        color: var(--fs-text-strong);
+                    }
+                }
+
+                .fs_create_ticket_btn {
+                    border: none;
+                    background: var(--fs-primary);
+                    color: var(--fs-white);
+                }
+            }
+
+            @media screen and (max-width: 768px) {
+                @include fs_ticket_list_stacked;
             }
 
             .fs_pagination_section {
@@ -1083,71 +1134,16 @@ html.dark {
                 justify-content: space-between;
                 align-items: center;
                 padding: 20px 4px 0;
-
-                .fs_page_info {
-                    color: var(--fs-text-light);
-                    font-size: 14px;
-                    font-weight: 500;
-                }
-
-                .fs_pagination_controls {
-                    display: flex;
-                    align-items: center;
-                    gap: 16px;
-
-                    .fs_per_page_select {
-                        width: 120px;
-                        font-size: 14px;
-                    }
-
-                    .fs_page_numbers {
-                        display: flex;
-                        gap: 4px;
-
-                        .fs_page_btn,
-                        .fs_page_number {
-                            min-width: 32px;
-                            height: 32px;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            border: 1px solid var(--fs-border-light);
-                            background: var(--fs-bg-white);
-                            border-radius: 6px;
-                            color: var(--fs-text-light);
-                            cursor: pointer;
-                            font-size: 14px;
-                            font-weight: 500;
-
-                            &.active {
-                                background: var(--fs-bg-lighter);
-                                color: var(--fs-text-strong);
-                                border-color: var(--fs-border-light);
-                            }
-
-                            &:disabled {
-                                opacity: 0.5;
-                                cursor: not-allowed;
-                            }
-                        }
-
-                        .fs_page_ellipsis {
-                            display: flex;
-                            align-items: center;
-                            padding: 0 8px;
-                            color: var(--fs-text-light);
-                            font-size: 14px;
-                        }
-                    }
-                }
             }
         }
 
         .fs_pagination_container {
             width: 100%;
             display: flex;
+            flex-wrap: wrap;
             align-items: center;
             justify-content: space-between;
+            gap: var(--fs-spacing-sm) var(--fs-spacing-md);
             padding: 20px;
 
 
@@ -1160,6 +1156,7 @@ html.dark {
             .fs_page_text {
                 color: var(--fs-text-light);
                 font-size: 14px;
+                white-space: nowrap;
             }
 
             .fs_per_page_select {
@@ -1346,32 +1343,6 @@ html.dark {
         padding: 8px;
         background-color: var(--fs-bg-weak);
         border-bottom: 1px solid var(--fs-border-lighter);
-    }
-
-    .editor-toolbar {
-        display: flex;
-        gap: 8px;
-        flex: 1;
-    }
-
-    .editor-mode {
-        margin-left: auto;
-    }
-
-    .priority-select,
-    .name-input,
-    .hint-text {
-        width: 100%;
-        margin-top: 4px;
-    }
-
-    .name-input .el-input__wrapper {
-        border-color: var(--fs-border-error);
-    }
-
-    .hint-text {
-        color: var(--fs-status-error);
-        font-size: 12px;
     }
 
     .el-form-item__label {
@@ -1583,25 +1554,8 @@ html.dark {
                         gap: 8px;
                     }
 
-                    .fs_tk_thread {
-                        border-radius: 8px;
-                        padding: 8px;
-                        flex: none;
-                        gap: 4px;
-                        border: 1px solid var(--fs-border-soft);
-                        align-items: center;
-                        display: flex;
-                        justify-content: center;
-                        display: flex;
-                        align-items: center;
-                        gap: 6px;
-                        font-size: 14px;
-                        line-height: 20px;
-                        color: var(--fs-status-inactive);
-                        cursor: pointer;
-                    }
-
                     .fs_ticket_refresh_btn {
+                        color: var(--fs-text-sub);
                         border: 1px solid var(--fs-border-soft);
                         align-items: center;
                         display: flex;
@@ -1641,15 +1595,6 @@ html.dark {
                             line-height: 20px;
                         }
                     }
-                }
-
-                .fs_ticket_number {
-                    font-size: var(--fs-text-xl);
-                    color: var(--fs-black);
-                    font-weight: var(--fs-font-medium);
-                    line-height: var(--fs-line-height-loose);
-                    display: block;
-                    margin-right: var(--fs-spacing-xs);
                 }
 
                 .fs_ticket_subject {
@@ -2063,7 +2008,7 @@ html.dark {
         }
 
         h3 {
-            font-family: Inter;
+            font-family: inherit;
             font-weight: 500;
             font-size: 14px;
             line-height: 20px;
@@ -2113,7 +2058,7 @@ html.dark {
         p {
             cursor: pointer;
             color: var(--fs-text-sub);
-            font-family: Inter;
+            font-family: inherit;
             font-weight: var(--fs-font-medium);
             font-size: 14px;
             line-height: 20px;
@@ -2384,6 +2329,8 @@ html.dark {
     &.fs_customer_portal_mobile {
         .fs_ticket_wrapper {
             .fs_tickets_container {
+                @include fs_ticket_list_stacked;
+
                 .fs_filters_section {
                     .fs_filter_container {
                         .fs_filter_left {
@@ -2405,10 +2352,6 @@ html.dark {
     button:hover, button:focus, button:active, .button:hover, .button:focus, .button:active, .wp-block-button__link:hover, .wp-block-button__link:focus, .wp-block-button__link:active, .wp-element-button:hover, .wp-element-button:focus, .wp-element-button:active, input[type=button]:hover, input[type=button]:focus, input[type=button]:active, input[type=reset]:hover, input[type=reset]:focus, input[type=reset]:active, input[type=submit]:hover, input[type=submit]:focus, input[type=submit]:active {
         background: initial;
     }
-}
-
-.el-table--fit.el-table table tr td {
-    padding: var(--fs-spacing-sm) 0 !important;
 }
 
 .el-input__inner,
@@ -2468,97 +2411,6 @@ html.dark {
     }
 }
 
-.fs_popover_item {
-    padding: var(--fs-spacing-sm);
-
-    .fs_popover_title {
-        margin-top: 0;
-        font-size: var(--fs-text-base);
-        font-weight: var(--fs-font-semibold);
-        color: var(--fs-text-strong);
-    }
-
-    .fs_radio_blocks {
-        margin-top: 10px;
-
-        .el-radio-group {
-            display: grid;
-
-            .el-radio__input {
-                &.is-checked {
-                    .el-radio__inner {
-                        background: var(--fs-primary);
-                        border-color: var(--fs-primary);
-                    }
-
-                    & + .el-radio__label {
-                        color: var(--fs-primary);
-                    }
-                }
-            }
-        }
-    }
-
-    .fs_switch_button {
-        display: flex;
-        margin: 16px 0px;
-
-        .el-radio-button {
-            line-height: 1.25rem;
-
-            &.is-active {
-                .el-radio-button__inner {
-                    border-color: var(--fs-border-input, #c0c2c4);
-                    background-color: var(--fs-bg-disabled, #d9dadc);
-                    color: var(--fs-text-dark, #253241);
-                    box-shadow: none;
-
-                    &:hover {
-                        color: var(--fs-text-dark);
-                    }
-                }
-            }
-            .el-radio-button__inner {
-                &:hover {
-                    color: var(--fs-text-dark, #253241);
-                }
-            }
-
-        }
-
-    }
-
-    .fs_sorting_button {
-        .el-button {
-            background: var(--fs-primary);
-            color: var(--fs-btn-text);
-            border-color: var(--fs-primary);
-            border-radius: var(--fs-radius-md);
-        }
-    }
-}
-
-.fs_dropdown_menu {
-    padding: var(--fs-spacing-sm);
-    border-radius: var(--fs-radius-lg);
-
-    .fs_dropdown_item {
-        padding: var(--fs-spacing-xs) var(--fs-spacing-md) var(--fs-spacing-xs) 0;
-
-        &:hover {
-            background: rgba(var(--fs-border-soft-rgb), 0.5) !important;
-            box-shadow: var(--fs-shadow-sm) !important;
-            color: inherit !important;
-        }
-    }
-
-    .fs_logout_item {
-        display: flex;
-        gap: var(--fs-spacing-xs);
-        align-items: center;
-    }
-}
-
 .wp_vue_editor {
     width: 100%;
     min-height: 100px;
@@ -2570,19 +2422,6 @@ html.dark {
 
     .wp-media-buttons .insert-media {
         vertical-align: middle;
-    }
-
-    .popover-wrapper {
-        z-index: 2;
-        position: absolute;
-        top: 0;
-        right: 0;
-
-        &-plaintext {
-            left: auto;
-            right: 0;
-            top: -32px;
-        }
     }
 
     .wp-editor-tabs {
@@ -2726,15 +2565,6 @@ html.dark {
     }
 }
 
-.fs_sorting_button {
-    .el-button {
-        background: var(--fs-primary);
-        color: var(--fs-btn-text);
-        border-color: var(--fs-primary);
-        border-radius: var(--fs-radius-md);
-    }
-}
-
 @media screen and (max-width: 768px) {
     .fs_product_filter {
         .el-select {
@@ -2743,32 +2573,97 @@ html.dark {
     }
 }
 
-.wp-theme-blocksy {
-  .woocommerce-MyAccount-content {
-    .fs_client_portal {
-
-      @media (min-width: 640px) {
-        max-width: 480px;
-      }
-
-      @media (min-width: 768px) {
-        max-width: 540px;
-      }
-
-      @media (min-width: 1024px) {
-        max-width: 720px;
-      }
-
-      @media (min-width: 1280px) {
-        max-width: 840px;
-      }
-    }
-  }
-}
-
 .fs_agent_signature {
     margin-top: 20px;
     padding-top: 10px;
+}
+
+// Busy states. The portal does not use v-loading: Element Plus's mask could cover
+// the whole window while it closed.
+.fs_client_portal {
+    .fs_spinner {
+        display: inline-block;
+        flex: none;
+        width: 14px;
+        height: 14px;
+        border: 2px solid currentColor;
+        border-right-color: transparent;
+        border-radius: 50%;
+        vertical-align: middle;
+        animation: fs-portal-spin 0.8s linear infinite;
+    }
+
+    .fs_is_busy {
+        pointer-events: none;
+        opacity: 0.7;
+    }
+
+    .fs_ticket_refresh_btn.fs_is_busy svg {
+        animation: fs-portal-spin 0.8s linear infinite;
+    }
+
+    .fs_custom_fields_loading {
+        padding: var(--fs-spacing-xs) 0;
+    }
+
+    // Loading placeholders. They reuse the real layout classes (ticket row, thread, reply box)
+    // and only size the bars. Transparent, so html.dark's .el-skeleton background does not
+    // show as a darker block inside the card.
+    .fs_portal_skeleton {
+        background: transparent;
+        pointer-events: none;
+
+        .fs_skeleton_lines {
+            display: flex;
+            flex-direction: column;
+            gap: var(--fs-spacing-sm);
+        }
+
+        .fs_skeleton_grow {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .fs_skeleton_badge {
+            width: 72px;
+            height: 22px;
+            border-radius: var(--fs-radius-pill);
+        }
+
+        .fs_skeleton_avatar {
+            width: 32px;
+            height: 32px;
+            flex: none;
+        }
+
+        .fs_skeleton_reply_input {
+            height: 40px;
+            border-radius: var(--fs-radius-md);
+        }
+
+        .fs_skeleton_field + .fs_skeleton_field {
+            margin-top: var(--fs-spacing-md);
+        }
+
+        .fs_skeleton_input {
+            height: var(--fs-input-height-lg);
+            border-radius: var(--fs-radius-lg);
+        }
+
+        // The real thread drops the last item's bottom padding because the opening message follows it.
+        .fs_ticket_thread:last-child {
+            padding-bottom: var(--fs-spacing-lg);
+        }
+    }
+}
+
+@keyframes fs-portal-spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes fs-portal-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 @keyframes fs-portal-skeleton-loading {

@@ -2,8 +2,7 @@
 /**
  * Per-plugin test suite configuration for the Fluent Support family.
  *
- * This is the ONLY file that should contain plugin-specific names. Everything
- * else in tests/ reads from here, so porting the suite to another WPFluent
+ * Plugin-specific names live only here. Porting the suite to another WPFluent
  * plugin means editing this file and one regex in the lint.
  */
 
@@ -11,8 +10,8 @@ return [
     // Plugin identity ------------------------------------------------------
     'plugin_slug'      => 'fluent-support',
 
-    // Substring used to decide whether a PHP notice/warning belongs to US.
-    // Deliberately matches fluent-support-pro too — pro diagnostics are ours.
+    // Substring that marks a PHP notice/warning as ours. Also matches
+    // fluent-support-pro on purpose.
     'plugin_dir_hint'  => 'plugins/fluent-support',
 
     // REST -----------------------------------------------------------------
@@ -20,37 +19,33 @@ return [
     'routes_file'      => 'app/Http/Routes/api.php',
 
     // Database -------------------------------------------------------------
-    // The plugin's own table prefix, WITHOUT the WordPress prefix.
-    // Also the regex in lint/raw-sql-prefix.php.
+    // Plugin table prefix, without the WordPress prefix. Also the regex in
+    // lint/raw-sql-prefix.php.
     'table_prefix'     => 'fs_',
 
     // Counted before and after every run; a change is a hard failure.
     'protected_tables' => ['fs_tickets', 'fs_conversations', 'fs_persons'],
 
     // Framework wiring -----------------------------------------------------
-    // No global app function exists (unlike FluentCrm()); the facade is the
-    // supported entry point: \FluentSupport\App\App::getInstance().
+    // There is no global app function like FluentCrm(), so use the facade.
     'app_bootstrap'    => ['\\FluentSupport\\App\\App', 'getInstance'],
     'request_class'    => 'FluentSupport\\Framework\\Http\\Request\\Request',
 
-    // Any class that only exists when the plugin is loaded — proves the
-    // harness booted against the right install before anything else runs.
+    // A class that only exists when the plugin is loaded. Proves the harness
+    // booted against the right install.
     'sentinel_class'   => 'FluentSupport\\App\\Models\\Ticket',
 
     // Caches ---------------------------------------------------------------
-    // Transient LIKE patterns flushed before every suite. A warm transient
-    // can return 200 over completely broken SQL. No object-cache group —
-    // fluent-support has none (verified 2026-08-08).
+    // Transient LIKE patterns flushed before every suite, since a warm
+    // transient can hide broken SQL. fluent-support has no object-cache group.
     'cache_groups'     => [],
 
     // Optional seams -------------------------------------------------------
-    // fluent-support has no loopback-intercept filter (verified 2026-08-08).
+    // fluent-support has no loopback-intercept filter.
     'loopback_filter'  => '',
 
     // Product family -------------------------------------------------------
-    // The suite's unit of operation. 'unrelated' classifications are recorded
-    // so the boundary is never re-litigated: fluent-connect is a FluentCRM/
-    // ThriveCart product, NOT part of this family (verified 2026-08-08).
+    // fluent-connect is a FluentCRM/ThriveCart product, not part of this family.
     'siblings'         => [
         'fluent-support-pro' => [
             'kind'        => 'pro',

@@ -6,10 +6,21 @@ use Exception;
 use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\TicketHelper;
-use FluentSupport\App\Services\TicketQueryService;
 use FluentSupport\App\Services\Tickets\TicketService;
 use FluentSupport\Framework\Support\Arr;
 
+/**
+ * Display attributes set on a loaded ticket before it is sent:
+ *
+ * @property string     $human_date       "3 hours ago", from created_at.
+ * @property mixed      $preview_response The latest response, for list rows.
+ * @property array      $custom_fields    Pro custom field values.
+ * @property array|null $created_by_agent Agent who opened the ticket for the customer.
+ *
+ * Column set outside $fillable:
+ *
+ * @property string     $content_hash     md5 of content; email piping uses it to spot a repeated email.
+ */
 class Ticket extends Model
 {
     protected $table = 'fs_tickets';
@@ -17,9 +28,8 @@ class Ticket extends Model
     protected $dates = ['waiting_since'];
 
     /**
-     * The ticket hash is a bearer credential for the signed public ticket view,
-     * so it must never be serialized into an API response. PHP property access
-     * is unaffected, which is what Helper::getTicketViewSignedUrl() relies on.
+     * The hash is a bearer credential for the public ticket view, so keep it
+     * out of API responses. Property access still works for signed URLs.
      *
      * @var array
      */
@@ -81,9 +91,8 @@ class Ticket extends Model
         });
 
         static::updating(function ($model) {
-            // A hash handed out for one customer must stop working the moment
-            // the ticket belongs to somebody else, otherwise every link already
-            // emailed for it keeps authorizing read, reply, close and reopen.
+            // Rotate the hash on customer change so links already emailed to
+            // the previous customer stop working.
             if ($model->isDirty('customer_id')) {
                 $model->hash = bin2hex(random_bytes(16));
             }
@@ -96,17 +105,15 @@ class Ticket extends Model
         });
 
         static::deleting(function ($model) {
-            //Delete the ticket meta
             Meta::where('object_type', 'ticket_meta')->where('object_id', $model->id)->delete();
-            //Delete all cc info for the ticket
+            // CC info
             Meta::where('object_type', 'ticket')->where('object_id', $model->id)->delete();
-            //Delete draft info
+            // Drafts
             Meta::where('object_type', '_fs_auto_draft')->where('object_id', $model->id)->delete();
-            //Delete internal notifications and notification recipient rows for the ticket
             Notification::deleteByTicketId($model->id);
-            //delete the responses first (their attachments are cleaned up by Conversation::deleting)
+            // Response attachments are cleaned up by Conversation::deleting
             Conversation::deleteAll($model->id);
-            // Delete ticket-level attachments (conversation_id IS NULL) and remove the ticket upload directory
+            // Ticket-level attachments, plus the ticket upload directory
             $class = __NAMESPACE__ . '\Attachment';
             $ticketAttachments = $class::where('ticket_id', $model->id)->whereNull('conversation_id')->get();
             $class::purgeAttachments($ticketAttachments, $model->id);
@@ -115,7 +122,6 @@ class Ticket extends Model
     }
 
     /**
-     * $searchable Columns in table to search
      * @var array
      */
     protected $searchable = [
@@ -128,7 +134,8 @@ class Ticket extends Model
     ];
 
     /**
-     * Local scope to filter tickets by search/query string
+     * Supports `column:value` to match a single fillable column.
+     *
      * @param ModelQueryBuilder $query
      * @param string $search
      * @return ModelQueryBuilder
@@ -169,61 +176,42 @@ class Ticket extends Model
     }
 
     /**
-     * Local scope to filter tickets by different filtering condition
-     * @param ModelQueryBuilder $query
-     * @param mixed $search
-     * @return ModelQueryBuilder
+     * @deprecated Use TicketQuery::filterTickets() (the "tickets" advanced filter provider).
      */
-
     public function doSearchForAdvancedFilter($query, $search)
     {
-        foreach ($search as $s) {
-            $operator = $s['operator'];
-            //If selected item for ticket either title or content
-            if (in_array($s['property'], ['title', 'content'])) {
-                //If the selected condition is contains, query operator id LIKE
-                if ($operator == 'contains') {
-                    $query = $query->where(function ($query) use ($s) {
-                        $query->where($s['property'], 'LIKE', "%" . $s['value'] . "%");
-                    });
-                } elseif ($operator == 'not_contains') {
-                    //If the selected condition is not_contains, query operator id NOT LIKE
-                    $query = $query->where(function ($query) use ($s) {
-                        $query->where($s['property'], 'NOT LIKE', '%' . $s['value'] . '%');
-                    });
-                }
-            }
+        return \FluentSupport\App\Services\Tickets\TicketQuery::filterTickets($query, (array) $search);
+    }
 
-            //If selected item is Ticket Conversation Content
-            if ($s['property'] == 'conversation_content') {
-                $operator = $s['operator'];
-                if ($operator == 'contains') {
-                    $query = $query->whereHas('responses', function ($q) use ($s) {
-                        $q->where('content', 'LIKE', "%" . $s['value'] . "%");
-                    });
+    /** Advanced-filter value for tickets with no recorded source (older tickets). */
+    const SOURCE_NONE = '__none__';
 
-                } else if ($operator == 'not_contains') {
-                    $query = $query->whereHas('responses', function ($q) use ($s) {
-                        $q->where('content', 'NOT LIKE', "%" . $s['value'] . "%");
-                    });
-                }
-            }
-
-            //If selected item is Ticket created or Last Response or Customer Waiting For, or Last Agent Response or Last Customer Response
-            if (in_array($s['property'], ['created_at', 'updated_at', 'waiting_since', 'last_agent_response', 'last_customer_response'])) {
-                $query = (new \FluentSupport\App\Models\Ticket())->buildDateBaseFilterQuery($query, $s);
-            }
-
-            //If selected item is Ticket Status or Client Priority or Agent Priority or Tags or Product or Waiting For Reply
-            if (in_array($s['property'], ['status', 'client_priority', 'priority', 'tags', 'product', 'waiting_for_reply', 'agent_id', 'mailbox_id'])) {
-                $query = (new \FluentSupport\App\Models\Ticket())->buildPropertiesFilterQuery($query, $s);
-            }
-        }
-        return $query;
+    /**
+     * Where tickets come from, for the advanced filter's Source field.
+     *
+     * @return array<string,string> source => label
+     */
+    public static function sourceFilterOptions()
+    {
+        return apply_filters('fluent_support/ticket_source_filter_options', [
+            'web'                          => __('Web', 'fluent-support'),
+            'email'                        => __('Email', 'fluent-support'),
+            self::SOURCE_AGENT_INITIATED   => __('Agent outreach', 'fluent-support'),
+            'mcp'                          => __('MCP (AI agents)', 'fluent-support'),
+            'telegram'                     => __('Telegram', 'fluent-support'),
+            'slack'                        => __('Slack', 'fluent-support'),
+            'whatsapp'                     => __('WhatsApp', 'fluent-support'),
+            'awesome-support'              => __('Imported: Awesome Support', 'fluent-support'),
+            'freshdesk'                    => __('Imported: Freshdesk', 'fluent-support'),
+            'helpscout'                    => __('Imported: Help Scout', 'fluent-support'),
+            'js-helpdesk'                  => __('Imported: JS Help Desk', 'fluent-support'),
+            'support-candy'                => __('Imported: SupportCandy', 'fluent-support'),
+            'zendesk'                      => __('Imported: Zendesk', 'fluent-support'),
+            self::SOURCE_NONE              => __('No source', 'fluent-support'),
+        ]);
     }
 
     /**
-     * Local scope to filter subscribers by search/query string
      * @param ModelQueryBuilder $query
      * @param array $statuses
      * @return ModelQueryBuilder
@@ -238,16 +226,9 @@ class Ticket extends Model
     }
 
     /**
-     * Who replied last on this ticket, derived from the already-loaded
-     * last_agent_response / last_customer_response timestamp columns.
-     *
-     * Returns 'agent', 'customer', or null. This is the per-ticket value behind
-     * the `waiting_for_reply` filter and mirrors the timestamp comparison in
-     * scopeWaitingOnly() (which lives in SQL, so it can't share this PHP code).
-     *
-     * Note: boot() seeds last_customer_response on creation, so a brand-new
-     * ticket with no agent reply correctly resolves to 'customer' (awaiting an
-     * agent). null is reserved for the rare case where neither timestamp is set.
+     * Who replied last: 'agent', 'customer', or null when neither timestamp is
+     * set. PHP counterpart of the timestamp check in scopeWaitingOnly(). A new
+     * ticket resolves to 'customer' because boot() seeds last_customer_response.
      *
      * @return string|null
      */
@@ -266,12 +247,12 @@ class Ticket extends Model
             return 'agent';
         }
 
-        // Tie (same second) resolves to 'customer' — the waiting bias used by scopeWaitingOnly.
+        // A tie resolves to 'customer'. scopeWaitingOnly() uses a strict <, so SQL treats a tie as answered.
         return strtotime($customerAt) >= strtotime($agentAt) ? 'customer' : 'agent';
     }
 
     /**
-     * Local scope to filter tickets by not response by agent
+     * Tickets awaiting an agent reply.
      * @param $query
      * @return mixed
      */
@@ -286,150 +267,6 @@ class Ticket extends Model
     }
 
     /**
-     * scopeApplyFilters method will filet ticket based on the selected filters
-     * This method will get filter option as parameter, loop through and apply conditions in query
-     * @param $query
-     * @param $filters
-     * @return ModelQueryBuilder
-     */
-    public function scopeApplyFilters($query, $filters)
-    {
-        $supportedColumns = ['product_id', 'client_priority', 'priority', 'mailbox_id'];
-        foreach ($filters as $filterKey => $filterValue) {
-            if (!$filterValue && ($filterValue !== '0' && $filterValue !== 0)) {
-                continue;
-            }
-            //If filer using status
-            if ($filterKey == 'status_type') {
-                //Get list of ticket status
-                $statusArray = Helper::getTkStatusesByGroupName($filterValue);
-                if ($statusArray) {
-                    //Apply filet where status in
-                    $query->whereIn('status', $statusArray);
-                }
-            } else if (in_array($filterKey, $supportedColumns)) {
-                // Use whereIn for all supported columns (they all now support multi-select)
-                if (is_array($filterValue)) {
-                    $query->whereIn($filterKey, $filterValue);
-                } else {
-                    $query->where($filterKey, $filterValue);
-                }
-            } else if ($filterKey == 'waiting_for_reply') {
-                if ($filterValue != 'yes') {
-                    continue;
-                }
-                //Apply filter where no response by agent
-                $query = $this->scopeWaitingOnly($query);
-            } else if ($filterKey == 'agent_id') {
-                // Handle array of agent IDs for multi-select
-                if (is_array($filterValue)) {
-                    // Check if 'unassigned' is in the array
-                    $hasUnassigned = in_array('unassigned', $filterValue);
-                    $agentIds = array_filter($filterValue, function($v) {
-                        return $v !== 'unassigned';
-                    });
-
-                    if ($hasUnassigned && !empty($agentIds)) {
-                        // Include both unassigned and specific agents
-                        $query->where(function($q) use ($agentIds) {
-                            $q->whereNull('agent_id')
-                              ->orWhereIn('agent_id', $agentIds);
-                        });
-                    } elseif ($hasUnassigned) {
-                        // Only unassigned
-                        $query->whereNull('agent_id');
-                    } elseif (!empty($agentIds)) {
-                        // Only specific agents
-                        if (defined('FLUENTSUPPORTPRO')) {
-                            if (isset($filters['watcher']) && $filters['watcher'] == 'watcher') {
-                                $watcherTickets = [];
-                                foreach ($agentIds as $agentId) {
-                                    $watcherTickets = array_merge($watcherTickets, TicketHelper::getWatcherTicketIds($agentId));
-                                }
-                                $query->whereIn('id', array_unique($watcherTickets));
-                            } else {
-                                $query->whereIn('agent_id', $agentIds);
-                            }
-                        } else {
-                            $query->whereIn('agent_id', $agentIds);
-                        }
-                    }
-                } else {
-                    // Single value (backward compatibility)
-                    if ($filterValue == 'unassigned') {
-                        $query->whereNull($filterKey);
-                    } else {
-                        if (defined('FLUENTSUPPORTPRO')) {
-                            if (isset($filters['watcher']) && $filters['watcher'] == 'watcher') {
-                                $watcherTickets = TicketHelper::getWatcherTicketIds($filterValue);
-                                $query->whereIn('id', $watcherTickets);
-                            } else {
-                                //Apply filter, get only assigned ticket
-                                $query->where($filterKey, $filterValue);
-                            }
-                        } else {
-                            $query->where($filterKey, $filterValue);
-                        }
-                    }
-                }
-            } else if ($filterKey == 'agent_group') {
-                $groupIds = is_array($filterValue) ? $filterValue : [$filterValue];
-                $groupIds = array_filter(array_map('intval', $groupIds));
-                if (!empty($groupIds)) {
-                    $agentIds = TagPivot::where('source_type', 'agent_group')
-                        ->whereIn('tag_id', $groupIds)
-                        ->pluck('source_id')
-                        ->toArray();
-                    if ($agentIds) {
-                        $query->whereIn('agent_id', $agentIds);
-                    } else {
-                        $query->whereRaw('1 = 0');
-                    }
-                }
-            } else if ($filterKey == 'ticket_tags') {
-                if (!$filterValue) {
-                    continue;
-                }
-                //Apply filter where ticket only has this tag id
-                $query->whereHas('tags', function ($q) use ($filterValue) {
-                    $q->whereIn('tag_id', $filterValue);
-                });
-            }
-        }
-
-        return $query;
-    }
-
-    /**
-     * Local scope to filter tickets by agent id
-     * @param ModelQueryBuilder $query
-     * @param int $agentId
-     * @return ModelQueryBuilder
-     */
-    public function scopeFilterByAgentId($query, $agentId)
-    {
-        if ($agentId) {
-            $query->where('agent_id', $agentId);
-        }
-
-        return $query;
-    }
-
-    /**
-     * Local scope to filter subscribers by search/query string
-     * @param ModelQueryBuilder $query
-     * @param int $customerId
-     * @return ModelQueryBuilder
-     */
-    public function scopeFilterByCustomerId($query, $customerId)
-    {
-        $query->where('customer_id', $customerId);
-
-        return $query;
-    }
-
-    /**
-     * Local scope to filter subscribers by search/query string
      * @param ModelQueryBuilder $query
      * @param int $productId
      * @return ModelQueryBuilder
@@ -444,266 +281,16 @@ class Ticket extends Model
     }
 
     /**
-     * Local scope to filter subscribers by search/query string
-     * @param ModelQueryBuilder $query
-     * @param array $priorities
-     * @return ModelQueryBuilder
-     */
-    public function scopeFilterByPriorities($query, $priorities)
-    {
-        if ($priorities) {
-            $query->whereIn('priority', $priorities);
-        }
-
-        return $query;
-    }
-
-    /**
-     * @param $filter
-     * @return string[]
-     */
-
-    public static function parseRelationalFilterQueryMethods($filter)
-    {
-        // default operator = in
-        $method = 'whereHas';
-        $subMethod = 'whereIn';
-
-        switch ($filter['operator']) {
-            case 'not_in':
-                $method = 'whereDoesntHave';
-                $subMethod = 'whereIn';
-
-                break;
-            case 'in_all':
-                $method = 'whereHas';
-                $subMethod = 'where';
-
-                break;
-            case 'not_in_all':
-                $method = 'whereDoesntHave';
-                $subMethod = 'where';
-
-                break;
-        }
-
-        return [$method, $subMethod];
-    }
-
-    /**
-     * Parse filter to set proper operator and value for the filter query.
-     *
-     * @param array $filter
-     * @return array
-     */
-    public static function filterParser($filter)
-    {
-        switch ($filter['operator']) {
-            case 'before':
-                $filter['operator'] = '<';
-                $filter['value'] = $filter['value'] . ' 23:59:59';
-                break;
-
-            case 'after':
-                $filter['operator'] = '>';
-                $filter['value'] = $filter['value'] . ' 23:59:59';
-                break;
-
-            case 'date_equal':
-                $filter['operator'] = 'LIKE';
-                $filter['value'] = '%' . $filter['value'] . '%';
-                break;
-
-            case 'days_before':
-                $filter['operator'] = '<';
-                $filter['value'] = gmdate('Y-m-d', time() - $filter['value'] * 24 * 60 * 60);
-                break;
-
-            case 'days_within':
-                $filter['operator'] = 'BETWEEN';
-                $filter['value'] = [
-                    gmdate('Y-m-d', time() - $filter['value'] * 24 * 60 * 60),
-                    gmdate('Y-m-d') . ' 23:59:59'
-                ];
-                break;
-            case 'date_range':
-                $filter['operator'] = 'BETWEEN';
-                if (isset($filter['value'][0]))
-                    $filter['value'][0] .= ' 00:00:00';
-                if (isset($filter['value'][1]))
-                    $filter['value'][1] .= ' 23:59:59';
-                break;
-        }
-
-        return $filter;
-    }
-
-    /**
-     * @param \FluentSupport\Framework\Database\Orm\Builder|\FluentSupport\Framework\Database\Query\Builder $query
-     * @param array $filters
-     * @return ModelQueryBuilder
-     */
-    public function buildDateBaseFilterQuery($query, $filters)
-    {
-        $filter = static::filterParser($filters);
-        $query->where(function ($dateQuery) use ($filter) {
-
-            if ($filter['operator'] == 'BETWEEN') {
-                $dateQuery->whereBetween($filter['property'], $filter['value']);
-            } else {
-                $dateQuery->where($filter['property'], $filter['operator'], $filter['value']);
-            }
-        });
-
-        return $query;
-    }
-
-    /**
-     * Relation builder
-     * @param $relation
-     * @param $query
-     * @param $method
-     * @param $subMethod
-     * @param $subField
-     * @param $filter
-     * @param false $provider
-     * @return ModelQueryBuilder
-     */
-
-    public static function buildRelationFilterQuery($relation, $query, $method, $subMethod, $subField, $filter, $provider = false)
-    {
-        if (in_array($filter['operator'], ['in_all', 'not_in_all']) && $filter['value']) {
-            foreach ($filter['value'] as $item) {
-                $query = static::buildRelationFilterQuery($relation, $query, $method, $subMethod, $subField, ['value' => $item, 'operator' => ''], $provider);
-            }
-        } else {
-            $query = $query->{$method}($relation, function ($relationQuery) use ($subMethod, $subField, $filter, $provider) {
-                $relationQuery = $relationQuery->{$subMethod}($subField, $filter['value']);
-
-                if ($provider) {
-                    $relationQuery = $relationQuery->where('provider', $provider);
-                }
-
-                return $relationQuery;
-            });
-        }
-
-        return $query;
-    }
-
-    /**
-     * get tickets by advanced filter segment data
-     * @param $query
-     * @param $filter
-     * @return ModelQueryBuilder
-     */
-
-    public function buildPropertiesFilterQuery($query, $filter)
-    {
-        if (in_array($filter['property'], ['tags', 'product'])) {
-            $subField = $filter['property'] == 'tags' ? 'tag_id' : 'product_id';
-            list($method, $subMethod) = static::parseRelationalFilterQueryMethods($filter);
-            $query = static::buildRelationFilterQuery($filter['property'], $query, $method, $subMethod, $subField, $filter);
-        } elseif ($filter['property'] == 'waiting_for_reply') {
-            if (($filter['value'] == 'yes' && $filter['operator'] == 'in') || ($filter['value'] == 'no' && $filter['operator'] == 'not_in')) {
-                $query = $query->where(function ($q) {
-                    $q->whereColumn('last_agent_response', '<', 'last_customer_response')
-                        ->orWhereNull('last_agent_response')
-                        ->orWhere('status', 'new');
-                });
-            } else {
-                $query = $query->where(function ($q) {
-                    $q->whereColumn('last_customer_response', '<', 'last_agent_response');
-                });
-            }
-        } else {
-            $method = $filter['operator'] == 'in' ? 'whereIn' : 'whereNotIn';
-            $query = $query->{$method}($filter['property'], (array)$filter['value']);
-        }
-        return $query;
-    }
-
-    /**
-     * method to search by properties
-     * @param $provider
-     * @param $query
-     * @param $search
-     * @param string $operator
-     * @return ModelQueryBuilder
-     */
-    public function buildSearchableQuery($provider, $query, $search, $operator = 'LIKE')
-    {
-        switch ($provider) {
-            case 'customer':
-                $fields = (new Customer())->getSearchableFields();
-                break;
-            case 'agent':
-                $fields = (new Agent())->getSearchableFields();
-                break;
-            default:
-                $fields = $this->searchable;
-                break;
-        }
-
-        $query->whereHas($provider, function ($query) use ($fields, $search, $operator) {
-            $query->where(array_shift($fields), $operator, $search);
-
-            $nameArray = explode(' ', (string) $search);
-
-            if (count($nameArray) >= 2) {
-                $query->orWhere(function ($q) use ($nameArray, $operator) {
-                    $firstName = array_shift($nameArray);
-                    $lastName = implode(' ', $nameArray);
-
-                    $q->where('first_name', $operator, $firstName);
-                    $q->where('last_name', $operator, $lastName);
-                });
-            }
-
-            foreach ($fields as $field) {
-                $query->orWhere($field, $operator, $search);
-            }
-        });
-
-        return $query;
-    }
-
-    /**
-     * Filter by ticket general properties like customer name, agent name etc
-     * @param $provider
-     * @param $query
-     * @param $filters
-     * @return ModelQueryBuilder
+     * @deprecated Use TicketQuery::filterPerson() (the "customer" and "agent" advanced filter providers).
      */
     public function filterTicketByUser($provider, $query, $filters)
     {
-        foreach ($filters as $filter) {
-            if ($filter['operator'] == 'in' || $filter['operator'] == 'not_in') {
-                $method = $filter['operator'] == 'in' ? 'whereIn' : 'whereNotIn';
-                $query = $query->whereHas($provider, function ($q) use ($method, $filter) {
-                    $q->{$method}($filter['property'], $filter['value']);
-                });
-            }
-
-            if ($filter['operator'] == 'contains' || $filter['operator'] == 'not_contains') {
-                $operator = $filter['operator'] == 'contains' ? 'LIKE' : 'NOT LIKE';
-                $query->whereHas($provider, function ($q) use ($operator, $filter) {
-                    $q->where($filter['property'], $operator, '%' . $filter['value'] . '%');
-                });
-            }
-
-            if ($filter['operator'] == '=' || $filter['operator'] == '!=') {
-                $operator = $filter['operator'];
-                $query->whereHas($provider, function ($q) use ($operator, $filter) {
-                    $q->where($filter['property'], $operator, $filter['value']);
-                });
-            }
-        }
-        return $query;
+        return \FluentSupport\App\Services\Tickets\TicketQuery::filterPerson($provider, $query, (array) $filters);
     }
 
     /**
-     * One2Many: Customer has to many Click Tickets
+     * Newest first.
+     *
      * @return Model Collection
      */
     public function responses()
@@ -712,8 +299,40 @@ class Ticket extends Model
 
         return $this->hasMany(
             $class, 'ticket_id', 'id'
-        )->orderBy('created_at', 'desc')
+        )->where('conversation_type', '!=', 'schedule')
+            ->orderBy('created_at', 'desc')
             ->orderBy('id', 'desc');
+    }
+
+    /** source value for a ticket an agent opened to reach out to the customer. */
+    const SOURCE_AGENT_INITIATED = 'agent_initiated';
+
+    /**
+     * Whether an agent opened this ticket to reach out. The message is then the
+     * agent's first response, and the ticket body is only a placeholder.
+     *
+     * @return bool
+     */
+    public function isAgentInitiated()
+    {
+        if ($this->source === self::SOURCE_AGENT_INITIATED) {
+            return true;
+        }
+
+        // Before 2.4.1 only the "initialized this ticket" placeholder body marked it.
+        return $this->created_by && self::hasLegacyAgentInitiatedMarker($this->content);
+    }
+
+    /**
+     * @param string $content
+     * @return bool
+     */
+    public static function hasLegacyAgentInitiatedMarker($content)
+    {
+        $content = (string) $content;
+
+        return strpos($content, ' initialized this ticket') !== false
+            || strpos($content, __(' initialized this ticket', 'fluent-support')) !== false;
     }
 
     public function preview_response()
@@ -722,7 +341,7 @@ class Ticket extends Model
 
         return $this->hasOne(
             $class, 'ticket_id', 'id'
-        );
+        )->where('conversation_type', '!=', 'schedule');
     }
 
     public function tags()
@@ -744,7 +363,6 @@ class Ticket extends Model
     }
 
     /**
-     * One2one: Customer has to many Click Tickets
      * @return Model Collection
      */
     public function customer()
@@ -757,7 +375,6 @@ class Ticket extends Model
     }
 
     /**
-     * One2one: Customer has to many Click Tickets
      * @return Model Collection
      */
     public function agent()
@@ -805,18 +422,12 @@ class Ticket extends Model
         );
     }
 
-
+    /**
+     * @deprecated Use TicketService::deleteTicket(), which also fires ticket_deleted.
+     */
     public function deleteTicket()
     {
-        /*
-         * Action on ticket deleting
-         *
-         * @since v1.0.0
-         * @param object $ticket
-         */
-        do_action('fluent_support/deleting_ticket', $this);
-        // Delete the ticket
-        $this->delete();
+        (new \FluentSupport\App\Services\Tickets\TicketService())->deleteTicket($this);
     }
 
     public static function getNextSerialNumber()
@@ -916,11 +527,8 @@ class Ticket extends Model
 
     public function customData($scope = 'admin', $rendered = false)
     {
-        if (!defined('FLUENTSUPPORTPRO')) {
-            return [];
-        }
-
-        $fields = \FluentSupportPro\App\Services\CustomFieldsService::getFieldLabels($scope);
+        // Pro defines the fields; without it there are none.
+        $fields = apply_filters('fluent_support/custom_field_labels', [], $scope);
 
         if (!$fields) {
             return [];
@@ -938,7 +546,7 @@ class Ticket extends Model
 
         $formattedData = [];
 
-        $customRenderers = \FluentSupportPro\App\Services\CustomFieldsService::getCustomerRenderers();
+        $customRenderers = apply_filters('fluent_support/custom_field_renders_type', []);
 
         foreach ($customRows as $row) {
             $dataKey = $row->key;
@@ -966,7 +574,7 @@ class Ticket extends Model
     }
 
     /**
-     * @param $data This is the data that will be saved to the ticket_meta for custom fields
+     * @param array $data Custom field values keyed by field key.
      * @return bool
      */
     public function syncCustomFields($data)
@@ -1043,65 +651,23 @@ class Ticket extends Model
     }
 
     /**
-     * This method will assign tags to the ticket
-     * @param $tagIds This is the array of tag ids that will be assigned to the ticket
-     * @return \FluentSupport\App\Models\Ticket
+     * @deprecated Use TicketService::addTags().
+     * @param int|array $tagIds
+     * @return bool True if any tag was added.
      */
     public function applyTags($tagIds)
     {
-        $result = false;
-
-        if (!is_array($tagIds)) {
-            $tagIds = array($tagIds);
-        }
-
-        foreach ($tagIds as $tagId) {
-            if (!$this->hasTag($tagId)) {
-                $this->tags()->attach($tagId, ['source_type' => 'ticket_tag']);
-                $result = true;
-
-                /*
-                 * Action while tag added to ticket
-                 *
-                 * @since v1.0.0
-                 * @param integer $tagId
-                 * @param object  $ticket
-                 */
-                do_action('fluent_support/ticket_tag_added', $tagId, $this);
-            }
-        }
-        return $result;
+        return (bool) (new \FluentSupport\App\Services\Tickets\TicketService())->addTags($this, $tagIds);
     }
 
     /**
-     * This method will remove tags from ticket
-     * @param $tagIds This is the array of tag ids that will be removed from the ticket
-     * @return \FluentSupport\App\Models\Ticket
+     * @deprecated Use TicketService::removeTags().
+     * @param int|array $tagIds
+     * @return bool True if any tag was removed.
      */
     public function detachTags($tagIds)
     {
-        $result = false;
-
-        if (!is_array($tagIds)) {
-            $tagIds = array($tagIds);
-        }
-
-        foreach ($tagIds as $tagId) {
-            if ($this->hasTag($tagId)) {
-                $this->tags()->detach($tagId);
-
-                /*
-                 * Action while tag removed from ticket
-                 *
-                 * @since v1.0.0
-                 * @param integer $tagId
-                 * @param object  $ticket
-                 */
-                do_action('fluent_support/ticket_tag_removed', $tagId, $this);
-                $result = true;
-            }
-        }
-        return $result;
+        return (bool) (new \FluentSupport\App\Services\Tickets\TicketService())->removeTags($this, $tagIds);
     }
 
     /**
@@ -1117,18 +683,11 @@ class Ticket extends Model
                 return new \WP_Error('error', 'A valid email is required to create a ticket');
             }
 
-            $existingCustomer = Customer::where('email', $email)->first();
-            if ($existingCustomer) {
-                $ticketData['customer_id'] = $existingCustomer->id;
-            } else {
-                $customerData = Arr::only($maybeNewCustomer, (new Customer())->getFillable());
-                $customerData = array_filter($customerData);
-                $createCustomer = Customer::create($customerData);
-                if (!$createCustomer) {
-                    return new \WP_Error('error', 'Customer could not be created');
-                }
-                $ticketData['customer_id'] = $createCustomer->id;
+            $customer = \FluentSupport\App\Modules\Customers\CustomerService::findOrCreate(Arr::only($maybeNewCustomer, (new Customer())->getFillable()));
+            if (!$customer) {
+                return new \WP_Error('error', 'Customer could not be created');
             }
+            $ticketData['customer_id'] = $customer->id;
         }
 
         if (empty($ticketData['customer_id'])) {
@@ -1138,43 +697,6 @@ class Ticket extends Model
         $customer = Customer::findOrFail($ticketData['customer_id']);
 
         return (new TicketService())->storeTicket($ticketData, $customer);
-    }
-
-    /**
-     * This `createResponse` will create a response for a ticket
-     * @param array $data
-     * @param int $ticketId
-     * @return array
-     * @throws Exception
-     */
-
-    public static function countTicketByMailBoxId($mailbox_id)
-    {
-        return self::where('mailbox_id', $mailbox_id)->count();
-    }
-
-    public static function syncMailBoxId($mailbox_id, $fallback_id)
-    {
-        return self::where('mailbox_id', $mailbox_id)
-            ->update([
-                'mailbox_id' => $fallback_id
-            ]);
-    }
-
-    public static function getTicketsQuery()
-    {
-        return self::with([
-            'customer'         => function ($query) {
-                $query->select(['first_name', 'last_name', 'email', 'id', 'avatar']);
-            }, 'agent'         => function ($query) {
-                $query->select(['first_name', 'last_name', 'id']);
-            },
-            'product',
-            'tags',
-            'preview_response' => function ($query) {
-                $query->latest('id');
-            }
-        ]);
     }
 
     public function getSettingsValue($valueKey = false, $default = false)

@@ -2,8 +2,7 @@
 
 namespace FluentSupport\App\Hooks\CLI;
 
-use FluentSupport\App\Modules\StatModule;
-use FluentSupport\App\Services\Tickets\Importer\MigratorService;
+use FluentSupport\App\Modules\TicketImport\Importers\BaseImporter;
 use FluentSupport\App\Models\Meta;
 
 class FluentCli
@@ -13,7 +12,10 @@ class FluentCli
 
     public function stats($args, $assoc_args)
     {
-        $overallStats = StatModule::getOverAllStats();
+        $overallStats = [];
+        foreach (\FluentSupport\App\Modules\Reports\Reports::overview('', '') as $key => $count) {
+            $overallStats[] = ['title' => ucwords(str_replace('_', ' ', $key)), 'count' => $count];
+        }
         $format = \WP_CLI\Utils\get_flag_value($assoc_args, 'format', 'table');
 
         \WP_CLI\Utils\format_items(
@@ -30,46 +32,57 @@ class FluentCli
             return;
         }
 
-        $licenseKey = trim(sanitize_text_field($assoc_args['key'] ?? ''));
-
-        if (!class_exists('\FluentSupportPro\App\Services\PluginManager\LicenseManager')) {
-            \WP_CLI::line('FluentSupport Pro is required');
-            return;
-        }
+        $licensing = $this->licensing();
 
         \WP_CLI::line('Validating License, Please wait');
 
-        $licenseManager = new \FluentSupportPro\App\Services\PluginManager\LicenseManager();
-        $response = $licenseManager->activateLicense($licenseKey);
+        $response = $licensing->activate(trim(sanitize_text_field($assoc_args['key'])));
 
         if (is_wp_error($response)) {
             \WP_CLI::error($response->get_error_message());
-            return;
         }
 
         \WP_CLI::line('Your license key has been successfully updated');
-        \WP_CLI::line('Your License Status: ' . $response['status']);
-        \WP_CLI::line('Expire Date: ' . $response['expires']);
-        return;
+        \WP_CLI::line('Your License Status: ' . ($response['status'] ?? ''));
+        \WP_CLI::line('Expire Date: ' . ($response['expires'] ?? ''));
     }
 
     public function license_status()
     {
-
-        if (!class_exists('\FluentSupportPro\App\Services\PluginManager\LicenseManager')) {
-            \WP_CLI::line('FluentSupport Pro is required');
-            return;
-        }
+        $licensing = $this->licensing();
 
         \WP_CLI::line('Fetching License details, Please wait');
 
-        $licenseManager = new \FluentSupportPro\App\Services\PluginManager\LicenseManager();
-        $licenseManager->verifyRemoteLicense(true);
-        $response = $licenseManager->getLicenseDetails();
+        $response = $licensing->getStatus(true);
 
-        \WP_CLI::line('Your License Status: ' . $response['status']);
-        \WP_CLI::line('Expires: ' . $response['expires']);
-        return;
+        if (is_wp_error($response)) {
+            \WP_CLI::error($response->get_error_message());
+        }
+
+        \WP_CLI::line('Your License Status: ' . ($response['status'] ?? ''));
+        \WP_CLI::line('Expires: ' . ($response['expires'] ?? ''));
+    }
+
+    /**
+     * Pro's licensing client (FluentLicensing), the one its License screen uses.
+     *
+     * @return object|null
+     */
+    private function licensing()
+    {
+        $class = '\FluentSupportPro\App\Services\PluginManager\FluentLicensing';
+
+        if (!class_exists($class)) {
+            \WP_CLI::error('FluentSupport Pro is required');
+        }
+
+        try {
+            return $class::getInstance();
+        } catch (\Exception $e) {
+            \WP_CLI::error($e->getMessage());
+        }
+
+        return null; // WP_CLI::error() has already exited.
     }
 
     public function freshdesk_ticket_import($args, $assoc_args)
@@ -166,13 +179,10 @@ class FluentCli
     }
 
     /**
-     * Process the migration by fetching and importing tickets page by page.
-     *
-     * Supports both page-number pagination (Freshdesk) and cursor-based pagination
-     * (Zendesk) by carrying cursor/next_page_url forward from each response.
+     * Import tickets page by page until the provider reports no more.
      *
      * @param int    $startPage Page number to start from
-     * @param string $provider  Handler name passed to MigratorService. Defaults to 'freshdesk'.
+     * @param string $provider  Importer handler (BaseImporter::make()). Defaults to 'freshdesk'.
      * @param array  $query     Credentials and pagination state. Defaults to Freshdesk class props.
      */
     private function processMigration($startPage = 1, $provider = 'freshdesk', $query = null)
@@ -186,21 +196,21 @@ class FluentCli
             }
 
             $page = $startPage;
-            $migrator = new MigratorService;
             $totalImported = 0;
             $totalSkipped = 0;
 
             while (true) {
                 \WP_CLI::line("Processing page: $page");
 
-                $result = $migrator->handleImport($page, $provider, $query);
+                // A fresh importer per page, carrying the cursor from the last one.
+                $result = BaseImporter::make($provider, $query)->doMigration($page, $provider);
 
                 if (empty($result) || !isset($result['completed'])) {
                     \WP_CLI::warning("Invalid response received for page $page. Stopping migration.");
                     break;
                 }
 
-                // Carry cursor/next_page_url forward for cursor-based providers (e.g. Zendesk)
+                // Cursor-based providers (Zendesk) need these carried into the next request.
                 if (array_key_exists('cursor', $result)) {
                     $query['cursor'] = $result['cursor'];
                 }

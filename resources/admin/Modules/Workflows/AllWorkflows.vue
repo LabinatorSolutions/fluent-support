@@ -45,7 +45,9 @@
                         </el-input>
                     </div>
                 </div>
-                <div class="fs_table_wrapper" v-if="!loading">
+                <!-- Skeleton on the first load only; later fetches keep the rows under an overlay. -->
+                <TableSkeleton v-if="first_loading" :rows="5" :columns="['50px', '90px', 3, '160px', '120px', '160px', '140px', '150px']" />
+                <div class="fs_table_wrapper" v-else v-loading="loading">
                     <el-table
                         :data="workflows"
                         row-class-name="fs_table_row"
@@ -123,6 +125,16 @@
                                 <span>{{ triggerTypeLabel(scope.row.trigger_type) }}</span>
                             </template>
                         </el-table-column>
+                        <el-table-column
+                            prop="last_ran_at"
+                            :label="$t('Last Run')"
+                            width="140"
+                        >
+                            <template #default="scope">
+                                <span v-if="hasRun(scope.row)" :title="scope.row.last_ran_at">{{ $timeDiff(scope.row.last_ran_at) }}</span>
+                                <span v-else class="fs_text_muted">{{ $t('Never') }}</span>
+                            </template>
+                        </el-table-column>
 
                         <el-table-column
                             align="center"
@@ -173,18 +185,40 @@
                     </div>
                 </div>
 
-                <div v-else>
-                    <el-skeleton :rows="3" animated />
-                </div>
             </div>
         </div>
-        <NarrowPromo
+        <ProShowcase
             v-else
-            :heading="$t('Automate your tickets by applying manual or automated tasks')"
-            :description="$t('pro_promo')"
-            :button-text="$t('Upgrade To Pro')"
+            :feature="$t('Workflows')"
+            :heading="$t('Automate repetitive ticket tasks')"
+            :description="$t('workflows_promo_description')"
+            :specifics="promoSpecifics"
             utm-content="feature_lock_workflow_automation"
-        />
+            docs-url="https://docs.fluentsupport.com/workflows-automations"
+        >
+            <template #preview>
+                <div class="fs_pro_preview">
+                    <div class="fs_pro_preview_card fs_pro_preview_fields">
+                        <div class="fs_pro_preview_title">
+                            <span class="fs_pro_preview_checkbox"></span>
+                            {{ $t('Workflow') }}
+                        </div>
+                        <div class="fs_pro_preview_row fs_pro_preview_reveal" style="--fs-row-index: 0">
+                            <span class="fs_pro_preview_row_label">{{ $t('When') }}</span>
+                            <span class="fs_pro_preview_row_value">{{ $t('New ticket') }}</span>
+                        </div>
+                        <div class="fs_pro_preview_row fs_pro_preview_reveal" style="--fs-row-index: 1">
+                            <span class="fs_pro_preview_row_label">{{ $t('If') }}</span>
+                            <span class="fs_pro_preview_chip fs_pro_preview_chip_purple fs_pro_preview_chip_plain">{{ $t('Priority is Critical') }}</span>
+                        </div>
+                        <div class="fs_pro_preview_row fs_pro_preview_row_focal fs_pro_preview_reveal" style="--fs-row-index: 2">
+                            <span class="fs_pro_preview_row_label">{{ $t('Then') }}</span>
+                            <span class="fs_pro_preview_badge fs_pro_preview_badge_success">{{ $t('Assign to Tier 3') }}</span>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </ProShowcase>
         <el-dialog
             v-model="showAddModal"
             :title="$t('Add a New Workflow')"
@@ -210,22 +244,14 @@
                     <div v-if="new_workflow.trigger_type == 'manual'">
                         <div class="fs_workflow_info_header">
                             <span class="fs_workflow_info_header_text">
-                                {{
-                                    $t(
-                                        "A Manual workflow doesn't do anything until you tell it to. When you apply a manual workflow from a ticket, Fluent Support performs all the actions."
-                                    )
-                                }}
+                                {{ $t('Manual_Workflow_Help') }}
                             </span>
                         </div>
                         <div class="fs_workflow_info_body">
                             <div class="fs_workflow_info_header_text">
                                 <span class="fs_workflow_info_header_example_title">{{ $t("Example") }}</span>
                                 <span class="fs_workflow_info_header_example_text">
-                                    {{
-                                        $t(
-                                            "When a customer's ticket/response in with a specific question, you execute this workflow to send a reply, add a tag and assign it to someone on your team."
-                                        )
-                                    }}
+                                    {{ $t('Manual_Workflow_Example') }}
                                 </span>
                             </div>
                         </div>
@@ -233,11 +259,7 @@
                     <div v-else-if="new_workflow.trigger_type == 'automatic'">
                         <div class="fs_workflow_info_header">
                             <span class="fs_workflow_info_header_text">
-                                {{
-                                    $t(
-                                        "Automatic workflows are always on, running on selected ticket events. Based on what's happening to your tickets and conversations, It will run the defined actions automatically."
-                                    )
-                                }}
+                                {{ $t('Automatic_Workflow_Help') }}
                             </span>
 
                         </div>
@@ -246,9 +268,7 @@
                                 <span class="fs_workflow_info_header_example_title">{{ $t("Example") }}</span>
                             </div>
                             <span class="fs_workflow_info_header_example_text">
-                                {{
-                                    $t('When the subject line contains "Bug Report", you want Fluent Support to automatically add a tag, send an email to the customer and assign a support agent.')
-                                }}
+                                {{ $t('Automatic_Workflow_Example') }}
                             </span>
                         </div>
                     </div>
@@ -318,7 +338,8 @@
 import Pagination from "../../Pieces/Pagination";
 import TableMoreActions from "@/admin/Components/TableMoreActions";
 import BulkAction from "@/admin/Components/BulkAction";
-import NarrowPromo from "@/admin/Components/NarrowPromo.vue";
+import ProShowcase from "@/admin/Components/ProShowcase.vue";
+import TableSkeleton from "@/admin/Components/TableSkeleton.vue";
 
 export default {
     name: "AllWorkflows",
@@ -326,12 +347,14 @@ export default {
         Pagination,
         TableMoreActions,
         BulkAction,
-        NarrowPromo,
+        ProShowcase,
+        TableSkeleton,
     },
     data() {
         return {
             workflows: [],
             loading: false,
+            first_loading: true,
             search: "",
             pagination: {
                 per_page: 10,
@@ -355,6 +378,13 @@ export default {
         };
     },
     computed: {
+        promoSpecifics() {
+            return [
+                this.$t('Trigger workflows for new tickets, replies, assignments or closed tickets'),
+                this.$t('Set conditions based on priority, product, tags, or inbox'),
+                this.$t('Automatically assign, tag, reply to or close tickets')
+            ];
+        },
         bulkActions() {
             return [
                 { value: 'delete', label: 'Delete' }
@@ -365,8 +395,11 @@ export default {
             if (!count) {
                 return this.$t('No workflows selected for deletion.');
             }
-            return this.$t(
-                `Are you sure to delete ${count} workflow(s)? All associated data will be deleted.`
+            // translators: %s is the number of workflows selected for deletion
+            return this.$_n(
+                'Are you sure you want to delete %s workflow? All associated data will be deleted.',
+                'Are you sure you want to delete %s workflows? All associated data will be deleted.',
+                count
             );
         },
     },
@@ -377,6 +410,10 @@ export default {
         this.$setTitle(this.$t("Workflows"));
     },
     methods: {
+        // Older rows hold MySQL's zero date instead of NULL.
+        hasRun(workflow) {
+            return !!workflow.last_ran_at && !String(workflow.last_ran_at).startsWith('0000');
+        },
         statusLabel(status) {
             const labels = {
                 published: this.$t('Published'),
@@ -407,6 +444,7 @@ export default {
                 })
                 .always(() => {
                     this.loading = false;
+                    this.first_loading = false;
                 });
         },
 

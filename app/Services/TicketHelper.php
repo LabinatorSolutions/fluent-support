@@ -4,26 +4,30 @@ namespace FluentSupport\App\Services;
 
 use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\Conversation;
-use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Meta;
-use FluentSupport\App\Models\Product;
 use FluentSupport\App\Models\TagPivot;
 use FluentSupport\App\Models\Ticket;
-use FluentSupport\App\Models\TicketTag;
 use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Helper;
+use FluentSupport\App\Services\Tickets\AgentTicketAccess;
 
 class TicketHelper
 {
     /**
-     * getActivity method will return the activity in a ticket by agent
-     * @param $ticketId
-     * @param false $currentAgentId
-     * @return array
+     * Above this many matches, suggested tickets are sorted in SQL. See firstIdsBy().
+     */
+    const SORT_IN_PHP_MAX = 1000;
+
+    /**
+     * Agents seen on the ticket in the last 60 seconds. Passing $currentAgentId also
+     * records that agent as active now.
+     *
+     * @param int $ticketId
+     * @param int|false $currentAgentId
+     * @return array|\FluentSupport\Framework\Support\Collection
      */
     public static function getActivity($ticketId, $currentAgentId = false)
     {
-        //Get the ticket meta information
         $meta = Meta::where('object_type', 'ticket_meta')
             ->where('key', '_live_activity')
             ->where('object_id', $ticketId)
@@ -73,10 +77,9 @@ class TicketHelper
     }
 
     /**
-     * Batch-load live activity for a collection of tickets.
-     * Uses 2 queries total: one for activity metas, one for all agents.
+     * Batch version of getActivity() for a list page: one query for metas, one for agents.
      *
-     * @param \Iterable $tickets Collection of Ticket models
+     * @param \FluentSupport\Framework\Support\Collection $tickets Collection of Ticket models
      * @return void
      */
     public static function loadBatchLiveActivities($tickets)
@@ -138,9 +141,10 @@ class TicketHelper
     }
 
     /**
-     * removeFromActivities method will remove the old live activity by agent and ticket id
-     * @param $ticketId
-     * @param $agentId
+     * Drop the agent's live activity on the ticket, plus any expired entries.
+     *
+     * @param int $ticketId
+     * @param int $agentId
      * @return bool
      */
     public static function removeFromActivities($ticketId, $agentId)
@@ -173,9 +177,10 @@ class TicketHelper
     }
 
     /**
-     * getSuggestedTickets method will return the list of Suggested tickets
-     * This method will get the agent id as parameter and fetch ticket information that are waiting to reply or unassigned
-     * @param $agentId
+     * The agent's tickets waiting for a reply, or unassigned open tickets when there are none
+     * and the user can manage unassigned tickets.
+     *
+     * @param int $agentId
      * @param int $limit
      * @return mixed
      */
@@ -183,56 +188,135 @@ class TicketHelper
     {
         $restrictedBusinessBoxes = PermissionManager::getRestrictedMailboxIds();
 
-        //Get lis of tickets which are waiting for reply
-        $tickets = Ticket::where('agent_id', $agentId)
-            ->where(function ($q) use ($restrictedBusinessBoxes) {
-                $q->whereNotIn('mailbox_id', $restrictedBusinessBoxes);
-                $q->orWhereNull('mailbox_id');
-            })
-            ->where('status', '!=', 'closed')
-            ->applyFilters([
-                'waiting_for_reply' => 'yes'
-            ])
-            ->oldest('last_customer_response')
-            ->limit($limit)
-            ->with(
-            [
-                'customer', 
-                'mailbox',
-                'tags',
-                'agent'
-            ])
-            ->get();
+        $inAllowedMailbox = function ($q) use ($restrictedBusinessBoxes) {
+            $q->whereNotIn('mailbox_id', $restrictedBusinessBoxes);
+            $q->orWhereNull('mailbox_id');
+        };
 
-        //If no ticket is available for reply and logged-in user has permission to manage unassigned tickets
-        if($tickets->isEmpty() && PermissionManager::currentUserCan('fst_manage_unassigned_tickets')) {
-            //Get the ticket list which status is not closed and agent id is null or 0
-            $tickets = Ticket::where('status', '!=', 'closed')
-                ->oldest('id')
-                ->where(function ($q) use ($restrictedBusinessBoxes) {
-                    $q->whereNotIn('mailbox_id', $restrictedBusinessBoxes);
-                    $q->orWhereNull('mailbox_id');
-                })
-                ->where(function ($q) {
-                    $q->whereNull('agent_id');
-                    $q->orWhere('agent_id', '0');
-                })
-                ->with(
-                [
-                    'customer', 
-                    'mailbox',
-                    'tags',
-                ])
-                ->limit($limit)
-                ->get();
+        $waitingQuery = Ticket::where('agent_id', $agentId)
+            ->where($inAllowedMailbox)
+            ->where('status', '!=', 'closed')
+            ->waitingOnly();
+
+        // NULL sorts first, as with ORDER BY ... ASC.
+        $waiting = static::firstIdsBy($waitingQuery, ['last_customer_response', 'id'], $limit);
+
+        if ($waiting) {
+            return static::showCardFields(static::ticketsInOrder($waiting, ['customer', 'mailbox', 'tags', 'agent']));
         }
 
+        if (!PermissionManager::currentUserCan('fst_manage_unassigned_tickets')) {
+            return new \FluentSupport\Framework\Support\Collection([]);
+        }
 
-        return $tickets;
+        $unassignedQuery = Ticket::where('status', '!=', 'closed')
+            ->where($inAllowedMailbox)
+            ->where(function ($q) {
+                $q->whereNull('agent_id');
+                $q->orWhere('agent_id', '0');
+            });
 
+        $unassigned = static::firstIdsBy($unassignedQuery, ['id'], $limit);
+
+        return static::showCardFields(static::ticketsInOrder($unassigned, ['customer', 'mailbox', 'tags']));
     }
 
-    // This method will return all tagged/mentioned/watcher ticket's ids for filtering
+    /**
+     * Ids of the first $limit rows of $query in ascending $columns order.
+     *
+     * When few rows match, ORDER BY ... LIMIT makes MySQL walk the whole table
+     * in sort order, so up to SORT_IN_PHP_MAX matches are sorted here. When many
+     * match, that walk ends quickly and loading them all would not, so SQL sorts.
+     *
+     * @param \FluentSupport\Framework\Database\Orm\Builder $query
+     * @param string[] $columns
+     * @param int $limit
+     * @return int[]
+     */
+    protected static function firstIdsBy($query, array $columns, $limit)
+    {
+        $matches = (clone $query)->count();
+
+        if (!$matches) {
+            return [];
+        }
+
+        if ($matches > static::SORT_IN_PHP_MAX) {
+            foreach ($columns as $column) {
+                $query->orderBy($column, 'ASC');
+            }
+
+            return array_map('intval', $query->limit($limit)->pluck('id')->all());
+        }
+
+        $rows = $query->get(array_unique(array_merge(['id'], $columns)))->all();
+
+        usort($rows, function ($a, $b) use ($columns) {
+            foreach ($columns as $column) {
+                $left = $column === 'id' ? (int) $a->id : (string) $a->{$column};
+                $right = $column === 'id' ? (int) $b->id : (string) $b->{$column};
+                if ($left != $right) {
+                    return $left < $right ? -1 : 1;
+                }
+            }
+            return 0;
+        });
+
+        return array_map(function ($row) {
+            return (int) $row->id;
+        }, array_slice($rows, 0, $limit));
+    }
+
+    /**
+     * Tickets by id with relations, in the order of $ids.
+     *
+     * @param int[] $ids
+     * @param array $with
+     * @return \FluentSupport\Framework\Support\Collection
+     */
+    protected static function ticketsInOrder(array $ids, array $with)
+    {
+        if (!$ids) {
+            return new \FluentSupport\Framework\Support\Collection([]);
+        }
+
+        $position = array_flip(array_map('intval', array_values($ids)));
+
+        return Ticket::whereIn('id', $ids)
+            ->with($with)
+            ->get()
+            ->sortBy(function ($ticket) use ($position) {
+                return $position[(int) $ticket->id];
+            })
+            ->values();
+    }
+
+    /**
+     * Limit the dashboard cards' people and inbox to what the cards show. The
+     * customer keeps their email, which the card shows when there is no name and
+     * the ticket view shows anyway; the IP, address and the agents' note stay out.
+     * The assigned agent may be a colleague, so it gets display fields only.
+     *
+     * @param \FluentSupport\Framework\Support\Collection $tickets
+     * @return \FluentSupport\Framework\Support\Collection
+     */
+    protected static function showCardFields($tickets)
+    {
+        foreach ($tickets as $ticket) {
+            if ($ticket->customer) {
+                $ticket->customer->setVisible(['id', 'first_name', 'last_name', 'full_name', 'photo', 'email']);
+            }
+            if ($ticket->relationLoaded('agent') && $ticket->agent) {
+                $ticket->agent->setVisible(['id', 'first_name', 'last_name', 'full_name', 'photo']);
+            }
+            if ($ticket->mailbox) {
+                $ticket->mailbox->setVisible(['id', 'name']);
+            }
+        }
+
+        return $tickets;
+    }
+
     public static function getWatcherTicketIds($agentId)
     {
         $mentioned  = TagPivot::where('source_type', 'ticket_watcher')
@@ -244,7 +328,7 @@ class TicketHelper
         return $ticketIds;
     }
 
-    // This method will return all tagged/mentioned/watcher tickets of logged in agent
+    // Up to 5 tickets the current agent is watching.
     public static function getTicketsToWatch()
     {
         $agent = Helper::getCurrentAgent();
@@ -268,16 +352,32 @@ class TicketHelper
             ->select(['fs_tickets.*'])
             ->get();
 
-        return $tickets;
+        return static::showCardFields($tickets);
     }
 
-    // This method will return all ticket watcher inside a ticket
     public static function getWatchers($watchers)
     {
         $watcherAgents = [];
+        $agentIds = [];
 
         foreach ($watchers as $watcher) {
-            $watcherAgents[] = Agent::where('id', absint($watcher->tag_id))->select(['id', 'first_name', 'last_name'])->first();
+            $agentIds[] = absint($watcher->tag_id);
+        }
+
+        if (!$agentIds) {
+            return $watcherAgents;
+        }
+
+        // email and avatar only build the photo URL; neither is sent to the browser.
+        $agents = Agent::whereIn('id', $agentIds)
+            ->select(['id', 'first_name', 'last_name', 'email', 'avatar'])
+            ->get()
+            ->keyBy('id');
+
+        foreach ($agentIds as $agentId) {
+            if (isset($agents[$agentId])) {
+                $watcherAgents[] = $agents[$agentId]->makeHidden(['email', 'avatar']);
+            }
         }
 
         return $watcherAgents;
@@ -293,55 +393,29 @@ class TicketHelper
         return [];
     }
 
-    // This method will count total tickets
-    public static function countAllTickets()
+    /**
+     * Ticket counts by status for the current user, among the tickets they can
+     * see in the list (visibility and mailbox restrictions).
+     *
+     * @return array{total:int, new:int, active:int, closed:int, unassigned:int}
+     */
+    public static function getStatusCounts()
     {
-        return (new Ticket())->count();
-    }
-    // This method will count all un-assigned tickets
-    public static function countUnassignedTickets()
-    {
-        return Ticket::whereNull('agent_id')->count();
-    }
-    // This method will count all closed tickets
-    public static function countClosedTickets()
-    {
-        return Ticket::where('status', 'closed')->count();
-    }
+        $access = new AgentTicketAccess();
 
-    // This method will count all New tickets
-    public static function countNewTickets()
-    {
-        return Ticket::where('status', 'new')->count();
-    }
+        $byStatus = $access->applyListScope(
+            Ticket::query()->select('status')->selectRaw('COUNT(*) AS total')->groupBy('status')
+        )->get()->pluck('total', 'status')->toArray();
 
-    // This method will count all Active tickets
-    public static function countActiveTickets()
-    {
-        return Ticket::where('status', 'active')->count();
-    }
+        $unassigned = $access->applyListScope(Ticket::query()->whereNull('agent_id'))->count();
 
-    public static function getTicketEssentials($type = '')
-    {
-        $agents = Agent::select(['id', 'first_name', 'last_name'])
-            ->where('person_type', 'agent')
-            ->get()->toArray();
-
-        $data = [
-            'client_priorities'          => Helper::customerTicketPriorities(),
-            'ticket_statuses_group'      => Helper::ticketStatusGroups(),
-            'agents'                     => $agents,
-            'changeable_ticket_statuses' => Helper::changeableTicketStatuses(),
-            'admin_priorities'           => Helper::adminTicketPriorities(),
-            'enable_draft_mode'          => Helper::getBusinessSettings('enable_draft_mode', 'no'),
-            'max_file_upload'            => Helper::getBusinessSettings('max_file_upload', 3),
-            'support_products'           => Product::select(['id', 'title'])->orderedByTitle()->get(),
-            'ticket_tags'                => TicketTag::select(['id', 'title'])->get()->toArray(),
-            'mailboxes'                  => MailBox::getAccessibleBoxes(),
-            'ticket_statuses'            => Helper::ticketStatuses(),
+        return [
+            'total'      => (int) array_sum($byStatus),
+            'new'        => (int) ($byStatus['new'] ?? 0),
+            'active'     => (int) ($byStatus['active'] ?? 0),
+            'closed'     => (int) ($byStatus['closed'] ?? 0),
+            'unassigned' => (int) $unassigned,
         ];
-
-        return $type ? $data[$type] : $data;
     }
 
     public static function getLabelSearch($agentId)
@@ -366,18 +440,14 @@ class TicketHelper
                                 ->where('key', 'label_search')
                                 ->first();
 
-        // If record exists, unserialize the data or initialize an empty array
         $existingData = $existingRecord ? Helper::safeUnserialize($existingRecord->value) ?: [] : [];
 
-        // Check if it's an update or new entry
         $isUpdate = isset($searchData['id']) && array_filter($existingData, function ($item) use ($searchData) {
             return isset($item['id']) && $item['id'] == $searchData['id'];
         });
 
-        // Handle adding or updating
         $updatedData = self::addOrUpdateSearchData($existingData, $searchData);
 
-        // Save the updated data back to the database
         if ($existingRecord) {
             $existingRecord->update([
                 'value' => maybe_serialize($updatedData)
@@ -405,7 +475,6 @@ class TicketHelper
         if (isset($searchData['id'])) {
             $updated = false;
 
-            // Update the existing record with the matching ID
             foreach ($existingData as &$record) {
                 if (isset($record['id']) && $record['id'] == $searchData['id']) {
                     $record = array_merge($record, $searchData);
@@ -414,12 +483,10 @@ class TicketHelper
                 }
             }
 
-            // If no matching record found, append the new data
             if (!$updated) {
                 $existingData[] = $searchData;
             }
         } else {
-            // If no ID provided, generate a new one and add the data
             $newId = self::generateNewId($existingData);
             $searchData['id'] = $newId;
             $existingData[] = $searchData;

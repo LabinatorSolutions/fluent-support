@@ -15,12 +15,17 @@ class AnthropicProvider extends BaseAIProvider
         return 'Anthropic';
     }
 
+    protected function getRecommendedModel(): string
+    {
+        return 'claude-sonnet-5-5';
+    }
+
     public function getAvailableModels(): array
     {
         $models = [
-            ['value' => 'claude-opus-4-8',           'label' => 'Claude Opus 4 (Most Powerful)'],
-            ['value' => 'claude-sonnet-4-6',         'label' => 'Claude Sonnet 4 (Recommended)'],
-            ['value' => 'claude-haiku-4-5-20251001', 'label' => 'Claude Haiku 4 (Fastest)'],
+            ['value' => 'claude-opus-5-5',   'label' => 'Claude Opus 5.5 (Most Powerful)'],
+            ['value' => 'claude-sonnet-5-5', 'label' => 'Claude Sonnet 5.5'],
+            ['value' => 'claude-haiku-5-5',  'label' => 'Claude Haiku 5.5 (Fastest)'],
         ];
 
         return apply_filters('fluent_support/supported_anthropic_models', $models);
@@ -38,7 +43,7 @@ class AnthropicProvider extends BaseAIProvider
 
         $payload = [
             'model'      => $this->model,
-            'max_tokens' => 1024,
+            'max_tokens' => 8000, // thinking tokens count against this
             'messages'   => $anthropicMessages,
         ];
 
@@ -57,7 +62,13 @@ class AnthropicProvider extends BaseAIProvider
             return $body;
         }
 
-        $content = $body['content'][0]['text'] ?? '';
+        // Current models think by default, so the first block is often a thinking block
+        $content = '';
+        foreach ($body['content'] ?? [] as $block) {
+            if (($block['type'] ?? '') === 'text') {
+                $content .= $block['text'];
+            }
+        }
         $tokens  = ($body['usage']['input_tokens'] ?? 0) + ($body['usage']['output_tokens'] ?? 0);
 
         $this->fireSuccessAction($ticketId, $prompt, $tokens);

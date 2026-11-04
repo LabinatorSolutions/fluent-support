@@ -11,7 +11,7 @@
 </template>
 
 <script type="text/babel">
-import isArray from 'lodash/isArray';
+import { isArray } from 'lodash-es';
 
 export default {
     name: 'CheckBoxGroup',

@@ -19,7 +19,6 @@ class SavedReply extends Model
     ];
 
     /**
-     * $searchable Columns in table to search
      * @var array
      */
     protected $searchable = [
@@ -37,7 +36,6 @@ class SavedReply extends Model
     ];
 
     /**
-     * Local scope to filter subscribers by search/query string
      * @param ModelQueryBuilder $query
      * @param string $search
      * @return ModelQueryBuilder
@@ -59,9 +57,8 @@ class SavedReply extends Model
     }
 
     /**
-     * Local scope to filter subscribers by search/query string
      * @param ModelQueryBuilder $query
-     * @param array $statuses
+     * @param int $productId
      * @return ModelQueryBuilder
      */
     public function scopeProductBy($query, $productId)
@@ -74,7 +71,6 @@ class SavedReply extends Model
     }
 
     /**
-     * One2Many: Customer has to many Click Tickets
      * @return Model Collection
      */
     public function person()
@@ -87,7 +83,6 @@ class SavedReply extends Model
     }
 
     /**
-     * One2Many: Customer has to many Click Tickets
      * @return Model Collection
      */
     public function product()

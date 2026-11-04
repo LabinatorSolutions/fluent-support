@@ -11,7 +11,7 @@ use FluentSupport\App\Models\TagPivot;
 use FluentSupport\App\Models\TicketTag;
 use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Helper;
-use FluentSupport\App\Services\Notifications\NotificationSettings;
+use FluentSupport\App\Modules\Notifications\NotificationService;
 use FluentSupport\App\Services\TranslationStrings;
 use FluentSupport\App\Services\Integrations\FluentBooking\FluentBookingService;
 use FluentSupport\App\Vite;
@@ -255,7 +255,7 @@ class Menu
         if (!defined('FLUENT_SUPPORT_PRO_DIR_FILE')) {
             $secondaryItems[] = [
                 'key'       => 'upgrade_to_pro',
-                'label'     => 'Upgrade to Pro',
+                'label'     => __('Upgrade to Pro', 'fluent-support'),
                 'permalink' => Helper::getUpgradeUrl('sidebar_cta')
             ];
         }
@@ -268,7 +268,6 @@ class Menu
         $app->view->render('admin.menu', [
             'base_url'       => $baseUrl,
             'logo'           => $assets . 'images/logo.svg',
-            'settingsLogo'   => $assets . 'images/gear.svg',
             'upgradeLogo'     => $assets . 'images/crown.svg',
             'assets'         => $assets,
             'menuItems'      => $menuItems,
@@ -284,34 +283,24 @@ class Menu
         }
     }
 
+    /**
+     * No-flash theme class for the shared Fluent admin theme.       @fluent-theme-toolkit v1
+     *
+     * Reads `fluent_theme_mode` (or the old `fs-theme` before Bits/Theme.js migrates it),
+     * resolves System live, and marks <html> before paint. The dark stylesheet targets
+     * `body.fluent_theme_dark`, so <body> is marked as soon as it exists.
+     */
     public function printDarkModeInit()
     {
-        ?>
-        <script>
-            (function () {
-                var savedTheme = localStorage.getItem('fs-theme');
+        $script = <<<'JS'
+(function(){try{var s=localStorage.getItem('fluent_theme_mode')||localStorage.getItem('fs-theme')||'';
+var m=s.split(':')[0];if(m!=='light'&&m!=='dark'){m=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}
+if(m!=='dark'){return;}document.documentElement.classList.add('fluent_theme_dark');
+new MutationObserver(function(r,o){if(document.body){document.body.classList.add('fluent_theme_dark');o.disconnect();}}).observe(document.documentElement,{childList:true});
+}catch(e){}})();
+JS;
 
-                // Check if dark mode should be active
-                // localStorage stores: 'dark', 'light', or 'system:dark' / 'system:light'
-                var isDark = savedTheme
-                    ? savedTheme.split(':').pop() === 'dark'
-                    : window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-                if (isDark) {
-                    // Apply immediately to <html> to prevent white flash
-                    document.documentElement.classList.add('fs-dark-mode');
-
-                    // Watch for <body> to appear and apply class as soon as it exists
-                    new MutationObserver(function (mutations, observer) {
-                        if (document.body) {
-                            document.body.classList.add('fs-dark-mode');
-                            observer.disconnect();
-                        }
-                    }).observe(document.documentElement, { childList: true });
-                }
-            })();
-        </script>
-        <?php
+        echo '<script id="fluent-support-theme-class">' . $script . '</script>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
     }
 
     public function enqueueAssets()
@@ -325,7 +314,7 @@ class Menu
             Vite::injectViteClient();
         }, 1);
 
-        wp_enqueue_script('dompurify', $assets . 'libs/purify/purify.min.js', [], '3.4.13');
+        wp_enqueue_script('dompurify', $assets . 'libs/purify/purify.min.js', [], '3.4.16');
 
         if (is_rtl()) {
             wp_enqueue_style('fluent_support_admin_app_rtl', $assets . 'admin/css/alpha-admin-rtl.css', [], FLUENT_SUPPORT_VERSION);
@@ -397,14 +386,12 @@ class Menu
                     'key'           => 'telegram_settings',
                     'title'         => __('Telegram', 'fluent-support'),
                     'description'   => __('Send Telegram notifications to Group, Channel or individual person inbox and reply from Telegram inbox', 'fluent-support'),
-                    'promo_heading' => __('Get activity notification to Telegram Messenger and reply directly from Telegram inbox', 'fluent-support'),
                     'require_pro'   => true
                 ],
                 [
                     'key'           => 'slack_settings',
                     'title'         => __('Slack', 'fluent-support'),
                     'description'   => __('Send ticket activity notifications to slack', 'fluent-support'),
-                    'promo_heading' => __('Get activity notification to Slack Channel and keep your support team super engaged', 'fluent-support'),
                     'require_pro'   => true
                 ]
             ];
@@ -457,15 +444,19 @@ class Menu
             // double as the "is Fluent Support set up yet?" signal the setup wizard keys off.
             'has_mailboxes'              => MailBox::count() > 0,
             'me'                         => $me,
+            'ticket_visibility'          => PermissionManager::getAgentTicketVisibility(),
             // Deleting a customer needs fst_sensitive_data plus administrator rights unless
             // the site turns the administrator part off.
             'customer_delete_requires_admin' => (bool) apply_filters('fluent_support/customer_delete_requires_admin', true),
+            // Only site admins may edit what a customer wrote (to remove sensitive data).
+            'can_edit_customer_messages' => current_user_can('manage_options'),
             'pref'                       => [
                 'go_back_after_reply' => 'yes'
             ],
             'notification_integrations'  => $integrationDrivers,
-            'internal_notification_settings' => (new NotificationSettings())->get(false),
-            'server_time'                => gmdate('Y-m-d\TH:i:sP'),
+            'internal_notification_settings' => NotificationService::settings(),
+            // Site time, like every date the API sends; relative times compare the two.
+            'server_time'                => current_time('mysql'),
             'has_email_parser'           => defined('FLUENTSUPPORTPRO_PLUGIN_VERSION'),
             'ticket_tags'                => $tags,
             'i18n'                       => $i18ns,
@@ -478,7 +469,6 @@ class Menu
             'max_file_upload'            => Helper::getBusinessSettings('max_file_upload', 3),
             'ajaxurl'                    => admin_url('admin-ajax.php'),
             'auth_provider'              => Helper::getAuthProvider(),
-            'fluent_bot_integration'     =>  Helper::fluentBotIntegrationStatus(),
         ));
 
         $appVars['fluent_booking'] = (new FluentBookingService())->getStatus();

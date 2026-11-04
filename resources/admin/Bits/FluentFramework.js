@@ -1,6 +1,7 @@
 import { h } from 'vue';
 import app from '@/admin/Bits/elements';
 import Rest from '@/admin/Bits/Rest';
+import { $t, $_n, $_x } from '@/admin/Bits/i18n';
 
 import {
     applyFilters,
@@ -15,6 +16,27 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import 'dayjs/locale/en-gb';
+
+// Ticket sources that have a bundled currentColor icon in Components/Icons.
+const SOURCE_ICONS = {
+    web: 'SourceWeb',
+    email: 'SourceEmail',
+    slack: 'SourceSlack',
+    webhook: 'SourceWebhook',
+    agent_initiated: 'SourceAgentInitiated',
+    'awesome-support': 'SourceAwesomeSupport'
+};
+
+// Product names and acronyms that ucFirst() would get wrong ("Mcp", "Fluent_booking").
+const SOURCE_NAMES = {
+    mcp: 'MCP',
+    whatsapp: 'WhatsApp',
+    helpscout: 'Help Scout',
+    'awesome-support': 'Awesome Support',
+    'fluent-crm': 'FluentCRM',
+    fluent_booking: 'FluentBooking',
+    fluent_support: 'Fluent Support'
+};
 
 dayjs.extend(relativeTime);
 dayjs.extend(utc);
@@ -72,12 +94,14 @@ export default class FluentFramework {
                 $confirm: self.confirm, // From FluentFrameWorkHelper.js
                 $scrollToRef: self.scrollToRef, // From FluentFrameWorkHelper.js
                 $getSourceIcon: self.getSourceIcon,
+                $sourceIconName: self.sourceIconName,
+                $sourceLabel: self.sourceLabel,
                 $setTitle(title) {
                     document.title = title;
                 },
-                $t(string) {
-                    return window.window.fluentSupportAdmin.i18n[string] || string;
-                },
+                $t,
+                $_n,
+                $_x,
                 renewOptions(type) {
                     this.$get(type)
                         .then(response => {
@@ -151,8 +175,9 @@ export default class FluentFramework {
         return dateObj.isValid() ? dateObj.format(format) : null;
     }
 
+    // API dates are site time ("Y-m-d H:i:s"), not UTC.
     localDate(date) {
-        return dayjs.utc(date).local();
+        return dayjs(date);
     }
 
     longLocalDate(date) {
@@ -450,6 +475,18 @@ export default class FluentFramework {
             ref.scrollIntoView({ behavior: 'smooth' });
         }
     }
+    sourceLabel(source) {
+        if (!source) return '';
+        if (source === 'agent_initiated') return $t('Agent outreach');
+        if (SOURCE_NAMES[source]) return SOURCE_NAMES[source];
+        return this.ucFirst(String(source).replace(/[_-]+/g, ' '));
+    }
+
+    // Bundled icon name for a ticket source, or '' to fall back to getSourceIcon().
+    sourceIconName(source) {
+        return SOURCE_ICONS[source] || '';
+    }
+
     getSourceIcon(source) {
         if (!source) return null;
         const iconFileName = 'source' + this.ucFirst(source) + '.svg';

@@ -34,8 +34,8 @@
                     </el-button>
                 </NarrowPromo>
             </div>
-            <div class="fs_box_body fs_skeleton_loader" v-else>
-                <el-skeleton :rows="5" animated/>
+            <div class="fs_box_body" v-else>
+                <FormSkeleton :fields="4" :button="false" />
             </div>
         </div>
     </div>
@@ -44,12 +44,14 @@
 <script type="text/babel">
 import FormBuilder from '../../Pieces/FormElements/_FormBuilder';
 import NarrowPromo from "@/admin/Components/NarrowPromo.vue";
+import FormSkeleton from "@/admin/Components/FormSkeleton.vue";
 
 export default {
     name: 'FluentCRMIntegration',
     components: {
         FormBuilder,
-        NarrowPromo
+        NarrowPromo,
+        FormSkeleton
     },
     data() {
         return {
@@ -73,18 +75,12 @@ export default {
                         this.settings_fields = response.settings_fields;
                         let tags = this.settings.assigned_tags;
                         let lists = this.settings.assigned_list;
+                        // isNaN('') and isNaN(null) are false, so an empty value would parse to NaN.
+                        const normalizeId = (value) => (value !== '' && value !== null && !isNaN(value)) ? parseInt(value) : value;
 
-                        if(Array.isArray(tags)) {
-                            this.settings.assigned_tags = tags.map((item) => !isNaN(item) ? parseInt(item) : item);
-                        }else {
-                            this.settings.assigned_tags = !isNaN(tags) ? parseInt(tags) : tags;
-                        }
-
-                        if(Array.isArray(lists)) {
-                            this.settings.assigned_list = lists.map((list) => !isNaN(list) ? parseInt(list) : list);
-                        }else {
-                            this.settings.assigned_list = !isNaN(lists) ?  parseInt(lists) : lists;
-                        }
+                        this.settings.assigned_tags = Array.isArray(tags) ? tags.map(normalizeId) : normalizeId(tags);
+                        // No list is saved as 0; show the placeholder for it.
+                        this.settings.assigned_list = Array.isArray(lists) ? lists.map(normalizeId) : (normalizeId(lists) || '');
 
                         this.fluentcrm_logo = response.fluentcrm_logo;
                         this.is_installed = true

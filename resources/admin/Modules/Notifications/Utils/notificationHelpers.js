@@ -78,7 +78,12 @@ export function getNotificationActorInitials(notification) {
 }
 
 export function getNotificationPreview(notification) {
-    return notification.payload?.content_preview || '';
+    const preview = notification.payload?.content_preview || '';
+
+    // The preview is stored HTML-escaped; decode it for the {{ }} text binding.
+    const textarea = document.createElement('textarea');
+    textarea.innerHTML = preview;
+    return textarea.value;
 }
 
 export function getNotificationTicketTitle(notification) {

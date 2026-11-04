@@ -1,44 +1,30 @@
 @use "_variables";
 
+// Default colors for currentColor glyphs (DynamicIcon, IconPack). The class sits on the svg, so a
+// hover/active state recolors it with a rule that targets the svg (e.g. `.btn:hover .fs_icon_muted`).
+.fs_icon_primary {
+    color: var(--fs-text-primary, #0E121B);
+}
+
+.fs_icon_secondary {
+    color: var(--fs-text-secondary, #525866);
+}
+
+.fs_icon_muted {
+    color: var(--fs-text-muted, #99A0AE);
+}
+
 .fs_full_width{
     width: 100%;
 }
 .fs-gap-16{
     gap: 16px;
 }
-.fs-gap-8{
-    gap: 8px;
-}
-.fs-gap-4{
-    gap: 4px;
-}
-.fs-gap-2{
-    gap: 2px;
-}
-.fs_mb-2{
-    margin-bottom: 2px;
-}
-.fs_mt-2{
-    margin-top: 2px;
-}
 .fs_mt-4{
     margin-top: 4px;
 }
-.fs_mt-5{
-    margin-top: 5px;
-}
 .fs_mt-10{
     margin-top: 10px;
-}
-.fs_mt_30{
-    margin-top: 30px;
-}
-.fs-ml-5{
-    margin-left: 5px;
-}
-
-.fs-mr-5 {
-    margin-right: 5px;
 }
 
 .fs_mt-16 {
@@ -47,34 +33,16 @@
 
 // text colors
 .text {
-    &-primary {
-        color: #20a0ff
-    }
 
     &-success {
-        color: #13ce66
-    }
-
-    &-info {
-        color: #50bfff
-    }
-
-    &-warning {
-        color: #f7ba2a
-    }
-
-    &-bg-highlight {
-        background: #EEEEEE;
+        color: #13ce66;
     }
 
     &-danger {
-        color: #ff4949
+        color: #ff4949;
     }
 
     &-align {
-        &-right {
-            text-align: right;
-        }
 
         &-center {
             text-align: center;
@@ -84,13 +52,6 @@
 
 .clickable {
     cursor: pointer;
-}
-
-.content {
-    &-center {
-        display: flex;
-        justify-content: center;
-    }
 }
 
 .url {
@@ -104,10 +65,6 @@
 
 .fs_ml_10 {
     margin-left: 10px;
-}
-
-.fs_mr_10 {
-    margin-right: 10px;
 }
 
 .fs_doc_link {
@@ -155,14 +112,6 @@
     }
 }
 
-.no-margin {
-    margin: 0;
-
-    &-bottom {
-        margin-bottom: initial !important;
-    }
-}
-
 // states
 .exist {
     display: flex;
@@ -171,16 +120,8 @@
 }
 
 // margins
-.mt25 {
-    margin-top: 25px;
-}
 
 // floats
-.float {
-    &-right {
-        float: right;
-    }
-}
 
 .el-button.fs_filled_btn {
     display: flex;
@@ -412,22 +353,7 @@
         box-shadow: 0px 0px 0px 2px var(--fs-bg-primary, #FFF), 0px 0px 0px 4px var(--fs-shadow-soft, rgba(153, 160, 174, 0.16));
     }
 
-    &.el-input__wrapper {
-        border-radius: var(--fs-radius-md, 8px);
-        background: var(--fs-bg-primary, #FFF);
-        box-shadow: 0px 1px 2px 0px var(--fs-shadow-light, rgba(10, 13, 20, 0.03));
-        input {
-            color: var(--fs-text-primary, #0E121B);
-        }
-    }
 
-    &.el-input__wrapper.is-active,
-    &.el-input__wrapper.is-active:hover {
-        border-radius: var(--fs-radius-md, 8px);
-        border: 1px solid var(--fs-stroke-strong, #0E121B);
-        background: var(--fs-bg-primary, #FFF);
-        box-shadow: 0px 0px 0px 2px var(--fs-bg-primary, #FFF), 0px 0px 0px 4px var(--fs-shadow-soft, rgba(153, 160, 174, 0.16));
-    }
 }
 
 .fs_select_field {
@@ -515,18 +441,6 @@
     }
 }
 
-.fs_fluent_bot_menu_icon {
-    width: 16px;
-    height: 16px;
-    border-radius: 3px;
-    vertical-align: middle;
-    margin-right: 4px;
-
-    .fs-dark-mode & {
-        filter: brightness(0) invert(1);
-    }
-}
-
 .fs_table_more_actions_dropdown_menu {
     background-color: var(--fs-bg-muted, #2B303B);
 
@@ -538,19 +452,6 @@
     }
     .el-dropdown-menu__item{
         margin-bottom: 0 !important;
-    }
-}
-
-.el-tree-node.fs_tree_node {
-
-    .el-checkbox.is-checked .el-checkbox__inner {
-        background-color: var(--fs-bg-muted, #2B303B);
-        border-color: var(--fs-bg-muted, #2B303B);
-    }
-
-    .el-checkbox__input.is-indeterminate {
-        background-color: var(--fs-bg-muted, #2B303B);
-        border-color: var(--fs-bg-muted, #2B303B);
     }
 }
 
@@ -567,6 +468,13 @@
 }
 
 .fs_box_wrapper {
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+    max-width: 1260px;
+    margin-left: auto;
+    margin-right: auto;
+
     &.fs_custom_fields_wrapper {
         .fs_table_wrapper{
             overflow-x: inherit;
@@ -576,21 +484,13 @@
         }
     }
 
-    box-sizing: border-box;
-
     * {
         box-sizing: border-box;
     }
 
-    display: block;
-    width: 100%;
-    max-width: 1260px;
-    margin-left: auto;
-    margin-right: auto;
-
     .fs_custom_drag_svg {
         position: absolute;
-        left: -12px;
+        inset-inline-start: 6px;
         top: 50%;
         transform: translateY(-50%);
         z-index: 2;
@@ -602,17 +502,18 @@
         transition: opacity 0.2s;
     }
 
-    .fs_custom_field_row:hover .fs_custom_drag_svg {
-        opacity: 1;
+    // Header and rows share the grid and side padding so the columns line up; the left padding holds the drag handle.
+    .fs_custom_field_table_header_row,
+    .fs_custom_field_column {
+        grid-template-columns: minmax(0, 2fr) minmax(0, 1.5fr) minmax(0, 1fr) 120px;
     }
 
     .fs_custom_field_table_header_row {
         display: grid;
-        grid-template-columns: 300px 200px 300px 200px;
-        border-top: 1px solid var(--bg-soft-200, #E1E4EA);
-        border-bottom: 1px solid var(--bg-soft-200, #E1E4EA);
+        border-top: 1px solid var(--fs-stroke-soft, #E1E4EA);
+        border-bottom: 1px solid var(--fs-stroke-soft, #E1E4EA);
         background: var(--fs-global-component-bg, #F3F5FA);
-        padding: 0px 12px 0px 20px;
+        padding-inline: 32px 12px;
         width: 100%;
     }
 
@@ -637,14 +538,21 @@
         min-height: 56px;
         align-items: center;
         display: flex;
-        padding-left: 12px;
+        padding-inline: 32px 12px;
     }
 
     .fs_custom_field_column {
         display: grid;
-        grid-template-columns: 300px 200px 300px 200px;
+        flex: 1 1 auto;
+        min-width: 0;
         align-items: center;
         transition: background-color 0.3s;
+
+        > div {
+            margin: 0;
+            padding-inline: 12px;
+            overflow-wrap: anywhere;
+        }
     }
 
     .fs_custom_field_row:hover {
@@ -811,13 +719,6 @@
     .fs_box_actions {
         display: flex;
         float: right;
-
-        .fs_cs_status_filter {
-            .el-select {
-                padding-right: 0.7em;
-                margin-right: 1.7em;
-            }
-        }
     }
 
     .fs_box_head {
@@ -834,10 +735,6 @@
             font-weight: 500;
             line-height: 24px;
             letter-spacing: -0.27px;
-
-            .fs_badge {
-                margin: 0 0 0 4px;
-            }
         }
     }
 
@@ -847,6 +744,18 @@
     .fs_box_wrapper {
         max-width: 1600px;
     }
+}
+
+// Shared v-tip tooltip (resources/admin/Bits/tooltip.js). Colors, padding and arrow come from
+// Element Plus's .el-popper.is-dark; this only places it. z-index sits above dialogs and the admin bar.
+.el-popper.fs_tip {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100000;
+    max-width: 320px;
+    pointer-events: none;
 }
 
 // Dropdown item content styles for proper icon and text alignment
@@ -962,10 +871,6 @@
     padding: 24px;
 }
 
-.fs_padded_16 {
-    padding: 16px;
-}
-
 span.fs_inline_avatars {
     img {
         display: inline-block;
@@ -974,94 +879,6 @@ span.fs_inline_avatars {
         margin-right: 5px;
         border-radius: 50%;
         border: 2px solid #67c23a;
-    }
-}
-
-ul.fs_card_list {
-    padding: 0px 15px;
-    margin: 0;
-    list-style: none;
-
-    li {
-        margin: 0;
-        padding: 8px 15px;
-        border-bottom: 1px solid #e3e8ed;
-
-        &:last-child {
-            border: 0;
-        }
-    }
-}
-
-.fs_dashboard_box {
-    max-width: 1360px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 24px;
-    border-radius: 5px;
-    border: 1px solid rgb(226, 228, 231);
-    box-shadow: 0 1px 4px rgb(18 25 97 / 8%);
-
-    ul.fs_card_list li {
-        span {
-            line-height: 120%;
-            display: inline-block;
-            vertical-align: top;
-            font-size: 16px;
-            padding: 0px 25px;
-        }
-
-        &:hover {
-            background: #f1f1f1;
-        }
-
-        a {
-            color: #4f3d8e;
-            display: flex;
-            text-decoration: none;
-            align-items: center;
-            display: contents;
-        }
-    }
-}
-
-.fs_inline_photo_40 {
-    display: inline-block;
-    margin-right: 10px;
-    max-height: 40px;
-    width: 40px;
-    border-radius: 50%;
-}
-
-
-ul.fs_inner_menu_items {
-    padding: 0;
-    list-style: none;
-    background: #f1f2f5;
-    margin: -20px -20px 20px;
-
-    li {
-        display: inline-block;
-        padding: 15px 15px 12px;
-        margin: 0;
-        cursor: pointer;
-
-        &.fs_active_item {
-            background: white;
-            border-top-left-radius: 5px;
-            border-top-right-radius: 5px;
-            border-bottom: 0;
-            font-weight: 500;
-        }
-    }
-}
-
-.fs_listed {
-    list-style: disc;
-    padding: 0px 0px 0px 20px;
-
-    li {
-        display: list-item;
     }
 }
 
@@ -1212,7 +1029,6 @@ a.el-button {
 }
 
 .fs_table_wrapper {
-    width: 100%;
 
     &:not(.fs_scrollable_table) .el-table {
         .el-table__header,
@@ -1284,17 +1100,6 @@ a.el-button {
     }
 }
 
-
-
-.fs_pipe_box {
-    max-width: 800px;
-    padding: 30px 30px;
-    margin: 30px auto;
-    background: #f7fafc;
-    text-align: center;
-    border-radius: 5px;
-}
-
 .activities.fs_box_wrapper {
     max-width: 1100px;
     margin: 0 auto;
@@ -1302,10 +1107,6 @@ a.el-button {
 
     @media all and (max-width: 767px) {
         padding: 0;
-
-        & .fs_activity_header {
-            line-height: 1.7em;
-        }
     }
 
     & .fs_activity_header {
@@ -1323,15 +1124,6 @@ a.el-button {
         padding: 0px 0px 17px 0px;
     }
 
-    & .fs_box.fs_activity_box ul.fs_activities li {
-        padding: 1em;
-        color: gray;
-
-        &:hover {
-            background: #FAFDFF;
-        }
-    }
-
     & ul.fs_activities {
         list-style: none;
     }
@@ -1340,30 +1132,6 @@ a.el-button {
         text-decoration: none;
         color: #1273cb;
         font-size: 14px;
-    }
-
-    & .fs_agent_activity {
-        border-left: 2px solid #1785EB;
-        height: 100%;
-        position: relative;
-        left: 0;
-        top: 0;
-    }
-
-    & .fs_activity {
-        display: inline-flex;
-        align-items: center;
-
-        & img {
-            width: 40px;
-            max-height: 40px;
-            margin-right: 1em;
-            border-radius: 50%;
-        }
-
-        & span {
-            font-size: 16px;
-        }
     }
 }
 
@@ -1380,58 +1148,11 @@ a.el-button {
     text-decoration: underline;
 }
 
-.fs_ai_activity_box_header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-direction: row;
-    font-size: 16px;
-    padding: 20px;
-
-    .fs_ai_filters {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        background: rgba(255, 255, 255, 0.6);
-        gap: 10px;
-    }
-
-    .fs_ai_box_actions {
-        float: right;
-        display: flex;
-        gap: 10px;
-    }
-}
-
-.fs_ai_settings_container {
-    width: calc(100% - 40px);
-    max-width: 944px;;
-    .fs_box_body {
-        width: 100% !important;
-    }
-    .el-form {
-        width: 100%;
-    }
-
-    .fs_open_ai_actions_btn {
-        display: flex;
-        justify-content: flex-end;
-    }
-}
-
 .fs_ticket_not_available {
     color: #6c757d;
     opacity: 0.9;
     word-break: break-word;
     white-space: normal;
-}
-
-.fs_warn {
-    padding: 8px 10px;
-    line-height: 100%;
-    background: var(--fs-warning-bg, rgba(250, 115, 25, 1));
-    color: var(--fs-warning-text, #FFFFFF);
-    border-radius: var(--fs-radius-md, 8px);
 }
 
 .fs_half_field {
@@ -1482,29 +1203,13 @@ a.el-button {
     }
 }
 
-.fs_permission_groups {
-    padding: 15px;
-    background: #f1f2f5;
-    border-radius: 4px;
-
-    h4 {
-        margin: 10px 0px;
-        padding: 0;
-        font-size: 16px !important;
-        line-height: 100%;
-    }
-}
-
 .el-form {
     padding-right: 1px;
 }
 
 .fs_customer_note {
     padding-top: 10px;
-    margin-top: 10px;
     border-top: 1px solid #e1e2e5;
-    font-size: 12px;
-    color: #596877;
 }
 
 p.fs_customer_address {
@@ -1535,14 +1240,6 @@ p.fs_customer_address {
         th {
             padding: .5rem;
             text-align: left;
-        }
-    }
-}
-
-.fs_all_tickets_table {
-    .el-table__body {
-        .el-table__row {
-            cursor: pointer;
         }
     }
 }
@@ -1605,37 +1302,6 @@ ul.fs_contact_results {
     }
 }
 
-.fs_agent_feedback {
-    width: 18px;
-    height: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 3px;
-    float: inline-end;
-    margin-left: 12px;
-
-    img {
-        width: 100%;
-        height: 100%;
-        display: block;
-    }
-}
-
-.fs_advanced_filter_btn {
-    width: 24px;
-    height: 24px;
-    border-radius: 4px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex: none;
-    background: #ffffff;
-    border: 1px solid #E1E4EA;
-    margin-left: 8px;
-}
-
 .fs-el-drawer {
     .el-drawer__body {
         padding: 0 !important;
@@ -1653,7 +1319,7 @@ ul.fs_contact_results {
     align-items: center;
 
     .fs_saved_search_btn_text {
-        color: var(--text-sub-600, #525866);
+        color: var(--fs-text-secondary, #525866);
         font-size: 14px;
         font-style: normal;
         font-weight: 500;
@@ -1694,12 +1360,6 @@ ul.fs_contact_results {
             &:hover {
                 background: #F5F7FA;
                 color: #0E121B;
-            }
-
-            .fs-each-search-left {
-                align-items: center;
-                display: flex;
-                gap: 20px;
             }
 
             .fs-search-name {
@@ -1783,21 +1443,6 @@ ul.fs_contact_results {
             }
         }
     }
-}
-
-.fs_option_title {
-    display: inline-block;
-    max-width: 300px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    vertical-align: middle;
-}
-
-.fs_option_id {
-    float: right;
-    color: #8492a6;
-    font-size: 13px;
 }
 
 .fs_divider {
@@ -1894,7 +1539,7 @@ ul.fs_contact_results {
             border: 1px solid var(--fs-border-default, #E1E4EA);
             border-radius: var(--fs-radius-lg, 12px);
             overflow: hidden;
-            background-color: white;
+            background-color: var(--fs-bg-primary, #FFFFFF);
 
             .el-table__header {
                 th {
@@ -2011,6 +1656,23 @@ ul.fs_contact_results {
 }
 
 .el-switch {
+    // WP admin forms.css styles every checkbox (size, fill, tick, disabled opacity) with more
+    // specific selectors than Element Plus, which shows the switch's hidden input behind it.
+    input.el-switch__input[type="checkbox"] {
+        width: 0;
+        min-width: 0;
+        height: 0;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        box-shadow: none;
+        opacity: 0;
+
+        &::before {
+            content: none;
+        }
+    }
+
     .el-switch__label {
         color: var(--fs-text-primary, #0E121B);
         font-size: 14px;
@@ -2053,14 +1715,99 @@ ul.fs_contact_results {
     }
 }
 
-.fs_skeleton {
-    padding: 20px;
-}
-
 .fs_skeleton_loader,
 .fs_loading_skeleton {
     padding: 15px;
     background: var(--fs-bg-primary, #FFF);
+}
+
+// Components/TableSkeleton.vue: placeholder rows shaped like an fs_table.
+.fs_table_skeleton {
+    align-self: stretch;
+    width: 100%;
+    box-sizing: border-box;
+    background: var(--fs-bg-primary, #FFF);
+
+    .el-skeleton {
+        width: 100%;
+        background: transparent;
+    }
+
+    .fs_table_skeleton_row {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        min-height: 56px;
+        padding: 0 16px;
+        border-bottom: 1px solid var(--fs-stroke-soft, #E1E4EA);
+
+        &:last-child {
+            border-bottom: none;
+        }
+    }
+
+    .fs_table_skeleton_head {
+        min-height: 44px;
+        background: var(--fs-table-header-bg, #F9FAFB);
+
+        .el-skeleton__item {
+            height: 12px;
+        }
+    }
+
+    .fs_table_skeleton_cell {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+    }
+
+    .fs_table_skeleton_avatar {
+        flex: 0 0 32px;
+        width: 32px;
+        height: 32px;
+    }
+
+    .fs_table_skeleton_lines {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        gap: 6px;
+    }
+}
+
+// Components/FormSkeleton.vue: label + input placeholders for settings forms.
+.fs_form_skeleton {
+    padding: 20px;
+    background: var(--fs-bg-primary, #FFF);
+
+    .el-skeleton {
+        background: transparent;
+    }
+
+    .fs_form_skeleton_field {
+        margin-bottom: 20px;
+    }
+
+    .fs_form_skeleton_label {
+        display: block;
+        width: 140px;
+        height: 14px;
+        margin-bottom: 8px;
+    }
+
+    .fs_form_skeleton_input {
+        display: block;
+        width: 100%;
+        height: 40px;
+        border-radius: var(--fs-radius-md, 8px);
+    }
+
+    .fs_form_skeleton_button {
+        width: 120px;
+        height: 36px;
+        border-radius: var(--fs-radius-md, 8px);
+    }
 }
 
 .fs_sidebar_skeleton {
@@ -2072,14 +1819,9 @@ ul.fs_contact_results {
 }
 
 .fs_status_badge {
-    display: inline-flex;
-    align-items: center;
     gap: var(--fs-spacing-xs);
     padding: var(--fs-spacing-xs) var(--fs-spacing-sm);
     border-radius: var(--fs-radius-md);
-    font-size: 12px;
-    font-weight: 500;
-    line-height: 16px;
     text-align: left;
 
     &.active {
@@ -2110,8 +1852,6 @@ ul.fs_contact_results {
     }
 
     .fs_status_dot {
-        width: 6px;
-        height: 6px;
         border-radius: var(--fs-radius-round);
         background: currentColor;
     }
@@ -2123,14 +1863,7 @@ ul.fs_contact_results {
 
 // Status Badge Styles
 .fs_status_badge {
-    display: flex;
-    padding: 4px 8px 4px 4px;
-    align-items: center;
-    gap: var(--fs-spacing-xs, 4px);
     border-radius: var(--fs-radius-sm, 6px);
-    font-size: 12px;
-    font-weight: 500;
-    line-height: 16px;
     letter-spacing: -0.06px;
     width: fit-content;
 
@@ -2162,22 +1895,6 @@ ul.fs_contact_results {
         border-radius: 50%;
         flex-shrink: 0;
         margin: 2px;
-
-        &.fs_dot_active {
-            background: var(--fs-status-active-dot, #059669);
-        }
-
-        &.fs_dot_blocked {
-            background: var(--fs-status-blocked, #525866);
-        }
-
-        &.fs_dot_inactive {
-            background: var(--fs-status-inactive, #525866);
-        }
-
-        &.fs_dot_pending {
-            background: var(--fs-status-pending-dot, #D97706);
-        }
     }
 }
 

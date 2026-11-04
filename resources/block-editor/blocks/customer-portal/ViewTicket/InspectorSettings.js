@@ -1,34 +1,23 @@
 import React from 'react';
-const { InspectorControls } = wp.blockEditor;
-const { PanelBody, SelectControl, PanelRow } = wp.components;
-const { __ } = wp.i18n;
+import { InspectorControls } from '@wordpress/block-editor';
+import { PanelBody, SelectControl, PanelRow } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 
-import { GeneralInspectorSettings, generateStyles as generalGenerateStyles } from '../GeneralInspectorSettings';
-
-export const generateStyles = (attributes) => {
-    const generalStyles = generalGenerateStyles(attributes);
-
-    return {
-        ...generalStyles,
-        avatarStyle: {
-            borderRadius: attributes.avatarBorderRadius || '50%'
-        },
-    };
-};
+import { GeneralInspectorSettings } from '../GeneralInspectorSettings';
 
 export const ViewTicketInspectorControls = ({ attributes, setAttributes }) => {
     return (
         <InspectorControls>
-            <PanelBody title={__('Custom Page Style')} initialOpen={true}>
+            <PanelBody title={__('Custom Page Style', 'fluent-support')} initialOpen={true}>
                 <PanelRow>
                     <div className="fs_block_inspector_widget">
-                        <h3 className="label">{__('Avatar Style')}</h3>
+                        <h3 className="label">{__('Avatar Style', 'fluent-support')}</h3>
                         <select
                             value={attributes.avatarBorderRadius}
                             onChange={(event) => setAttributes({avatarBorderRadius: event.target.value})}
                         >
-                            <option value="8px">{__('Square')}</option>
-                            <option value="50%">{__('Rounded')}</option>
+                            <option value="8px">{__('Square', 'fluent-support')}</option>
+                            <option value="50%">{__('Rounded', 'fluent-support')}</option>
                         </select>
                     </div>
                 </PanelRow>

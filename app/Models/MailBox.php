@@ -59,12 +59,9 @@ class MailBox extends Model
     }
 
     /**
-     * Returns the mailboxes the current agent is allowed to know about.
-     *
-     * Restricted inboxes are filtered out, so the `settings` blob only ever describes
-     * an inbox the agent already works in. Note that the restriction list is the only
-     * gate here: an agent with no restrictions receives `settings` — including
-     * `admin_email_address` — for every inbox, regardless of their other permissions.
+     * Mailboxes the current agent isn't restricted from. The restriction list is
+     * the only gate, so an unrestricted agent gets `settings` (incl.
+     * admin_email_address) for every box.
      *
      * @param bool $withEmail Include the inbox address. Only pass true once the caller
      *                        has confirmed the current user holds `fst_sensitive_data`.
@@ -72,7 +69,7 @@ class MailBox extends Model
      */
     public static function getAccessibleBoxes($withEmail = false)
     {
-        $columns = ['id', 'name', 'settings'];
+        $columns = ['id', 'name', 'box_type', 'settings'];
 
         if ($withEmail) {
             $columns[] = 'email';
@@ -98,23 +95,79 @@ class MailBox extends Model
         return $slug;
     }
 
-    public function getMailerHeader()
+    /** From-name choices for email an agent writes (settings.from_name_type). */
+    const FROM_NAME_MAILBOX = 'mailbox';
+    const FROM_NAME_AGENT = 'agent';
+    const FROM_NAME_CUSTOM = 'custom';
+
+    /**
+     * @param \FluentSupport\App\Models\Agent|null $agent The agent who wrote the email.
+     *        Only agent-written email passes one; automatic email keeps the inbox name.
+     * @return array
+     */
+    public function getMailerHeader($agent = null)
     {
         $headers = [];
-        $fromString = $this->email; //$this->name;
-        if($this->name) {
-            $fromString = $this->name.' <'.$fromString.'>';
+        $fromString = $this->email;
+        $fromName = $this->getFromName($agent);
+        if ($fromName) {
+            $fromString = $fromName . ' <' . $fromString . '>';
         }
 
         if ($fromString) {
             $headers[] = 'From: '. $fromString;
         }
 
-        // Set Reply-To Header
         $headers[] = 'Reply-To: '. $fromString;
-        $headers[] = 'In-Reply-To: '. $fromString;
 
         return $headers;
+    }
+
+    /**
+     * Display name for the From header. The address is always the inbox email, so
+     * replies thread back; only the name follows the inbox's From name setting.
+     *
+     * @param \FluentSupport\App\Models\Agent|null $agent
+     * @return string
+     */
+    public function getFromName($agent = null)
+    {
+        $settings = is_array($this->settings) ? $this->settings : [];
+        $type = isset($settings['from_name_type']) ? $settings['from_name_type'] : self::FROM_NAME_MAILBOX;
+        $name = '';
+
+        if ($agent && $type === self::FROM_NAME_AGENT) {
+            $name = $agent->full_name;
+        } elseif ($agent && $type === self::FROM_NAME_CUSTOM && !empty($settings['from_name_template'])) {
+            $name = apply_filters('fluent_support/parse_smartcode_data', $settings['from_name_template'], [
+                'agent'    => $agent,
+                'business' => $this,
+            ]);
+        }
+
+        $name = self::cleanFromName($name) ?: self::cleanFromName($this->name);
+
+        /*
+         * Filter the From name of an email sent from this inbox.
+         *
+         * @since v2.4.1
+         * @param string $name
+         * @param MailBox $mailbox
+         * @param \FluentSupport\App\Models\Agent|null $agent Set for email an agent wrote.
+         */
+        return (string) apply_filters('fluent_support/mailbox_from_name', $name, $this, $agent);
+    }
+
+    // A header value: no line breaks, quotes, angle brackets or address separators, no
+    // unparsed smartcodes. The name also goes into Reply-To, which wp_mail() splits on commas.
+    private static function cleanFromName($name)
+    {
+        $name = preg_replace('/{{[^}]*}}/', '', (string) $name);
+        $name = wp_strip_all_tags($name, true);
+        $name = preg_replace('/[\x00-\x1F\x7F",;<>\\\\]+/u', ' ', $name);
+        $name = trim(preg_replace('/\s+/u', ' ', $name));
+
+        return mb_substr($name, 0, 120);
     }
 
     public function getMeta($key, $default = '')
@@ -175,59 +228,5 @@ class MailBox extends Model
             ->where('object_id', $this->id)
             ->delete();
     }
-    /**
-     * This `getMailBox` method is used to get a mailbox by id.
-     * @param int $id
-     * @return MailBox
-     */
-    public function getMailBox ($id )
-    {
-        return MailBox::findOrFail($id);
-    }
 
-    /**
-     * This `createMailBox` method is used to create a new MailBox.
-     * @param array $data
-     * @return MailBox
-     */
-    public function createMailBox ( $data )
-    {
-        if ($data['box_type'] == 'email') {
-            $data['settings'] = [
-                'admin_email_address' => ''
-            ];
-        } else {
-            $data['settings'] = [
-                'admin_email_address' => $data['email']
-            ];
-        }
-
-        if (!MailBox::first()) {
-            $data['is_default'] = 'yes';
-        }
-
-        return MailBox::create($data);
-    }
-
-
-    /**
-     * This `updateMailBox` method is used to update a mailbox.
-     * @param array $data
-     * @param int $mailBoxId
-     * @return object $mailbox
-     */
-    public function updateMailBox ($data, $mailBoxId )
-    {
-
-        $mailbox = MailBox::findOrFail($mailBoxId);
-
-        if ($data['box_type'] == 'email' && empty($data['mapped_email'])) {
-            throw new \Exception('Mapped Email Address is required');
-        }
-
-        $mailbox->fill($data);
-        $mailbox->save();
-
-        return $mailbox;
-    }
 }

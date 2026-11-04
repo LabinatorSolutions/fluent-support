@@ -1,11 +1,7 @@
 <?php
 /**
- * Agent authorization on the file upload endpoints.
- *
- * PortalPolicy::uploadTicketFiles() used to return true for any row in fs_agents,
- * so an agent with no write capability could persist attachments and push files to
- * cloud storage. UploaderController then trusted the submitted ticket_id without
- * looking it up, so those writes could target a ticket the agent cannot reach.
+ * Agent authorization on the file upload endpoints: only agents with a write
+ * capability may upload, and only to a ticket they can reach.
  *
  * @package Fluent_Support
  */
@@ -20,10 +16,8 @@ use FluentSupport\App\Modules\PermissionManager;
 class AgentUploadAuthorizationTest extends WP_UnitTestCase
 {
     /**
-     * Route.php:1103 binds the dispatched WP_REST_Request into the container as
-     * 'wprestrequest', and Request::inputs() merges that binding into every framework
-     * Request built afterwards. Left in place it leaks one test's ticket_id into the
-     * next, so the binding is dropped between tests.
+     * The router binds the dispatched WP_REST_Request as 'wprestrequest', and every
+     * later framework Request merges its inputs. Drop it so ticket_id doesn't leak.
      */
     public function tear_down()
     {
@@ -39,10 +33,8 @@ class AgentUploadAuthorizationTest extends WP_UnitTestCase
     }
 
     /**
-     * Build a WP user plus its fs_agents row and attach exactly the permissions given.
-     *
-     * The user must not be an administrator: attachPermissions() short-circuits for
-     * manage_options, and userCan() lets admins through unconditionally.
+     * Build a WP user plus its fs_agents row with exactly the given permissions.
+     * Not an administrator, since admins bypass permission checks.
      */
     private function makeAgent(array $permissions, $email = null)
     {
@@ -67,9 +59,7 @@ class AgentUploadAuthorizationTest extends WP_UnitTestCase
     }
 
     /**
-     * currentUserPermissions() memoizes into a static that is not keyed by user id,
-     * so the cache has to be refilled whenever the acting user changes or every
-     * assertion after the first would read the previous user's permissions.
+     * currentUserPermissions() caches in a static not keyed by user, so refresh it.
      */
     private function actAs(Agent $agent)
     {
@@ -95,8 +85,7 @@ class AgentUploadAuthorizationTest extends WP_UnitTestCase
     }
 
     /**
-     * The framework Request needs the Application instance, which is only exposed
-     * through the fluent_support_loaded action; tests/bootstrap.php stashes it.
+     * Uses the Application instance tests/bootstrap.php stashes.
      */
     private function makeRequest(array $post = [])
     {
@@ -230,8 +219,7 @@ class AgentUploadAuthorizationTest extends WP_UnitTestCase
 
         $response = $this->uploadImageResponse($ticket->id);
 
-        // No file was supplied, so this stops at image validation — the point is
-        // that it got past the access guard rather than being refused with a 403.
+        // No file, so this stops at image validation, past the access guard.
         $this->assertStringNotContainsString(
             'permission to upload a file to this ticket',
             $this->responseMessage($response)
@@ -239,22 +227,17 @@ class AgentUploadAuthorizationTest extends WP_UnitTestCase
     }
 
     /* ---------------------------------------------------------------------
-     * The same guard on uploadTicketFiles(), the endpoint the finding named.
-     * uploadImage() alone would not prove this call site exists.
+     * The same guard on uploadTicketFiles()
      * ------------------------------------------------------------------ */
 
     /**
-     * uploadTicketFiles() rejects the request before reaching the ticket guard
-     * unless a "file" part is present, so $_FILES has to carry a real fixture.
-     * The guard fires before anything is written, so nothing lands on disk.
+     * uploadTicketFiles() needs a "file" part before it reaches the ticket guard.
+     * The guard fires before anything is written.
      */
     private function uploadTicketFilesResponse($ticketId)
     {
-        // The contents do not matter: the guard runs before validation, and the
-        // validator would reject this anyway because isValidFileInstance() requires
-        // is_uploaded_file(), which is never true off a real HTTP upload. If the guard
-        // is ever removed, that rejection surfaces as a ValidationException and fails
-        // this test — which is exactly the regression signal wanted here.
+        // Validation would reject this file (is_uploaded_file() is false outside a real
+        // upload), so a missing guard surfaces as a ValidationException and fails the test.
         $tmp = wp_tempnam('fs-upload-guard');
         file_put_contents($tmp, 'fixture');
 
@@ -311,13 +294,8 @@ class AgentUploadAuthorizationTest extends WP_UnitTestCase
     }
 
     /* ---------------------------------------------------------------------
-     * End to end through the registered REST route.
-     *
-     * Everything above calls the policy and controller directly, which cannot show
-     * that withPolicy('PortalPolicy') on api.php:116 actually dispatches to
-     * uploadTicketFiles() rather than falling back to verifyRequest(). If that
-     * binding broke, every direct test would still pass while the endpoint stayed
-     * open, so the route itself has to be exercised.
+     * End to end through the registered REST route, proving the route's policy
+     * actually dispatches to uploadTicketFiles().
      * ------------------------------------------------------------------ */
 
     private function dispatch($route, $ticketId = null)
@@ -358,8 +336,7 @@ class AgentUploadAuthorizationTest extends WP_UnitTestCase
 
         $response = $this->dispatch($route, 1);
 
-        // It still fails further in (no multipart body), but it must get past the
-        // permission callback — otherwise the policy is refusing legitimate agents.
+        // Fails later (no multipart body), but must pass the permission callback.
         $this->assertNotContains(
             $response->get_status(),
             [401, 403],
@@ -381,7 +358,7 @@ class AgentUploadAuthorizationTest extends WP_UnitTestCase
 
         $response = $this->uploadImageResponse(0);
 
-        // The Add Ticket form uploads before its ticket exists; that must keep working.
+        // The Add Ticket form uploads before its ticket exists.
         $this->assertStringNotContainsString(
             'permission to upload a file to this ticket',
             $this->responseMessage($response)

@@ -1,6 +1,6 @@
 <template>
     <div class="fs_saved_replies">
-        <div v-if="!loading" class="fs_box_wrapper">
+        <div class="fs_box_wrapper">
             <template v-if="has_pro">
                 <div class="fs_component_header">
                     <div class="fs_component_head">
@@ -17,14 +17,14 @@
                         </el-button>
                     </div>
                 </div>
-                <div v-if="!loading" class="fs_table_container">
+                <div class="fs_table_container">
                     <div class="fs_table_header">
                         <div class="fs_box_actions">
                             <div class="fs_ticket_orders fs_table_search_field">
                                 <el-input
-                                    @keyup.enter="fetch"
+                                    @keyup.enter="searchReplies"
                                     clearable
-                                    @clear="fetch"
+                                    @clear="searchReplies"
                                     :disabled="!has_pro"
                                     :placeholder="$t('Search...')"
                                     v-model="search"
@@ -37,7 +37,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="fs_table_wrapper">
+                    <TableSkeleton v-if="first_loading" :rows="5" :columns="[50, 200, 200, 180, 180, 150]" />
+                    <div v-else class="fs_table_wrapper" v-loading="loading">
                         <el-table
                             :data="replies"
                             row-class-name="fs_table_row"
@@ -124,16 +125,39 @@
                     </div>
                 </div>
             </template>
-            <NarrowPromo
+            <ProShowcase
                 v-else
-                :heading="$t('create_reply_template')"
-                :description="$t('pro_promo')"
-                :button-text="$t('Upgrade To Pro')"
+                :feature="$t('Saved Replies')"
+                :heading="$t('Reply faster with saved responses')"
+                :description="$t('saved_replies_promo_description')"
+                :specifics="promoSpecifics"
                 utm-content="feature_lock_saved_reply_templates"
-            />
-        </div>
-        <div class="fs_table_container fs_skeleton_loader" v-else>
-            <el-skeleton class="fs_box_wrapper fs_skeleton" :rows="5" animated />
+                docs-url="https://docs.fluentsupport.com/templated-saved-replies"
+            >
+                <template #preview>
+                    <div class="fs_pro_preview">
+                        <div class="fs_pro_preview_card fs_pro_preview_fields">
+                            <div class="fs_pro_preview_title">
+                                <span class="fs_pro_preview_checkbox"></span>
+                                {{ $t('Saved reply') }}
+                            </div>
+                            <div class="fs_pro_preview_row fs_pro_preview_reveal" style="--fs-row-index: 0">
+                                <span class="fs_pro_preview_row_label">{{ $t('Reply Title') }}</span>
+                                <span class="fs_pro_preview_row_value">{{ $t('Order status') }}</span>
+                            </div>
+                            <div class="fs_pro_preview_row fs_pro_preview_reveal" style="--fs-row-index: 1">
+                                <span class="fs_pro_preview_row_label">{{ $t('Product') }}</span>
+                                <span class="fs_pro_preview_chip fs_pro_preview_chip_purple fs_pro_preview_chip_plain">{{ $t('Fluent Forms Pro') }}</span>
+                            </div>
+                            <div class="fs_pro_preview_row fs_pro_preview_row_focal fs_pro_preview_reveal" style="--fs-row-index: 2">
+                                <span class="fs_pro_preview_row_label">{{ $t('Insert into') }}</span>
+                                <!-- translators: %s: ticket number -->
+                                <span class="fs_pro_preview_badge fs_pro_preview_badge_info">{{ $t('Ticket #%s', 1729) }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </ProShowcase>
         </div>
 
         <el-dialog
@@ -207,7 +231,8 @@
 import Pagination from "../../Pieces/Pagination";
 import WpEditor from "../../Pieces/_wp_editor";
 import TableMoreActions from "@/admin/Components/TableMoreActions.vue";
-import NarrowPromo from "@/admin/Components/NarrowPromo.vue";
+import ProShowcase from "@/admin/Components/ProShowcase.vue";
+import TableSkeleton from "@/admin/Components/TableSkeleton.vue";
 
 export default {
     name: "SavedReplies",
@@ -215,7 +240,8 @@ export default {
         WpEditor,
         Pagination,
         TableMoreActions,
-        NarrowPromo,
+        ProShowcase,
+        TableSkeleton,
     },
 
     data() {
@@ -227,6 +253,7 @@ export default {
                 total: 0,
             },
             loading: true,
+            first_loading: true,
             saving: false,
             editing_reply: false,
             products: this.appVars.support_products,
@@ -248,6 +275,16 @@ export default {
         };
     },
 
+    computed: {
+        promoSpecifics() {
+            return [
+                this.$t('Create templates for frequently asked questions'),
+                this.$t('Insert saved replies into tickets in one click'),
+                this.$t('Keep responses consistent across your support team')
+            ];
+        }
+    },
+
     methods: {
         fetch() {
             this.loading = true;
@@ -265,7 +302,13 @@ export default {
                 })
                 .always(() => {
                     this.loading = false;
+                    this.first_loading = false;
                 });
+        },
+
+        searchReplies() {
+            this.pagination.current_page = 1;
+            this.fetch();
         },
 
         createOrUpdate() {
@@ -340,6 +383,7 @@ export default {
             this.fetch();
         } else {
             this.loading = false;
+            this.first_loading = false;
         }
         this.$setTitle("Saved Replies");
     }

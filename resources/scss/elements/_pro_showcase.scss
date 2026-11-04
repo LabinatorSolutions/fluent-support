@@ -1,0 +1,520 @@
+// Pro feature showcase (Components/ProShowcase.vue) and the fs_pro_preview_* blocks pages build their preview from.
+
+.fs_pro_badge {
+    display: inline-flex;
+    align-items: center;
+    height: 18px;
+    padding: 0 7px;
+    border-radius: var(--fs-radius-sm, 4px);
+    background: var(--fs-pro-badge-bg, #E0FAEC);
+    color: var(--fs-pro-badge-text, #0B4627);
+    font-size: 10.5px;
+    font-weight: 600;
+    line-height: 18px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.fs_pro_showcase {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 1040px;
+    margin: 0 auto;
+}
+
+.fs_pro_showcase_hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: 32px;
+    align-items: center;
+    padding: 32px 36px;
+    background: var(--fs-bg-primary, #FFFFFF);
+    border-radius: var(--fs-radius-md, 8px);
+
+    &.fs_pro_showcase_hero_single {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+.fs_pro_showcase_copy {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-width: 0;
+}
+
+.fs_pro_showcase_eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--fs-text-secondary, #525866);
+}
+
+.fs_pro_showcase_headline {
+    margin: 0;
+    font-size: 24px;
+    line-height: 1.25;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    color: var(--fs-text-primary, #0E121B);
+}
+
+.fs_pro_showcase_support {
+    margin: 0;
+    max-width: 52ch;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--fs-text-secondary, #525866);
+}
+
+.fs_pro_showcase_specifics {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 2px 0 0 !important;
+    padding: 0;
+    list-style: none;
+
+    li {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin: 0 !important;
+        font-size: 14px;
+        line-height: 20px;
+        color: var(--fs-text-primary, #0E121B);
+    }
+
+    svg {
+        flex: 0 0 auto;
+        margin-top: 1px;
+        color: var(--fs-pro-check, #089360);
+    }
+}
+
+.fs_pro_showcase_actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 2px;
+
+    .el-button {
+        font-size: 13px;
+        line-height: 18px;
+        text-decoration: none;
+    }
+
+    .el-button + .el-button {
+        margin-left: 0;
+    }
+}
+
+.fs_pro_showcase_stage {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 240px;
+    padding: 32px;
+    overflow: hidden;
+    border-radius: var(--fs-radius-md, 8px);
+    background: var(--fs-bg-subtle, #F5F7FA);
+}
+
+// White floating card for preview art inside the stage.
+.fs_pro_preview_card {
+    background: var(--fs-bg-primary, #FFFFFF);
+    border: 1px solid var(--fs-stroke-soft, #E1E4EA);
+    border-radius: var(--fs-radius-md, 8px);
+    box-shadow: var(--fs-pro-preview-shadow, 0 1px 2px rgba(23, 23, 23, 0.05), 0 8px 24px -6px rgba(23, 23, 23, 0.12));
+}
+
+// Building blocks for preview art: a mock form field with chips and a dropdown menu.
+.fs_pro_preview {
+    position: relative;
+    width: 100%;
+}
+
+.fs_pro_preview_fields {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px;
+}
+
+.fs_pro_preview_title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--fs-text-primary, #0E121B);
+}
+
+.fs_pro_preview_checkbox {
+    width: 14px;
+    height: 14px;
+    border: 1.5px solid var(--fs-text-secondary, #525866);
+    border-radius: 3px;
+    opacity: 0.7;
+}
+
+.fs_pro_preview_label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--fs-text-primary, #0E121B);
+}
+
+.fs_pro_preview_input {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    min-height: 36px;
+    padding: 6px 8px;
+    border: 1px solid var(--fs-stroke-soft, #E1E4EA);
+    border-radius: var(--fs-radius-md, 8px);
+    background: var(--fs-bg-primary, #FFFFFF);
+}
+
+.fs_pro_preview_caret {
+    margin-inline-start: auto;
+    font-size: 10px;
+    color: var(--fs-text-muted, #99A0AE);
+}
+
+.fs_pro_preview_chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 22px;
+    padding: 0 8px;
+    border: 1px solid transparent;
+    border-radius: var(--fs-radius-6, 6px);
+    font-size: 11.5px;
+    font-weight: 500;
+    white-space: nowrap;
+
+    &::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+        opacity: 0.7;
+    }
+}
+
+.fs_pro_preview_chip_orange {
+    background: var(--fs-pro-chip-orange-bg, #FFF3E6);
+    border-color: var(--fs-pro-chip-orange-border, #FFE1C2);
+    color: var(--fs-pro-chip-orange-text, #9A4C00);
+}
+
+.fs_pro_preview_chip_plain::before {
+    display: none;
+}
+
+.fs_pro_preview_chip_purple {
+    background: var(--fs-pro-chip-purple-bg, #EFEBFF);
+    border-color: var(--fs-pro-chip-purple-border, #CAC0FF);
+    color: var(--fs-pro-chip-purple-text, #351A75);
+}
+
+// Small status badge, e.g. "Ticket created".
+.fs_pro_preview_badge {
+    display: inline-flex;
+    align-items: center;
+    height: 20px;
+    padding: 2px 6px;
+    border-radius: var(--fs-radius-6, 6px);
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.fs_pro_preview_badge_success {
+    background: var(--fs-badge-sm-success-bg, #E0FAEC);
+    color: var(--fs-badge-sm-success-text, #0B4627);
+}
+
+.fs_pro_preview_badge_info {
+    background: var(--fs-badge-sm-info-bg, #EBF1FF);
+    color: var(--fs-badge-sm-info-text, #122368);
+}
+
+// Open dropdown under a .fs_pro_preview_fields card; in the flow so the stage reserves room for it.
+.fs_pro_preview_menu {
+    position: relative;
+    margin: -8px 14px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 6px;
+
+    > div {
+        display: flex;
+        align-items: center;
+        height: 28px;
+        padding: 0 8px;
+        border-radius: var(--fs-radius-6, 6px);
+        font-size: 11.5px;
+        color: var(--fs-text-primary, #0E121B);
+    }
+
+    .fs_pro_preview_menu_meta {
+        margin-inline-start: auto;
+        font-size: 10.5px;
+        font-weight: 400;
+        color: var(--fs-text-secondary, #525866);
+    }
+
+    > .fs_pro_preview_menu_active {
+        background: var(--fs-state-feature-light, #EFEBFF);
+        color: var(--fs-pro-menu-active-text, #5B2CC9);
+        font-weight: 600;
+    }
+}
+
+// Setting row: a name on the left, a switch on the right.
+.fs_pro_preview_row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    height: 32px;
+    padding: 0 8px;
+    border-radius: var(--fs-radius-6, 6px);
+    font-size: 11.5px;
+    color: var(--fs-text-primary, #0E121B);
+}
+
+.fs_pro_preview_row_focal {
+    background: var(--fs-pro-chip-purple-bg, #EFEBFF);
+}
+
+.fs_pro_preview_row_name {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    overflow: hidden;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.fs_pro_preview_row_off .fs_pro_preview_row_name {
+    color: var(--fs-text-muted, #99A0AE);
+}
+
+// Field row: a grey label on the left, the entered value on the right.
+.fs_pro_preview_row_label {
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    font-weight: 500;
+    color: var(--fs-text-secondary, #525866);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.fs_pro_preview_row_value {
+    min-width: 0;
+    overflow: hidden;
+    font-weight: 500;
+    text-align: end;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+// Small uppercase marker next to a row name, e.g. "Required".
+.fs_pro_preview_tag {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--fs-pro-menu-active-text, #5B2CC9);
+}
+
+.fs_pro_preview_switch {
+    position: relative;
+    flex: 0 0 auto;
+    width: 26px;
+    height: 16px;
+    border-radius: var(--fs-radius-full, 999px);
+    background: var(--fs-stroke-soft, #E1E4EA);
+
+    &::after {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--fs-pro-switch-off-knob, #FFFFFF);
+        box-shadow: 0 1px 2px rgba(23, 23, 23, 0.2);
+    }
+}
+
+.fs_pro_preview_switch_on {
+    background: var(--fs-text-primary, #0E121B);
+
+    &::after {
+        background: var(--fs-pro-switch-on-knob, #FFFFFF);
+        transform: translateX(10px);
+    }
+}
+
+// Footer line inside a card, e.g. a suggested article.
+.fs_pro_preview_note {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+    padding: 8px 10px;
+    border-top: 1px solid var(--fs-stroke-soft, #E1E4EA);
+    font-size: 11.5px;
+    color: var(--fs-text-primary, #0E121B);
+
+    > span:last-child {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+
+.fs_pro_preview_note_icon {
+    flex: 0 0 auto;
+    width: 14px;
+    height: 14px;
+    border: 1px solid var(--fs-pro-chip-purple-border, #CAC0FF);
+    border-radius: 3px;
+    background: var(--fs-pro-chip-purple-bg, #EFEBFF);
+}
+
+// Plays once on load: the menu opens, a switch turns off (.fs_pro_preview_switch_turning_off) and its
+// row name greys out, then .fs_pro_preview_added appears. Without motion the end state is shown.
+@media (prefers-reduced-motion: no-preference) {
+    .fs_pro_preview_menu {
+        opacity: 0;
+        animation: fs_pro_preview_pop 0.25s ease-out 0.5s forwards;
+    }
+
+    .fs_pro_preview_added {
+        opacity: 0;
+        animation: fs_pro_preview_pop 0.3s ease-out 1.2s forwards;
+    }
+
+    .fs_pro_preview_switch_turning_off {
+        animation: fs_pro_preview_switch_off 0.3s ease-out 0.8s both;
+
+        &::after {
+            animation: fs_pro_preview_knob_off 0.3s ease-out 0.8s both;
+        }
+    }
+
+    .fs_pro_preview_row_off .fs_pro_preview_row_name {
+        animation: fs_pro_preview_name_off 0.3s ease-out 0.8s both;
+    }
+
+    // Staggered entry: set --fs-row-index (0, 1, 2...) on each element.
+    .fs_pro_preview_reveal {
+        opacity: 0;
+        animation: fs_pro_preview_pop 0.3s ease-out calc(0.3s + var(--fs-row-index, 0) * 0.35s) forwards;
+    }
+}
+
+@keyframes fs_pro_preview_pop {
+    from {
+        opacity: 0;
+        transform: translateY(4px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@keyframes fs_pro_preview_switch_off {
+    from {
+        background: var(--fs-text-primary, #0E121B);
+    }
+    to {
+        background: var(--fs-stroke-soft, #E1E4EA);
+    }
+}
+
+@keyframes fs_pro_preview_name_off {
+    from {
+        color: var(--fs-text-primary, #0E121B);
+    }
+    to {
+        color: var(--fs-text-muted, #99A0AE);
+    }
+}
+
+@keyframes fs_pro_preview_knob_off {
+    from {
+        background: var(--fs-pro-switch-on-knob, #FFFFFF);
+        transform: translateX(10px);
+    }
+    to {
+        background: var(--fs-pro-switch-off-knob, #FFFFFF);
+        transform: none;
+    }
+}
+
+@media (max-width: 1024px) {
+    .fs_pro_showcase_hero {
+        grid-template-columns: minmax(0, 1fr);
+        padding: 24px;
+    }
+
+    .fs_pro_showcase_stage {
+        order: -1;
+        min-height: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .fs_pro_showcase_hero {
+        padding: 16px;
+    }
+
+    .fs_pro_showcase_headline {
+        font-size: 20px;
+    }
+
+    .fs_pro_showcase_actions .el-button {
+        width: 100%;
+    }
+}
+
+// Crown on a Pro-only action button, e.g. Apply Filter in the free tickets page.
+.fs_pro_crown_icon {
+    width: 16px;
+    height: 16px;
+    margin-inline-end: 6px;
+    color: var(--fs-pro-crown, #F6B51E);
+}
+
+// ProShowcase inside a dialog: the title carries the Pro badge.
+.fs_pro_showcase_dialog_title {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    color: var(--fs-text-primary, #0E121B);
+}
+
+.fs_pro_showcase_dialog .fs_pro_showcase_hero {
+    padding: 8px 0;
+}

@@ -127,6 +127,16 @@ FsTest::uniq('prefix');                // collision-free fixture names
 FsTest::clearCaches();
 ```
 
+`tests/lib/contract.php` records a value the code must keep producing and
+compares later runs with it (see its header for re-recording):
+
+```php
+$contract = new FsContract('114-tickets-contract');   // fixtures/114-tickets-contract.json
+$contract->response('GET tickets/{id}', $result);       // status + response key paths
+$contract->check('close: admin', $hooksFired);          // any value, compared exactly
+$contract->finish();                                    // prints the recording when there is no file
+```
+
 Extend the harness when you genuinely need a new primitive — but add it to
 `harness.php` with a doc-block explaining *why*, never inline in a suite.
 

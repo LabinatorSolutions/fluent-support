@@ -6,11 +6,7 @@ use FluentSupport\App\Services\Helper;
 use FluentSupport\Framework\Http\Request\Request;
 
 /**
- *  ActivityLoggerController class for REST API
- * This class is responsible for getting data for all request related to activity and activity settings
- * @package FluentSupport\App\Http\Controllers
- *
- * @version 1.0.0
+ * AI activity log endpoints and settings.
  */
 class AIActivityLoggerController extends Controller
 {
@@ -35,7 +31,6 @@ class AIActivityLoggerController extends Controller
     }
 
     /**
-     * updateSettings method will update existing activity settings
      * @return \WP_REST_Response | array
      */
     public function updateSettings (Request $request)
@@ -56,7 +51,6 @@ class AIActivityLoggerController extends Controller
     }
 
     /**
-     * getSettings method will get the list of activity settings and return
      * @return \WP_REST_Response | array
      */
     public function getSettings()

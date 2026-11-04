@@ -17,11 +17,11 @@
 
                 <!-- Step 1: Search/Create Contact -->
                 <div v-if="step == 'search'" class="fs_step_content">
-                    <el-form-item :label="$t('Search Existing contact or provide email address')">
+                    <el-form-item :label="canBrowseContacts ? $t('Search Existing contact or provide email address') : $t('Find a contact by their full email address')">
                         <el-input
                             @keypress.enter.native.prevent="searchCustomers()"
                             v-model="search_customer"
-                            :placeholder="$t('Search or provide email address')">
+                            :placeholder="canBrowseContacts ? $t('Search or provide email address') : $t('Full email address')">
                             <template #suffix>
                                 <el-button
                                     @click="searchCustomers()"
@@ -39,7 +39,8 @@
                     <div v-loading="searching"
                          v-if="searching || (search_results && search_results.data && search_results.data.length && ticket.create_customer != 'yes')"
                          class="fs_customer_selector">
-                        <h3>{{ $t('Please Select a contact') }} [{{ search_results.provider }}]</h3>
+                        <!-- translators: %s is the contact provider, e.g. FluentCRM -->
+                        <h3>{{ $t('Please select a contact (%s)', search_results.provider) }}</h3>
                         <ul class="fs_contact_results">
                             <li v-for="item in search_results.data" :key="item.id"
                                 @click="customerSelected(item, search_results.provider)">
@@ -340,6 +341,10 @@ export default {
         }
     },
     computed: {
+        // Partial search lists customers, so it needs the Customers permission; others look up a full email.
+        canBrowseContacts() {
+            return !!this.appVars?.me?.permissions?.includes('fst_sensitive_data');
+        },
         canProceedToTicket() {
             // Can proceed if a customer is selected from search results
             if (this.new_customer.email && this.ticket.create_customer !== 'yes') {

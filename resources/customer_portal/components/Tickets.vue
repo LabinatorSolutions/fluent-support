@@ -2,7 +2,7 @@
     <div class="fs_ticket_wrapper">
         <div class="fs_tickets_container">
             <div class="fs_tickets_header">
-                <label> {{ $t('All Tickets') }}</label>
+                <h2 class="fs_tickets_heading">{{ $t('All Tickets') }}</h2>
 
                 <div class="fs_tickets_actions">
                     <el-button
@@ -10,35 +10,18 @@
                         class="fs_create_ticket_btn"
                         @click="$router.push({ name: 'create_ticket' })"
                     >
-                        {{ '+ ' + $t('create_ticket_cta') }}
+                        + {{ $t('create_ticket_cta') }}
                     </el-button>
 
-                    <el-dropdown v-if="appVars.show_logout" class="fs_actions_dropdown" trigger="click">
-                        <el-button class="fs_actions_dropdown_btn">
-                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M10 3.25C9.38125 3.25 8.875 3.75625 8.875 4.375C8.875 4.99375 9.38125 5.5 10 5.5C10.6187 5.5 11.125 4.99375 11.125 4.375C11.125 3.75625 10.6187 3.25 10 3.25ZM10 14.5C9.38125 14.5 8.875 15.0063 8.875 15.625C8.875 16.2437 9.38125 16.75 10 16.75C10.6187 16.75 11.125 16.2437 11.125 15.625C11.125 15.0063 10.6187 14.5 10 14.5ZM10 8.875C9.38125 8.875 8.875 9.38125 8.875 10C8.875 10.6188 9.38125 11.125 10 11.125C10.6187 11.125 11.125 10.6188 11.125 10C11.125 9.38125 10.6187 8.875 10 8.875Z"
-                                    fill="#525866"/>
-                            </svg>
-
-                        </el-button>
-                        <template #dropdown>
-                            <el-dropdown-menu class="fs_dropdown_menu">
-                                <el-dropdown-item class="fs_dropdown_item" v-if="appVars.show_logout" @click="logout">
-                                    <div class="fs_logout_item">
-                                        <svg class="fs_logout_icon" width="20" height="20" viewBox="0 0 20 20"
-                                             fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path
-                                                d="M4.75 17.5C4.55109 17.5 4.36032 17.421 4.21967 17.2803C4.07902 17.1397 4 16.9489 4 16.75V3.25C4 3.05109 4.07902 2.86032 4.21967 2.71967C4.36032 2.57902 4.55109 2.5 4.75 2.5H15.25C15.4489 2.5 15.6397 2.57902 15.7803 2.71967C15.921 2.86032 16 3.05109 16 3.25V5.5H14.5V4H5.5V16H14.5V14.5H16V16.75C16 16.9489 15.921 17.1397 15.7803 17.2803C15.6397 17.421 15.4489 17.5 15.25 17.5H4.75ZM14.5 13V10.75H9.25V9.25H14.5V7L18.25 10L14.5 13Z"
-                                                fill="#525866"/>
-                                        </svg>
-                                        <span>{{ $t('Log Out') }}</span>
-                                    </div>
-                                </el-dropdown-item>
-                            </el-dropdown-menu>
-                        </template>
-                    </el-dropdown>
+                    <el-button v-if="appVars.show_logout" class="fs_logout_btn" @click="logout">
+                        <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M4.75 17.5C4.55109 17.5 4.36032 17.421 4.21967 17.2803C4.07902 17.1397 4 16.9489 4 16.75V3.25C4 3.05109 4.07902 2.86032 4.21967 2.71967C4.36032 2.57902 4.55109 2.5 4.75 2.5H15.25C15.4489 2.5 15.6397 2.57902 15.7803 2.71967C15.921 2.86032 16 3.05109 16 3.25V5.5H14.5V4H5.5V16H14.5V14.5H16V16.75C16 16.9489 15.921 17.1397 15.7803 17.2803C15.6397 17.421 15.4489 17.5 15.25 17.5H4.75ZM14.5 13V10.75H9.25V9.25H14.5V7L18.25 10L14.5 13Z"
+                                fill="currentColor"/>
+                        </svg>
+                        <span>{{ $t('Log Out') }}</span>
+                    </el-button>
                 </div>
             </div>
 
@@ -47,10 +30,12 @@
                     :filters="filters"
                     :sorting="sorting"
                     :sortingColumns="sortingColumns"
+                    :search="search"
+                    :statusFilter="filterType"
                     @update:search.sync="search = $event"
                     @update:statusFilter="filterType = $event"
                     :appVars="appVars"
-                    @fetch-tickets="fetchTickets"
+                    @fetch-tickets="refetchFromFirstPage"
                 />
             </div>
 
@@ -80,39 +65,65 @@
                 </div>
             </div>
 
-            <div v-else class="fs_tickets_table">
-                <el-table
-                    :data="tickets"
-                    v-loading="loading"
-                    style="width: 100%"
-                    :row-class-name="'fs_ticket_row'"
-                    :empty-text="$t('No tickets found')"
-                >
-                    <el-table-column prop="title" :label="$t('Conversation')" class-name="conversation-cell"
-                                     min-width="50%">
-                        <template #default="{ row }">
-                            <router-link class="fs_ticket_conversation"
-                                         :to="{ name: 'view_ticket', params: { ticket_id: row.serial_number || row.id }}">
+            <!-- No v-loading in the portal: its mask could cover the whole window while closing. The list dims instead. -->
+            <div v-else class="fs_ticket_list_wrap"
+                 :class="{ fs_ticket_list_wrap_tall: loading || !tickets.length, fs_ticket_list_loading: loading && !first_loading }"
+                 :aria-busy="loading ? 'true' : 'false'">
+                <!-- The first load shows placeholder rows; later loads keep the current rows and dim them -->
+                <el-skeleton v-if="first_loading" animated class="fs_portal_skeleton" aria-hidden="true">
+                    <template #template>
+                        <ul class="fs_ticket_list">
+                            <li v-for="row in 5" :key="row" class="fs_ticket_item">
+                                <div class="fs_ticket_link">
+                                    <div class="fs_ticket_main fs_skeleton_lines">
+                                        <el-skeleton-item variant="text" :style="{ width: (row % 2 ? 55 : 40) + '%' }"/>
+                                        <el-skeleton-item variant="text" style="width: 85%;"/>
+                                    </div>
+                                    <div class="fs_ticket_meta">
+                                        <el-skeleton-item variant="button" class="fs_skeleton_badge"/>
+                                        <el-skeleton-item variant="text" style="width: 64px;"/>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </template>
+                </el-skeleton>
+                <ul v-else-if="tickets.length" class="fs_ticket_list">
+                    <li v-for="ticket in tickets" :key="ticket.id" class="fs_ticket_item">
+                        <router-link class="fs_ticket_link"
+                                     :to="{ name: 'view_ticket', params: { ticket_id: ticket.serial_number || ticket.id }}">
+                            <div class="fs_ticket_main">
                                 <div class="fs_ticket_title">
-                                    <strong>{{ row.title }}</strong>
-                                    <span v-show="parseInt(row?.response_count) > 0" class="fs_response_count">
-                                      {{ row.response_count }}
+                                    <strong>{{ ticket.title }}</strong>
+                                    <span v-if="parseInt(ticket.response_count) > 0" class="fs_response_count"
+                                          :title="replyCountLabel(ticket)">
+                                        {{ ticket.response_count }}
                                     </span>
                                 </div>
-                                <p class="fs_ticket_preview">{{ getExcerpt(row) }}</p>
-                            </router-link>
-                        </template>
-                    </el-table-column>
-                    <el-table-column prop="human_date" :label="$t('Date')" class-name="date-cell" min-width="25%"/>
-                    <el-table-column prop="status" :label="$t('Status')" class-name="fs_status_cell" min-width="25%">
-                        <template #default="{ row }">
-                            <span :class="['fs_status_badge', getStatusClass(row.status)]">
-                                <span class="fs_status_dot"></span>
-                                {{ appVars.ticket_statuses[row.status] || row.status }}
-                            </span>
-                        </template>
-                    </el-table-column>
-                </el-table>
+                                <p class="fs_ticket_preview">{{ getExcerpt(ticket) }}</p>
+                            </div>
+                            <div class="fs_ticket_meta">
+                                <span v-if="isWaitingOnCustomer(ticket)" class="fs_waiting_on_you">{{ $t('Waiting for your reply') }}</span>
+                                <span :class="['fs_status_badge', getStatusClass(ticket.status)]">
+                                    <span class="fs_status_dot"></span>
+                                    {{ appVars.ticket_statuses[ticket.status] || ticket.status }}
+                                </span>
+                                <span class="fs_ticket_date">{{ ticket.human_date }}</span>
+                            </div>
+                        </router-link>
+                    </li>
+                </ul>
+                <div v-else-if="!loading" class="fs_ticket_list_empty">
+                    <p class="fs_ticket_list_empty_title">{{ emptyState.title }}</p>
+                    <p v-if="emptyState.text" class="fs_ticket_list_empty_text">{{ emptyState.text }}</p>
+                    <el-button :class="emptyState.primary ? 'fs_create_ticket_btn' : 'fs_ticket_list_empty_action'"
+                               @click="emptyState.onClick">
+                        {{ emptyState.action }}
+                    </el-button>
+                </div>
+                <div v-if="loading && !first_loading" class="fs_ticket_list_spinner">
+                    <span class="fs_spinner" aria-hidden="true"></span>
+                </div>
             </div>
 
             <div
@@ -130,7 +141,7 @@
 </template>
 
 <script type="text/babel">
-import debounce from 'lodash/debounce'
+import { debounce } from 'lodash-es';
 import TicketFilters from "./_TicketFilter.vue";
 import Pagination from "./pieces/Pagination";
 
@@ -146,6 +157,7 @@ export default {
             tickets: [],
             filterType: 'all',
             loading: true,
+            first_loading: true,
             search: '',
             filters: {
                 product_id: ''
@@ -178,6 +190,53 @@ export default {
     computed: {
         totalPages() {
             return Math.ceil(this.pagination.total / this.pagination.per_page)
+        },
+        // What the empty list says depends on why it is empty, with a way back to tickets
+        emptyState() {
+            if (this.search) {
+                return {
+                    // translators: %s is what the customer searched for
+                    title: this.$t('No tickets match "%s"', this.search),
+                    text: this.$t('Check the spelling or try other words.'),
+                    action: this.$t('Clear search'),
+                    onClick: () => {
+                        this.search = '';
+                    }
+                };
+            }
+
+            if (this.filters.product_id) {
+                return {
+                    title: this.$t('No tickets for this product'),
+                    action: this.$t('Show all products'),
+                    onClick: () => {
+                        this.filters.product_id = '';
+                        this.pagination.current_page = 1;
+                        this.fetchTickets();
+                    }
+                };
+            }
+
+            if (this.filterType === 'open' || this.filterType === 'closed') {
+                return {
+                    title: this.filterType === 'open' ? this.$t('No open tickets') : this.$t('No closed tickets'),
+                    text: this.filterType === 'closed' ? this.$t('Tickets show up here once they are resolved.') : '',
+                    action: this.$t('View all tickets'),
+                    onClick: () => {
+                        this.filterType = 'all';
+                    }
+                };
+            }
+
+            return {
+                title: this.$t('You have not created any tickets yet'),
+                text: this.$t('Need help with something? Create a ticket and our team will get back to you.'),
+                action: this.$t('create_ticket_cta'),
+                primary: true,
+                onClick: () => {
+                    this.$router.push({name: 'create_ticket'});
+                }
+            };
         }
     },
     methods: {
@@ -200,7 +259,29 @@ export default {
                 })
                 .finally(() => {
                     this.loading = false;
+                    this.first_loading = false;
                 });
+        },
+        // A changed filter, sort or search (TicketFilters) starts again from the first page
+        refetchFromFirstPage() {
+            this.pagination.current_page = 1;
+            this.fetchTickets();
+        },
+        /**
+         * The support team replied last and the ticket is still open.
+         * Informational replies never set last_agent_response, so they don't count.
+         */
+        isWaitingOnCustomer(row) {
+            if (!row || row.status === 'closed' || !row.last_agent_response) {
+                return false;
+            }
+            // Both are "Y-m-d H:i:s" in site time, so they compare as strings.
+            return !row.last_customer_response || String(row.last_agent_response) > String(row.last_customer_response);
+        },
+        replyCountLabel(ticket) {
+            const count = parseInt(ticket.response_count);
+            // translators: %s: number of replies on the ticket
+            return this.$_n('%s reply', '%s replies', count);
         },
         getStatusClass(status) {
             return status.toLowerCase()
@@ -211,7 +292,9 @@ export default {
             if (!text) {
                 return '';
             }
-            return text.replace(/<\/?("[^"]*"|'[^']*'|[^>])*(>|$)/g, "");
+            // Drops the tags and decodes entities (&gt; shows as >). DOMParser runs no
+            // scripts and loads nothing, and the result is text-interpolated.
+            return new DOMParser().parseFromString(text, 'text/html').body.textContent || '';
         },
 
         handlePageChange(page) {

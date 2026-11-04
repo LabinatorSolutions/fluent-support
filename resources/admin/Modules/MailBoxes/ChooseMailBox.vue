@@ -16,7 +16,7 @@
                 </div>
             </div>
 
-            <div v-if="!fetching" class="fs_mailbox_grid">
+            <div v-if="!first_loading" class="fs_mailbox_grid" v-loading="fetching">
                 <div
                     v-for="box in mailboxes"
                     :key="box.id"
@@ -39,7 +39,7 @@
                                     params: { box_id: box.id },
                                 })"
                             >
-                                <img :src="appVars.asset_url + 'images/gear.svg'"/>
+                                <DynamicIcon name="Gear"/>
                             </el-button>
                             <el-dropdown
                                 @command="handleBoxCommand"
@@ -47,7 +47,7 @@
                                 trigger="click"
                             >
                                 <el-button class="fs_action_button" text>
-                                    <img :src="appVars.asset_url + 'images/more.svg'"/>
+                                    <DynamicIcon name="More"/>
                                 </el-button>
                                 <template #dropdown>
                                     <el-dropdown-menu class="fs_global_dropdown fs_table_more_actions_dropdown_menu">
@@ -102,8 +102,32 @@
                 </div>
             </div>
 
-            <div v-else class="fs_table_container fs_skeleton_loader">
-                <el-skeleton :rows="5" animated />
+            <div v-else class="fs_mailbox_grid">
+                <div v-for="n in 3" :key="n" class="fs_mailbox_card">
+                    <el-skeleton animated style="padding: 16px;">
+                        <template #template>
+                            <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+                                <el-skeleton-item variant="h3" style="width: 45%;" />
+                                <div style="display: flex; gap: 8px;">
+                                    <el-skeleton-item variant="rect" style="width: 32px; height: 32px;" />
+                                    <el-skeleton-item variant="rect" style="width: 32px; height: 32px;" />
+                                </div>
+                            </div>
+                            <el-skeleton-item variant="text" style="width: 20%; margin-top: 20px;" />
+                            <el-skeleton-item variant="text" style="width: 65%; margin-top: 6px;" />
+                            <div style="display: flex; gap: 24px; margin-top: 16px;">
+                                <div style="flex: 1;">
+                                    <el-skeleton-item variant="text" style="width: 40%;" />
+                                    <el-skeleton-item variant="text" style="width: 55%; margin-top: 6px;" />
+                                </div>
+                                <div style="flex: 1;">
+                                    <el-skeleton-item variant="text" style="width: 40%;" />
+                                    <el-skeleton-item variant="text" style="width: 25%; margin-top: 6px;" />
+                                </div>
+                            </div>
+                        </template>
+                    </el-skeleton>
+                </div>
             </div>
         </div>
 
@@ -172,7 +196,7 @@
                     <el-button class="fs_outline_btn" @click="create_modal = false">{{
                         $t("Cancel")
                     }}</el-button>
-                    <el-button class="fs_filled_btn" @click="createMailBox()">{{
+                    <el-button class="fs_filled_btn" v-loading="creating" :disabled="creating" @click="createMailBox()">{{
                         $t("Add Business Inbox")
                     }}</el-button>
                 </span>
@@ -249,16 +273,19 @@
 <script type="text/babel">
 import MoveTicket from "./MoveTicket";
 import NarrowPromo from "@/admin/Components/NarrowPromo.vue";
+import DynamicIcon from '@/admin/Components/Icons/DynamicIcon.vue';
 
 export default {
     name: "ChooseMailBox",
     components: {
+        DynamicIcon,
         MoveTicket,
         NarrowPromo,
     },
     data() {
         return {
             fetching: true,
+            first_loading: true,
             mailboxes: [],
             create_modal: false,
             new_business: {
@@ -318,6 +345,7 @@ export default {
                 })
                 .always(() => {
                     this.fetching = false;
+                    this.first_loading = false;
                 });
         },
         update_mailbox(mailboxes) {

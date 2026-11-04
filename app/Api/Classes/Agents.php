@@ -2,17 +2,13 @@
 
 namespace FluentSupport\App\Api\Classes;
 
-use FluentSupport\App\Http\Controllers\AuthController;
+use FluentSupport\App\Modules\Auth\AuthService;
 use FluentSupport\App\Models\Agent;
 
 /**
- *  Agent class for PHP API
+ * Agents PHP API.
  *
  * Example Usage: $agentsApi = FluentSupportApi('agents');
- *
- * @package FluentSupport\App\Api\Classes
- *
- * @version 1.0.0
  */
 class Agents
 {
@@ -32,7 +28,7 @@ class Agents
     }
 
     /**
-     * getAgents method will return a all available customers
+     * Paginated list of agents.
      *
      * @return object
      */
@@ -43,8 +39,6 @@ class Agents
     }
 
     /**
-     * getAgent method will return a specific agent by id
-     *
      * @param int $agentId
      * @return mixed
      */
@@ -58,8 +52,6 @@ class Agents
     }
 
     /**
-     * updateAgent method will update the specific agent by id
-     *
      * @param array $data
      * @param int $agentId
      * @return mixed
@@ -77,10 +69,7 @@ class Agents
     }
 
     /**
-     * createAgentWithOrWithoutWpUser method will create a new agent
-     * also it will create a wp user if you want to create one
-     * if you want to create a wp user too then the process will be 1st it will create a wp user
-     * after creating the wp user successfully it will create a fluent support agent
+     * Create an agent, optionally creating the WP user first.
      *
      * @param array $data
      * @param bool $createWpUser
@@ -98,9 +87,7 @@ class Agents
         }
 
         if (!username_exists($data['username'])) {
-            $authController = new AuthController();
-            $createdUser = $authController->createUser($data);
-            $authController->maybeUpdateUser($createdUser, $data);
+            $createdUser = AuthService::createUser($data);
             if ($createdUser) {
                 $data['user_id'] = $createdUser;
                 return Agent::create($data);
@@ -112,7 +99,6 @@ class Agents
     }
 
     /**
-     * deleteAgent method will delete agent by id
      * @param int $id
      */
     public function deleteAgent($id)

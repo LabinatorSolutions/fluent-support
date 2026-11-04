@@ -56,15 +56,8 @@ return function ($file) {
                 }
             }
 
-            /*
-             * The below schedule is powered by Action Scheduler by WooCommerce
-             * It will run every 30 minutes. Only schedule it while something is
-             * actually listening (currently only Fluent Support Pro's storage
-             * token refresh / email piping retry) — otherwise it fires with no
-             * callback to run. Any future free-tier listener added via
-             * add_action('fluent_support_half_hourly', ...) makes this schedule
-             * itself automatically, with no change needed here.
-             */
+            // Half-hourly Action Scheduler job. Only schedule it while something
+            // listens (currently only Pro), otherwise it fires with no callback.
             $hasListener = has_action('fluent_support_half_hourly');
             $nextRun     = as_next_scheduled_action('fluent_support_half_hourly', [], 'fluent-support');
 

@@ -66,14 +66,20 @@
                 </div>
             </template>
         </div>
-        <div v-else-if="loading_remote" style="width: 100%; height: 20px" v-loading="true"></div>
+        <!-- Placeholder fields (label and input) while the rendered fields load -->
+        <el-skeleton v-else-if="loading_remote" animated class="fs_portal_skeleton fs_custom_fields_loading" aria-hidden="true">
+            <template #template>
+                <div v-for="row in 2" :key="row" class="fs_skeleton_lines fs_skeleton_field">
+                    <el-skeleton-item variant="text" style="width: 120px;"/>
+                    <el-skeleton-item variant="rect" class="fs_skeleton_input"/>
+                </div>
+            </template>
+        </el-skeleton>
     </div>
 </template>
 
 <script type="text/babel">
-import isEmpty from 'lodash/isEmpty';
-import isArray from 'lodash/isArray';
-import each from 'lodash/each';
+import { each, isArray, isEmpty } from 'lodash-es';
 import Errors from '@/common/Errors';
 import Error from '@/common/Error';
 

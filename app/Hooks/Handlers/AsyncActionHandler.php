@@ -4,6 +4,7 @@ namespace FluentSupport\App\Hooks\Handlers;
 
 use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\Ticket;
+use FluentSupport\App\Services\Tickets\TicketService;
 
 class AsyncActionHandler
 {
@@ -13,8 +14,9 @@ class AsyncActionHandler
         $ticket = Ticket::find($ticketId);
         $assigner = Agent::find($assignerId);
 
-        if ($agent && $ticket) {
-            do_action('fluent_support/agent_assigned_to_ticket', $agent, $ticket, $assigner ?: $agent, $previousAgentId);
+        // Skip when the ticket moved on to someone else before the job ran.
+        if ($agent && $ticket && (int) $ticket->agent_id === (int) $agent->id) {
+            (new TicketService())->afterAgentAssigned($ticket, $assigner ?: $agent, $previousAgentId);
         }
     }
 }

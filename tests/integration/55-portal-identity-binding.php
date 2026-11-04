@@ -1,18 +1,11 @@
 <?php
 /**
  * Portal identity binding: a WordPress account reaches a customer record through
- * its user id and through nothing else.
+ * its user id and nothing else.
  *
- * WordPress lets any user change their own address with no verification through
- * the REST users endpoint, WP-CLI and most account pages, because the
- * confirmation flow runs only on wp-admin/profile.php. Resolving a customer by
- * that address therefore let a plain subscriber read, answer and close another
- * customer's private tickets, and writing their user id onto the matched row
- * made the takeover survive changing the address back.
- *
- * These cases reproduce that sequence with the routes the original report used:
- * an unlinked customer holding a private ticket, and a subscriber who takes
- * over the address.
+ * WordPress only confirms email changes on wp-admin/profile.php; the REST users
+ * endpoint, WP-CLI and most account pages don't. So an address match must never
+ * grant access to, or bind, an unlinked customer's private tickets.
  */
 
 use FluentSupport\App\Models\Customer;
@@ -55,8 +48,7 @@ return function () {
     $managerUserId  = 0;
 
     try {
-        // The victim exists only inside Fluent Support. No WordPress account
-        // holds this address, which is exactly what leaves it free to claim.
+        // No WordPress account holds this address, so it is free to claim.
         $victim = FsFactory::customer([
             'email'   => $victimEmail,
             'user_id' => null,
@@ -85,17 +77,12 @@ return function () {
 
         $victimSerial = (int) Ticket::find($victimTicket->id)->serial_number;
 
-        // Step 5 of the report: change only the subscriber's own address. No
-        // confirmation takes place, which is how the REST users endpoint, WP-CLI
-        // and account pages such as WooCommerce's all apply an email change.
+        // The subscriber changes their own address to the victim's, unconfirmed.
         wp_update_user(['ID' => $attackerUserId, 'user_email' => $victimEmail]);
 
         FsTest::case('an_unverified_self_service_email_change_does_not_move_the_customers_address', function () use (
             $becomeUser, $adminId, $owner, $ownerUserId, $marker
         ) {
-            // The account holder changing their own address, which is what the
-            // REST users endpoint and account pages such as WooCommerce's do.
-            // No confirmation takes place anywhere in that path.
             $becomeUser($ownerUserId);
 
             $movedEmail = $marker . '-bind-owner-moved@example.invalid';
@@ -151,19 +138,15 @@ return function () {
         ) {
             $becomeUser($attackerUserId);
 
-            // Reading alone never binds. The report made the takeover permanent
-            // by loading the portal page, which resolves the current user into a
-            // customer through exactly this payload, and the REST ticket-create
-            // route reaches the same call with forceCreate set.
+            // The portal page resolves the current user through this payload, and
+            // REST ticket-create reaches the same call with forceCreate set.
             $resolved = Customer::maybeCreateCustomer([
                 'user_id'         => $attackerUserId,
                 'email'           => $victimEmail,
                 'last_ip_address' => '127.0.0.1',
             ]);
 
-            // Refused the victim's row, the call falls through to creating a
-            // fresh empty one for this account. That row is a real fixture and
-            // has to be cleaned up like any other.
+            // Refused the victim's row, the call creates a new one. Clean it up.
             if ($resolved && (int) $resolved->id !== (int) $victim->id) {
                 FsFactory::adoptRestCustomer($resolved);
             }
@@ -214,8 +197,7 @@ return function () {
             FsTest::assertSame($adminEmail, (string) $stored->email,
                 'an administrator editing the account may move the address, since they can already edit the customer directly');
 
-            // The new address is authorised but still unproven, so links already
-            // sitting in the previous inbox have to stop working.
+            // The new address is authorised but unproven, so old inbox links must stop working.
             $hashAfter = (string) Ticket::find($ownerTicket->id)->hash;
 
             FsTest::assert($hashBefore !== '' && $hashAfter !== $hashBefore,
@@ -227,10 +209,7 @@ return function () {
         FsTest::case('an_actor_who_may_edit_the_account_moves_the_customers_address', function () use (
             $becomeUser, $adminId, $owner, $ownerUserId, $marker, &$managerUserId
         ) {
-            // Anyone who may edit the WordPress account may move the address
-            // Fluent Support writes to. This role holds edit_users and nothing
-            // else: no administrator rights and no Fluent Support permission,
-            // which is the shape WooCommerce's shop_manager has on a store.
+            // A role with edit_users and nothing else, like WooCommerce's shop_manager.
             add_role('fs_test_user_manager', 'FS Test User Manager', [
                 'read'       => true,
                 'edit_users' => true,
@@ -271,9 +250,7 @@ return function () {
         FsTest::case('an_actor_without_user_edit_rights_cannot_move_the_customers_address', function () use (
             $becomeUser, $adminId, $owner, $ownerUserId, $attackerUserId, $marker
         ) {
-            // wp_update_user() performs no capability check of its own, so this
-            // is the boundary: a plain subscriber reaching a user update through
-            // any route must not be able to redirect a support address.
+            // wp_update_user() has no capability check of its own, so the plugin must enforce one.
             $becomeUser($attackerUserId);
 
             FsTest::assert(!current_user_can('edit_user', $ownerUserId),
@@ -299,9 +276,8 @@ return function () {
                 'user_id' => null,
             ]);
 
-            // Registration is the one moment an address may be treated as
-            // belonging to the account: WordPress refuses an address another
-            // user already holds, and it mails the credentials to that inbox.
+            // Registration may adopt by address: WordPress rejects taken addresses
+            // and mails the credentials to that inbox.
             $adopteeUserId = $makeWpUser('bind-adoptee', $adopteeEmail);
 
             $stored = Customer::find($adoptee->id);

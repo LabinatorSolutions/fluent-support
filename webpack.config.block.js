@@ -1,30 +1,49 @@
 /**
  * Block editor webpack config.
  *
- * Extends @wordpress/scripts default config. CSS is extracted to a separate
- * file (assets/block-editor/css/fs_block.css) via MiniCSSExtractPlugin so
- * WordPress can register it as editor_style and inject it into the Block
- * Editor iframe (required for Block API v3 / iframe-mode compatibility).
+ * Extends @wordpress/scripts default config. Entries come from block.json, and
+ * the build writes block.json, index.js, index.css, index-rtl.css and
+ * index.asset.php side by side so register_block_type() can read them from
+ * assets/block-editor/customer-portal/.
  */
 const defaultConfig = require( '@wordpress/scripts/config/webpack.config' );
-const MiniCSSExtractPlugin = require( 'mini-css-extract-plugin' );
 const TerserPlugin = require( 'terser-webpack-plugin' );
 const webpack = require( 'webpack' );
 
-// Replace the default MiniCSSExtractPlugin instance with one that writes CSS
-// to ../css/ (relative to the JS output path) so JS and CSS land in separate
-// sibling directories under assets/block-editor/.
-const pluginsWithCssRedirect = defaultConfig.plugins.map( ( plugin ) => {
-	if ( plugin instanceof MiniCSSExtractPlugin ) {
-		return new MiniCSSExtractPlugin( { filename: '../css/[name].css' } );
+// @wordpress/scripts ships sass-loader 12, which only speaks Sass's legacy JS
+// API. Silence that deprecation until wp-scripts moves to the modern API.
+const rulesWithQuietSass = defaultConfig.module.rules.map( ( rule ) => {
+	if ( ! Array.isArray( rule.use ) ) {
+		return rule;
 	}
-	return plugin;
+	return {
+		...rule,
+		use: rule.use.map( ( use ) => {
+			if ( ! use.loader || ! use.loader.includes( 'sass-loader' ) ) {
+				return use;
+			}
+			return {
+				...use,
+				options: {
+					...use.options,
+					sassOptions: {
+						...use.options?.sassOptions,
+						silenceDeprecations: [ 'legacy-js-api' ],
+					},
+				},
+			};
+		} ),
+	};
 } );
 
 module.exports = {
 	...defaultConfig,
+	module: {
+		...defaultConfig.module,
+		rules: rulesWithQuietSass,
+	},
 	plugins: [
-		...pluginsWithCssRedirect,
+		...defaultConfig.plugins,
 		new webpack.BannerPlugin( {
 			banner: `@license React\nreact.production.min.js\n\nCopyright (c) Facebook, Inc. and its affiliates.\n\nThis source code is licensed under the MIT license found in the\nLICENSE file in the root directory of this source tree.`,
 			raw: false,

@@ -1,120 +1,47 @@
-<!--
- Composition API unchanged
-
- reason: Chart.js integration and lifecycle management.
- In options API, managing chart instance and cleanup is more cumbersome.
-
--->
 <template>
-    <canvas ref="chartCanvas"></canvas>
+    <e-chart :option="buildOption"></e-chart>
 </template>
 
 <script type="text/babel">
-import { defineComponent, ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
-import Chart from 'chart.js/auto'
+import EChart from './EChart.vue';
+import {categoryAxes, tooltipStyle, withOpacity} from './echarts';
 
-export default defineComponent({
+// Smooth line chart. chartData: { labels: [], datasets: [{ label, data, color, fill? }] }
+// A dataset with fill: true gets a faint area under its line.
+export default {
     name: 'LineChartBase',
+    components: {
+        EChart
+    },
     props: {
         chartData: {
             type: Object,
             required: true
-        },
-        chartOptions: {
-            type: Object,
-            required: false,
-            default: () => ({})
-        },
-        plugins: {
-            type: Array,
-            required: false,
-            default: () => []
-        },
+        }
     },
-    setup(props) {
-        const chartCanvas = ref(null)
-        let chartInstance = null
-        let isDestroyed = false
-
-        const createChart = () => {
-            if (isDestroyed || !chartCanvas.value) return
-
-            const ctx = chartCanvas.value.getContext('2d')
-            if (!ctx) return
-
-            // Destroy existing chart if any
-            if (chartInstance) {
-                try {
-                    chartInstance.destroy()
-                } catch (e) {
-                    // Ignore destruction errors
-                }
-                chartInstance = null
-            }
-
-            try {
-                chartInstance = new Chart(ctx, {
+    methods: {
+        buildOption() {
+            return {
+                animationDuration: 300,
+                grid: {left: 8, right: 16, top: 16, bottom: 8, containLabel: true},
+                tooltip: {
+                    trigger: 'axis',
+                    ...tooltipStyle()
+                },
+                ...categoryAxes(this.chartData.labels),
+                series: this.chartData.datasets.map(dataset => ({
                     type: 'line',
-                    data: props.chartData,
-                    options: {
-                        ...props.chartOptions,
-                        animation: {
-                            duration: 300
-                        },
-                        responsive: true,
-                        maintainAspectRatio: false
-                    },
-                    plugins: props.plugins
-                })
-            } catch (error) {
-                console.error('Chart creation error:', error)
-            }
-        }
-
-        const updateChart = () => {
-            if (isDestroyed || !chartInstance) return
-
-            try {
-                chartInstance.data = props.chartData
-                chartInstance.update('none')
-            } catch (error) {
-                // Chart may have been destroyed, try recreating
-                createChart()
-            }
-        }
-
-        watch(() => props.chartData, () => {
-            if (!isDestroyed) {
-                updateChart()
-            }
-        }, { deep: true })
-
-        onMounted(() => {
-            nextTick(() => {
-                createChart()
-            })
-        })
-
-        onBeforeUnmount(() => {
-            isDestroyed = true
-            if (chartInstance) {
-                try {
-                    // Stop animations first
-                    chartInstance.stop()
-                    // Clear the canvas
-                    chartInstance.clear()
-                    // Destroy the chart
-                    chartInstance.destroy()
-                } catch (error) {
-                    // Silently ignore cleanup errors
-                }
-                chartInstance = null
-            }
-        })
-
-        return {
-            chartCanvas
+                    name: dataset.label,
+                    data: dataset.data,
+                    smooth: true,
+                    showSymbol: false,
+                    symbolSize: 8,
+                    lineStyle: {width: 2.5, color: dataset.color},
+                    itemStyle: {color: dataset.color},
+                    areaStyle: dataset.fill ? {color: withOpacity(dataset.color, 0.12)} : undefined
+                }))
+            };
         }
     }
-})
+};
 </script>

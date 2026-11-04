@@ -3,20 +3,16 @@
 namespace FluentSupport\App\Modules;
 
 /**
- *  IntegrationSettingsModule class is responsible for getting/setting Settings related to integration
- * @package FluentSupport\App\Modules
- *
- * @version 1.0.0
+ * Registry of notification integrations and their settings.
  */
 class IntegrationSettingsModule
 {
     private static $integrations = [];
 
     /**
-     * getSettings will return settings for a specific integration key
-     * @param $integrationKey
-     * @param false $withFields
-     * @return false
+     * @param string $integrationKey
+     * @param bool $withFields
+     * @return mixed|false False when the integration isn't registered.
      */
     public static function getSettings($integrationKey, $withFields = false)
     {
@@ -32,10 +28,9 @@ class IntegrationSettingsModule
     }
 
     /**
-     * saveSettings save integration settings by integration_key
-     * @param $integrationKey
-     * @param $settings
-     * @return false || object
+     * @param string $integrationKey
+     * @param array $settings
+     * @return mixed|false False when the integration isn't registered.
      */
     public static function saveSettings($integrationKey, $settings)
     {
@@ -51,8 +46,7 @@ class IntegrationSettingsModule
     }
 
     /**
-     * addIntegration add integration classes into the self property list
-     * @param $class
+     * @param \FluentSupport\App\Services\Integrations\NotificationIntegrationBase $class
      */
     public static function addIntegration($class)
     {

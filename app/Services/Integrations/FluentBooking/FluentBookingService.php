@@ -2,6 +2,7 @@
 
 namespace FluentSupport\App\Services\Integrations\FluentBooking;
 
+use FluentSupport\App\Services\Tickets\ResponseService;
 use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Services\Helper;
@@ -11,8 +12,6 @@ class FluentBookingService
 {
 
     /**
-     * Registers WordPress hooks for the booking-scheduled and agent-response events.
-     *
      * @return void
      */
     public function init()
@@ -22,9 +21,7 @@ class FluentBookingService
     }
 
     /**
-     * Returns the plugin's active/configured state.
-     *
-     * Pass $eventTypes from a prior getEventTypes() call to avoid a redundant DB query.
+     * Pass $eventTypes if already loaded to skip the query.
      *
      * @param array|null $eventTypes
      * @return array
@@ -45,7 +42,7 @@ class FluentBookingService
     }
 
     /**
-     * Returns all active, publicly-accessible event types the current user can read, shaped for the frontend selector.
+     * Active event types whose landing page is public, for the frontend selector.
      *
      * @return array
      */
@@ -80,9 +77,8 @@ class FluentBookingService
     }
 
     /**
-     * Generates a tokenised booking URL and both HTML and plain-text email content.
-     *
-     * Each selected slot is validated against live availability before being embedded.
+     * Build the reply content (HTML and plain text) with a tokenised booking link.
+     * Selected slots are re-checked against live availability.
      *
      * @param Ticket $ticket
      * @param int    $eventId
@@ -132,7 +128,7 @@ class FluentBookingService
     }
 
     /**
-     * Fetches and formats available time slots for the given event and date range, grouped by day for the UI preview.
+     * Available slots for the event in the given range, grouped by day.
      *
      * @param int         $eventId
      * @param string      $range
@@ -180,9 +176,8 @@ class FluentBookingService
     }
 
     /**
-     * Returns upcoming and past bookings for the ticket's customer.
-     *
-     * When stored link tokens exist the query is scoped to those event types and date range.
+     * Upcoming and past bookings for the ticket's customer, scoped to the
+     * events and dates of the ticket's stored links when there are any.
      *
      * @param Ticket $ticket
      * @return array
@@ -245,9 +240,7 @@ class FluentBookingService
     }
 
     /**
-     * Hook: fluent_booking/after_booking_scheduled.
-     *
-     * Appends an internal timeline note when a customer books via a link sent from this ticket.
+     * Add a timeline note when the customer books through a link sent from the ticket.
      *
      * @param object $booking
      * @param object $calendarSlot
@@ -282,20 +275,14 @@ class FluentBookingService
             $content .= '<br><a href="' . esc_url($adminUrl) . '" target="_blank" rel="noopener">' . esc_html__('View booking', 'fluent-support') . '</a>';
         }
 
-        Conversation::create([
-            'ticket_id'         => $ticket->id,
-            'person_id'         => $personId,
-            'message_id'        => 'fluent_booking_scheduled_' . (int) $booking->id,
-            'conversation_type' => 'internal_info',
-            'source'            => 'fluent_booking',
-            'content'           => wp_kses_post($content)
+        ResponseService::addActivity($ticket, $personId, wp_kses_post($content), [
+            'message_id' => 'fluent_booking_scheduled_' . (int) $booking->id,
+            'source'     => 'fluent_booking',
         ]);
     }
 
     /**
-     * Hook: fluent_support/response_added_by_agent.
-     *
-     * Scans outgoing response content for tokenised booking URLs and persists any found as ticket meta.
+     * Store any tokenised booking links found in an agent response.
      *
      * @param object $response
      * @param Ticket $ticket
@@ -321,7 +308,7 @@ class FluentBookingService
     }
 
     /**
-     * Returns true when FluentBooking is installed.
+     * FluentBooking is installed and the integration is enabled.
      *
      * @return bool
      */
@@ -334,7 +321,7 @@ class FluentBookingService
     }
 
     /**
-     * Returns true when the event's landing-page sharing is enabled and includes this slot.
+     * The calendar's public landing page is enabled and includes this event.
      *
      * @param object $event
      * @return bool
@@ -355,12 +342,8 @@ class FluentBookingService
     }
 
     /**
-     * Builds the booking landing-page URL for an event.
-     *
-     * Uses Calendar::getLandingPageUrl() so FluentBooking owns its URL format (pretty-slug vs query-string).
-     * canUseEvent() has already confirmed the landing page is enabled, so $isForce = true skips the
-     * redundant settings re-check inside getLandingPageUrl().
-     * Appends customer name, email, and ticket ID when a ticket is provided.
+     * Landing-page URL for an event, prefilled with the customer and ticket ID when given.
+     * Forces getLandingPageUrl() because callers have already checked canUseEvent().
      *
      * @param object      $event
      * @param Ticket|null $ticket
@@ -392,7 +375,7 @@ class FluentBookingService
     }
 
     /**
-     * Appends fs_booking_link_token to a URL so a completed booking can be traced back to the originating ticket link.
+     * Add fs_booking_link_token so a booking can be traced back to the link that was sent.
      *
      * @param string $url
      * @param string $linkToken

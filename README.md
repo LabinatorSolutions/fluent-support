@@ -5,8 +5,9 @@ WordPress helpdesk and support ticket plugin.
 ## Development Setup
 
 ```bash
-npm install --legacy-peer-deps
+pnpm install
 ```
+`pnpm-lock.yaml` is the lockfile. The `npm run …` commands below work the same as `pnpm run …`.
 
 ### Dev mode (Vite HMR on port 5175)
 ```bash
@@ -59,12 +60,41 @@ assets/
     app.css                # Portal styles
   vendor.js                # Shared vendor libs (admin only)
   vendor-element-plus.js   # Element Plus (admin only)
-  block-editor/js/
-    fs_block.js            # Gutenberg block
+  block-editor/customer-portal/
+    block.json             # Gutenberg block metadata (registered from here)
+    index.js               # Gutenberg block editor script
 ```
 
 ### Vite dev/prod mode
 The `config/app.php` `env` key controls mode (`dev` or `production`). The `npm run dev` and `npm run build` scripts set this automatically via `vite-mode.js`. In dev mode, the `Vite.php` helper checks if the dev server is running and proxies assets from it; if the server is down, it falls back to built assets.
+
+## Translations
+
+Vue strings use `$t('text')`, `$_n('%s ticket', '%s tickets', n)` and `$_x('Open', 'Ticket status')` (helpers in `resources/admin/Bits/i18n.js` and `resources/customer_portal/i18n.js`). `i18n.node.js` collects the literal calls, plus the long texts in `resources/long_translations.json`, into the generated `app/Services/TranslationStrings.php`, which PHP localizes for each app and the POT picks up.
+
+```bash
+npm run translate         # regenerate TranslationStrings.php, then lint it
+npm run translate:check   # lint only
+```
+
+Run `translate` after adding or changing UI strings: the static test tier fails on a stale map. The lint also rejects split sentences, em/en dashes, template literals and placeholder strings without a `translators:` comment. See `docs/js-translations.md`.
+
+## Release Build
+
+```bash
+bash build.sh --node-build --rtl_css --with-pro   # full release; no flags = interactive
+```
+
+Requires node/pnpm, PHP, Composer and WP-CLI.
+
+1. Refreshes `TranslationStrings.php`, runs the translation lint, and regenerates `language/fluent-support.pot` (and Pro's) with `wp i18n make-pot`. `--skip-i18n` skips this step.
+2. With `--node-build`, cleans and rebuilds `assets/`. With `--rtl_css`, adds `-rtl.css` variants.
+3. Copies the files listed in `dev/whitelist.sh` to `builds/fluent-support/`. All release-only changes are made in that copy, so your working tree is never touched:
+   - forces `env=production` in `config/app.php`;
+   - dumps a `--no-dev --classmap-authoritative` Composer autoloader;
+   - adds `index.php` files;
+   - removes dotfiles and source maps.
+4. Writes `builds/fluent-support-<version>.zip` (and `builds/fluent-support-pro-<version>.zip` with `--with-pro`). The folder inside each zip stays unversioned.
 
 ## DB Changelog
 

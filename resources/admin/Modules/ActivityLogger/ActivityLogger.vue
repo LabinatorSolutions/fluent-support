@@ -16,8 +16,8 @@
                 v-loading="loading"
                 @click="fetchActivities()"
             >
-                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M2.59725 1.82476C3.95817 0.645503 5.69924 -0.0025049 7.5 7.27699e-06C11.6423 7.27699e-06 15 3.35776 15 7.50001C15 9.10201 14.4975 10.587 13.6425 11.805L11.25 7.50001H13.5C13.5001 6.32373 13.1544 5.17336 12.506 4.19195C11.8576 3.21054 10.9349 2.44138 9.85288 1.9801C8.77082 1.51882 7.57704 1.38578 6.41997 1.59752C5.2629 1.80926 4.19359 2.35643 3.345 3.17101L2.59725 1.82476ZM12.4028 13.1753C11.0418 14.3545 9.30076 15.0025 7.5 15C3.35775 15 0 11.6423 0 7.50001C0 5.89801 0.5025 4.41301 1.3575 3.19501L3.75 7.50001H1.5C1.4999 8.67629 1.84556 9.82665 2.494 10.8081C3.14244 11.7895 4.06505 12.5586 5.14712 13.0199C6.22918 13.4812 7.42296 13.6142 8.58003 13.4025C9.7371 13.1908 10.8064 12.6436 11.655 11.829L12.4028 13.1753Z" fill="#525866"/>
+                <svg class="fs_icon_secondary" width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2.59725 1.82476C3.95817 0.645503 5.69924 -0.0025049 7.5 7.27699e-06C11.6423 7.27699e-06 15 3.35776 15 7.50001C15 9.10201 14.4975 10.587 13.6425 11.805L11.25 7.50001H13.5C13.5001 6.32373 13.1544 5.17336 12.506 4.19195C11.8576 3.21054 10.9349 2.44138 9.85288 1.9801C8.77082 1.51882 7.57704 1.38578 6.41997 1.59752C5.2629 1.80926 4.19359 2.35643 3.345 3.17101L2.59725 1.82476ZM12.4028 13.1753C11.0418 14.3545 9.30076 15.0025 7.5 15C3.35775 15 0 11.6423 0 7.50001C0 5.89801 0.5025 4.41301 1.3575 3.19501L3.75 7.50001H1.5C1.4999 8.67629 1.84556 9.82665 2.494 10.8081C3.14244 11.7895 4.06505 12.5586 5.14712 13.0199C6.22918 13.4812 7.42296 13.6142 8.58003 13.4025C9.7371 13.1908 10.8064 12.6436 11.655 11.829L12.4028 13.1753Z" fill="currentColor"/>
                 </svg>
                 <span>{{ $t('Refresh') }}</span>
             </button>
@@ -31,7 +31,7 @@
                     <el-select
                         clearable
                         filterable
-                        @change="fetchActivities()"
+                        @change="filterActivities()"
                         v-model="filters.agent_id"
                         :placeholder="$t('All Support Staff')"
                         class="fs_select_field fs_staff_filter"
@@ -61,7 +61,7 @@
                                 :end-placeholder="$t('End')"
                                 :unlink-panels="true"
                                 :shortcuts="shortcuts"
-                                @change="fetchActivities"
+                                @change="filterActivities"
                                 value-format="YYYY-MM-DD"
                                 class="fs_date_range_picker"
                             >
@@ -76,17 +76,30 @@
                         @click="showSettingsModal = true"
                         class="fs_settings_button"
                     >
-                        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M3.26954 5.72492C3.38204 5.48742 3.51329 5.26242 3.66329 5.04367L3.63829 3.41867C3.63829 3.26867 3.70079 3.12492 3.81954 3.02492C4.40079 2.53742 5.06329 2.14367 5.79454 1.88117C5.93829 1.83117 6.09454 1.84367 6.21954 1.92492L7.61329 2.76242C7.87579 2.74367 8.13829 2.74367 8.40079 2.76242L9.79454 1.92492C9.92579 1.84992 10.082 1.83117 10.2258 1.88117C10.9383 2.13742 11.607 2.51867 12.2008 3.01867C12.3133 3.11242 12.382 3.26242 12.3758 3.41242L12.3508 5.03742C12.5008 5.25617 12.632 5.48117 12.7445 5.71867L14.1633 6.50617C14.2945 6.58117 14.3883 6.70617 14.4133 6.85617C14.5445 7.59992 14.5508 8.37492 14.4133 9.13117C14.3883 9.28117 14.2945 9.40617 14.1633 9.48117L12.7445 10.2687C12.632 10.5062 12.5008 10.7312 12.3508 10.9499L12.3758 12.5749C12.3758 12.7249 12.3133 12.8687 12.1945 12.9687C11.6133 13.4562 10.9508 13.8499 10.2195 14.1124C10.0758 14.1624 9.91954 14.1499 9.79454 14.0687L8.40079 13.2312C8.13829 13.2499 7.87579 13.2499 7.61329 13.2312L6.21954 14.0687C6.08829 14.1437 5.93204 14.1624 5.78829 14.1124C5.07579 13.8562 4.40704 13.4749 3.81329 12.9749C3.70079 12.8812 3.63204 12.7312 3.63829 12.5812L3.66329 10.9562C3.51329 10.7374 3.38204 10.5124 3.26954 10.2749L1.85079 9.48742C1.71954 9.41242 1.62579 9.28742 1.60079 9.13742C1.46954 8.39367 1.46329 7.61867 1.60079 6.86242C1.62579 6.71242 1.71954 6.58742 1.85079 6.51242L3.26954 5.72492Z" stroke="#525866" stroke-width="1.2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M8.00073 10.9999C9.65759 10.9999 11.0007 9.65679 11.0007 7.99994C11.0007 6.34308 9.65759 4.99994 8.00073 4.99994C6.34388 4.99994 5.00073 6.34308 5.00073 7.99994C5.00073 9.65679 6.34388 10.9999 8.00073 10.9999Z" stroke="#525866" stroke-width="1.2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        <svg class="fs_icon_secondary" width="15" height="15" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3.26954 5.72492C3.38204 5.48742 3.51329 5.26242 3.66329 5.04367L3.63829 3.41867C3.63829 3.26867 3.70079 3.12492 3.81954 3.02492C4.40079 2.53742 5.06329 2.14367 5.79454 1.88117C5.93829 1.83117 6.09454 1.84367 6.21954 1.92492L7.61329 2.76242C7.87579 2.74367 8.13829 2.74367 8.40079 2.76242L9.79454 1.92492C9.92579 1.84992 10.082 1.83117 10.2258 1.88117C10.9383 2.13742 11.607 2.51867 12.2008 3.01867C12.3133 3.11242 12.382 3.26242 12.3758 3.41242L12.3508 5.03742C12.5008 5.25617 12.632 5.48117 12.7445 5.71867L14.1633 6.50617C14.2945 6.58117 14.3883 6.70617 14.4133 6.85617C14.5445 7.59992 14.5508 8.37492 14.4133 9.13117C14.3883 9.28117 14.2945 9.40617 14.1633 9.48117L12.7445 10.2687C12.632 10.5062 12.5008 10.7312 12.3508 10.9499L12.3758 12.5749C12.3758 12.7249 12.3133 12.8687 12.1945 12.9687C11.6133 13.4562 10.9508 13.8499 10.2195 14.1124C10.0758 14.1624 9.91954 14.1499 9.79454 14.0687L8.40079 13.2312C8.13829 13.2499 7.87579 13.2499 7.61329 13.2312L6.21954 14.0687C6.08829 14.1437 5.93204 14.1624 5.78829 14.1124C5.07579 13.8562 4.40704 13.4749 3.81329 12.9749C3.70079 12.8812 3.63204 12.7312 3.63829 12.5812L3.66329 10.9562C3.51329 10.7374 3.38204 10.5124 3.26954 10.2749L1.85079 9.48742C1.71954 9.41242 1.62579 9.28742 1.60079 9.13742C1.46954 8.39367 1.46329 7.61867 1.60079 6.86242C1.62579 6.71242 1.71954 6.58742 1.85079 6.51242L3.26954 5.72492Z" stroke="currentColor" stroke-width="1.2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M8.00073 10.9999C9.65759 10.9999 11.0007 9.65679 11.0007 7.99994C11.0007 6.34308 9.65759 4.99994 8.00073 4.99994C6.34388 4.99994 5.00073 6.34308 5.00073 7.99994C5.00073 9.65679 6.34388 10.9999 8.00073 10.9999Z" stroke="currentColor" stroke-width="1.2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </button>
                 </div>
             </div>
         </div>
         <!-- Activity Timeline -->
-        <div v-if="activities">
-            <div class="fs_activity_timeline_container" v-if="!loading">
+        <div v-if="first_loading" class="fs_activity_timeline_container" aria-busy="true">
+            <el-skeleton animated>
+                <template #template>
+                    <div v-for="n in 6" :key="n" style="display: flex; gap: 12px; padding: 12px 0;">
+                        <el-skeleton-item variant="circle" style="width: 32px; height: 32px; flex-shrink: 0;" />
+                        <div style="flex: 1;">
+                            <el-skeleton-item variant="text" :style="{ width: (n % 2 ? 70 : 55) + '%' }" />
+                            <el-skeleton-item variant="text" style="width: 20%; margin-top: 8px;" />
+                        </div>
+                    </div>
+                </template>
+            </el-skeleton>
+        </div>
+        <div v-else-if="activities">
+            <div class="fs_activity_timeline_container" v-loading="loading">
                 <div v-if="activities.length > 0" class="fs_activity_timeline">
                     <div
                         v-for="activity in activities"
@@ -127,13 +140,9 @@
                     />
                 </div>
             </div>
-            
-            <div v-if="loading" class="fs_loading_skeleton">
-                <el-skeleton :rows="5" animated />
-            </div>
         </div>
 
-        <div class="fs_no_activities" v-if="activities.length < 1">
+        <div class="fs_no_activities" v-if="!first_loading && activities.length < 1">
             <img :src="appVars.asset_url + 'images/empty.svg'" alt="">
             <p>{{ $t('No Results Found') }}</p>
         </div>
@@ -161,11 +170,11 @@ import Pagination from "../../Pieces/Pagination";
 import ActivitySettings from "./_ActivitySettings";
 import dayjs from "dayjs";
 import DOMPurify from 'dompurify';
-import { stripReservedElementPlusClasses } from '@/common/domPurifyGuards';
+import { applyPurifyGuards } from '@/common/domPurifyGuards';
 import {shortcuts} from "../Reports/Utils/dateShortCuts";
 import { formatDateRangeForDisplay } from "../Reports/Utils/reportHelpers";
 
-stripReservedElementPlusClasses(DOMPurify);
+applyPurifyGuards(DOMPurify);
 
 export default {
     name: "ActivityLogger",
@@ -178,6 +187,7 @@ export default {
         return {
             activities: [],
             loading: false,
+            first_loading: true,
             me: this.appVars.me,
             showSettingsModal: false,
             pagination: {
@@ -220,7 +230,12 @@ export default {
                 })
                 .always(() => {
                     this.loading = false;
+                    this.first_loading = false;
                 });
+        },
+        filterActivities() {
+            this.pagination.current_page = 1;
+            this.fetchActivities();
         },
         handleClick(activity, $event) {
             const route = $event.target.getAttribute("href");
@@ -229,12 +244,12 @@ export default {
                 return false;
             }
 
-            const routerData = {
-                name: "view_ticket",
-                params: { ticket_id: activity.object_id },
-            };
+            // Workflow runs (object_type workflow) link the workflow and carry the ticket id on the link.
+            const routerData = route === '#edit_workflow'
+                ? { name: "edit-workflow", params: { workflow_id: activity.object_id } }
+                : { name: "view_ticket", params: { ticket_id: $event.target.dataset.ticketId || activity.object_id } };
 
-            if (this.settings.open_link_in_new_tab == 'yes' && route == '#view_ticket') {
+            if (this.settings.open_link_in_new_tab == 'yes' && (route == '#view_ticket' || route == '#edit_workflow')) {
                 const routeData = this.$router.resolve(routerData);
 
                 window.open(routeData.href, '_blank');
@@ -243,6 +258,9 @@ export default {
             }
         },
         getActivityIcon(activity) {
+            if (this.isWorkflowRun(activity)) {
+                return 'M13 10V3L4 14h7v7l9-11h-7z';
+            }
             const description = activity.description.toLowerCase();
             if (description.includes('created')) {
                 return 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z';
@@ -263,7 +281,13 @@ export default {
             }
             return 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z';
         },
+        isWorkflowRun(activity) {
+            return activity.event_type === 'fluent_support/workflow_ran' || activity.event_type === 'fluent_support/workflow_failed';
+        },
         getActivityIconClass(activity) {
+            if (this.isWorkflowRun(activity)) {
+                return activity.event_type === 'fluent_support/workflow_failed' ? 'fs_icon_workflow fs_icon_failed' : 'fs_icon_workflow';
+            }
             const description = activity.description.toLowerCase();
             if (description.includes('created')) return 'fs_icon_created';
             if (description.includes('response') && description.includes('customer')) return 'fs_icon_customer';
@@ -279,16 +303,9 @@ export default {
             if (!description) return '';
             return DOMPurify.sanitize(description);
         },
+        // created_at is site time ("Y-m-d H:i:s"); new Date() can't parse that in Safari.
         formatActivityTime(createdAt) {
-            const date = new Date(createdAt);
-            return date.toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-                hour: 'numeric',
-                minute: '2-digit',
-                hour12: true
-            });
+            return this.dateTimeFormat(createdAt, 'MMM D, YYYY, h:mm A') || '';
         },
     },
     mounted() {

@@ -7,7 +7,7 @@
                 </div>
             </div>
             <template v-if="has_pro">
-                <div v-if="!loading" class="fs_table_container">
+                <div class="fs_table_container">
                     <div class="fs_custom_table_field_header fs_table_header">
                         <div class="fs_custom_field_actions">
                             <el-button
@@ -20,7 +20,8 @@
                             </el-button>
                         </div>
                     </div>
-                    <div class="fs_table_wrapper">
+                    <TableSkeleton v-if="first_loading" :rows="5" :columns="['32px', 2, 1.5, 1, '120px']" />
+                    <div v-else class="fs_table_wrapper" v-loading="loading">
                         <div class="fs_custom_field_table_header_row">
                             <div class="fs_field_label_header">
                                 {{ $t("Label") }}
@@ -36,7 +37,7 @@
                             </div>
                         </div>
                         <draggable
-                            v-model="fields"
+                            v-model="pagedFields"
                             ghost-class="ghost"
                             item-key="slug"
                             @end="saveFields"
@@ -48,7 +49,7 @@
                                     class="fs_custom_field_row"
                                 >
                                     <span class="fs_custom_drag_svg">
-                                        <svg
+                                        <svg class="fs_icon_secondary"
                                             width="24"
                                             height="24"
                                             viewBox="0 0 24 24"
@@ -65,7 +66,7 @@
                                             />
                                             <path
                                                 d="M9.375 8.25C9.99632 8.25 10.5 7.74632 10.5 7.125C10.5 6.50368 9.99632 6 9.375 6C8.75368 6 8.25 6.50368 8.25 7.125C8.25 7.74632 8.75368 8.25 9.375 8.25ZM9.375 13.125C9.99632 13.125 10.5 12.6213 10.5 12C10.5 11.3787 9.99632 10.875 9.375 10.875C8.75368 10.875 8.25 11.3787 8.25 12C8.25 12.6213 8.75368 13.125 9.375 13.125ZM10.5 16.875C10.5 17.4963 9.99632 18 9.375 18C8.75368 18 8.25 17.4963 8.25 16.875C8.25 16.2537 8.75368 15.75 9.375 15.75C9.99632 15.75 10.5 16.2537 10.5 16.875ZM14.625 8.25C15.2463 8.25 15.75 7.74632 15.75 7.125C15.75 6.50368 15.2463 6 14.625 6C14.0037 6 13.5 6.50368 13.5 7.125C13.5 7.74632 14.0037 8.25 14.625 8.25ZM15.75 12C15.75 12.6213 15.2463 13.125 14.625 13.125C14.0037 13.125 13.5 12.6213 13.5 12C13.5 11.3787 14.0037 10.875 14.625 10.875C15.2463 10.875 15.75 11.3787 15.75 12ZM14.625 18C15.2463 18 15.75 17.4963 15.75 16.875C15.75 16.2537 15.2463 15.75 14.625 15.75C14.0037 15.75 13.5 16.2537 13.5 16.875C13.5 17.4963 14.0037 18 14.625 18Z"
-                                                fill="#525866"
+                                                fill="currentColor"
                                             />
                                         </svg>
                                     </span>
@@ -105,7 +106,7 @@
                                                         class="fs_action_button"
                                                         @click="
                                                             updateFieldModal(
-                                                                index
+                                                                pageStart + index
                                                             )
                                                         "
                                                         text
@@ -116,10 +117,10 @@
                                                 <TableMoreActions
                                                     :scope="{
                                                         row: element,
-                                                        $index: index,
+                                                        $index: pageStart + index,
                                                     }"
                                                     :fetching="loading"
-                                                    @delete="deleteField(index)"
+                                                    @delete="deleteField(pageStart + index)"
                                                     :delete-warning="
                                                         $t(
                                                             'Delete custom field'
@@ -133,7 +134,7 @@
                             </template>
                         </draggable>
                     </div>
-                    <div class="fs_pagination_wrapper" v-if="fields.length">
+                    <div class="fs_pagination_wrapper" v-if="!first_loading && fields.length">
                         <span class="fs_pagination_left">
                             <p>
                                 Page {{ pagination.current_page }} of
@@ -144,14 +145,12 @@
                                 }}
                             </p>
                             <pagination
-                                @fetch="fetchFields()"
                                 :pagination="pagination"
                                 layout="sizes"
                             />
                         </span>
                         <span class="fs_pagination_right">
                             <pagination
-                                @fetch="fetchFields()"
                                 :pagination="pagination"
                                 :background="true"
                                 layout="prev, pager, next"
@@ -159,17 +158,40 @@
                         </span>
                     </div>
                 </div>
-                <div class="fs_box_body fs_skeleton_loader" v-else>
-                    <el-skeleton class="fs_box_wrapper" :rows="5" animated />
-                </div>
             </template>
-            <NarrowPromo
-                v-else
-                :heading="$t('tk_data_collect_using_customfield')"
-                :description="$t('pro_promo')"
-                :button-text="$t('Upgrade To Pro')"
-                utm-content="feature_lock_custom_fields"
-            />
+            <div v-else class="fs_box_body">
+                <ProShowcase
+                    :feature="$t('Custom fields')"
+                    :heading="$t('Collect the details you need when a ticket is opened')"
+                    :description="$t('custom_fields_promo_description')"
+                    :specifics="promoSpecifics"
+                    utm-content="feature_lock_custom_fields"
+                    docs-url="https://docs.fluentsupport.com/conditional-custom-fields"
+                >
+                    <template #preview>
+                        <div class="fs_pro_preview">
+                            <div class="fs_pro_preview_card fs_pro_preview_fields">
+                                <div class="fs_pro_preview_title">
+                                    <span class="fs_pro_preview_checkbox"></span>
+                                    {{ $t('Ticket form') }}
+                                </div>
+                                <div class="fs_pro_preview_row fs_pro_preview_reveal" style="--fs-row-index: 0">
+                                    <span class="fs_pro_preview_row_label">{{ $t('Order number') }}</span>
+                                    <span class="fs_pro_preview_row_value">#48213</span>
+                                </div>
+                                <div class="fs_pro_preview_row fs_pro_preview_reveal" style="--fs-row-index: 1">
+                                    <span class="fs_pro_preview_row_label">{{ $t('Website') }}</span>
+                                    <span class="fs_pro_preview_row_value">example.com</span>
+                                </div>
+                                <div class="fs_pro_preview_row fs_pro_preview_row_focal fs_pro_preview_reveal" style="--fs-row-index: 2">
+                                    <span class="fs_pro_preview_row_label">{{ $t('Plan') }}</span>
+                                    <span class="fs_pro_preview_chip fs_pro_preview_chip_purple fs_pro_preview_chip_plain">{{ $t('Agency') }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </ProShowcase>
+            </div>
         </div>
         <el-dialog
             :title="$t('Add New Custom Field')"
@@ -233,7 +255,8 @@ import CustomFieldForm from "./_CustomFieldForm";
 import TableMoreActions from "@/admin/Components/TableMoreActions.vue";
 import Pagination from "../../Pieces/Pagination";
 import TableEmptyStateImage from "@/admin/Components/TableEmptyStateImage.vue";
-import NarrowPromo from "@/admin/Components/NarrowPromo.vue";
+import ProShowcase from "@/admin/Components/ProShowcase.vue";
+import TableSkeleton from "@/admin/Components/TableSkeleton.vue";
 import draggable from "vuedraggable";
 
 export default {
@@ -243,13 +266,15 @@ export default {
         TableMoreActions,
         Pagination,
         TableEmptyStateImage,
-        NarrowPromo,
+        ProShowcase,
+        TableSkeleton,
         draggable,
     },
     data() {
         return {
             fields: [],
             loading: false,
+            first_loading: true,
             new_item: {},
             field_types: {},
             addFieldVisible: false,
@@ -266,6 +291,38 @@ export default {
         this.$setTitle(this.$t("Custom Ticket Fields"));
         if (this.has_pro) {
             this.fetchFields();
+        }
+    },
+    computed: {
+        // The API returns every field, so the pager only slices the list on screen.
+        pageStart() {
+            return (this.pagination.current_page - 1) * this.pagination.per_page;
+        },
+        pagedFields: {
+            get() {
+                return this.fields.slice(this.pageStart, this.pageStart + this.pagination.per_page);
+            },
+            set(rows) {
+                const fields = [...this.fields];
+                fields.splice(this.pageStart, rows.length, ...rows);
+                this.fields = fields;
+            }
+        },
+        promoSpecifics() {
+            return [
+                this.$t('Add your own fields to the ticket form'),
+                this.$t('Pick the field type that fits the answer'),
+                this.$t('See what customers entered on every ticket')
+            ];
+        }
+    },
+    watch: {
+        'fields.length'(total) {
+            this.pagination.total = total;
+            const lastPage = Math.max(1, Math.ceil(total / this.pagination.per_page));
+            if (this.pagination.current_page > lastPage) {
+                this.pagination.current_page = lastPage;
+            }
         }
     },
     methods: {
@@ -287,6 +344,9 @@ export default {
                 .catch((error) => {
                     this.$handleError(error);
                     this.loading = false;
+                })
+                .always(() => {
+                    this.first_loading = false;
                 });
         },
         saveFields() {
@@ -313,6 +373,8 @@ export default {
                 return false;
             }
             this.fields.push(this.new_item);
+            // Show the page the new field landed on.
+            this.pagination.current_page = Math.ceil(this.fields.length / this.pagination.per_page);
             this.addFieldVisible = false;
             this.new_item = {};
             this.saveFields();

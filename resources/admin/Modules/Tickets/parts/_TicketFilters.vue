@@ -1,98 +1,96 @@
 <template>
     <div class="fs_custom_filter_container">
-        <el-tooltip effect="dark" :content="$t('Filter')" placement="top" trigger="hover">
-            <span>
-                <el-popover
-                    placement="bottom-start"
-                    width="600"
-                    v-model:visible="filterPopoverVisible"
-                    trigger="manual"
-                    popper-class="fs_filter_dropdown"
-                >
-                    <div class="fs_filter_panels">
-                        <!-- Left Panel - Filter Categories (shown when no category selected) -->
-                        <div class="fs_filter_left_panel" v-if="!selectedCategory">
-                            <div class="fs_filter_categories">
-                                <div
-                                    v-for="category in filteredCategories"
-                                    :key="category.value"
-                                    @click="selectCategory(category)"
-                                    class="fs_filter_category"
-                                >
-                                    <IconPack :iconKey="category.icon" :width="20" :height="20" class="fs_category_icon" />
-                                    {{ category.label }}
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Right Panel - Filter Options (shown when category selected) -->
-                        <div class="fs_filter_right_panel" v-if="selectedCategory">
-                            <div class="fs_filter_header">
-                                <el-button
-                                    @click="goBackToCategories"
-                                    text
-                                    class="fs_back_button"
-                                >
-                                    <IconPack iconKey="backIcon" :width="18" :height="18" />
-                                </el-button>
-                                <span class="fs_category_title">{{ selectedCategory.label }}</span>
-                            </div>
-                            <div class="fs_filter_search fs_text_input" v-if="selectedCategory.options.length > 6">
-                                <el-input
-                                    v-model="optionSearchQuery"
-                                    :placeholder="$t('Search') + '...'"
-                                    clearable
-                                    size="small"
-                                />
-                            </div>
-                            <div class="fs_filter_options">
-                                <!-- Multi-select options -->
-                                <template v-if="selectedCategory.isMultiple">
-                                    <div
-                                        v-for="option in filteredOptions"
-                                        :key="option.value"
-                                        @click="toggleMultiOption(option)"
-                                        class="fs_filter_option"
-                                    >
-                                        <el-checkbox
-                                            :model-value="isOptionSelected(option)"
-                                            class="fs_option_checkbox"
-                                        />
-                                        {{ option.label }}
-                                    </div>
-                                </template>
-
-                                <!-- Single-select options -->
-                                <template v-else>
-                                    <div
-                                        v-for="option in filteredOptions"
-                                        :key="option.value"
-                                        @click="selectSingleOption(option)"
-                                        class="fs_filter_option"
-                                    >
-                                        <el-radio
-                                            :model-value="isSingleOptionSelected(option)"
-                                            class="fs_option_radio"
-                                        />
-                                        {{ option.label }}
-                                    </div>
-                                </template>
+        <span v-tip="$t('Filter')">
+            <el-popover
+                placement="bottom-start"
+                width="600"
+                v-model:visible="filterPopoverVisible"
+                trigger="manual"
+                popper-class="fs_filter_dropdown"
+            >
+                <div class="fs_filter_panels">
+                    <!-- Left Panel - Filter Categories (shown when no category selected) -->
+                    <div class="fs_filter_left_panel" v-if="!selectedCategory">
+                        <div class="fs_filter_categories">
+                            <div
+                                v-for="category in filteredCategories"
+                                :key="category.value"
+                                @click="selectCategory(category)"
+                                class="fs_filter_category"
+                            >
+                                <IconPack :iconKey="category.icon" :width="20" :height="20" class="fs_category_icon" />
+                                {{ category.label }}
                             </div>
                         </div>
                     </div>
 
-                    <template #reference>
-                        <el-button
-                            @click="filterPopoverVisible = !filterPopoverVisible"
-                            class="fs_outline_btn"
-                            :disabled="disabled"
-                        >
-                            <IconPack iconKey="filter" :width="20" :height="20" />
-                        </el-button>
-                    </template>
-                </el-popover>
-            </span>
-        </el-tooltip>
+                    <!-- Right Panel - Filter Options (shown when category selected) -->
+                    <div class="fs_filter_right_panel" v-if="selectedCategory">
+                        <div class="fs_filter_header">
+                            <el-button
+                                @click="goBackToCategories"
+                                text
+                                class="fs_back_button"
+                            >
+                                <IconPack iconKey="backIcon" :width="18" :height="18" />
+                            </el-button>
+                            <span class="fs_category_title">{{ selectedCategory.label }}</span>
+                        </div>
+                        <div class="fs_filter_search fs_text_input" v-if="selectedCategory.options.length > 6">
+                            <el-input
+                                v-model="optionSearchQuery"
+                                :placeholder="$t('Search...')"
+                                clearable
+                                size="small"
+                            />
+                        </div>
+                        <div class="fs_filter_options">
+                            <!-- Multi-select options -->
+                            <template v-if="selectedCategory.isMultiple">
+                                <div
+                                    v-for="option in filteredOptions"
+                                    :key="option.value"
+                                    @click="toggleMultiOption(option)"
+                                    class="fs_filter_option"
+                                >
+                                    <el-checkbox
+                                        :model-value="isOptionSelected(option)"
+                                        class="fs_option_checkbox"
+                                    />
+                                    {{ option.label }}
+                                </div>
+                            </template>
+
+                            <!-- Single-select options -->
+                            <template v-else>
+                                <div
+                                    v-for="option in filteredOptions"
+                                    :key="option.value"
+                                    @click="selectSingleOption(option)"
+                                    class="fs_filter_option"
+                                >
+                                    <el-radio
+                                        :model-value="isSingleOptionSelected(option)"
+                                        class="fs_option_radio"
+                                    />
+                                    {{ option.label }}
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+                <template #reference>
+                    <el-button
+                        @click="filterPopoverVisible = !filterPopoverVisible"
+                        class="fs_outline_btn"
+                        :disabled="disabled"
+                    >
+                        <IconPack iconKey="filter" :width="20" :height="20" />
+                    </el-button>
+                </template>
+            </el-popover>
+        </span>
 
     </div>
 </template>

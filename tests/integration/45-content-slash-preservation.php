@@ -2,18 +2,10 @@
 /**
  * Literal backslashes must survive the write path byte for byte.
  *
- * Request input is unslashed exactly once at the boundary — the WPFluent
- * Request cleaner for web requests, WP core for REST params — and API, MCP and
- * webhook callers hand over decoded JSON that was never slashed. The write
- * services must therefore sanitize only. A second wp_unslash() silently eats
- * Windows paths, regexes, escaped quotes and UNC paths out of ticket bodies and
- * agent replies: the row is still written, the request still returns 200, and
- * the loss is visible only to the person reading the ticket afterwards.
- *
- * That is precisely the invariant a framework or WP-core bump can break without
- * anything erroring, so it is asserted byte for byte instead of with a
- * substring probe. If the boundary ever starts handing these services slashed
- * input again, this goes red here rather than in a support inbox.
+ * Input is unslashed once at the boundary (WPFluent Request for web, WP core
+ * for REST), and API/MCP/webhook callers pass JSON that was never slashed. The
+ * write services must only sanitize; a second wp_unslash() silently strips
+ * paths, regexes and escaped quotes from ticket bodies and replies.
  */
 
 use FluentSupport\App\Models\Conversation;
@@ -55,13 +47,10 @@ return function () {
             return;
         }
 
-        // Byte for byte: ResponseService::createResponse() sanitizes, it does
-        // not unslash. Anything else here is content loss.
         FsTest::assertSame($content, (string) $stored->content,
             'fs_conversations.content must be exactly what was posted');
 
-        // content_hash is derived from the same string, so a mangled body would
-        // also break reply de-duplication on the email-piping path.
+        // A mangled body would also break reply de-duplication on email piping.
         FsTest::assertSame(md5($content), (string) $stored->content_hash,
             'fs_conversations.content_hash must be md5 of the stored content');
 
@@ -86,8 +75,7 @@ return function () {
             ],
         ]);
 
-        // Adopt before asserting — a row written by a request that then errors
-        // must still be registered for exact-ID cleanup.
+        // Adopt before asserting so a write that then errors is still cleaned up.
         foreach (Ticket::where('title', 'LIKE', '%' . $marker . '%')->get() as $persisted) {
             FsFactory::adoptRestTicket($persisted);
         }
@@ -106,8 +94,6 @@ return function () {
             return;
         }
 
-        // TicketService::createTicket() sanitizes title and content; neither
-        // may unslash.
         FsTest::assertSame($title, (string) $stored->title,
             'fs_tickets.title must be exactly what was posted');
         FsTest::assertSame($content, (string) $stored->content,

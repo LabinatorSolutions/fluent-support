@@ -2,15 +2,14 @@
 /**
  * Fluent Support integration runner.
  *
- * Every tests/integration/*.php file must return one closure. The closure
- * registers/runs its own FsTest::case() calls. Files are loaded in sorted
- * order, the administrator identity is restored before each suite, mail is
- * intercepted for the entire process, and exact-ID factory cleanup always
- * runs in finally.
+ * Each tests/integration/*.php file returns one closure that runs its own
+ * FsTest::case() calls. Files run in sorted order as the administrator, with
+ * mail intercepted and factory cleanup in finally.
  */
 
 require_once dirname(__DIR__) . '/lib/harness.php';
 require_once dirname(__DIR__) . '/lib/factory.php';
+require_once dirname(__DIR__) . '/lib/contract.php';
 
 FsTest::boot();
 $adminId = get_current_user_id();
@@ -59,11 +58,8 @@ WP_CLI::log(sprintf(
     $cleared
 ));
 
-/*
- * A shutdown backstop covers fatal errors outside FsTest::case(). The normal
- * finally path remains authoritative because it can convert cleanup exceptions
- * into an ordinary test failure with a useful summary.
- */
+// Backstop for fatals outside FsTest::case(). The finally block below is the
+// primary cleanup path because it can report cleanup errors as a test failure.
 register_shutdown_function(function () use ($adminId) {
     wp_set_current_user($adminId);
     \FluentSupport\App\Modules\PermissionManager::currentUserPermissions(false);
@@ -105,7 +101,7 @@ try {
 
     try {
         FsFactory::cleanup();
-        // A second call is intentional: idempotence is part of the contract.
+        // Called twice on purpose: cleanup must be idempotent.
         FsFactory::cleanup();
     } catch (\Throwable $e) {
         $cleanupFailure = $e;

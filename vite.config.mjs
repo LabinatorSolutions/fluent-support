@@ -6,6 +6,8 @@ import Components from "unplugin-vue-components/vite";
 import {ElementPlusResolver} from "unplugin-vue-components/resolvers";
 import path from "path";
 import fs from "fs";
+import pruneElementGrid from "./dev/vite/prune-element-grid.mjs";
+import dedupeCssRules from "./dev/vite/dedupe-css-rules.mjs";
 
 const serverConfig = require('./config/vite.json');
 
@@ -17,19 +19,68 @@ function getPluginVersion() {
 
 const PLUGIN_VERSION = getPluginVersion();
 
+// File names stay the same across releases (clean SVN diffs); every import
+// between chunks carries ?ver=PLUGIN_VERSION instead. No chunk imports
+// start.js: the app is the separate `app` chunk (see manualChunks), so the
+// entry keeps one URL, the one in its <script> tag.
 const chunkCacheBustPlugin = {
     name: 'chunk-cache-bust',
-    renderDynamicImport() {
-        return {
-            left: 'import(',
-            right: ' + "?ver=' + PLUGIN_VERSION + '")'
-        };
-    },
-    renderChunk(code) {
+    // writeBundle, on the written files: Vite removes imports of the CSS-only chunks
+    // it deletes, and builds each dynamic import's preload list, in its own
+    // generateBundle, which runs after this plugin's. A ?ver= added before then
+    // hides the import from both steps (dangling imports, empty preload lists).
+    writeBundle(options, bundle) {
         const ver = '?ver=' + PLUGIN_VERSION;
-        return code.replace(/(from\s*["'])(\.[^"']+\.js)(["'])/g, `$1$2${ver}$3`)
-                   .replace(/(import\s*["'])(\.[^"']+\.js)(["'])/g, `$1$2${ver}$3`)
-                   .replace(/([\[,]\s*)(["'])(\.[^"']+\.js)(["'])/g, `$1$2$3${ver}$4`);
+        const addVer = (match, prefix, file, suffix) => `${prefix}${file}${ver}${suffix}`;
+        for (const file of Object.values(bundle)) {
+            if (file.type !== 'chunk') {
+                continue;
+            }
+            const filePath = path.join(options.dir, file.fileName);
+            const code = fs.readFileSync(filePath, 'utf8')
+                .replace(/(from\s*["'])(\.{1,2}\/[^"'?]+\.js)(["'])/g, addVer)
+                .replace(/(import\s*["'])(\.{1,2}\/[^"'?]+\.js)(["'])/g, addVer)
+                .replace(/(import\(\s*["'])(\.{1,2}\/[^"'?]+\.js)(["'])/g, addVer)
+                // Vite's preload list, so a preload and its import share one URL.
+                // Only inside __vite__mapDeps: other strings in the code stay as they are.
+                .replace(/(__vite__mapDeps=[^\[]*\[)([^\]]*)(\])/, (match, start, list, end) =>
+                    start + list.replace(/(["'])(\.{1,2}\/[^"'?]+\.js)(["'])/g, addVer) + end
+                );
+            fs.writeFileSync(filePath, code);
+        }
+    }
+};
+
+const appModuleId = path.resolve(__dirname, 'resources/admin/app.js');
+
+// Fail the build when a chunk imports a file the bundle does not contain
+// (for example a CSS-only chunk Vite removed), instead of shipping a page that 404s.
+const verifyChunkImportsPlugin = {
+    name: 'verify-chunk-imports',
+    writeBundle(options, bundle) {
+        const missing = [];
+        for (const file of Object.values(bundle)) {
+            if (file.type !== 'chunk') {
+                continue;
+            }
+            const dir = path.posix.dirname(file.fileName);
+            for (const match of file.code.matchAll(/(?:from|import)\s*\(?\s*["'](\.{1,2}\/[^"'?]+\.js)/g)) {
+                const target = path.posix.normalize(path.posix.join(dir, match[1]));
+                if (!bundle[target]) {
+                    missing.push(`${file.fileName} -> ${match[1]}`);
+                }
+            }
+            // Preload lists (__vite__mapDeps) name CSS files by relative path.
+            for (const match of file.code.matchAll(/["']((?:\.{1,2}\/)+[^"'?]+\.css)["']/g)) {
+                const target = path.posix.normalize(path.posix.join(dir, match[1]));
+                if (!bundle[target]) {
+                    missing.push(`${file.fileName} -> ${match[1]}`);
+                }
+            }
+        }
+        if (missing.length) {
+            this.error('Chunks import files that were not emitted:\n' + missing.join('\n'));
+        }
     }
 };
 
@@ -73,13 +124,50 @@ const mergeCssChunksPlugin = {
         let mergedCss = '';
         const toRemove = [];
 
-        for (const [fileName, asset] of Object.entries(bundle)) {
-            if (asset.type !== 'asset' || !fileName.endsWith('.css')) continue;
-            if (legacyCssPaths.has(fileName)) continue;
+        // Merge in load order: a chunk's static imports before the chunk, so an
+        // Element Plus base rule comes before the component CSS that overrides it.
+        const chunks = Object.values(bundle).filter(file => file.type === 'chunk');
+        const chunkByFile = new Map(chunks.map(chunk => [chunk.fileName, chunk]));
+        const orderedCss = [];
+        const visited = new Set();
+        const visit = (chunk) => {
+            if (!chunk || visited.has(chunk.fileName)) {
+                return;
+            }
+            visited.add(chunk.fileName);
+            chunk.imports.forEach(fileName => visit(chunkByFile.get(fileName)));
+            const importedCss = chunk.viteMetadata && chunk.viteMetadata.importedCss;
+            if (importedCss) {
+                importedCss.forEach(fileName => orderedCss.push(fileName));
+            }
+            chunk.dynamicImports.forEach(fileName => visit(chunkByFile.get(fileName)));
+        };
+        chunks.filter(chunk => chunk.isEntry).forEach(visit);
+        chunks.forEach(visit);
 
-            mergedCss += asset.source + '\n';
+        const cssFiles = Object.keys(bundle).filter(fileName => bundle[fileName].type === 'asset' && fileName.endsWith('.css') && !legacyCssPaths.has(fileName));
+        const mergeOrder = [...new Set(orderedCss.filter(fileName => cssFiles.includes(fileName)))];
+        cssFiles.forEach(fileName => {
+            if (!mergeOrder.includes(fileName)) {
+                mergeOrder.push(fileName);
+            }
+        });
+
+        for (const fileName of mergeOrder) {
+            mergedCss += bundle[fileName].source + '\n';
             toRemove.push(fileName);
         }
+
+        // Vite builds each dynamic import's preload list from importedCss in its own
+        // generateBundle, which runs after this plugin. Left in, the merged files
+        // would be preloaded, 404, and reject the route import ("Unable to preload CSS").
+        const mergedFiles = new Set(toRemove);
+        chunks.forEach(chunk => {
+            const importedCss = chunk.viteMetadata && chunk.viteMetadata.importedCss;
+            if (importedCss) {
+                mergedFiles.forEach(fileName => importedCss.delete(fileName));
+            }
+        });
 
         for (const f of toRemove) delete bundle[f];
 
@@ -92,29 +180,6 @@ const mergeCssChunksPlugin = {
                 this.emitFile({ type: 'asset', fileName: targetKey, source: mergedCss });
             }
         }
-    }
-};
-
-// vue3-apexcharts ships a pre-built dist that contains a dynamic import() for its SSR
-// companion file (apexcharts.ssr.esm-*.js). We never need SSR hydration in the WordPress
-// admin, so patch that import to a no-op and drop the chunk from the output.
-const suppressApexchartsSSRPlugin = {
-    name: 'suppress-apexcharts-ssr',
-    generateBundle(_, bundle) {
-        const ssrFileName = Object.keys(bundle).find(f => f.includes('apexcharts.ssr.esm'));
-        if (!ssrFileName) return;
-
-        // Replace every dynamic import() of that chunk (including cache-busted form
-        // "file.js" + "?ver=x.y.z") with a resolved empty object so the call succeeds.
-        for (const chunk of Object.values(bundle)) {
-            if (chunk.type !== 'chunk' || !chunk.code) continue;
-            if (!chunk.code.includes('apexcharts.ssr.esm')) continue;
-            chunk.code = chunk.code.replace(
-                /import\(["'][^"']*apexcharts\.ssr\.esm[^"']*["'](?:\s*\+\s*["'][^"']*["'])?\)/g,
-                'Promise.resolve({default:{}})'
-            );
-        }
-        delete bundle[ssrFileName];
     }
 };
 
@@ -261,7 +326,8 @@ export default defineConfig({
         }),
         moveManifestPlugin,
         mergeCssChunksPlugin,
-        suppressApexchartsSSRPlugin,
+        pruneElementGrid({ sourceDir: path.resolve(__dirname, "resources") }),
+        dedupeCssRules(),
         createExtractLicensesPlugin(),
     ],
 
@@ -285,10 +351,27 @@ export default defineConfig({
         reportCompressedSize: true,
         cssCodeSplit: true,
         assetsInlineLimit: 4096,
+        // JS is code-split per route; CSS is not. mergeCssChunksPlugin folds every
+        // chunk's CSS into alpha-admin.css and removes those files from the chunks'
+        // CSS lists, so Vite's preload helper only preloads a route's JS chunks.
+        modulePreload: {
+            polyfill: false
+        },
 
         rollupOptions: {
             input: inputs,
             output: {
+                manualChunks(id) {
+                    // The app and the code it uses (Rollup adds its dependencies).
+                    // Route chunks import this chunk, never the start.js entry.
+                    if (id === appModuleId) {
+                        return 'app';
+                    }
+                    // ECharts loads only with the report pages.
+                    if (/[\\/]node_modules[\\/](echarts|zrender)[\\/]/.test(id)) {
+                        return 'vendor-echarts';
+                    }
+                },
                 chunkFileNames: (chunkInfo) => {
                     const facadeModuleId = chunkInfo.facadeModuleId || '';
                     if (facadeModuleId.includes('resources/')) {
@@ -335,7 +418,7 @@ export default defineConfig({
                     return "[name][extname]";
                 },
             },
-            plugins: [chunkCacheBustPlugin],
+            plugins: [chunkCacheBustPlugin, verifyChunkImportsPlugin],
         },
     },
 

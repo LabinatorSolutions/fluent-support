@@ -3,11 +3,10 @@
  * S1 — REST smoke runner.
  *
  * Dispatches every entry in tests/smoke/routes.manifest.php in-process and
- * asserts the route is healthy: no DB error, no plugin exception, an expected
- * status, and no PHP diagnostics raised inside Fluent Support.
+ * asserts no DB error, no plugin exception, an expected status and no PHP
+ * diagnostics from Fluent Support.
  *
- * READ-ONLY. This runner only issues GET requests. Do not add mutating routes
- * here — their happy paths belong in tests/integration/.
+ * GET only. Mutating routes belong in tests/integration/.
  *
  * Usage (inside the lab):
  *   tests/bin/lab wp eval-file wp-content/plugins/fluent-support/tests/bin/run-smoke.php
@@ -31,11 +30,9 @@ foreach ((array) $args as $arg) {
 }
 
 /**
- * Fixture resolvers for routes needing concrete path or query values.
- *
- * Read-only: these look up an EXISTING row rather than creating one. If
- * nothing exists the case is skipped, not failed — the lab seed is expected
- * to satisfy every resolver, so a skip here usually means seed drift.
+ * Look up an existing row for routes that need concrete path or query values.
+ * A missing row skips the case. The lab seed should satisfy every resolver,
+ * so a skip usually means seed drift.
  */
 $resolve = function ($needs) {
     switch ($needs) {
@@ -89,9 +86,8 @@ $resolve = function ($needs) {
 };
 
 /**
- * Recursively substitute resolver tokens without changing parameter types.
- * A parameter that is exactly `{id}` becomes the resolved integer; tokens
- * embedded in a larger string are string-replaced.
+ * Substitute resolver tokens recursively. A value that is exactly `{id}` keeps
+ * the resolved integer type; embedded tokens are string-replaced.
  */
 $replaceTokens = function ($value, array $tokens) use (&$replaceTokens) {
     if (is_array($value)) {
@@ -115,8 +111,7 @@ $replaceTokens = function ($value, array $tokens) use (&$replaceTokens) {
     return $value;
 };
 
-// Caches MUST be dropped first — a warm transient hides a broken query
-// behind a 200.
+// A warm transient can hide a broken query behind a 200.
 $cleared = FsTest::clearCaches();
 
 WP_CLI::log('Fluent Support smoke — ' . count($manifest) . ' cases'

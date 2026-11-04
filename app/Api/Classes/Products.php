@@ -5,12 +5,9 @@ namespace FluentSupport\App\Api\Classes;
 use FluentSupport\App\Models\Product;
 
 /**
- *  Products class for PHP API
- *  Example Usage: $productApi = FluentSupportApi('products');
+ * Products PHP API.
  *
- * @package FluentSupport\App\Api\Classes
- *
- * @version 1.0.0
+ * Example Usage: $productApi = FluentSupportApi('products');
  */
 class Products
 {
@@ -29,16 +26,12 @@ class Products
         $this->instance = $instance;
     }
 
-    /**
-     * getProducts method will return all available products
-     */
     public function getProducts()
     {
         return Product::paginate();
     }
 
     /**
-     * getProduct method returns a specific product by id
      * @param int $id
      */
     public function getProduct(int $id)
@@ -51,7 +44,6 @@ class Products
     }
 
     /**
-     * createProduct method will create a new product
      * @param array $data
      */
     public function createProduct(array $data)
@@ -63,7 +55,6 @@ class Products
     }
 
     /**
-     * updateProduct method will update product by id
      * @param int $id
      * @param array $data
      */
@@ -76,7 +67,6 @@ class Products
     }
 
     /**
-     * deleteProduct method will delete product by id
      * @param int $id
      */
     public function deleteProduct(int $id)

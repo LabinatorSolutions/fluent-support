@@ -59,7 +59,8 @@
             </div>
 
             <div class="fs_snapshot_banner" v-if="liveMode === 'snapshot' && selectedSnapshot">
-                {{ $t("Viewing snapshot from") }} {{ formattedSnapshotDate }} {{ $t("at") }} {{ selectedSnapshot.time }}
+                <!-- translators: %1$s is the snapshot date, %2$s the snapshot time -->
+                {{ $t('Viewing snapshot from %1$s at %2$s', formattedSnapshotDate, selectedSnapshot.time) }}
             </div>
         </div>
 
@@ -172,7 +173,8 @@
                                     <bar-chart-base
                                         v-if="hourlyTicketChartData"
                                         :chartData="hourlyTicketChartData"
-                                        :chartOptions="hourlyTicketChartOptions"
+                                        :bar-max-width="12"
+                                        :bar-radius="2"
                                     ></bar-chart-base>
                                 </div>
                             </div>
@@ -243,7 +245,8 @@
                                     <bar-chart-base
                                         v-if="hourlyAgentResponseChartData"
                                         :chartData="hourlyAgentResponseChartData"
-                                        :chartOptions="hourlyTicketChartOptions"
+                                        :bar-max-width="12"
+                                        :bar-radius="2"
                                     ></bar-chart-base>
                                 </div>
                             </div>
@@ -298,14 +301,14 @@
                             <h4 class="fs_section_title">{{ $t("Same-Day Response Rate") }}</h4>
                         </div>
                         <div class="fs_section_body">
-                            <div class="fs_chart_container fs_gauge_chart_container" style="height: 220px;">
-                                <vue-apex-charts
-                                    v-if="responseChartData"
-                                    type="donut"
-                                    height="220"
-                                    :options="responseChartOptions"
-                                    :series="responseChartData.series"
-                                ></vue-apex-charts>
+                            <div class="fs_chart_container" style="height: 220px;">
+                                <donut-chart
+                                    v-if="responseChartItems"
+                                    :items="responseChartItems"
+                                    :total="sameDayResponse.total"
+                                    :total-label="$t('Total Responses')"
+                                    :format-value="formatStatValue"
+                                ></donut-chart>
                             </div>
                             <div class="fs_product_list">
                                 <div
@@ -334,7 +337,7 @@
 import BarChartBase from "../Charts/BarChartBase";
 import IconPack from "@/admin/Components/IconPack.vue";
 import LiveSnapshotSelector from "./Parts/LiveSnapshotSelector.vue";
-import VueApexCharts from "vue3-apexcharts";
+import DonutChart from "../Charts/DonutChart.vue";
 import { ArrowDown } from "@element-plus/icons-vue";
 import { shortcuts } from "../Utils/dateShortCuts";
 import { formatDateRangeForDisplay, formatStatValue, isFutureDate, isSameDateRange } from "../Utils/reportHelpers";
@@ -348,7 +351,7 @@ export default {
         BarChartBase,
         IconPack,
         LiveSnapshotSelector,
-        VueApexCharts,
+        DonutChart,
         ArrowDown
     },
     data() {
@@ -387,120 +390,7 @@ export default {
             },
             hourlyTicketChartData: null,
             hourlyAgentResponseChartData: null,
-            hourlyTicketChartOptions: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: {
-                            drawOnChartArea: true,
-                            color: "#E1E4EA"
-                        },
-                        border: {
-                            display: false,
-                            dash: [4, 4]
-                        },
-                        ticks: {
-                            color: "#99A0AE",
-                            precision: 0,
-                            font: {
-                                family: "Inter",
-                                size: 12,
-                                weight: 500
-                            }
-                        }
-                    },
-                    x: {
-                        grid: {
-                            drawOnChartArea: false
-                        },
-                        border: {
-                            display: false
-                        },
-                        ticks: {
-                            color: "#99A0AE",
-                            font: {
-                                family: "Inter",
-                                size: 12,
-                                weight: 500
-                            },
-                            maxRotation: 0,
-                            minRotation: 0,
-                            autoSkip: true,
-                            maxTicksLimit: 8
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                },
-                layout: {
-                    padding: {
-                        left: 16,
-                        right: 24,
-                        top: 12,
-                        bottom: 24
-                    }
-                },
-                datasets: {
-                    bar: {
-                        barPercentage: 0.7,
-                        categoryPercentage: 0.8,
-                        borderRadius: {
-                            topLeft: 2,
-                            topRight: 2,
-                            bottomLeft: 0,
-                            bottomRight: 0
-                        },
-                        borderSkipped: false
-                    }
-                }
-            },
-            responseChartData: null,
-            responseChartOptions: {
-                chart: {
-                    type: "donut"
-                },
-                labels: [],
-                colors: [],
-                legend: {
-                    show: false
-                },
-                dataLabels: {
-                    enabled: false
-                },
-                plotOptions: {
-                    pie: {
-                        donut: {
-                            size: "78%",
-                            labels: {
-                                show: true,
-                                name: {
-                                    show: true,
-                                    fontSize: "14px",
-                                    fontWeight: 500,
-                                    offsetY: -4
-                                },
-                                value: {
-                                    show: true,
-                                    fontSize: "24px",
-                                    fontWeight: 500,
-                                    offsetY: 4,
-                                    formatter: (val) => this.formatStatValue(val)
-                                },
-                                total: {
-                                    show: true,
-                                    label: this.$t("Total Responses"),
-                                    formatter: () => this.formatStatValue(this.sameDayResponse.total)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            responseChartItems: null
         };
     },
     computed: {
@@ -641,7 +531,6 @@ export default {
                     label: this.$t("Number of tickets"),
                     backgroundColor: chartColor,
                     data,
-                    barThickness: 12,
                 }]
             };
         },
@@ -654,20 +543,15 @@ export default {
                     label: this.$t("Number of responses"),
                     backgroundColor: chartColor,
                     data,
-                    barThickness: 12,
                 }]
             };
         },
         setupResponseChart() {
-            const labels = this.sameDayResponse.categories.map(c => c.name);
-            const series = this.sameDayResponse.categories.map(c => c.responses);
-            const colors = this.sameDayResponse.categories.map((c, i) => this.getResponseColor(i));
-            this.responseChartData = { series };
-            this.responseChartOptions = {
-                ...this.responseChartOptions,
-                labels,
-                colors
-            };
+            this.responseChartItems = this.sameDayResponse.categories.map((category, index) => ({
+                name: category.name,
+                value: category.responses,
+                color: this.getResponseColor(index)
+            }));
         },
         resetStats() {
             this.stats = {
@@ -687,7 +571,7 @@ export default {
             this.sameDayResponse = { total: 0, categories: [] };
             this.hourlyTicketChartData = null;
             this.hourlyAgentResponseChartData = null;
-            this.responseChartData = null;
+            this.responseChartItems = null;
         },
         applyTicketOverviewResponse(response) {
             if (response.snapshot_range) {
@@ -1154,11 +1038,6 @@ export default {
 .fs_chart_container {
     width: 100%;
     position: relative;
-}
-
-.fs_gauge_chart_container {
-    display: flex;
-    justify-content: center;
 }
 
 .fs_product_dist_body {

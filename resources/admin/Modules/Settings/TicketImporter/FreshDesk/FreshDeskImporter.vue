@@ -45,55 +45,8 @@ export default {
     emits: ['import', 'close', 'restart_previous_migration'],
     data() {
         return {
-            mailboxes: {},
             start_from_previous_migration: false,
         }
-    },
-    methods: {
-        getAccessToken() {
-            let url = 'https://api.helpscout.net/v2/oauth2/token?grant_type=authorization_code&code=' + this.settings.code +'&client_id='+ this.settings.app_id +'&client_secret=' + this.settings.app_secret;
-            const request = {
-                url: url,
-                method: 'POST',
-                body: JSON.stringify({
-                    grant_type: 'authorization_code',
-                    code: this.settings.code,
-                    client_id: this.settings.app_id,
-                    client_secret: this.settings.app_secret,
-                }),
-            };
-
-            jQuery.ajax(request).done(response=> {
-                this.settings.access_token = response.access_token;
-                this.settings.refresh_token = response.refresh_token;
-                this.settings.token_type = response.token_type;
-                this.settings.expires_in = response.expires_in;
-                if (this.settings.access_token) {
-                    this.getMailboxes();
-                }
-            }).fail(error => {
-                this.$handleError(error);
-            })
-        },
-        getMailboxes() {
-            const that = this;
-            const settings = {
-                url: 'https://api.helpscout.net/v2/mailboxes',
-                method: "GET",
-                headers: {
-                    Authorization: "Bearer " + this.settings.access_token
-                },
-            };
-
-            jQuery.ajax(settings).done(response => {
-                that.mailboxes = response._embedded.mailboxes;
-            }).fail(error => {
-                this.$handleError(error);
-            });
-        },
-        handleCancel() {
-            this.show = false;
-        },
     }
 }
 </script>

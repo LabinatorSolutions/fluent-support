@@ -9,43 +9,28 @@ use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\Meta;
 use FluentSupport\App\Models\Notification;
 use FluentSupport\App\Models\Ticket;
-use FluentSupport\App\Services\Notifications\NotificationSettings;
+use FluentSupport\App\Modules\Notifications\NotificationService;
 
 /**
- * Reconciles a customer record with the WordPress account it belongs to after
- * that account's email address has moved.
+ * Moves a customer record onto its WordPress account's new email address once
+ * the customer proves they own it.
  *
- * ProfileInfoService deliberately refuses to follow an unverified email change,
- * so an account whose address changes through REST, WP-CLI or a WooCommerce
- * account form leaves its customer record pointing at the previous address.
- * That is the safe outcome but not a finished one: support mail keeps going to
- * an inbox the customer may have stopped reading, and any ticket they open from
- * the new address lands on a second, unlinked record.
- *
- * This closes that gap without ever trusting the account address on its own.
- * The divergence is surfaced in the portal, the customer asks for a
- * confirmation link, and the link is mailed to the address being claimed.
- *
- * The security of the whole flow rests on which inbox that mail lands in. When
- * somebody points their WordPress account at an address they do not own, the
- * link goes to the real owner, who learns of the attempt, and the sender is
- * left with nothing. Confirming also requires being signed in as the claiming
- * account, so neither the inbox nor the account moves anything alone.
+ * ProfileInfoService won't follow an unverified email change, so the record
+ * keeps the old address. The confirmation link goes to the new address and
+ * only works for the signed-in account that requested it, so neither the inbox
+ * nor the account can move the record alone.
  */
 class EmailClaimService
 {
     /**
-     * How long a claim link stays valid.
-     *
-     * WordPress's own email change confirmation never expires. Bounding it is
-     * cheap here because a fresh link can always be requested from the portal,
-     * and it limits how long a link left sitting in an inbox stays live.
+     * How long a claim link stays valid. A fresh one can always be requested
+     * from the portal.
      */
     const TTL_SECONDS = DAY_IN_SECONDS;
 
     /**
-     * Domain separator mixed into the signing key so a token minted here can
-     * never be replayed against another feature that signs with the same salt.
+     * Mixed into the signature so these tokens can't be replayed against
+     * another feature that signs with the same salt.
      */
     const SIGNING_CONTEXT = 'fluent_support_email_claim_v1';
 
@@ -55,10 +40,8 @@ class EmailClaimService
     public static function isEnabled()
     {
         /*
-         * Filter whether customers may reconcile their support address with
-         * their WordPress account address from the portal. Turning this off
-         * leaves a diverged record pointing at its previous address until an
-         * agent moves it by hand.
+         * Filter whether customers may move their support address to their
+         * WordPress account address from the portal.
          *
          * @since v2.4.1
          * @param bool $enabled
@@ -67,19 +50,14 @@ class EmailClaimService
     }
 
     /**
-     * Describe the gap between the signed-in account's address and the address
-     * on its customer record, or null when there is nothing to reconcile.
+     * Describe how the signed-in account's address differs from its customer
+     * record, or null when there is nothing to reconcile.
      *
-     * Returning null is the common case and covers rather more than "the
-     * addresses match": no signed-in account, no record linked to it, a record
-     * linked to somebody else, or an address already held by another linked
-     * record. That last one is a genuine conflict between two accounts and is
-     * left for an agent rather than resolved by whoever asks first.
+     * An address already held by another linked record also returns null. That
+     * is a conflict between two accounts and is left for an agent.
      *
-     * Pass the customer when the caller has already resolved it. The portal
-     * renders this on every page load, and looking the same record up twice per
-     * render is the one cost this check has in the common case where the two
-     * addresses agree.
+     * Pass the customer if you already have it. The portal calls this on every
+     * page load.
      *
      * @param \FluentSupport\App\Models\Customer|null $customer
      * @return array|null
@@ -116,10 +94,8 @@ class EmailClaimService
             return null;
         }
 
-        // Deliberately does not count or load the stray records holding the new
-        // address. Nothing on the read path needs them -- the notice reports no
-        // count on purpose -- and apply() re-reads them at the moment it acts,
-        // where a list assembled pages earlier would be stale anyway.
+        // Stray records on the new address aren't loaded here. apply() reads
+        // them when it acts.
         return [
             'customer' => $customer,
             'from'     => $customer->email,
@@ -138,10 +114,8 @@ class EmailClaimService
         $customer = $divergence['customer'];
         $target   = $divergence['to'];
 
-        // Two buckets, because the two abuses are different. The per-account
-        // bucket stops somebody cycling their own account address to mail-bomb
-        // a series of victims; the per-address bucket stops the same inbox
-        // being targeted repeatedly from several accounts.
+        // Per account, to stop one account mailing many inboxes. Per address,
+        // to stop many accounts mailing one inbox.
         $accountKey = 'fs_email_claim_user_' . (int) $customer->user_id;
         $targetKey  = 'fs_email_claim_to_' . wp_hash(self::normalize($target));
 
@@ -171,8 +145,7 @@ class EmailClaimService
         $body = $pStart . sprintf(
                 // translators: %s is the customer's first name
                 __('Hello %s,', 'fluent-support'),
-                // WordPress does not sanitize first_name on the way in, so this
-                // is arbitrary text landing in an HTML mail body.
+                // WordPress doesn't sanitize first_name on save.
                 esc_html($customer->first_name)
             ) . '</p>' .
             $pStart . sprintf(
@@ -206,8 +179,6 @@ class EmailClaimService
         $sent = wp_mail($target, $subject, $message, ['Content-Type: text/html; charset=UTF-8']);
 
         if (!$sent) {
-            // Telling the customer to go and read a mail that was never accepted
-            // for delivery wastes their time and both rate limit allowances.
             return 'send_failed';
         }
 
@@ -217,18 +188,9 @@ class EmailClaimService
     /**
      * Validate a confirmation token against current state.
      *
-     * Every field in the token is re-checked rather than trusted, because the
-     * world moves between issuing a link and clicking it. Binding the record's
-     * address at issue time is what retires a used link: applying a claim moves
-     * that address, so replaying the same link finds a record that no longer
-     * matches.
-     *
-     * That is a condition, not a stored single use. Nothing is written down, so
-     * a link works again if the record is put back on the address it was issued
-     * against before the link expires -- an agent correcting a mistake, say.
-     * The link is still in the inbox that proved the address in the first place,
-     * so this reconfirms what was already confirmed; it is recorded here because
-     * calling it single-use would overstate what the token does.
+     * The token binds the record's current address, so applying a claim retires
+     * the link. It is not strictly single-use: if the record is moved back to
+     * that address before expiry, the link works again.
      *
      * @param string $token
      * @return array ['status' => slug, 'customer' => Customer|null, 'email' => string]
@@ -249,9 +211,7 @@ class EmailClaimService
             return ['status' => 'expired'];
         }
 
-        // Requiring the claiming account to be signed in is the second half of
-        // the proof. Reading the inbox is not enough on its own, and a link
-        // forwarded to somebody else does nothing in their hands.
+        // Inbox access alone isn't enough. The claiming account must be signed in.
         if ((int) get_current_user_id() !== $claim['user_id']) {
             return ['status' => 'wrong_account'];
         }
@@ -306,9 +266,7 @@ class EmailClaimService
         $customer->email = $email;
         $customer->save();
 
-        // Rotates every ticket hash and writes the activity entry. Shared with
-        // the profile_update paths so a proven address move has exactly one
-        // set of consequences however it was proven.
+        // Shared with the profile_update path: rotates ticket hashes and logs activity.
         ProfileInfoService::onProvenEmailChange($customer, $previousEmail, 'claimed');
 
         return ['merged' => $merged, 'tickets' => $moved];
@@ -318,11 +276,8 @@ class EmailClaimService
      * Reparent everything hanging off one customer record onto another, then
      * remove the record it came from.
      *
-     * The record is only deleted once it is provably empty. Reparenting is
-     * several statements over tables that may well be MyISAM, where a
-     * transaction would silently do nothing, so emptiness is re-read from the
-     * database rather than assumed from the writes having been attempted. A
-     * record that is not empty is left in place for an agent to look at.
+     * The source is deleted only if a re-read shows it empty. The tables may be
+     * MyISAM, so a transaction can't be relied on.
      *
      * @param \FluentSupport\App\Models\Customer $source
      * @param \FluentSupport\App\Models\Customer $target
@@ -334,10 +289,8 @@ class EmailClaimService
 
         foreach ($tickets as $ticket) {
             $ticket->customer_id = $target->id;
-            // Saved one at a time on purpose: Ticket's updating event rotates
-            // the hash when customer_id moves, and a mass update on the query
-            // builder would skip it, leaving every link already mailed for
-            // these tickets working under their new owner.
+            // Saved one by one so Ticket's updating event rotates the hash.
+            // A query-builder update would skip it.
             $ticket->save();
         }
 
@@ -352,15 +305,9 @@ class EmailClaimService
             ->where('object_id', $source->id)
             ->update(['object_id' => $target->id]);
 
-        // Internal notifications name the person who caused them, and a customer
-        // reply is one of the things that raises one. Left behind, they point at
-        // a person row that is about to be deleted.
-        //
-        // The tables are opt-in: NotificationSettings creates them the first
-        // time internal notifications are switched on, and the default is off.
-        // Querying them unguarded is a fatal on every site that never enabled
-        // the feature.
-        $hasNotifications = (new NotificationSettings())->notificationTablesExist();
+        // Notification tables only exist once internal notifications have been
+        // enabled, so check before querying them.
+        $hasNotifications = NotificationService::tablesExist();
 
         if ($hasNotifications) {
             Notification::where('actor_id', $source->id)
@@ -370,12 +317,9 @@ class EmailClaimService
         self::mergeMeta($source, $target);
 
         /*
-         * Fires while one customer record is being folded into another, after
-         * core has reparented tickets, conversations, attachments, activity and
-         * person meta, and before the emptied record is removed.
-         *
-         * Anything holding its own rows against a person id must move them here
-         * -- Fluent Support Pro moves time tracking on this hook.
+         * Fires while one customer record is merged into another, after core
+         * rows have moved and before the source record is removed. Move any
+         * rows keyed by person id here. Pro moves time tracking on this hook.
          *
          * @since v2.4.1
          * @param \FluentSupport\App\Models\Customer $source Record being absorbed
@@ -409,14 +353,24 @@ class EmailClaimService
             'description' => $remaining === 0
                 ? sprintf(
                     // translators: 1: merged customer record id, 2: that record's email address, 3: number of tickets moved
-                    __('Merged customer record #%1$s (%2$s) into this one after the address was confirmed. %3$s ticket(s) moved and their shared links were reissued.', 'fluent-support'),
+                    _n(
+                        'Merged customer record #%1$s (%2$s) into this one after the address was confirmed. %3$s ticket moved and its shared link was reissued.',
+                        'Merged customer record #%1$s (%2$s) into this one after the address was confirmed. %3$s tickets moved and their shared links were reissued.',
+                        $ticketsMoved,
+                        'fluent-support'
+                    ),
                     $sourceId,
                     $sourceEmail,
                     $ticketsMoved
                 )
                 : sprintf(
                     // translators: 1: customer record id, 2: that record's email address, 3: number of tickets moved
-                    __('Moved %3$s ticket(s) from customer record #%1$s (%2$s) into this one after the address was confirmed. That record still holds other data and was kept.', 'fluent-support'),
+                    _n(
+                        'Moved %3$s ticket from customer record #%1$s (%2$s) into this one after the address was confirmed. That record still holds other data and was kept.',
+                        'Moved %3$s tickets from customer record #%1$s (%2$s) into this one after the address was confirmed. That record still holds other data and was kept.',
+                        $ticketsMoved,
+                        'fluent-support'
+                    ),
                     $sourceId,
                     $sourceEmail,
                     $ticketsMoved
@@ -427,13 +381,7 @@ class EmailClaimService
     }
 
     /**
-     * Carry across person meta the surviving record does not already have.
-     *
-     * Keys the target already holds are left alone: the record being kept is
-     * the one the customer has been using, and a stray record assembled from an
-     * inbound email is not a better source of truth than it. Whatever is left
-     * goes with the row, rather than sitting in fs_meta pointing at a person id
-     * that no longer exists.
+     * Move person meta the target doesn't already have. The target's own keys win.
      *
      * @param \FluentSupport\App\Models\Customer $source
      * @param \FluentSupport\App\Models\Customer $target
@@ -495,8 +443,7 @@ class EmailClaimService
     /**
      * URL the portal notice points at to request a confirmation email.
      *
-     * Nonced because following it sends mail, and a GET that has an effect is
-     * otherwise a link an attacker can put in front of a signed-in customer.
+     * Nonced because following it sends mail.
      *
      * @return string
      */
@@ -525,12 +472,7 @@ class EmailClaimService
      */
     public static function buildToken($customerId, $userId, $from, $to, $expires)
     {
-        // The addresses are percent-encoded before they are joined, because the
-        // separator is legal inside one: WordPress's is_email() accepts '|' in
-        // the local part, so a@b|c@example.com is a real address somebody can
-        // hold. Unencoded it splits the payload into seven fields and the exact
-        // field count below rejects the token, which fails closed but leaves
-        // that customer unable to use the flow at all.
+        // Encoded because is_email() accepts '|' in the local part.
         $payload = implode('|', [
             (int) $customerId,
             (int) $userId,
@@ -564,8 +506,6 @@ class EmailClaimService
 
         $parts = explode('|', $raw);
 
-        // Exact: the addresses were percent-encoded before joining, so no field
-        // can carry the separator.
         if (count($parts) !== 6) {
             return null;
         }
@@ -578,8 +518,7 @@ class EmailClaimService
             return null;
         }
 
-        // Decoded only after the signature has been checked, so what is verified
-        // is exactly the string that was signed.
+        // Decode only after verifying the signature over the encoded string.
         return [
             'customer_id' => (int) $customerId,
             'user_id'     => (int) $userId,
@@ -599,9 +538,8 @@ class EmailClaimService
     }
 
     /**
-     * Customer records holding this address that no WordPress account has
-     * claimed. These are the rows an address change stranded, and they are the
-     * only ones a confirmed claim is allowed to absorb.
+     * Records on this address with no WordPress account. Only these may be
+     * absorbed by a claim.
      *
      * @param string $email
      * @param int $excludeId
@@ -617,9 +555,7 @@ class EmailClaimService
     }
 
     /**
-     * Whether another WordPress account's customer record already holds this
-     * address. That is a conflict between two accounts, not something a
-     * confirmation can settle, so nothing is offered and nothing is moved.
+     * Whether another account's customer record already holds this address.
      *
      * @param string $email
      * @param int $excludeId

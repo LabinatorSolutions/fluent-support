@@ -6,7 +6,7 @@
                     <h3>{{ $t('Ticket Migration Settings') }}</h3>
                 </div>
             </div>
-            <div v-if="!loading" class="fs_box_body">
+            <div v-if="!first_loading" class="fs_box_body" v-loading="loading">
                 <div v-if="settings.length" class="fs_importer_list">
                     <div v-for="(setting, index) in settings" :key="setting.handler" class="fs_importer_item">
                         <div class="fs_importer_item_content">
@@ -14,15 +14,18 @@
                                 <h3 class="fs_importer_title">
                                     {{ setting.name }}
                                     <span v-if="setting.last_migrated" class="fs_last_migration_inline">
-                                        ({{ $t('Last migration:') }} {{ setting.last_migrated }})
+                                        <!-- translators: %s is the date of the last migration -->
+                                        {{ $t('(Last migration: %s)', setting.last_migrated) }}
                                     </span>
                                 </h3>
                                 <p class="fs_importer_description">
                                     <template v-if="setting?.type=='sass'">
-                                        {{ $t('Migrate tickets from') }} {{ setting.name }} {{ $t('in one click.') }}
+                                        <!-- translators: %s is the name of the help desk to import from, e.g. Zendesk -->
+                                        {{ $t('Migrate tickets from %s in one click.', setting.name) }}
                                     </template>
                                     <template v-else>
-                                        {{ $t('This migrator will migrate total') }} <strong>{{ setting.tickets }}</strong> {{ $t('tickets with') }} <strong>{{ setting.replies }}</strong> {{ $t('replies and') }} <strong>{{ setting.customers }}</strong> {{ $t("customers. If you already migrate tickets then it won't migrate existing tickets.") }}
+                                        <!-- translators: %1$s is the number of tickets, %2$s the number of replies, %3$s the number of customers to migrate -->
+                                        {{ $t('Ready to import. Tickets: %1$s, replies: %2$s, customers: %3$s. Tickets that were already migrated are skipped.', setting.tickets, setting.replies, setting.customers) }}
                                     </template>
                                 </p>
 
@@ -101,18 +104,31 @@
 
                 <div v-else class="fs_no_importers">
                     <h2>{{ $t('Import from other Support Tickets Plugins') }}</h2>
-                    <p>{{ $t('If you want to migrate tickets from other ticketing system like') }} <strong>{{ $t('Awesome Support') }}</strong> {{ $t('or') }} <strong>{{ $t('Support Candy') }}</strong> {{ $t('WordPress plugin then you can migrate from this section.') }}</p>
+                    <p>{{ $t('Ticket_Migration_Plugins_Help') }}</p>
                     <p>{{ $t('Currently no migration is available for this site') }}</p>
                 </div>
             </div>
 
             <div class="fs_box_body" v-else>
-                <el-skeleton class="fs_skeleton" :rows="5" animated/>
+                <el-skeleton animated>
+                    <template #template>
+                        <div v-for="n in 3" :key="n">
+                            <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px;">
+                                <div style="flex: 1;">
+                                    <el-skeleton-item variant="text" style="width: 30%; height: 18px;" />
+                                    <el-skeleton-item variant="text" style="width: 70%; margin-top: 8px;" />
+                                </div>
+                                <el-skeleton-item variant="button" style="width: 120px;" />
+                            </div>
+                            <hr v-if="n < 3" class="fs_divider">
+                        </div>
+                    </template>
+                </el-skeleton>
             </div>
 
             <!-- Delete confirmation dialog -->
             <el-dialog v-if="!had_tickets" v-model="import_done" :title="$t('Delete Imported Tickets')" class="fs_dialog">
-                <span>{{ $t('Do you want to delete all imported tickets and its data?') }}</span>
+                <span>{{ $t('Do you want to delete all imported tickets and their data?') }}</span>
                 <template #footer>
                     <span class="dialog-footer">
                         <el-button @click="import_done = false" type="primary">{{ $t('No') }}</el-button>
@@ -198,6 +214,7 @@ export default {
             completedPercentage: 0,
             completed: 0,
             loading: false,
+            first_loading: true,
             currently_importing: '',
             import_done: false,
             deleting: false,
@@ -230,6 +247,7 @@ export default {
                 })
                 .always(() => {
                     this.loading = false;
+                    this.first_loading = false;
                 });
         },
         restartTicketMigration(handler) {
@@ -335,6 +353,7 @@ export default {
                     }
                 })
                 .catch((error) => {
+                    this.imporing = false;
                     this.$handleError(error);
                 })
         },
@@ -364,6 +383,7 @@ export default {
                     }
                 })
                 .catch(e => {
+                    this.deleting = false;
                     this.$handleError(e);
                 })
         }

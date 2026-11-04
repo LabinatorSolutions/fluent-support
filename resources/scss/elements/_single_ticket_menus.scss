@@ -47,13 +47,15 @@
     border: none;
     padding: 10px;
 
-    &.collapsed img {
+    &.collapsed img,
+    &.collapsed svg {
         transform: rotate(180deg);
     }
 
-    &:hover {
-        color: var(--fs-bg-subtle, #F5F7FA) !important;
-        background-color: transparent !important;
+    // One step more specific than Element Plus's text-button hover, so no !important is needed.
+    &.is-text:not(.is-disabled):hover {
+        color: var(--fs-text-primary, #0E121B);
+        background-color: var(--fs-bg-subtle, #F5F7FA);
     }
 }
 
@@ -106,6 +108,111 @@
     font-size: 20px;
 }
 
+/* View switcher: names the list beside the ticket and changes it in place */
+.fs_view_switcher_slot {
+    min-width: 0;
+    flex: 1;
+}
+
+.el-button.fs_view_switcher_btn {
+    display: flex;
+    max-width: 100%;
+    height: 32px;
+    margin-inline-start: -8px;
+    padding: 4px 8px;
+    border: none;
+    border-radius: var(--fs-radius-md, 8px);
+    color: var(--fs-text-primary, #0E121B);
+
+    > span {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-width: 0;
+    }
+
+    &.is-text:not(.is-disabled):hover,
+    &.is-text:not(.is-disabled):focus-visible {
+        color: var(--fs-text-primary, #0E121B);
+        background-color: var(--fs-bg-subtle, #F5F7FA);
+    }
+
+    .fs_view_switcher_label {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 24px;
+        letter-spacing: -0.176px;
+    }
+
+    .fs_view_switcher_total {
+        flex-shrink: 0;
+        min-width: 20px;
+        padding: 0 6px;
+        border-radius: var(--fs-radius-full, 999px);
+        background: var(--fs-state-faded-light, #F2F5F8);
+        color: var(--fs-text-secondary, #525866);
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 20px;
+        text-align: center;
+        box-sizing: border-box;
+    }
+
+    .fs_view_switcher_arrow {
+        flex-shrink: 0;
+        color: var(--fs-text-secondary, #525866);
+    }
+}
+
+.el-popover.el-popper.fs_view_switcher_popover {
+    padding: 0;
+
+    .fs_sidebar_items {
+        max-height: min(70vh, 560px);
+        padding: 8px;
+    }
+
+    // The active marker sits on the sidebar's edge; inside a popover the fill is enough.
+    .fs_sidebar_items ul li a.fs_sidebar_active:before {
+        display: none;
+    }
+}
+
+/* Position in the list with previous/next */
+.fs_ticket_position {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    .fs_ticket_position_text {
+        margin-inline-end: 4px;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 20px;
+        letter-spacing: -0.084px;
+        color: var(--fs-text-secondary, #525866);
+        white-space: nowrap;
+    }
+
+    .el-button.fs_ticket_step_btn {
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        margin-left: 0;
+    }
+}
+
+/* Previous ticket stays on screen while the next one loads (ViewTicket.vue switchingTicket).
+   The delay keeps fast loads from flashing; removing the class restores opacity at once. */
+.fs_view_ticket.fs_ticket_switching,
+.fs_action_buttons.fs_ticket_switching {
+    opacity: 0.55;
+    transition: opacity 0.2s ease 0.15s;
+}
+
 /* Action Buttons Container */
 .fs_top_bar_actions {
     display: flex;
@@ -113,8 +220,36 @@
     gap: 10px;
     .fs_action_buttons{
         padding: 12px 24px;
-        .fs_workflow_pop {
-            margin-left: 10px;
+        gap: 8px !important;
+
+        // One gap for every control; drop the mixed per-button margins.
+        .el-button + .el-button,
+        .fs_agent_selector_tooltip,
+        .fs_workflow_pop,
+        .fs_close_ticket_btn,
+        .fs_more_action {
+            margin-left: 0;
+        }
+
+        > .el-button,
+        .fs_more_action > .el-button,
+        .fs_agent_selector_tooltip .el-button,
+        .fs_workflow_pop .el-button {
+            height: 32px;
+            min-height: 32px;
+            box-sizing: border-box;
+        }
+
+        > .el-button:not(.fs_action_btn_with_text),
+        .fs_more_action > .el-button,
+        .fs_workflow_pop .el-button {
+            width: 32px;
+            padding: 0;
+        }
+
+        .el-button:not(.fs_action_btn_with_text) svg {
+            width: 16px;
+            height: 16px;
         }
     }
 }

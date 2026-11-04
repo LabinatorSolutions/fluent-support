@@ -2,20 +2,12 @@ import { createApp } from 'vue';
 import Application from './Application';
 import { createWebHashHistory, createRouter } from 'vue-router'
 import routes from "./routes";
-import {ElNotification, ElLoading, ElMessageBox} from 'element-plus'
+import {ElNotification} from 'element-plus'
 import Rest from './Rest.js';
+import { $t, $_n, $_x } from './i18n.js';
 
 import {
-    Refresh,
-    Search,
     Paperclip,
-    ArrowUpBold,
-    ArrowDownBold,
-    Sort,
-    ArrowLeft,
-    List,
-    UploadFilled,
-    Upload,
     Delete,
     Loading,
     CircleCloseFilled,
@@ -24,12 +16,7 @@ import {
 
 const app = createApp(Application);
 
-app.use(ElLoading);
-
 app.config.globalProperties.$notify = ElNotification;
-app.config.globalProperties.$confirm = ElMessageBox.confirm;
-app.config.globalProperties.$promt = ElMessageBox.prompt;
-app.config.globalProperties.$messageBox = ElMessageBox;
 
 const router = createRouter({
     history: createWebHashHistory(),
@@ -38,16 +25,7 @@ const router = createRouter({
 
 const components = [
     // Icon component
-    Refresh,
     Paperclip,
-    Search,
-    ArrowUpBold,
-    ArrowDownBold,
-    Sort,
-    List,
-    ArrowLeft,
-    UploadFilled,
-    Upload,
     Delete,
     Loading,
     CircleCloseFilled,
@@ -113,9 +91,9 @@ app.mixin({
             }
             return string.join('<br />')
         },
-        $t(string) {
-            return window.window.fs_customer_portal.i18n[string] || string;
-        }
+        $t,
+        $_n,
+        $_x
     }
 });
 

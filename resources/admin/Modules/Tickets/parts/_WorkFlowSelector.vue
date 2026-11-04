@@ -25,8 +25,8 @@
             class="fs_dialog"
         >
             <div v-if="modalVisible" v-loading="fetchingActions" class="fs_workflow_desc">
-                <h3>{{ $t('Running the') }} <b>{{ selected_workflow.title }}</b>
-                    {{ $t('workflow will perform the following actions:') }}</h3>
+                <!-- translators: %s is the workflow name -->
+                <h3>{{ $t('Running the "%s" workflow will perform the following actions:', selected_workflow.title) }}</h3>
                 <ul class="fs_workflow_items">
                     <li v-for="(task,taskIndex) in workflow_actions" :key="task.id">
                         <span v-if="taskIndex != 0">{{ $t('and') }}</span> {{ task.title || task.action_name }}
@@ -96,7 +96,7 @@ export default {
                     this.$notify({
                         message: response.message,
                         position: "bottom-right",
-                        type: "success",
+                        type: response.has_failures ? "warning" : "success",
                     });
 
                     this.modalVisible = false;

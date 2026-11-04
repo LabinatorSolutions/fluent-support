@@ -4,7 +4,7 @@ namespace FluentSupport\App\Services\EmailNotification;
 use FluentSupportPro\Database\Migrations\TimeTrackMigrator;
 
 use FluentSupport\App\Services\Helper;
-use FluentSupport\App\Services\Notifications\NotificationSettings;
+use FluentSupport\App\Modules\Notifications\NotificationService;
 use FluentSupport\Framework\Support\Arr;
 
 class Settings
@@ -33,12 +33,10 @@ class Settings
             ];
         }
 
-        if ($settingsKey == NotificationSettings::OPTION_KEY) {
-            $notificationSettings = new NotificationSettings();
-
+        if ($settingsKey == NotificationService::OPTION_KEY) {
             return [
-                'settings' => $notificationSettings->get(false),
-                'fields'   => $notificationSettings->getFields()
+                'settings' => NotificationService::settings(),
+                'fields'   => NotificationService::settingsFields()
             ];
         }
 
@@ -57,10 +55,7 @@ class Settings
     public function save($settingsKey, $settings)
     {
         if ($settingsKey == 'global_business_settings' && is_array($settings) && array_key_exists('internal_notifications_enabled', $settings)) {
-            $notificationSettings = new NotificationSettings();
-            $savedNotificationSettings = $notificationSettings->get(false);
-            $savedNotificationSettings['enabled'] = $settings['internal_notifications_enabled'];
-            $notificationSettings->save($savedNotificationSettings);
+            NotificationService::saveSettings(['enabled' => $settings['internal_notifications_enabled']] + NotificationService::settings());
         }
 
         if ($settingsKey == 'global_business_settings' && empty($settings['accepted_file_types'])) {
@@ -78,6 +73,13 @@ class Settings
             if (isset($settings['report_snapshot_retention']) && !in_array($settings['report_snapshot_retention'], ['3', '7', '15'], true)) {
                 $settings['report_snapshot_retention'] = '15';
             }
+            // These keys become user meta on signup, so keep only the offered fields.
+            if (isset($settings['custom_registration_form_field'])) {
+                $settings['custom_registration_form_field'] = array_values(array_intersect(
+                    (array) $settings['custom_registration_form_field'],
+                    array_keys(Helper::getCustomRegistrationFieldOptions())
+                ));
+            }
         }
 
         if ($settingsKey == 'global_business_settings' && !empty($settings['agent_time_tracking'])) {
@@ -86,8 +88,8 @@ class Settings
             }
         }
 
-        if ($settingsKey == NotificationSettings::OPTION_KEY) {
-            return (new NotificationSettings())->save($settings);
+        if ($settingsKey == NotificationService::OPTION_KEY) {
+            return NotificationService::saveSettings($settings);
         }
 
         $result = Helper::updateOption($settingsKey, $settings);
@@ -115,7 +117,7 @@ class Settings
             // translators: %1$s is opening paragraph tag, %2$s is closing paragraph tag
             'login_message'         => sprintf(__('%1$sPlease login or create an account to access the Customer Support Portal%2$s [fluent_support_auth]', 'fluent-support'), '<p>', '</p>'),
             'disable_public_ticket' => 'no',
-            'accepted_file_types'   => ['images', 'csv', 'documents', 'zip', 'json'],
+            'accepted_file_types'   => ['images', 'csv', 'documents', 'zip', 'json', 'text'],
             'max_file_size'         => 2,
             'max_file_upload'       => 3,
             'del_files_on_close'    => 'no',
@@ -192,14 +194,7 @@ class Settings
             $formattedMimeGroups[$mimeGroup] = $mime['title'];
         }
 
-        $customRegistrationFormOptions = array(
-            'address_line_1' => 'Address Line 1',
-            'address_line_2' => 'Address Line 2',
-            'city' => 'City',
-            'zip' => 'Zip Code',
-            'state' => 'State',
-            'country' => 'Country',
-        );
+        $customRegistrationFormOptions = Helper::getCustomRegistrationFieldOptions();
 
         $fields = [
             'ticket_link_portal_description' => [
@@ -241,7 +236,7 @@ class Settings
             'login_message'         => [
                 'type'        => 'wp-editor',
                 'label'       => __('Message for non logged in users', 'fluent-support'),
-                'inline_help' => __('Please provide message for not logged in users. You can place login shortcode too. Use shortcode <code>[fluent_support_login]</code> to show built-in login form. For the user registration use this shortcode <code>[fluent_support_signup]</code> and for both form please use <code>[fluent_support_auth]</code>', 'fluent-support')
+                'inline_help' => __('Please provide message for not logged in users. You can place login shortcode too. Use shortcode <code>[fluent_support_login]</code> to show built-in login form. For the user registration use this shortcode <code>[fluent_support_signup]</code> and for both form please use <code>[fluent_support_auth]</code>. Registration forms only show when "Anyone can register" is enabled in Settings > General.', 'fluent-support')
             ],
             'disable_public_ticket' => [
                 'wrapper_class' => '',
@@ -410,7 +405,45 @@ class Settings
 
         }
 
+        if (Helper::getAuthProvider() === 'fluent_auth') {
+            $fields = $this->replaceTwoFaWithFluentAuthNotice($fields);
+        }
+
         return $fields;
+    }
+
+    /**
+     * With FluentAuth handling portal sign-in, our 2FA toggle no longer applies, so a note
+     * pointing to FluentAuth's 2FA settings takes its place. The stored value is kept.
+     *
+     * @param array $fields
+     * @return array
+     */
+    private function replaceTwoFaWithFluentAuthNotice($fields)
+    {
+        $notice = [
+            'type'          => 'html-viewer',
+            'label'         => __('Two-Factor Authentication', 'fluent-support'),
+            'wrapper_class' => 'fs_warn_alert_wrapper',
+            'html'          => sprintf(
+                /* translators: %s: URL of the FluentAuth settings page */
+                __('Portal sign-in is handled by the FluentAuth plugin, so two-factor authentication for your customers and agents is set up there. FluentAuth applies it to the roles you choose, so include your customers\' role. <a href="%s">Open FluentAuth settings</a>', 'fluent-support'),
+                esc_url(admin_url('admin.php?page=fluent-auth#/settings'))
+            ),
+        ];
+
+        $replaced = [];
+
+        foreach ($fields as $key => $field) {
+            if ($key === 'enable_two_fa') {
+                $replaced['fluent_auth_two_fa_notice'] = $notice;
+                continue;
+            }
+
+            $replaced[$key] = $field;
+        }
+
+        return $replaced;
     }
 
     private function getTicketLinkPortalOptions()
@@ -474,39 +507,47 @@ class Settings
         $actionLabel = __('Action', 'fluent-support');
         $shortcutLabel = __('Shortcut', 'fluent-support');
 
+        // Windows and Linux use Ctrl where macOS uses ⌘ (see resources/admin/Bits/shortcuts.js).
         $macShortcuts = [
-            ['action' => __('Tickets – Advanced filter toggle', 'fluent-support'), 'shortcut' => '⌘ + ⌥ + f'],
-            ['action' => __('Tickets – Refresh', 'fluent-support'), 'shortcut' => '⌘ + ⌥ + q'],
-            ['action' => __('Tickets – Create Ticket', 'fluent-support'), 'shortcut' => '⌘ + ⌥ + n'],
-            ['action' => __('Tickets – Reset filter', 'fluent-support'), 'shortcut' => '⌘ + ⌥ + r'],
-            ['action' => __('Tickets – All Tickets', 'fluent-support'), 'shortcut' => '⌘ + ⇧ + a'],
-            ['action' => __('Tickets – My Tickets', 'fluent-support'), 'shortcut' => '⌘ + ⇧ + m'],
-            ['action' => __('Tickets – Unassigned', 'fluent-support'), 'shortcut' => '⌘ + ⇧ + u'],
-            ['action' => __('Tickets – Waiting for reply', 'fluent-support'), 'shortcut' => '⌘ + ⌥ + w'],
-            ['action' => __('Tickets – Bookmarks', 'fluent-support'), 'shortcut' => '⌘ + ⇧ + b'],
-            ['action' => __('Tickets – Toggle (Open, active, close, all)', 'fluent-support'), 'shortcut' => '⌘ + ⇧ + → / ←'],
-            ['action' => __('Ticket Reply – Reply', 'fluent-support'), 'shortcut' => '⌘ + ⌥ + r'],
-            ['action' => __('Ticket Reply – Personal note', 'fluent-support'), 'shortcut' => '⌘ + ⌥ + n'],
-            ['action' => __('Ticket Reply – Merge', 'fluent-support'), 'shortcut' => '⌘ + ⌥ + m'],
-            ['action' => __('Ticket Reply – Bookmarks', 'fluent-support'), 'shortcut' => '⌘ + ⌥ + b'],
-            ['action' => __('Ticket Reply – Refresh', 'fluent-support'), 'shortcut' => '⌘ + ⌥ + q'],
+            ['action' => __('Tickets: Advanced filter toggle', 'fluent-support'), 'shortcut' => '⌘ + ⌥ + f'],
+            ['action' => __('Tickets: Refresh', 'fluent-support'), 'shortcut' => '⌘ + ⌥ + q'],
+            ['action' => __('Tickets: Create Ticket', 'fluent-support'), 'shortcut' => '⌘ + ⌥ + n'],
+            ['action' => __('Tickets: Reset filter', 'fluent-support'), 'shortcut' => '⌘ + ⌥ + r'],
+            ['action' => __('Tickets: All Tickets', 'fluent-support'), 'shortcut' => '⌘ + ⇧ + a'],
+            ['action' => __('Tickets: My Tickets', 'fluent-support'), 'shortcut' => '⌘ + ⇧ + m'],
+            ['action' => __('Tickets: Unassigned', 'fluent-support'), 'shortcut' => '⌘ + ⇧ + u'],
+            ['action' => __('Tickets: Waiting for reply', 'fluent-support'), 'shortcut' => '⌘ + ⌥ + w'],
+            ['action' => __('Tickets: Bookmarks', 'fluent-support'), 'shortcut' => '⌘ + ⇧ + b'],
+            ['action' => __('Tickets: Toggle (Open, active, close, all)', 'fluent-support'), 'shortcut' => '⌘ + ⇧ + → / ←'],
+            ['action' => __('Ticket Reply: Reply', 'fluent-support'), 'shortcut' => '⌘ + ⌥ + r'],
+            ['action' => __('Ticket Reply: Personal note', 'fluent-support'), 'shortcut' => '⌘ + ⌥ + n'],
+            ['action' => __('Ticket Reply: Merge', 'fluent-support'), 'shortcut' => '⌘ + ⌥ + m'],
+            ['action' => __('Ticket Reply: Bookmarks', 'fluent-support'), 'shortcut' => '⌘ + ⌥ + b'],
+            ['action' => __('Ticket Reply: Refresh', 'fluent-support'), 'shortcut' => '⌘ + ⌥ + q'],
+            ['action' => __('Ticket Reply: Next ticket', 'fluent-support'), 'shortcut' => '⌘ + ⌥ + ↓'],
+            ['action' => __('Ticket Reply: Previous ticket', 'fluent-support'), 'shortcut' => '⌘ + ⌥ + ↑'],
+            ['action' => __('Ticket Reply: Close ticket', 'fluent-support'), 'shortcut' => '⌘ + ⌥ + x'],
         ];
 
         $winShortcuts = [
-            ['action' => __('Tickets – Advanced filter toggle', 'fluent-support'), 'shortcut' => 'Alt + Win + Shift + f'],
-            ['action' => __('Tickets – Refresh', 'fluent-support'), 'shortcut' => 'Alt + Win + q'],
-            ['action' => __('Tickets – Create Ticket', 'fluent-support'), 'shortcut' => 'Alt + Win + n'],
-            ['action' => __('Tickets – Reset filter', 'fluent-support'), 'shortcut' => 'Alt + Win + Shift + r'],
-            ['action' => __('Tickets – All Tickets', 'fluent-support'), 'shortcut' => 'Win + Shift + a'],
-            ['action' => __('Tickets – My Tickets', 'fluent-support'), 'shortcut' => 'Alt + Win + Shift + m'],
-            ['action' => __('Tickets – Unassigned', 'fluent-support'), 'shortcut' => 'Win + Shift + u'],
-            ['action' => __('Tickets – Waiting for reply', 'fluent-support'), 'shortcut' => 'Alt + Win + Shift + w'],
-            ['action' => __('Tickets – Bookmarks', 'fluent-support'), 'shortcut' => 'Win + Shift + b'],
-            ['action' => __('Ticket Reply – Reply', 'fluent-support'), 'shortcut' => 'Alt + Win + Shift + r'],
-            ['action' => __('Ticket Reply – Personal note', 'fluent-support'), 'shortcut' => 'Alt + Win + n'],
-            ['action' => __('Ticket Reply – Merge', 'fluent-support'), 'shortcut' => 'Ctrl + Alt + Win + m'],
-            ['action' => __('Ticket Reply – Bookmarks', 'fluent-support'), 'shortcut' => 'Ctrl + Alt + Win + b'],
-            ['action' => __('Ticket Reply – Refresh', 'fluent-support'), 'shortcut' => 'Alt + Win + q'],
+            ['action' => __('Tickets: Advanced filter toggle', 'fluent-support'), 'shortcut' => 'Ctrl + Alt + f'],
+            ['action' => __('Tickets: Refresh', 'fluent-support'), 'shortcut' => 'Ctrl + Alt + q'],
+            ['action' => __('Tickets: Create Ticket', 'fluent-support'), 'shortcut' => 'Ctrl + Alt + n'],
+            ['action' => __('Tickets: Reset filter', 'fluent-support'), 'shortcut' => 'Ctrl + Alt + r'],
+            ['action' => __('Tickets: All Tickets', 'fluent-support'), 'shortcut' => 'Ctrl + Shift + a'],
+            ['action' => __('Tickets: My Tickets', 'fluent-support'), 'shortcut' => 'Ctrl + Shift + m'],
+            ['action' => __('Tickets: Unassigned', 'fluent-support'), 'shortcut' => 'Ctrl + Shift + u'],
+            ['action' => __('Tickets: Waiting for reply', 'fluent-support'), 'shortcut' => 'Ctrl + Alt + w'],
+            ['action' => __('Tickets: Bookmarks', 'fluent-support'), 'shortcut' => 'Ctrl + Shift + b'],
+            ['action' => __('Tickets: Toggle (Open, active, close, all)', 'fluent-support'), 'shortcut' => 'Ctrl + Shift + → / ←'],
+            ['action' => __('Ticket Reply: Reply', 'fluent-support'), 'shortcut' => 'Ctrl + Alt + r'],
+            ['action' => __('Ticket Reply: Personal note', 'fluent-support'), 'shortcut' => 'Ctrl + Alt + n'],
+            ['action' => __('Ticket Reply: Merge', 'fluent-support'), 'shortcut' => 'Ctrl + Alt + m'],
+            ['action' => __('Ticket Reply: Bookmarks', 'fluent-support'), 'shortcut' => 'Ctrl + Alt + b'],
+            ['action' => __('Ticket Reply: Refresh', 'fluent-support'), 'shortcut' => 'Ctrl + Alt + q'],
+            ['action' => __('Ticket Reply: Next ticket', 'fluent-support'), 'shortcut' => 'Ctrl + Alt + ↓'],
+            ['action' => __('Ticket Reply: Previous ticket', 'fluent-support'), 'shortcut' => 'Ctrl + Alt + ↑'],
+            ['action' => __('Ticket Reply: Close ticket', 'fluent-support'), 'shortcut' => 'Ctrl + Alt + x'],
         ];
 
         return [
@@ -549,7 +590,7 @@ class Settings
                 'key'            => 'ticket_created_email_to_customer',
                 'title'          => __('Ticket Created (To Customer)', 'fluent-support'),
                 'description'    => __('This email will be sent when a customer submit a support ticket', 'fluent-support'),
-                'email_subject'  => 'Re: {{ticket.title}} #{{ticket.id}}',
+                'email_subject'  => 'Re: {{ticket.title}} #{{ticket.public_id}}',
                 'default_status' => 'no',
                 'send_attachments'=> 'no'
             ],
@@ -557,7 +598,7 @@ class Settings
                 'key'            => 'ticket_replied_by_agent_email_to_customer',
                 'title'          => __('Replied by Agent (To Customer)', 'fluent-support'),
                 'description'    => __('This email will be sent when an agent reply to a ticket', 'fluent-support'),
-                'email_subject'  => 'Re: {{ticket.title}} #{{ticket.id}}',
+                'email_subject'  => 'Re: {{ticket.title}} #{{ticket.public_id}}',
                 'default_status' => 'yes',
                 'send_attachments'=> 'no'
             ],
@@ -565,7 +606,7 @@ class Settings
                 'key'            => 'ticket_closed_by_agent_email_to_customer',
                 'title'          => __('Ticket Closed by Agent (To Customer)', 'fluent-support'),
                 'description'    => __('This email will be sent when an agent close a ticket', 'fluent-support'),
-                'email_subject'  => 'Re: {{ticket.title}} #{{ticket.id}}',
+                'email_subject'  => 'Re: {{ticket.title}} #{{ticket.public_id}}',
                 'default_status' => 'no',
                 'send_attachments'=> 'no'
             ],
@@ -573,7 +614,7 @@ class Settings
                 'key'            => 'ticket_created_email_to_admin',
                 'title'          => __('Ticket Created (To Admin)', 'fluent-support'),
                 'description'    => __('This email will be sent when the business when a new ticket has been submitted', 'fluent-support'),
-                'email_subject'  => 'New Ticket: {{ticket.title}} #{{ticket.id}}',
+                'email_subject'  => 'New Ticket: {{ticket.title}} #{{ticket.public_id}}',
                 'default_status' => 'yes',
                 'send_attachments'=> 'no'
             ],
@@ -581,7 +622,7 @@ class Settings
                 'key'            => 'ticket_replied_by_customer_email_to_admin',
                 'title'          => __('Replied by Customer (To Agent/Admin)', 'fluent-support'),
                 'description'    => __('This email will be sent to Assigned Agent or Admin when a customer reply to a ticket', 'fluent-support'),
-                'email_subject'  => 'New Response: {{ticket.title}} #{{ticket.id}}',
+                'email_subject'  => 'New Response: {{ticket.title}} #{{ticket.public_id}}',
                 'default_status' => 'yes',
                 'send_attachments'=> 'no'
             ],
@@ -589,7 +630,7 @@ class Settings
                 'key'            => 'ticket_agent_on_change',
                 'title'          => __('Ticket Agent Change (To Agent)', 'fluent-support'),
                 'description'    => __('This email will be sent to newly assigned agent', 'fluent-support'),
-                'email_subject'  => 'Ticket Agent Change: {{ticket.title}} #{{ticket.id}}',
+                'email_subject'  => 'Ticket Agent Change: {{ticket.title}} #{{ticket.public_id}}',
                 'default_status' => 'yes',
                 'send_attachments'=> 'no'
             ],
@@ -597,7 +638,7 @@ class Settings
                 'key' => 'ticket_created_by_agent_email_to_customer',
                 'title' => __('Ticket Logged by Agent (To Customer)', 'fluent-support'),
                 'description' => __('This email will be sent when an agent logs a ticket on behalf of a customer (e.g. from a phone call or email received outside the system)', 'fluent-support'),
-                'email_subject' => 'Re: {{ticket.title}} #{{ticket.id}}',
+                'email_subject' => 'Re: {{ticket.title}} #{{ticket.public_id}}',
                 'default_status' => 'no',
                 'send_attachments'=> 'no'
             ],
@@ -605,7 +646,8 @@ class Settings
                 'key' => 'ticket_created_by_agent_on_behalf_email_to_customer',
                 'title' => __('Agent Outreach Ticket (To Customer)', 'fluent-support'),
                 'description' => __('This email will be sent when an agent creates a ticket using the "Agent Initiated" option to proactively reach out to a customer — includes the agent\'s message content', 'fluent-support'),
-                'email_subject' => 'Your ticket has been created (#{{ticket.id}})',
+                // Outreach reads like an email the agent wrote: their subject, their message.
+                'email_subject' => '{{ticket.title}}',
                 'default_status' => 'yes',
                 'send_attachments'=> 'no'
             ]
@@ -675,36 +717,37 @@ class Settings
     {
         if ($emailKey == 'ticket_created_email_to_customer') {
             if ($type == 'web') {
-                return '<p>Hi <strong><em>{{customer.full_name}}</em>,</strong></p><p>Your request (<a href="{{ticket.public_url}}">#{{ticket.id}}</a>) has been received, and is being reviewed by our support staff.</p><p>To add additional comments, follow the link below:</p><h4><a href="{{ticket.public_url}}">View Ticket</a></h4><p>&nbsp;</p><p>or follow this link: {{ticket.public_url}}</p><hr /><p>{{business.name}}</p>';
+                return '<p>Hi <strong><em>{{customer.full_name}}</em>,</strong></p><p>Your request (<a href="{{ticket.public_url}}">#{{ticket.public_id}}</a>) has been received, and is being reviewed by our support staff.</p><p>To add additional comments, follow the link below:</p><h4><a href="{{ticket.public_url}}">View Ticket</a></h4><p>&nbsp;</p><p>or follow this link: {{ticket.public_url}}</p><hr /><p>{{business.name}}</p>';
             } else {
                 return '<p>Hi <strong><em>{{customer.full_name}}</em>,</strong></p><p>Your request has been received, and is being reviewed by our support staff.</p><p>Our support staff will reply back to you soon</p>';
             }
         } else if ($emailKey == 'ticket_replied_by_agent_email_to_customer') {
             if ($type == 'web') {
-                return '<p>Hi <strong><em>{{customer.full_name}}</em>,</strong></p><p>An agent just replied to your ticket "<strong>{{ticket.title}}</strong>" (<a href="{{ticket.public_url}}">#{{ticket.id}}</a>). To view his reply or add additional comments, click the button below:</p><h4><a href="{{ticket.public_url}}">View Ticket</a></h4><p>or follow this link: {{ticket.public_url}}</p><hr /><p>Regards,<br />{{business.name}}</p>';
+                return '<p>Hi <strong><em>{{customer.full_name}}</em>,</strong></p><p>An agent just replied to your ticket "<strong>{{ticket.title}}</strong>" (<a href="{{ticket.public_url}}">#{{ticket.public_id}}</a>). To view the reply or add additional comments, click the button below:</p><h4><a href="{{ticket.public_url}}">View Ticket</a></h4><p>or follow this link: {{ticket.public_url}}</p><hr /><p>Regards,<br />{{business.name}}</p>';
             } else {
-                return '{{response.full_content}}<p>Regards,<br />{{agent.full_name}}</p>';
+                // {{agent.signature}} is empty when the agent has none.
+                return '{{response.full_content}}{{agent.signature}}';
             }
         } else if ($emailKey == 'ticket_closed_by_agent_email_to_customer') {
             if ($type == 'web') {
-                return '<p>Hi <strong><em>{{customer.full_name}},</strong></p><p>Your ticket - {{ticket.title}}</p><p>We hope that the ticket was resolved to your satisfaction. If you feel that the ticket should not be closed or if the ticket has not been resolved, please reopen the ticket (<a href="{{ticket.public_url}}">#{{ticket.id}}</a>)</p><p>Regards,<br />{{business.name}}</p>';
+                return '<p>Hi <strong><em>{{customer.full_name}},</strong></p><p>Your ticket - {{ticket.title}}</p><p>We hope that the ticket was resolved to your satisfaction. If you feel that the ticket should not be closed or if the ticket has not been resolved, please reopen the ticket (<a href="{{ticket.public_url}}">#{{ticket.public_id}}</a>)</p><p>Regards,<br />{{business.name}}</p>';
             } else {
                 return '<p>Hi <strong><em>{{customer.full_name}},</strong></p><p>Your ticket - {{ticket.title}}</p><p>We hope that the ticket was resolved to your satisfaction. If you feel that the ticket should not be closed or if the ticket has not been resolved, please feel free to reply back.<p>Regards,<br />{{business.name}}</p>';
             }
         } else if ($emailKey == 'ticket_created_email_to_admin') {
-            return '<p>A new ticket (<a href="{{ticket.admin_url}}">{{ticket.title}}</a>) as been submitted by {{customer.full_name}}</p><h4>Ticket Body</h4><p>{{ticket.content}}</p><p><b><a href="{{ticket.admin_url}}">View Ticket</a></b></p>';
+            return '<p>A new ticket (<a href="{{ticket.admin_url}}">{{ticket.title}}</a>) has been submitted by {{customer.full_name}}</p><h4>Ticket Body</h4><p>{{ticket.content}}</p><p><b><a href="{{ticket.admin_url}}">View Ticket</a></b></p>';
         } else if ($emailKey == 'ticket_replied_by_customer_email_to_admin') {
             return '<p>A new response has been added to "<a href="{{ticket.admin_url}}">{{ticket.title}}</a>"  by {{customer.full_name}}</p><h4>Response Body</h4><p>{{response.content}}</p><p><b><a href="{{ticket.admin_url}}">View Ticket</a></b></p>';
         } else if($emailKey == 'ticket_agent_on_change') {
-            return '<p>Hi <strong><em>{{agent.full_name}}</em>,</strong></p><p>Ticket "<a href="{{ticket.admin_url}}">#{{ticket.id}}</a>" assigned to you.</p>';
+            return '<p>Hi <strong><em>{{agent.full_name}}</em>,</strong></p><p>Ticket "<a href="{{ticket.admin_url}}">#{{ticket.public_id}}</a>" assigned to you.</p>';
         } else if($emailKey == 'ticket_created_by_agent_email_to_customer') {
             return '<p>Hi <strong><em>{{customer.full_name}}</em>,</strong></p><p>{{agent.full_name}} created a ticket on behalf of you, you can check it <a href="{{ticket.public_url}}">here</a></p>.';
         } else if($emailKey == 'ticket_created_by_agent_on_behalf_email_to_customer') {
             if ($type == 'web') {
-                return '<p>Hi <strong><em>{{customer.full_name}}</em>,</strong></p><p>A support agent has created a new ticket on your behalf titled "{{ticket.title}}" (#{{ticket.id}}).</p><p>You can review the details, track progress, or add additional comments by clicking the button below:</p><h4><a href="{{ticket.public_url}}">View Ticket</a></h4><p>Or follow this link: {{ticket.public_url}}</p><p>Best regards,<br />{{agent.full_name}}</p>';
-            } else {
-                return '{{response.full_content}}<p>Regards,<br />{{agent.full_name}}</p>';
+                // Web mailboxes take replies in the portal, not by email.
+                return '{{response.full_content}}{{agent.signature}}<p><a href="{{ticket.public_url}}">Reply to this conversation</a></p>';
             }
+            return '{{response.full_content}}{{agent.signature}}';
         }
 
         return '';

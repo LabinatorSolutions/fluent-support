@@ -2,12 +2,8 @@
 
 namespace FluentSupport\App\Models;
 
-use FluentSupport\App\Models\Traits\AgentTrait;
-
 class Agent extends Person
 {
-    use AgentTrait;
-
     protected static $type = 'agent';
 
     protected $searchable = [
@@ -28,9 +24,8 @@ class Agent extends Person
     }
 
     /**
-     * Agent ids, resolved once per request. Reporting filters on this list
-     * rather than whereHas('person', ...), which drove those queries off
-     * fs_persons (no person_type index) and cost them their date range.
+     * Agent ids, cached per request. Reporting filters on these ids because
+     * whereHas('person') hits fs_persons, which has no person_type index.
      *
      * @return array
      */
@@ -61,7 +56,6 @@ class Agent extends Person
 
 
     /**
-     * One2Many: Customer has to many Click Tickets
      * @return Model Collection
      */
     public function tickets()

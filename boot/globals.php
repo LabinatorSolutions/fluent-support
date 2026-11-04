@@ -10,16 +10,5 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  */
 
 
+// Dev-only helpers (dd(), query log). build.sh leaves the file out of releases.
 is_readable(__DIR__ . '/globals_dev.php') && include 'globals_dev.php';
-
-if (!function_exists('dd')) {
-    function dd()
-    {
-        foreach (func_get_args() as $arg) {
-            echo "<pre>";
-            print_r($arg);
-            echo "</pre>";
-        }
-        die();
-    }
-}

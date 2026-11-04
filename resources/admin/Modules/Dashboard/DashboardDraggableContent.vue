@@ -94,16 +94,28 @@
         </el-row>
     </div>
 
-    <div class="fs_padded_20" v-else>
+    <div class="fs_padded_20" v-else aria-busy="true">
         <el-row :gutter="20">
-            <el-col :span="12">
-                <div class="fs_component_skeleton">
-                    <el-skeleton :rows="6" animated />
-                </div>
-            </el-col>
-            <el-col :span="12">
-                <div class="fs_component_skeleton">
-                    <el-skeleton :rows="6" animated />
+            <el-col v-for="column in ['first_column', 'second_column']" :key="column" :span="12">
+                <div
+                    v-for="element in skeletonWidgets(column)"
+                    :key="element.id"
+                    class="fs_component_skeleton"
+                    style="margin-bottom: 20px;"
+                >
+                    <el-skeleton animated>
+                        <template #template>
+                            <el-skeleton-item variant="text" style="width: 40%; height: 18px;" />
+                            <div v-for="n in 3" :key="n" style="margin-top: 20px;">
+                                <el-skeleton-item variant="text" style="width: 75%;" />
+                                <div style="display: flex; gap: 8px; margin-top: 10px;">
+                                    <el-skeleton-item variant="button" style="width: 64px; height: 22px;" />
+                                    <el-skeleton-item variant="button" style="width: 64px; height: 22px;" />
+                                    <el-skeleton-item variant="text" style="width: 80px;" />
+                                </div>
+                            </div>
+                        </template>
+                    </el-skeleton>
                 </div>
             </el-col>
         </el-row>
@@ -154,6 +166,11 @@ export default {
     emits: ['change'],
 
     methods: {
+        skeletonWidgets(column) {
+            // One placeholder card per visible widget; fall back to one card so the column is never empty.
+            const items = (this.dashboard_param[column] || []).filter(item => item.show);
+            return items.length ? items : [{ id: column }];
+        },
         handleChange() {
             this.$emit('change');
         },

@@ -78,7 +78,7 @@
                     </div>
                 </div>
                 <div class="fs_section_body fs_wid_day_by_day">
-                    <div v-if="appReady && !heatmapFetchError" class="fs_time_widget">
+                    <div v-if="heatmapHasData && !heatmapFetchError" class="fs_time_widget" v-loading="!appReady">
                         <div class="fs_time_widget_header">
                             <div class="fs_time_day"></div>
                             <div v-for="day in days" :key="day" class="fs_time_day">{{ dayLabels[day] }}</div>
@@ -101,7 +101,26 @@
                     <div class="fs_chart_error fs_heatmap_error" v-else-if="heatmapFetchError">
                         <p>{{ $t("Couldn't load this data.") }}</p>
                     </div>
-                    <el-skeleton v-else :rows="5"></el-skeleton>
+                    <el-skeleton v-else animated aria-busy="true">
+                        <template #template>
+                            <div class="fs_time_widget">
+                                <div class="fs_time_widget_header">
+                                    <div class="fs_time_day"></div>
+                                    <div v-for="day in days" :key="day" class="fs_time_day">{{ dayLabels[day] }}</div>
+                                </div>
+                                <div class="fs_time_widget_body">
+                                    <div class="fs_wid_sub_headers">
+                                        <div v-for="tipIndex in tipIndexes" :key="tipIndex" class="fs_wid_sub_header">{{ tipIndex }}</div>
+                                    </div>
+                                    <div v-for="day in days" :key="day" class="fs_time_day">
+                                        <div v-for="keyItem in filledSlots" :key="keyItem" class="fs_time_hour">
+                                            <el-skeleton-item variant="rect" style="width: 100%; height: 100%;" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </el-skeleton>
                     <div class="fs_wid_label_info">
                         <span class="fs_wid_dir">{{ $t('Less') }}</span>
                         <span class="fs_wid_level fs_wid_level_0"></span>
@@ -135,8 +154,6 @@
                         <line-chart-base
                             v-if="responseActivityChartData"
                             :chartData="responseActivityChartData"
-                            :chartOptions="responseActivityChartOptions"
-                            :plugins="chartPlugins"
                         ></line-chart-base>
                         <div class="fs_chart_error" v-else-if="trendFetchError">
                             <p>{{ $t("Couldn't load this data.") }}</p>
@@ -169,30 +186,6 @@ const REPORT_TYPE_LABELS = {
     ticket: "All Tickets",
     agent_response: "Agent Response",
     customer_response: "Customer Response"
-};
-
-const dashedYGridPlugin = {
-    id: "dashedYGrid",
-    beforeDatasetsDraw(chart) {
-        const { ctx, chartArea, scales } = chart;
-        const yScale = scales.y;
-        if (!yScale || !chartArea) {
-            return;
-        }
-        const gridColor = getComputedStyle(document.documentElement).getPropertyValue('--fs-stroke-soft').trim() || '#E1E4EA';
-        ctx.save();
-        ctx.setLineDash([4, 4]);
-        ctx.strokeStyle = gridColor;
-        ctx.lineWidth = 1;
-        yScale.ticks.forEach((tick) => {
-            const y = yScale.getPixelForValue(tick.value);
-            ctx.beginPath();
-            ctx.moveTo(chartArea.left, y);
-            ctx.lineTo(chartArea.right, y);
-            ctx.stroke();
-        });
-        ctx.restore();
-    }
 };
 
 export default {
@@ -244,45 +237,15 @@ export default {
             chartLabels: [],
             ticketCreation: [],
             agentReplies: [],
-            responseActivityChartData: null,
-            responseActivityChartOptions: {
-                responsive: true,
-                maintainAspectRatio: false,
-                interaction: {
-                    mode: "index",
-                    intersect: false
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: {
-                            drawOnChartArea: false
-                        }
-                    },
-                    x: {
-                        grid: {
-                            drawOnChartArea: false
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                },
-                layout: {
-                    padding: {
-                        left: 8,
-                        right: 16,
-                        top: 12,
-                        bottom: 8
-                    }
-                }
-            }
+            responseActivityChartData: null
         };
     },
 
     computed: {
+        heatmapHasData() {
+            // Keep the last grid on screen while a new one loads; the skeleton shows only before the first grid.
+            return !!this.dataItems && this.days.every(day => !!this.dataItems[day]);
+        },
         formattedDateRange() {
             return formatDateRangeForDisplay(this.dateRange);
         },
@@ -319,9 +282,6 @@ export default {
                     color: computedStyle.getPropertyValue('--fs-chart-primary').trim() || '#0cbe7e'
                 }
             ];
-        },
-        chartPlugins() {
-            return [dashedYGridPlugin];
         },
         trendIsSnapshotMode() {
             return this.trendLiveMode === "snapshot" && !!this.trendSelectedSnapshot;
@@ -528,17 +488,6 @@ export default {
                 });
         },
 
-        withOpacity(hex, opacity) {
-            const normalized = hex.replace('#', '');
-            const bigint = parseInt(normalized.length === 3
-                ? normalized.split('').map(c => c + c).join('')
-                : normalized, 16);
-            const r = (bigint >> 16) & 255;
-            const g = (bigint >> 8) & 255;
-            const b = bigint & 255;
-            return `rgba(${r}, ${g}, ${b}, ${opacity})`;
-        },
-
         setupResponseActivityChart() {
             const [ticketColor, agentColor] = this.trendLegendItems.map(item => item.color);
             this.responseActivityChartData = {
@@ -547,26 +496,14 @@ export default {
                     {
                         label: this.$t("Ticket Creation"),
                         data: this.ticketCreation,
-                        borderColor: ticketColor,
-                        backgroundColor: this.withOpacity(ticketColor, 0.12),
-                        fill: true,
-                        tension: 0.4,
-                        borderWidth: 2.5,
-                        pointRadius: 0,
-                        pointHoverRadius: 4,
-                        pointHoverBackgroundColor: ticketColor
+                        color: ticketColor,
+                        fill: true
                     },
                     {
                         label: this.$t("Agent Replies"),
                         data: this.agentReplies,
-                        borderColor: agentColor,
-                        backgroundColor: this.withOpacity(agentColor, 0.12),
-                        fill: true,
-                        tension: 0.4,
-                        borderWidth: 2.5,
-                        pointRadius: 0,
-                        pointHoverRadius: 4,
-                        pointHoverBackgroundColor: agentColor
+                        color: agentColor,
+                        fill: true
                     }
                 ]
             };

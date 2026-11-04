@@ -1,64 +1,68 @@
 /**
  * Fluent Support Dark Mode
- * Overrides CSS variables and components when body.fs-dark-mode.
+ * Overrides CSS variables and components when body.fluent_theme_dark.
  */
-body.fs-dark-mode {
+body.fluent_theme_dark {
 
     // ═══════════════════════════════════════════
     // A. CSS VARIABLE OVERRIDES
     // ═══════════════════════════════════════════
 
     // ─── TEXT COLORS ─────────────────────── //
-    --fs-text-primary: #E5E7EB;
+    --fs-text-primary: #F5F6F7;
     --fs-text-black: #000000;
-    --fs-text-secondary: #99A0AE;
-    --fs-text-muted: #9CA3AF;
-    --fs-text-gray: #9CA3AF;
+    --fs-text-secondary: #C1C7D1;
+    --fs-text-muted: #98A2B3;
+    --fs-text-gray: #98A2B3;
     --fs-text-link: #34D399;
 
     // ─── BUTTON HOVER COLORS ─────────────── //
-    --fs-btn-hover-bg: #2B303B;
+    --fs-btn-hover-bg: #2C3C4E;
     --fs-btn-stroke-hover-bg: rgba(251, 55, 72, 0.12);
 
     // ─── BACKGROUND COLORS ───────────────── //
-    --fs-global-component-bg: #05070B;
-    --fs-bg-primary: #0E121B;
-    --fs-bg-subtle: #222530;
-    --fs-bg-strong: #181B25;
-    --fs-bg-muted: #2B303B;
-    --fs-bg-internal-note: #1F2937;
-    --fs-bg-warning: #1F2937;
+    --fs-global-component-bg: #11171D;
+    --fs-bg-primary: #151D26;
+    --fs-bg-subtle: #1C2732;
+    --fs-bg-strong: #253241;
+    --fs-bg-muted: #2C3C4E;
+    --fs-bg-internal-note: #253241;
+    --fs-bg-warning: #253241;
+    --fs-bg-selected: rgba(51, 92, 255, 0.16);
 
     // ─── BUTTONS / ACTIONS ───────────────── //
-    --fs-btn-primary-bg: #05070b;
-    --fs-btn-disabled: #4B5563;
-    --fs-subtle-btn-bg: #1F2937;
-    --fs-subtle-btn-text: #99A0AE;
+    --fs-btn-primary-bg: #11171D;
+    --fs-btn-filled-bg: #FFFFFF;
+    --fs-btn-filled-text: #0E121B;
+    --fs-btn-filled-hover-bg: #E1E4EA;
+    --fs-btn-disabled: #5A5F66;
+    --fs-subtle-btn-bg: #253241;
+    --fs-subtle-btn-text: #C1C7D1;
 
     // ─── BORDER COLORS ───────────────────── //
-    --fs-border-default: #2B303B;
-    --fs-stroke-soft: #2B303B;
-    --fs-stroke-strong: #E5E7EB;
-    --fs-btn-border-black: #E5E7EB;
+    --fs-border-default: #2C3C4E;
+    --fs-stroke-soft: #2C3C4E;
+    --fs-stroke-strong: #F5F6F7;
+    --fs-btn-border-black: #F5F6F7;
 
     // ─── TABLE ───────────────────────────── //
-    --fs-table-header-bg: #141721;
-    --fs-table-hover-bg: #1F2937;
+    --fs-table-header-bg: #1C2732;
+    --fs-table-hover-bg: #253241;
 
     // ─── STATUS COLORS ───────────────────── //
     --fs-status-active-bg: #064E3B;
     --fs-status-active-text: #6EE7B7;
-    --fs-status-inactive-bg: #1F2937;
+    --fs-status-inactive-bg: #253241;
     --fs-status-pending-bg: #78350F;
-    --fs-status-blocked-bg: #181B25;
-    --fs-status-blocked-border: #2B303B;
+    --fs-status-blocked-bg: #1C2732;
+    --fs-status-blocked-border: #2C3C4E;
     --fs-status-info-bg: #1E3A5F;
     --fs-status-info-text: #93C5FD;
     --fs-status-waiting-bg: rgba(217, 119, 6, 0.15);
     --fs-status-waiting-color: #FBBF24;
 
     // ─── TAGS COLORS ───────────────────── //
-    --fs-primary-tags-bg: #2B303B;
+    --fs-primary-tags-bg: #2C3C4E;
 
     // ─── STATE COLORS ─────────────────────── //
     --fs-state-faded-light: rgba(153, 160, 174, 0.16);
@@ -66,14 +70,25 @@ body.fs-dark-mode {
     --fs-state-success-light: rgba(31, 193, 107, 0.10);
     --fs-state-information-light: rgba(251, 55, 72, 0.15);
     --fs-state-feature-light: rgba(139, 92, 246, 0.15);
-    --fs-state-feature-dark: #A78BFA;
-    --fs-badge-faded-text: #E5E7EB;
+    --fs-state-feature-dark: #C4B5FD;
+    // The *-dark state tokens are foregrounds (text, dots) on their tinted *-light backgrounds.
+    --fs-state-faded-dark: #98A2B3;
+    --fs-state-faded-base: #98A2B3;
+    --fs-state-stable-dark: #5EEAD4;
+    --fs-state-warning-dark: #FFA468;
+    --fs-state-error-dark: #FCA5A5;
+    --fs-state-away-dark: #FCD34D;
+    --fs-state-away-lighter: rgba(250, 204, 21, 0.12);
+    --fs-status-inactive: #98A2B3;
+    --fs-status-blocked: #98A2B3;
+    --fs-gray-600: #98A2B3;
+    --fs-badge-faded-text: #F5F6F7;
 
     // ─── PLAIN BUTTON TEXT ───────────────── //
-    --fs-plain-button-text: #99A0AE;
+    --fs-plain-button-text: #C1C7D1;
 
     // ─── TOOLTIP ─────────────────────────── //
-    --fs-tooltip-bg: #374151;
+    --fs-tooltip-bg: #2C3C4E;
 
     // ─── SHADOWS ─────────────────────────── //
     --fs-shadow-soft: rgba(0, 0, 0, 0.3);
@@ -81,14 +96,37 @@ body.fs-dark-mode {
     --fs-shadow-toggle: 0 6px 10px 0 rgba(0, 0, 0, 0.25), 0 2px 4px 0 rgba(0, 0, 0, 0.15);
 
     // ─── STAT ICON BACKGROUNDS ────────────── //
-    --fs-stat-icon-bg: #1F2937;
-    --fs-stat-icon-color: #99A0AE;
+    --fs-stat-icon-bg: #253241;
+    --fs-stat-icon-color: #C1C7D1;
     --fs-stat-icon-danger-bg: rgba(251, 55, 72, 0.15);
     --fs-stat-icon-danger-color: #FB3748;
     --fs-stat-icon-warning-bg: rgba(255, 132, 71, 0.15);
     --fs-stat-icon-warning-color: #FF8447;
     --fs-stat-icon-info-bg: rgba(51, 92, 255, 0.15);
-    --fs-stat-icon-info-color: #335CFF;
+    --fs-stat-icon-info-color: #8FA8FF;
+    // Tone tiles keep a tinted fill but a neutral glyph in dark mode.
+    --fs-stat-icon-blue-bg: rgba(51, 92, 255, 0.18);
+    --fs-stat-icon-blue-color: var(--fs-stat-icon-color, #C1C7D1);
+    --fs-stat-icon-orange-bg: rgba(255, 132, 71, 0.18);
+    --fs-stat-icon-orange-color: var(--fs-stat-icon-color, #C1C7D1);
+    --fs-stat-icon-purple-bg: rgba(125, 82, 244, 0.2);
+    --fs-stat-icon-purple-color: var(--fs-stat-icon-color, #C1C7D1);
+    --fs-stat-icon-pink-bg: rgba(251, 75, 163, 0.18);
+    --fs-stat-icon-pink-color: var(--fs-stat-icon-color, #C1C7D1);
+    --fs-stat-icon-sky-bg: rgba(71, 194, 255, 0.18);
+    --fs-stat-icon-sky-color: var(--fs-stat-icon-color, #C1C7D1);
+    --fs-stat-icon-red-bg: rgba(251, 55, 72, 0.18);
+    --fs-stat-icon-red-color: var(--fs-stat-icon-color, #C1C7D1);
+
+    // ─── SMALL BADGES (sidebar widgets) ───── //
+    --fs-badge-sm-success-bg: rgba(24, 152, 119, 0.12);
+    --fs-badge-sm-success-text: #46AD92;
+    --fs-badge-sm-warning-bg: rgba(250, 115, 25, 0.2);
+    --fs-badge-sm-warning-text: #FFA468;
+    --fs-badge-sm-danger-bg: rgba(240, 68, 56, 0.2);
+    --fs-badge-sm-danger-text: #FF8A94;
+    --fs-badge-sm-info-bg: rgba(51, 92, 255, 0.2);
+    --fs-badge-sm-info-text: #8FA8FF;
 
     // ─── DOT / GLOW ─────────────────────── //
     --fs-dot-warning-glow: rgba(255, 132, 71, 0.15);
@@ -99,6 +137,21 @@ body.fs-dark-mode {
 
     // ─── WARNING COLORS ──────────────────── //
     --fs-warning-bg: rgba(250, 115, 25, 0.8);
+
+    // ─── PRO SHOWCASE ────────────────────── //
+    --fs-pro-badge-bg: rgba(24, 152, 119, 0.12);
+    --fs-pro-badge-text: #46AD92;
+    --fs-pro-check: #46AD92;
+    --fs-pro-preview-shadow: 0 0 0 1px rgba(255, 255, 255, 0.04), 0 8px 24px -6px rgba(0, 0, 0, 0.5);
+    --fs-pro-chip-orange-bg: rgba(255, 142, 58, 0.16);
+    --fs-pro-chip-orange-border: rgba(255, 142, 58, 0.3);
+    --fs-pro-chip-orange-text: #FFB36B;
+    --fs-pro-chip-purple-bg: rgba(120, 77, 239, 0.24);
+    --fs-pro-chip-purple-border: #4C25A7;
+    --fs-pro-chip-purple-text: #CAC0FF;
+    --fs-pro-menu-active-text: #CAC0FF;
+    --fs-pro-switch-on-knob: #2C3C4E;
+    --fs-pro-switch-off-knob: #98A2B3;
 
     // ─── ELEMENT PLUS DESIGN TOKENS ──────── //
     --el-text-color-primary: var(--fs-text-primary);
@@ -121,7 +174,7 @@ body.fs-dark-mode {
     // B. LAYOUT / GLOBAL SCOPING
     // ═══════════════════════════════════════════
 
-    // Scoped to Fluent Support admin (WordPress admin body) — same canvas as light mode
+    // Fluent Support admin pages only.
     &.toplevel_page_fluent-support,
     &.toplevel_page_fluent-support #wpwrap,
     &.toplevel_page_fluent-support #wpcontent,
@@ -129,7 +182,17 @@ body.fs-dark-mode {
     &.toplevel_page_fluent-support #wpbody-content,
     &.toplevel_page_fluent-support #alpha_app,
     &.toplevel_page_fluent-support .fframe_app {
-        background-color: var(--fs-global-component-bg, #05070B);
+        background-color: var(--fs-global-component-bg, #11171D);
+    }
+
+    // Unstyled text and icons otherwise inherit WP admin's #3C434A.
+    #alpha_app {
+        color: var(--fs-text-primary, #F5F6F7);
+    }
+
+    // Searchable select input: WP admin / theme input colors are dark-on-dark here.
+    .el-select__input {
+        color: var(--fs-text-primary, #F5F6F7);
     }
 
     .el-input__wrapper {
@@ -149,43 +212,57 @@ body.fs-dark-mode {
 
     .el-textarea {
         .el-textarea__inner {
-            background: var(--fs-bg-primary, #0E121B);
-            color: var(--fs-text-primary, #E5E7EB);
-            border-color: var(--fs-stroke-soft, #2B303B);
+            background: var(--fs-bg-primary, #151D26);
+            color: var(--fs-text-primary, #F5F6F7);
+            border-color: var(--fs-stroke-soft, #2C3C4E);
         }
     }
 
     .el-input-group__append,
     .el-input-group__prepend {
-        background-color: var(--fs-bg-subtle, #222530);
-        border-color: var(--fs-border-default, #2B303B);
-        color: var(--fs-text-primary, #E5E7EB);
+        background-color: var(--fs-bg-subtle, #1C2732);
+        border-color: var(--fs-border-default, #2C3C4E);
+        color: var(--fs-text-primary, #F5F6F7);
 
         .el-button {
-            color: var(--fs-text-primary, #E5E7EB);
+            color: var(--fs-text-primary, #F5F6F7);
         }
     }
 
     .el-tabs {
         .el-tabs__nav-wrap::after {
-            background-color: var(--fs-border-default, #2B303B);
+            background-color: var(--fs-border-default, #2C3C4E);
         }
 
         .el-tabs__item {
-            color: var(--fs-text-secondary, #99A0AE);
+            color: var(--fs-text-secondary, #C1C7D1);
 
             &.is-active {
-                color: var(--fs-text-primary, #E5E7EB);
+                color: var(--fs-text-primary, #F5F6F7);
             }
 
             &:hover {
-                color: var(--fs-text-primary, #E5E7EB);
+                color: var(--fs-text-primary, #F5F6F7);
             }
         }
 
         .el-tabs__active-bar {
-            background-color: var(--fs-text-primary, #E5E7EB);
+            background-color: var(--fs-text-primary, #F5F6F7);
         }
+    }
+
+    // Ticket header items that otherwise inherit WP's #3C434A.
+    .fs_timer_info .fs_timer_icon {
+        color: var(--fs-text-secondary, #C1C7D1);
+    }
+
+    .fs_additional_info .fs_no_data {
+        color: var(--fs-text-muted, #98A2B3);
+    }
+
+    // --fs-status-active doubles as a solid background behind white text, so lighten the badge text only.
+    .fs_status_badge.active {
+        color: var(--fs-status-active-text, #6EE7B7);
     }
 
     .fs_mcp_connected_badge {
@@ -202,24 +279,15 @@ body.fs-dark-mode {
     // C. COLOR MODE TOGGLE
     // ═══════════════════════════════════════════
 
-    .fs_color_mode {
-        .show_on_dark {
-            transform: scale(1);
-        }
-        .show_on_light {
-            transform: scale(0);
-        }
-    }
-
     .fs_customer_sentiment_status{
         .fs_sentiment_text{
-            color: var(--fs-text-primary, #E5E7EB);
+            color: var(--fs-text-primary, #F5F6F7);
         }
     }
 
     .fs_color_mode_core {
-        color: var(--fs-text-secondary, #99A0AE);
-        border-color: var(--fs-border-default, #2B303B);
+        color: var(--fs-text-secondary, #C1C7D1);
+        border-color: var(--fs-border-default, #2C3C4E);
     }
 
 
@@ -228,43 +296,43 @@ body.fs-dark-mode {
     // ═══════════════════════════════════════════
 
     .fs_main_navbar {
-        background: var(--fs-bg-primary, #0E121B);
-        border-bottom-color: var(--fs-stroke-soft, #2B303B);
+        background: var(--fs-bg-primary, #151D26);
+        border-bottom-color: var(--fs-stroke-soft, #2C3C4E);
     }
 
     .fs_nav_item {
         .fs_nav_link,
         .fs_nav_right_item {
-            color: var(--fs-text-secondary, #99A0AE);
+            color: var(--fs-text-secondary, #C1C7D1);
             &:hover {
-                background: var(--fs-bg-subtle, #222530);
-                color: var(--fs-text-primary, #E5E7EB);
+                background: var(--fs-bg-subtle, #1C2732);
+                color: var(--fs-text-primary, #F5F6F7);
             }
         }
         &.fs_active .fs_nav_link,
         &.current .fs_nav_link,
         &.fs_active .fs_nav_right_item,
         &.current .fs_nav_right_item {
-            background: var(--fs-bg-subtle, #222530);
-            color: var(--fs-text-primary, #E5E7EB);
+            background: var(--fs-bg-subtle, #1C2732);
+            color: var(--fs-text-primary, #F5F6F7);
         }
         &.fs_has_dropdown {
             .fs_dropdown_trigger {
-                color: var(--fs-text-secondary, #99A0AE);
+                color: var(--fs-text-secondary, #C1C7D1);
                 &:hover {
-                    background: var(--fs-bg-subtle, #222530);
-                    color: var(--fs-text-primary, #E5E7EB);
+                    background: var(--fs-bg-subtle, #1C2732);
+                    color: var(--fs-text-primary, #F5F6F7);
                 }
             }
             .fs_dropdown_menu {
-                background: var(--fs-bg-primary, #0E121B);
-                border-color: var(--fs-border-default, #2B303B);
+                background: var(--fs-bg-primary, #151D26);
+                border-color: var(--fs-border-default, #2C3C4E);
             }
             .fs_dropdown_link {
-                color: var(--fs-text-secondary, #99A0AE);
+                color: var(--fs-text-secondary, #C1C7D1);
                 &:hover {
-                    background: var(--fs-bg-subtle, #222530);
-                    color: var(--fs-text-primary, #E5E7EB);
+                    background: var(--fs-bg-subtle, #1C2732);
+                    color: var(--fs-text-primary, #F5F6F7);
                 }
             }
         }
@@ -277,62 +345,62 @@ body.fs-dark-mode {
     }
 
     .el-select-dropdown {
-        background-color: var(--fs-bg-primary, #0E121B);
-        border-color: var(--fs-border-default, #2B303B);
+        background-color: var(--fs-bg-primary, #151D26);
+        border-color: var(--fs-border-default, #2C3C4E);
 
         .el-select-group__title {
-            color: var(--fs-text-secondary, #9CA3AF);
+            color: var(--fs-text-secondary, #98A2B3);
         }
 
         .el-select-dropdown__item {
-            color: var(--fs-text-primary, #E5E7EB);
+            color: var(--fs-text-primary, #F5F6F7);
 
             &.is-hovering {
-                background-color: var(--fs-bg-subtle, #222530);
+                background-color: var(--fs-bg-subtle, #1C2732);
             }
 
             &.is-selected {
-                color: var(--fs-text-primary, #E5E7EB);
+                color: var(--fs-text-primary, #F5F6F7);
             }
         }
     }
 
     // --- Table ---
     .el-table {
-        --el-table-bg-color: var(--fs-bg-primary, #0E121B);
-        --el-table-tr-bg-color: var(--fs-bg-primary, #0E121B);
-        --el-table-header-bg-color: var(--fs-table-header-bg, #141721);
-        --el-table-row-hover-bg-color: var(--fs-table-hover-bg, #1F2937);
-        --el-table-border-color: var(--fs-border-default, #2B303B);
-        color: var(--fs-text-primary, #E5E7EB);
+        --el-table-bg-color: var(--fs-bg-primary, #151D26);
+        --el-table-tr-bg-color: var(--fs-bg-primary, #151D26);
+        --el-table-header-bg-color: var(--fs-table-header-bg, #1C2732);
+        --el-table-row-hover-bg-color: var(--fs-table-hover-bg, #253241);
+        --el-table-border-color: var(--fs-border-default, #2C3C4E);
+        color: var(--fs-text-primary, #F5F6F7);
     }
 
     // --- Native HTML table (.fs_table) ---
     .fs_table {
-        background-color: var(--fs-bg-primary, #0E121B);
-        border-color: var(--fs-border-default, #2B303B);
+        background-color: var(--fs-bg-primary, #151D26);
+        border-color: var(--fs-border-default, #2C3C4E);
 
         thead th {
-            background-color: var(--fs-table-header-bg, #141721);
-            color: var(--fs-text-secondary, #99A0AE);
+            background-color: var(--fs-table-header-bg, #1C2732);
+            color: var(--fs-text-secondary, #C1C7D1);
         }
 
         tbody th,
         td {
-            background-color: var(--fs-bg-primary, #0E121B);
-            color: var(--fs-text-primary, #E5E7EB);
-            border-bottom-color: var(--fs-border-default, #2B303B);
+            background-color: var(--fs-bg-primary, #151D26);
+            color: var(--fs-text-primary, #F5F6F7);
+            border-bottom-color: var(--fs-border-default, #2C3C4E);
         }
     }
 
     .fs_custom_fields_wrapper {
         .fs_field_label {
-            color: var(--fs-text-primary, #E5E7EB);
+            color: var(--fs-text-primary, #F5F6F7);
         }
 
         .fs_field_slug,
         .fs_field_type {
-            color: var(--fs-text-muted, #9CA3AF);
+            color: var(--fs-text-muted, #98A2B3);
         }
     }
 
@@ -353,7 +421,7 @@ body.fs-dark-mode {
             border-radius: 12px;
             background: transparent !important;
             border-color: transparent !important;
-            color: var(--fs-text-muted, #9CA3AF) !important;
+            color: var(--fs-text-muted, #98A2B3) !important;
             box-shadow: none !important;
             display: inline-flex;
             align-items: center;
@@ -364,73 +432,85 @@ body.fs-dark-mode {
             &:hover,
             &:focus,
             &:active {
-                background: var(--fs-bg-strong, #181B25) !important;
-                border-color: var(--fs-bg-strong, #181B25) !important;
-                color: var(--fs-text-primary, #E5E7EB) !important;
+                background: var(--fs-bg-strong, #1C2732) !important;
+                border-color: var(--fs-bg-strong, #1C2732) !important;
+                color: var(--fs-text-primary, #F5F6F7) !important;
             }
         }
     }
 
     // --- Dialog ---
     .el-dialog {
-        --el-dialog-bg-color: var(--fs-bg-primary, #0E121B);
-        border-color: var(--fs-border-default, #2B303B);
+        --el-dialog-bg-color: var(--fs-bg-primary, #151D26);
+        border-color: var(--fs-border-default, #2C3C4E);
     }
 
     // --- Message Box ---
 
     .fs_warn_alert {
+        background-color: rgba(250, 115, 25, 0.12);
+
         .fs_warn_content,
         .fs_warn_content b {
-            color: var(--fs-text-black, #000000);
+            color: var(--fs-text-primary, #F5F6F7);
         }
     }
+
+    .fs_refresh_button:hover {
+        background: var(--fs-btn-hover-bg, #2C3C4E);
+        color: var(--fs-text-primary, #F5F6F7);
+    }
+
+    .fs_license_checked a,
+    .fs_license_purchase_link {
+        color: var(--fs-status-info-text, #93C5FD);
+    }
     .el-message-box {
-        background-color: var(--fs-bg-primary, #0E121B);
-        border-color: var(--fs-border-default, #2B303B);
+        background-color: var(--fs-bg-primary, #151D26);
+        border-color: var(--fs-border-default, #2C3C4E);
 
         .el-message-box__title {
-            color: var(--fs-text-primary, #E5E7EB);
+            color: var(--fs-text-primary, #F5F6F7);
         }
 
         .el-message-box__message {
-            color: var(--fs-text-secondary, #99A0AE);
+            color: var(--fs-text-secondary, #C1C7D1);
         }
 
         .el-message-box__close {
-            color: var(--fs-text-muted, #9CA3AF);
+            color: var(--fs-text-muted, #98A2B3);
         }
     }
 
     // --- Drawer ---
     .el-drawer {
-        background-color: var(--fs-bg-primary, #0E121B);
+        background-color: var(--fs-bg-primary, #151D26);
     }
 
     // --- Dropdown ---
     .el-dropdown-menu {
-        background-color: var(--fs-bg-primary, #0E121B);
-        border-color: var(--fs-border-default, #2B303B);
+        background-color: var(--fs-bg-primary, #151D26);
+        border-color: var(--fs-border-default, #2C3C4E);
     }
 
     // --- Popover / Popper ---
     .el-popper {
         &.is-light,
         &.is-dark {
-            background: var(--fs-bg-primary, #0E121B);
-            border-color: var(--fs-border-default, #2B303B);
-            color: var(--fs-text-primary, #E5E7EB);
+            background: var(--fs-bg-primary, #151D26);
+            border-color: var(--fs-border-default, #2C3C4E);
+            color: var(--fs-text-primary, #F5F6F7);
 
             > .el-popper__arrow::before {
-                background: var(--fs-bg-primary, #0E121B);
-                border-color: var(--fs-border-default, #2B303B);
+                background: var(--fs-bg-primary, #151D26);
+                border-color: var(--fs-border-default, #2C3C4E);
             }
         }
     }
 
     .el-popover {
-        background: var(--fs-bg-primary, #0E121B) !important;
-        border-color: var(--fs-border-default, #2B303B) !important;
+        background: var(--fs-bg-primary, #151D26) !important;
+        border-color: var(--fs-border-default, #2C3C4E) !important;
     }
 
     // --- Loading ---
@@ -440,70 +520,71 @@ body.fs-dark-mode {
 
     // --- Tags ---
     .el-tag {
-        --el-tag-bg-color: var(--fs-bg-subtle, #222530);
-        --el-tag-border-color: var(--fs-border-default, #2B303B);
-        --el-tag-text-color: var(--fs-text-secondary, #99A0AE);
+        --el-tag-bg-color: var(--fs-bg-subtle, #1C2732);
+        --el-tag-border-color: var(--fs-border-default, #2C3C4E);
+        --el-tag-text-color: var(--fs-text-secondary, #C1C7D1);
     }
 
     // --- Breadcrumb ---
-    .el-breadcrumb__separator {
-        color: var(--fs-text-muted, #9CA3AF);
+    .el-breadcrumb__separator,
+    .fs_breadcrumb_separator {
+        color: var(--fs-text-muted, #98A2B3);
     }
 
     // --- Checkbox ---
     .fframe_body .el-checkbox.is-checked .el-checkbox__inner {
-        background-color: var(--fs-bg-primary, #0E121B);
-        border-color: var(--fs-stroke-strong, #E5E7EB);
+        background-color: var(--fs-bg-primary, #151D26);
+        border-color: var(--fs-stroke-strong, #F5F6F7);
     }
 
     // --- Radio ---
     .el-radio {
         .el-radio__inner {
             background-color: transparent;
-            border-color: var(--fs-border-default, #2B303B);
+            border-color: var(--fs-border-default, #2C3C4E);
         }
 
         .el-radio__label {
-            color: var(--fs-text-primary, #E5E7EB);
+            color: var(--fs-text-primary, #F5F6F7);
         }
 
         .el-radio__input.is-checked {
             .el-radio__inner {
-                background-color: var(--fs-text-primary, #E5E7EB) !important;
-                border-color: var(--fs-stroke-strong, #E5E7EB) !important;
+                background-color: var(--fs-text-primary, #F5F6F7) !important;
+                border-color: var(--fs-stroke-strong, #F5F6F7) !important;
 
                 &::after {
-                    background-color: var(--fs-bg-primary, #0E121B);
+                    background-color: var(--fs-bg-primary, #151D26);
                 }
             }
 
             + .el-radio__label {
-                color: var(--fs-text-primary, #E5E7EB) !important;
+                color: var(--fs-text-primary, #F5F6F7) !important;
             }
         }
     }
 
-    // --- Switch (consolidated, no duplicates) ---
+    // --- Switch ---
     .el-switch {
         .el-switch__core {
             border: unset;
-            background-color: var(--fs-bg-muted, #2B303B);
+            background-color: var(--fs-bg-muted, #2C3C4E);
 
             .el-switch__action {
-                background-color: var(--fs-text-primary, #E5E7EB);
+                background-color: var(--fs-text-primary, #F5F6F7);
             }
         }
 
         &:not(.is-checked) .el-switch__core {
-            background-color: var(--fs-bg-muted, #2B303B);
+            background-color: var(--fs-bg-muted, #2C3C4E);
         }
 
         &.is-checked .el-switch__core {
-            background-color: var(--fs-text-primary, #E5E7EB) !important;
-            border-color: var(--fs-text-primary, #E5E7EB) !important;
+            background-color: var(--fs-text-primary, #F5F6F7) !important;
+            border-color: var(--fs-text-primary, #F5F6F7) !important;
 
             .el-switch__action {
-                background-color: var(--fs-bg-muted, #2B303B);
+                background-color: var(--fs-bg-muted, #2C3C4E);
             }
         }
     }
@@ -511,8 +592,8 @@ body.fs-dark-mode {
     // --- Date Picker ---
     .el-date-table td.end-date .el-date-table-cell__text,
     .el-date-table td.start-date .el-date-table-cell__text {
-        background: var(--fs-text-primary, #E5E7EB) !important;
-        color: var(--fs-bg-primary, #0E121B) !important;
+        background: var(--fs-text-primary, #F5F6F7) !important;
+        color: var(--fs-bg-primary, #151D26) !important;
     }
 
     .el-date-range-picker__header .el-picker-panel__icon-btn.arrow-left::before,
@@ -527,49 +608,63 @@ body.fs-dark-mode {
     }
 
     .el-date-table td.disabled .el-date-table-cell {
-        background-color: #41485230;
+        background-color: #2C3C4E30;
     }
 
     .el-date-range-picker__content.is-left,
     .el-date-table th {
-        border-color: var(--fs-border-default, #2B303B);
+        border-color: var(--fs-border-default, #2C3C4E);
     }
 
     .el-date-range-picker__header-label {
-        color: var(--fs-text-secondary, #99A0AE);
+        color: var(--fs-text-secondary, #C1C7D1);
     }
 
     .el-date-table td.in-range .el-date-table-cell {
-        background: var(--fs-bg-subtle, #222530) !important;
-        color: var(--fs-text-primary, #E5E7EB) !important;
+        background: var(--fs-bg-subtle, #1C2732) !important;
+        color: var(--fs-text-primary, #F5F6F7) !important;
     }
 
     // --- Pagination ---
     .el-pagination .el-pager .number,
     .el-pagination .el-pager .more,
     .el-pagination button {
-        background-color: var(--fs-bg-primary, #0E121B) !important;
-        border-color: var(--fs-border-default, #2B303B) !important;
-        color: var(--fs-text-secondary, #99A0AE) !important;
+        background-color: var(--fs-bg-primary, #151D26) !important;
+        border-color: var(--fs-border-default, #2C3C4E) !important;
+        color: var(--fs-text-secondary, #C1C7D1) !important;
     }
 
     .el-pagination .el-pager .number.is-active {
-        border-color: var(--fs-stroke-strong, #E5E7EB) !important;
-        color: var(--fs-text-primary, #E5E7EB) !important;
+        border-color: var(--fs-stroke-strong, #F5F6F7) !important;
+        color: var(--fs-text-primary, #F5F6F7) !important;
     }
 
-    .el-button.fs_filled_btn:hover {
-        color: var(--fs-text-white, #FFF);
+    // Primary filled buttons invert in dark mode: white surface, dark text
+    .el-button.fs_filled_btn,
+    .el-button.fs_save_settings_btn {
+        background: var(--fs-btn-filled-bg, #FFFFFF);
+        color: var(--fs-btn-filled-text, #0E121B);
+
+        &:hover,
+        &:active {
+            background-color: var(--fs-btn-filled-hover-bg, #E1E4EA);
+            color: var(--fs-btn-filled-text, #0E121B);
+        }
+
+        &[aria-disabled="true"],
+        &[aria-disabled="true"]:hover {
+            background: var(--fs-bg-subtle, #1C2732);
+            color: var(--fs-btn-disabled, #5A5F66);
+        }
     }
 
     // --- Scrollbar ---
-    .fs-scrollbar,
     .el-scrollbar__wrap {
         &::-webkit-scrollbar {
-            background: var(--fs-bg-subtle, #222530);
+            background: var(--fs-bg-subtle, #1C2732);
         }
         &::-webkit-scrollbar-thumb {
-            background: var(--fs-border-default, #2B303B);
+            background: var(--fs-border-default, #2C3C4E);
             border-radius: 4px;
         }
     }
@@ -582,18 +677,23 @@ body.fs-dark-mode {
     .fs_settings_view,
     .fs_inner_sidebar,
     .fs_settings_wrapper {
-        background-color: var(--fs-bg-primary, #0E121B);
+        background-color: var(--fs-bg-primary, #151D26);
     }
 
     .fs_settings_view .fs_inner_sidebar {
-        border-right-color: var(--fs-border-default, #2B303B);
+        border-right-color: var(--fs-border-default, #2C3C4E);
+    }
+
+    .fs_settings_view .fs_desktop_sidebar.is-collapsed.is-hover-expanded,
+    .fs_inside_menu_tab_header.is-collapsed.is-hover-expanded {
+        box-shadow: 0 16px 32px -12px rgba(0, 0, 0, 0.5);
     }
 
     // Inline help code blocks
     .fc_inline_help code {
-        background: var(--fs-bg-subtle, #222530);
-        color: var(--fs-text-primary, #E5E7EB);
-        border-color: var(--fs-border-default, #2B303B);
+        background: var(--fs-bg-subtle, #1C2732);
+        color: var(--fs-text-primary, #F5F6F7);
+        border-color: var(--fs-border-default, #2C3C4E);
     }
 
 
@@ -604,12 +704,12 @@ body.fs-dark-mode {
     .fs_reports_wrapper,
     .fs_inner_body,
     .fs_summary_settings {
-        background-color: var(--fs-global-component-bg, #05070B);
+        background-color: var(--fs-global-component-bg, #11171D);
     }
 
     // --- Activity heatmap levels ---
     .fs_wid_level_0 {
-        background: #1E222A;
+        background: #1C2732;
     }
 
     .fs_wid_level_1 {
@@ -639,9 +739,9 @@ body.fs-dark-mode {
 
     .fs_stat_box,
     .el-card {
-        --el-card-bg-color: var(--fs-bg-primary, #0E121B);
-        border-color: var(--fs-border-default, #2B303B);
-        background-color: var(--fs-bg-primary, #0E121B);
+        --el-card-bg-color: var(--fs-bg-primary, #151D26);
+        border-color: var(--fs-border-default, #2C3C4E);
+        background-color: var(--fs-bg-primary, #151D26);
     }
 
     // ═══════════════════════════════════════════
@@ -649,6 +749,10 @@ body.fs-dark-mode {
     // ═══════════════════════════════════════════
 
     // --- Status badges ---
+    .fs_dashboard_wrapper .fs_all_tickets .fs_status_active {
+        color: var(--fs-state-success-dark, #1FC16B);
+    }
+
     .fs_status_waiting {
         background: var(--fs-status-waiting-bg, rgba(217, 119, 6, 0.15));
 
@@ -665,18 +769,15 @@ body.fs-dark-mode {
         background: rgba(153, 160, 174, 0.16);
 
         .fs_status_dot {
-            background: var(--fs-text-muted, #9CA3AF);
+            background: var(--fs-text-muted, #98A2B3);
         }
 
         .fs_status_text {
-            color: var(--fs-text-muted, #9CA3AF);
+            color: var(--fs-text-muted, #98A2B3);
         }
     }
 
     // --- Internal note label ---
-    .fs_label_note {
-        color: #FBBF24;
-    }
 
     // --- Badge colors ---
     .fs_badge_thread_starter {
@@ -686,23 +787,23 @@ body.fs-dark-mode {
 
     // --- More button hover ---
     .fs_more_btn:hover {
-        background: var(--fs-bg-subtle, #222530) !important;
+        background: var(--fs-bg-subtle, #1C2732) !important;
     }
 
     // --- Additional info / custom data card ---
     .fs_additional_info {
-        background: var(--fs-table-header-bg, #141721);
+        background: var(--fs-table-header-bg, #1C2732);
 
         .fs_custom_data_card {
-            border-color: var(--fs-border-default, #2B303B);
-            background: var(--fs-bg-primary, #0E121B);
+            border-color: var(--fs-border-default, #2C3C4E);
+            background: var(--fs-bg-primary, #151D26);
         }
     }
 
     // --- Active agents floating panel ---
     .fs_active_agents {
-        background: var(--fs-bg-primary, #0E121B);
-        border-color: var(--fs-border-default, #2B303B);
+        background: var(--fs-bg-primary, #151D26);
+        border-color: var(--fs-border-default, #2C3C4E);
         box-shadow: 0 16px 32px 8px rgba(0, 0, 0, 0.3);
     }
 
@@ -710,9 +811,9 @@ body.fs-dark-mode {
     .fs_message_body {
         pre,
         code {
-            background: var(--fs-bg-subtle, #222530);
-            color: var(--fs-text-primary, #E5E7EB);
-            border-color: var(--fs-border-default, #2B303B);
+            background: var(--fs-bg-subtle, #1C2732);
+            color: var(--fs-text-primary, #F5F6F7);
+            border-color: var(--fs-border-default, #2C3C4E);
         }
     }
 
@@ -722,47 +823,24 @@ body.fs-dark-mode {
     // ═══════════════════════════════════════════
 
     // --- Legacy badges ---
-    .fs_badge {
-        background: #4B5563;
-        color: #E5E7EB;
-
-        &.fs_badge_new {
-            background: rgba(251, 55, 72, 0.15);
-            color: #FB3748;
-        }
-
-        &.fs_badge_active {
-            background: rgba(31, 193, 107, 0.15);
-            color: #6EE7B7;
-        }
-    }
 
     // --- Thread count ---
-    .fs_thread_count {
-        background: var(--fs-bg-subtle, #222530);
-        border-color: var(--fs-border-default, #2B303B);
-        color: var(--fs-text-muted, #9CA3AF);
-    }
 
     // --- Custom data wrap (legacy) ---
-    .custom_data_wrap,
     .fs_custom_data_wrap {
-        background: var(--fs-bg-subtle, #222530);
-        border-color: var(--fs-border-default, #2B303B);
-        color: var(--fs-text-primary, #E5E7EB);
+        background: var(--fs-bg-subtle, #1C2732);
+        border-color: var(--fs-border-default, #2C3C4E);
+        color: var(--fs-text-primary, #F5F6F7);
     }
 
     // --- Legacy thread colors ---
-    .fs_thread_title {
-        color: var(--fs-text-secondary, #99A0AE);
-    }
 
     .fs_thread_body {
-        color: var(--fs-text-primary, #E5E7EB);
+        color: var(--fs-text-primary, #F5F6F7);
     }
 
     .fs_thread_actions {
-        color: var(--fs-text-muted, #9CA3AF);
+        color: var(--fs-text-muted, #98A2B3);
     }
 
 
@@ -771,15 +849,6 @@ body.fs-dark-mode {
     // ═══════════════════════════════════════════
 
     // --- Legacy dash cards ---
-    .fs_dash_card {
-        background: var(--fs-bg-primary, #0E121B);
-        box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.2);
-        color: var(--fs-text-primary, #E5E7EB);
-
-        .dash_card_title {
-            border-bottom-color: var(--fs-border-default, #2B303B);
-        }
-    }
 
     // --- Highlight span ---
     span.fs_highlight {
@@ -787,130 +856,70 @@ body.fs-dark-mode {
         color: #FBBF24;
     }
 
-    // --- Collapse / draggable hover states ---
-    .fs_trigger_view .fs_actions_board {
-        .el-collapse-item__header {
-            background: var(--fs-bg-primary, #0E121B);
-            border-bottom-color: var(--fs-border-default, #2B303B);
-
-            &:hover {
-                background-color: var(--fs-bg-subtle, #222530);
-            }
-
-            &.is-active {
-                border-radius: 8px 8px 0 0;
-            }
-        }
-    }
-
-
     // ═══════════════════════════════════════════
     // L. WORKFLOWS DARK MODE
     // ═══════════════════════════════════════════
 
     // --- Workflow trigger box ---
-    .fs_workflow_trigger_box {
-        background: var(--fs-bg-primary, #0E121B);
-    }
 
     // --- Workflow edit wrapper ---
     .fs_workflow_edit_wrap {
         .fs_box_edit_header {
-            background: var(--fs-bg-primary, #0E121B);
-            border-bottom-color: var(--fs-border-default, #2B303B);
+            background: var(--fs-bg-primary, #151D26);
+            border-bottom-color: var(--fs-border-default, #2C3C4E);
         }
 
         .fs_box_body {
-            background: var(--fs-bg-primary, #0E121B);
-        }
-    }
-
-    // --- Trigger editor ---
-    .fs_trigger_editor {
-        background: var(--fs-bg-subtle, #222530);
-
-        h3 {
-            color: var(--fs-text-primary, #E5E7EB);
+            background: var(--fs-bg-primary, #151D26);
         }
     }
 
     // --- Conditional group ---
     .fs_conditional_group {
-        background: var(--fs-bg-subtle, #222530);
+        background: var(--fs-bg-subtle, #1C2732);
     }
 
     .fs_conditional_group + .fs_conditional_group::before {
-        background: var(--fs-border-default, #2B303B);
+        background: var(--fs-border-default, #2C3C4E);
     }
 
     .fs_conditional_group + .fs_conditional_group::after {
-        color: var(--fs-text-muted, #9CA3AF);
-    }
-
-    .fs_cond_and {
-        &::before {
-            background: var(--fs-border-default, #2B303B);
-        }
-
-        em {
-            background: var(--fs-bg-primary, #0E121B);
-            color: var(--fs-text-muted, #9CA3AF);
-        }
+        color: var(--fs-text-muted, #98A2B3);
     }
 
     // --- Or button wrapper ---
     .fs_group_footer .fs_or_btn_wrapper {
-        border-color: var(--fs-border-default, #2B303B);
-        background: var(--fs-bg-primary, #0E121B);
+        border-color: var(--fs-border-default, #2C3C4E);
+        background: var(--fs-bg-primary, #151D26);
     }
 
     // --- Delete condition button ---
     .fs_cond_block.fs_cond_action .fs_delete_condition_btn {
-        border-color: var(--fs-border-default, #2B303B);
-        background: var(--fs-bg-primary, #0E121B);
-    }
-
-    // --- All triggers list ---
-    .fs_all_triggers {
-        border-color: var(--fs-border-default, #2B303B);
+        border-color: var(--fs-border-default, #2C3C4E);
+        background: var(--fs-bg-primary, #151D26);
     }
 
     // --- Workflow list items hover ---
     ul.fs_workflows_list li:hover {
-        background: var(--fs-bg-subtle, #222530);
+        background: var(--fs-bg-subtle, #1C2732);
     }
 
     // --- Workflow items list ---
     ul.fs_workflow_items {
-        border-color: var(--fs-border-default, #2B303B);
-        background: var(--fs-bg-primary, #0E121B);
+        border-color: var(--fs-border-default, #2C3C4E);
+        background: var(--fs-bg-primary, #151D26);
 
         li {
-            border-bottom-color: var(--fs-border-default, #2B303B);
-            color: var(--fs-text-secondary, #99A0AE);
+            border-bottom-color: var(--fs-border-default, #2C3C4E);
+            color: var(--fs-text-secondary, #C1C7D1);
 
             span {
-                background: #4B5563;
+                background: #5A5F66;
             }
         }
     }
 
     // --- Add AND button ---
-    .fs_add_more_and_btn .fs_add_and_button {
-        border-color: var(--fs-border-default, #2B303B);
-        background: var(--fs-bg-primary, #0E121B);
-        color: var(--fs-text-primary, #E5E7EB);
-
-        .fs_add_and_text {
-            color: var(--fs-text-primary, #E5E7EB);
-        }
-
-        &:hover {
-            background: var(--fs-bg-subtle, #222530) !important;
-            border-color: var(--fs-border-default, #2B303B) !important;
-            color: var(--fs-text-primary, #E5E7EB) !important;
-        }
-    }
 
     // --- Button/action icons ---
     .el-button svg path[fill="#0E121B"],
@@ -919,51 +928,35 @@ body.fs-dark-mode {
         fill: currentColor;
     }
 
+
+
     // --- Advanced filter and ticket preview text ---
     .fs_rich_filter_item .fs_action_filter_field,
     .fs_tickets_list .fs_tk_preview_text {
-        color: var(--fs-text-muted, #9CA3AF);
+        color: var(--fs-text-muted, #98A2B3);
     }
 
     // --- Horizontal line separator ---
-    .fs_horizontal_line {
-        background: var(--fs-border-default, #2B303B);
-    }
-
-    // --- Save action button ---
-    .fs_save_action_btn {
-        background-color: var(--fs-text-primary, #E5E7EB) !important;
-        border-color: var(--fs-text-primary, #E5E7EB) !important;
-        color: var(--fs-bg-primary, #0E121B) !important;
-    }
-
-    .fs_save_action_btn:hover {
-        background-color: #D1D5DB !important;
-        border-color: #D1D5DB !important;
-    }
 
     // --- Workflow type info ---
     .fs_workflow_type_info {
-        border-color: var(--fs-border-default, #2B303B);
-        background-color: var(--fs-bg-subtle, #222530);
+        border-color: var(--fs-border-default, #2C3C4E);
+        background-color: var(--fs-bg-subtle, #1C2732);
     }
 
     // --- Box header ---
     .fs_box_wrapper .fs_box_header {
-        border-bottom-color: var(--fs-border-default, #2B303B);
-        background: var(--fs-bg-primary, #0E121B);
+        border-bottom-color: var(--fs-border-default, #2C3C4E);
+        background: var(--fs-bg-primary, #151D26);
     }
 
     // --- Trigger sub label ---
-    span.fs_trigger_sub {
-        color: var(--fs-text-muted, #9CA3AF);
-    }
 
     .fs_msg_customer {
-        background: var(--fs-bg-primary, #0E121B);
+        background: var(--fs-bg-primary, #151D26);
     }
     .fs_msg_agent {
-        background: var(--fs-table-header-bg, #141721);
+        background: var(--fs-table-header-bg, #1C2732);
     }
 
     // ═══════════════════════════════════════════
@@ -972,85 +965,85 @@ body.fs-dark-mode {
 
     .wp-editor-wrap {
         .wp-editor-container, .wp-editor {
-            border-color: var(--fs-border-default, #2B303B);
-            background: var(--fs-bg-subtle, #222530);
+            border-color: var(--fs-border-default, #2C3C4E);
+            background: var(--fs-bg-subtle, #1C2732);
         }
 
         .mce-panel {
-            background: var(--fs-bg-subtle, #222530) !important;
-            border-color: var(--fs-border-default, #2B303B) !important;
+            background: var(--fs-bg-subtle, #1C2732) !important;
+            border-color: var(--fs-border-default, #2C3C4E) !important;
         }
 
         .mce-toolbar-grp {
-            background: var(--fs-bg-subtle, #222530) !important;
-            border-bottom-color: var(--fs-border-default, #2B303B) !important;
+            background: var(--fs-bg-subtle, #1C2732) !important;
+            border-bottom-color: var(--fs-border-default, #2C3C4E) !important;
         }
 
         .mce-container-body.mce-stack-layout {
-            background: var(--fs-bg-subtle, #222530);
+            background: var(--fs-bg-subtle, #1C2732);
         }
 
         .mce-btn {
             i.mce-ico {
-                color: var(--fs-text-secondary, #99A0AE) !important;
+                color: var(--fs-text-secondary, #C1C7D1) !important;
             }
 
             &:hover {
-                background-color: var(--fs-bg-muted, #2B303B) !important;
+                background-color: var(--fs-bg-muted, #2C3C4E) !important;
             }
 
             &.mce-active {
-                background-color: var(--fs-bg-muted, #2B303B) !important;
+                background-color: var(--fs-bg-muted, #2C3C4E) !important;
 
                 i.mce-ico {
-                    color: var(--fs-text-primary, #E5E7EB) !important;
+                    color: var(--fs-text-primary, #F5F6F7) !important;
                 }
             }
         }
 
         .mce-btn-group .mce-btn.mce-listbox {
-            border-color: var(--fs-border-default, #2B303B) !important;
-            background-color: var(--fs-bg-primary, #0E121B) !important;
+            border-color: var(--fs-border-default, #2C3C4E) !important;
+            background-color: var(--fs-bg-primary, #151D26) !important;
 
             .mce-txt {
-                color: var(--fs-text-secondary, #99A0AE);
+                color: var(--fs-text-secondary, #C1C7D1);
             }
         }
 
         .wp-editor-tabs {
-            border-color: var(--fs-border-default, #2B303B);
-            background-color: var(--fs-bg-subtle, #222530);
+            border-color: var(--fs-border-default, #2C3C4E);
+            background-color: var(--fs-bg-subtle, #1C2732);
 
             .wp-switch-editor {
-                color: var(--fs-text-secondary, #99A0AE);
+                color: var(--fs-text-secondary, #C1C7D1);
             }
 
             .wp-switch-editor[aria-pressed="true"] {
-                color: var(--fs-text-primary, #E5E7EB);
-                background-color: var(--fs-bg-primary, #0E121B);
+                color: var(--fs-text-primary, #F5F6F7);
+                background-color: var(--fs-bg-primary, #151D26);
                 box-shadow: none;
             }
         }
 
         .quicktags-toolbar {
-            background: var(--fs-bg-subtle, #222530);
+            background: var(--fs-bg-subtle, #1C2732);
 
             .button {
-                color: var(--fs-text-secondary, #99A0AE);
+                color: var(--fs-text-secondary, #C1C7D1);
             }
         }
 
         .wp-media-buttons .insert-media {
-            background: var(--fs-bg-primary, #0E121B);
-            border-color: var(--fs-border-default, #2B303B);
-            color: var(--fs-text-secondary, #99A0AE);
+            background: var(--fs-bg-primary, #151D26);
+            border-color: var(--fs-border-default, #2C3C4E);
+            color: var(--fs-text-secondary, #C1C7D1);
         }
 
         .mce-statusbar {
-            background: var(--fs-bg-subtle, #222530);
+            background: var(--fs-bg-subtle, #1C2732);
 
             .mce-path-item {
-                color: var(--fs-text-muted, #9CA3AF);
+                color: var(--fs-text-muted, #98A2B3);
             }
         }
     }
@@ -1058,18 +1051,18 @@ body.fs-dark-mode {
     // --- TinyMCE floating panels (appended to body, outside .wp-editor-wrap) ---
     .mce-floatpanel,
     .mce-menu {
-        background: var(--fs-bg-primary, #0E121B) !important;
-        border-color: var(--fs-border-default, #2B303B) !important;
+        background: var(--fs-bg-primary, #151D26) !important;
+        border-color: var(--fs-border-default, #2C3C4E) !important;
     }
 
     .mce-menu-item {
-        color: var(--fs-text-primary, #E5E7EB) !important;
+        color: var(--fs-text-primary, #F5F6F7) !important;
 
         &:hover,
         &:focus,
         &.mce-selected {
-            background: var(--fs-bg-subtle, #222530) !important;
-            color: var(--fs-text-primary, #E5E7EB) !important;
+            background: var(--fs-bg-subtle, #1C2732) !important;
+            color: var(--fs-text-primary, #F5F6F7) !important;
         }
 
         .mce-text,
@@ -1082,9 +1075,8 @@ body.fs-dark-mode {
     // N. GENERIC ICON CONTRAST (DROPDOWNS/CARDS)
     // ═══════════════════════════════════════════
 
-    // Generic dark-mode icon system for all Element Plus dropdown items.
     .el-dropdown-menu__item {
-        color: var(--fs-text-secondary, #99A0AE);
+        color: var(--fs-text-secondary, #C1C7D1);
 
         .el-icon,
         svg {
@@ -1098,7 +1090,7 @@ body.fs-dark-mode {
         &:hover,
         &:focus,
         &.is-active {
-            color: var(--fs-text-primary, #E5E7EB);
+            color: var(--fs-text-primary, #F5F6F7);
 
             img {
                 filter: brightness(0) invert(0.95);
@@ -1113,18 +1105,6 @@ body.fs-dark-mode {
     }
 
 
-    // ═══════════════════════════════════════════
-    // O. MAILBOX MENU ICONS
-    // ═══════════════════════════════════════════
-
-    .fs_menu_container .fs_menu_item {
-        img {
-            filter: brightness(0) invert(0.7);
-        }
-        &.active img {
-            filter: brightness(0) invert(0.9);
-        }
-    }
 
 
     // ═══════════════════════════════════════════
@@ -1140,7 +1120,7 @@ body.fs-dark-mode {
     .fs_loading_skeleton,
     .fs_sidebar_skeleton {
         .el-skeleton__item {
-            background: linear-gradient(90deg, #0d121b 25%, #171c24 50%, #0d121b 75%);
+            background: linear-gradient(90deg, #151D26 25%, #1C2732 50%, #151D26 75%);
             background-size: 400% 100%;
         }
 
@@ -1151,7 +1131,7 @@ body.fs-dark-mode {
 
     // Global skeleton item override
     .el-skeleton__item {
-        background: linear-gradient(90deg, #0d121b 25%, #171c24 50%, #0d121b 75%);
+        background: linear-gradient(90deg, #151D26 25%, #1C2732 50%, #151D26 75%);
         background-size: 400% 100%;
     }
 
@@ -1159,12 +1139,24 @@ body.fs-dark-mode {
         animation: fs-skeleton-loading 1.4s ease infinite;
     }
 
+    // Element Plus paints the animated gradient from these variables with a
+    // more specific selector than the item rule above, so set them too.
+    .el-skeleton {
+        --el-skeleton-color: #1C2732;
+        --el-skeleton-to-color: #253241;
+    }
+
+    .el-skeleton.is-animated .el-skeleton__item {
+        background: linear-gradient(90deg, #1C2732 25%, #253241 50%, #1C2732 75%);
+        background-size: 400% 100%;
+    }
+
     .fs_widget_skeleton {
-        background: var(--fs-bg-muted, #2B303B);
+        background: var(--fs-bg-muted, #2C3C4E);
     }
 
     .el-skeleton {
-        background: var(--fs-bg-primary, #0E121B) !important;
+        background: var(--fs-bg-primary, #151D26) !important;
     }
 
 
@@ -1173,85 +1165,85 @@ body.fs-dark-mode {
     // ═══════════════════════════════════════════
 
     .fs_ai_header_section {
-        background-color: var(--fs-bg-primary, #0E121B);
-        border-bottom-color: var(--fs-border-default, #2B303B);
+        background-color: var(--fs-bg-primary, #151D26);
+        border-bottom-color: var(--fs-border-default, #2C3C4E);
     }
 
     .fs_icon_container {
-        background-color: var(--fs-bg-subtle, #222530);
-        border-color: var(--fs-border-default, #2B303B);
+        background-color: var(--fs-bg-subtle, #1C2732);
+        border-color: var(--fs-border-default, #2C3C4E);
     }
 
     .fs_header_text {
-        color: var(--fs-text-primary, #E5E7EB);
+        color: var(--fs-text-primary, #F5F6F7);
     }
 
     .fs_textarea {
-        background-color: var(--fs-bg-subtle, #222530);
-        color: var(--fs-text-primary, #E5E7EB);
-        border-color: var(--fs-border-default, #2B303B);
+        background-color: var(--fs-bg-subtle, #1C2732);
+        color: var(--fs-text-primary, #F5F6F7);
+        border-color: var(--fs-border-default, #2C3C4E);
 
         &::placeholder {
-            color: var(--fs-text-muted, #9CA3AF);
+            color: var(--fs-text-muted, #98A2B3);
         }
     }
 
     .fs_prompt_button .fs_prompt_submit {
-        background: var(--fs-bg-subtle, #222530);
-        border-color: var(--fs-border-default, #2B303B);
+        background: var(--fs-bg-subtle, #1C2732);
+        border-color: var(--fs-border-default, #2C3C4E);
     }
 
     .fs_prompt_button .fs_prompt_submit:hover {
-        background: var(--fs-btn-hover-bg, #2B303B);
+        background: var(--fs-btn-hover-bg, #2C3C4E);
     }
 
     .fs_prompt_option {
-        border-color: var(--fs-border-default, #2B303B);
-        color: var(--fs-text-secondary, #99A0AE);
+        border-color: var(--fs-border-default, #2C3C4E);
+        color: var(--fs-text-secondary, #C1C7D1);
     }
 
     .fs_prompt_option:hover {
-        background-color: var(--fs-bg-subtle, #222530);
-        color: var(--fs-text-primary, #E5E7EB);
+        background-color: var(--fs-bg-subtle, #1C2732);
+        color: var(--fs-text-primary, #F5F6F7);
     }
 
     .fs_prompt_option_selected,
     .fs_prompt_option_selected:hover {
-        background-color: var(--fs-bg-muted, #2B303B);
-        color: var(--fs-text-primary, #E5E7EB);
+        background-color: var(--fs-bg-muted, #2C3C4E);
+        color: var(--fs-text-primary, #F5F6F7);
     }
 
     .fs_response_container {
-        background-color: var(--fs-bg-subtle, #222530);
-        border-color: var(--fs-border-default, #2B303B);
+        background-color: var(--fs-bg-subtle, #1C2732);
+        border-color: var(--fs-border-default, #2C3C4E);
     }
 
     .fs_response_content,
     .fs_response_content p {
-        color: var(--fs-text-primary, #E5E7EB);
+        color: var(--fs-text-primary, #F5F6F7);
     }
 
     .fs_response_insert_button .fs_insert_button {
-        background-color: var(--fs-text-primary, #E5E7EB);
-        color: var(--fs-bg-primary, #0E121B);
+        background-color: var(--fs-text-primary, #F5F6F7);
+        color: var(--fs-bg-primary, #151D26);
     }
 
     .fs_response_insert_button .fs_insert_button:hover {
         background-color: #D1D5DB;
-        color: var(--fs-bg-primary, #0E121B);
+        color: var(--fs-bg-primary, #151D26);
     }
 
     .fs_ai_response_loading {
-        border-color: var(--fs-border-default, #2B303B);
+        border-color: var(--fs-border-default, #2C3C4E);
     }
 
     .fs_draft_widget h3 {
-        color: var(--fs-text-primary, #E5E7EB);
+        color: var(--fs-text-primary, #F5F6F7);
     }
 
     .fs_draft_item {
-        background: var(--fs-bg-subtle, #222530);
-        border-color: var(--fs-border-default, #2B303B);
+        background: var(--fs-bg-subtle, #1C2732);
+        border-color: var(--fs-border-default, #2C3C4E);
 
         &:hover {
             border-color: #335CFF;
@@ -1260,18 +1252,45 @@ body.fs-dark-mode {
     }
 
     .fs_draft .fs_draft_button {
-        background: var(--fs-bg-muted, #2B303B);
-        color: var(--fs-text-primary, #E5E7EB);
+        background: var(--fs-bg-muted, #2C3C4E);
+        color: var(--fs-text-primary, #F5F6F7);
 
         &:focus {
-            background: var(--fs-bg-muted, #2B303B);
-            color: var(--fs-text-primary, #E5E7EB);
+            background: var(--fs-bg-muted, #2C3C4E);
+            color: var(--fs-text-primary, #F5F6F7);
         }
 
         &:hover {
-            background: var(--fs-bg-strong, #181B25);
-            color: var(--fs-text-primary, #E5E7EB);
+            background: var(--fs-bg-strong, #1C2732);
+            color: var(--fs-text-primary, #F5F6F7);
         }
+    }
+
+    .fs_reply_split.fs_reply_split_on .el-button.fs_filled_btn {
+        &:hover,
+        &[aria-expanded="true"] {
+            background: var(--fs-btn-filled-hover-bg, #E1E4EA);
+        }
+
+        &.is-disabled,
+        &.is-disabled:hover {
+            background: var(--fs-btn-filled-bg, #FFFFFF);
+            color: var(--fs-btn-filled-text, #0E121B);
+        }
+    }
+
+    .fs_schedule_form_body .el-button.fs_schedule_submit:hover {
+        background: var(--fs-btn-filled-hover-bg, #E1E4EA);
+    }
+
+    .fs_schedule_empty_notice {
+        border-color: var(--fs-stat-icon-warning-bg, rgba(255, 132, 71, 0.15));
+        background: var(--fs-stat-icon-warning-bg, rgba(255, 132, 71, 0.15));
+        color: var(--fs-stat-icon-warning-color, #FF8447);
+    }
+
+    .fs_create_response .fs_editor_needs_text .wp-editor-container {
+        border-color: var(--fs-dot-warning, #FF8447);
     }
 
 }
@@ -1284,4 +1303,10 @@ body.fs-dark-mode {
     100% {
         background-position: 0 50%;
     }
+}
+
+// Default link colour for unstyled links in dark mode. Zero specificity, so any
+// component link style still wins over it; it only replaces WP admin's dark blue.
+:where(body.fluent_theme_dark #alpha_app, body.fluent_theme_dark .el-overlay, body.fluent_theme_dark .el-popper) a {
+    color: var(--fs-status-info-text, #93C5FD);
 }

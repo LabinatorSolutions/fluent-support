@@ -81,16 +81,6 @@
     }
 }
 
-.ninja-erp-app {
-    table {
-        margin: auto;
-    }
-
-    .el-table.el-table--fit {
-        border: 1px solid #ebeef5;
-    }
-}
-
 .el-dropdown-menu {
     padding: 0 15px;
     list-style: none;
@@ -233,24 +223,14 @@ p.fc_inline_help {
     z-index: 9999 !important;
 }
 
-.fs_preset_tooltip {
-    max-width: 280px !important;
+.el-popper.fs_tooltip_compact {
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    line-height: 16px;
+    font-weight: 400;
 }
 
-.fs_context_tooltip {
-    max-width: 280px !important;
-
-    .el-tooltip__content {
-        display: -webkit-box;
-        -webkit-line-clamp: 6;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: normal;
-        line-height: 1.5;
-        word-break: break-word;
-    }
-}
 .el-radio__input .el-radio__inner {
     border: 2px solid #dcdfe6;
 }
@@ -264,7 +244,7 @@ p.fc_inline_help {
 }
 .fs_dialog{
     .el-input__wrapper {
-        height: 36px;
+        min-height: 36px;
         padding: 0px 11px;
         input[type="text"], input[type="email"] {
             min-height: 0;

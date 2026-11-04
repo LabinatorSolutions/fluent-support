@@ -2,13 +2,14 @@
 
 namespace FluentSupport\App\Services\Integrations\FluentCrm;
 
+use FluentSupport\App\Modules\Customers\CustomerService;
 use FluentCrm\App\Services\Funnel\BaseAction;
 use FluentCrm\App\Services\Funnel\FunnelHelper;
 use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\MailBox;
-use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Services\Helper;
+use FluentSupport\App\Services\Tickets\TicketService;
 use FluentSupport\Framework\Support\Arr;
 
 class CreateTicketAction extends BaseAction
@@ -89,19 +90,19 @@ class CreateTicketAction extends BaseAction
                 'business_inbox' => [
                     'type'        => 'rest_selector',
                     'option_key'  => 'fs_inboxes',
-                    'placeholder' => 'Business Inbox',
-                    'label'       => 'Default Business Inbox'
+                    'placeholder' => __('Select Business Inbox', 'fluent-support'),
+                    'label'       => __('Default Business Inbox', 'fluent-support')
                 ],
                 'default_agent'  => [
                     'type'        => 'rest_selector',
                     'option_key'  => 'fs_agents',
-                    'placeholder' => 'Select Agent (optional)',
-                    'label'       => 'Default Assigned Agent (optional)'
+                    'placeholder' => __('Select Agent (optional)', 'fluent-support'),
+                    'label'       => __('Default Assigned Agent (optional)', 'fluent-support')
                 ],
                 'priority' => [
                     'options' => $formattedPriorities,
-                    'label' => 'Priority (Admin)',
-                    'placeholder' => 'Select Priority',
+                    'label' => __('Priority (Admin)', 'fluent-support'),
+                    'placeholder' => __('Select Priority', 'fluent-support'),
                     'type' => 'select'
                 ]
             ]
@@ -123,7 +124,7 @@ class CreateTicketAction extends BaseAction
         $ticketData = [
             'title'   => substr(sanitize_text_field($emailSubject), 0, 192),
             // Funnel settings are stored unslashed, so sanitize only.
-            'content' => wp_kses_post($emailBody),
+            'content' => wp_kses_post(Helper::decodeNonMarkupEntities($emailBody)),
             'source'  => 'fluent-crm'
         ];
 
@@ -153,13 +154,10 @@ class CreateTicketAction extends BaseAction
         $customerData['status'] = 'active';
         $customerData = array_filter($customerData);
 
-        $customer = Customer::maybeCreateCustomer($customerData);
+        $customer = CustomerService::findOrCreate($customerData);
 
         $ticketData['customer_id'] = $customer->id;
-        $ticketData = apply_filters('fluent_support/create_ticket_data', $ticketData, $customer);
-        do_action('fluent_support/before_ticket_create', $ticketData, $customer);
-        $ticket = Ticket::create($ticketData);
-        do_action('fluent_support/ticket_created', $ticket, $customer);
+        (new TicketService())->storeCustomerTicket($ticketData, $customer);
 
         return true;
     }

@@ -32,6 +32,18 @@
             </el-form-item>
         </el-form>
 
+        <el-skeleton v-if="loading && !show_ticket_selection" animated>
+            <template #template>
+                <div v-for="n in 5" :key="n" style="display: flex; align-items: center; gap: 12px; padding: 12px 0;">
+                    <el-skeleton-item variant="rect" style="width: 14px; height: 14px; flex-shrink: 0;" />
+                    <div style="flex: 1;">
+                        <el-skeleton-item variant="text" :style="{ width: (n % 2 ? 60 : 45) + '%' }" />
+                        <el-skeleton-item variant="text" style="width: 25%; margin-top: 6px;" />
+                    </div>
+                </div>
+            </template>
+        </el-skeleton>
+
         <template v-if="!!show_ticket_selection">
             <div class="fs_all_tickets fs_move_tickets_container" v-if="has_pro">
                 <div class="fs_box_wrapper">
@@ -78,9 +90,10 @@
                     </div>
                     <div class="fs_box_body fs_move_ticket_list_body">
                         <div class="fs_move_ticket_header">
-                            <h4>{{ $t('Select ticket that you want to move') }}</h4>
+                            <h4>{{ $t('Select the tickets you want to move') }}</h4>
                             <span class="fs_selected_count" v-if="move_ticket.selected_tickets.length">
-                                {{ move_ticket.selected_tickets.length }} {{ $t('selected') }}
+                                <!-- translators: %s is the number of selected tickets -->
+                                {{ $_n('%s ticket selected', '%s tickets selected', move_ticket.selected_tickets.length) }}
                             </span>
                         </div>
 
@@ -96,7 +109,8 @@
                                         {{ $t('Select All') }}
                                     </el-checkbox>
                                     <span class="fs_total_count">
-                                        {{ move_ticket.selected_tickets.length }} {{ $t('out of') }} {{ pagination.total }} {{ $t('tickets') }}
+                                        <!-- translators: %1$s is the number of selected tickets, %2$s the total number of tickets -->
+                                        {{ $t('%1$s out of %2$s tickets', move_ticket.selected_tickets.length, pagination.total) }}
                                     </span>
                                 </div>
                             </div>
@@ -144,7 +158,8 @@
 
                         <div class="fs_pagination_wrapper" v-if="tickets.length">
                             <span class="fs_pagination_left">
-                                <p>{{ $t('Page') }} {{ pagination.current_page }} {{ $t('of') }} {{ Math.ceil(pagination.total / pagination.per_page) }}</p>
+                                <!-- translators: %1$s is the current page number, %2$s the total number of pages -->
+                                <p>{{ $t('Page %1$s of %2$s', pagination.current_page, Math.ceil(pagination.total / pagination.per_page)) }}</p>
                             </span>
                             <span class="fs_pagination_right">
                                 <pagination
@@ -182,7 +197,7 @@
     import Pagination from '../../Pieces/Pagination';
     import RemoteSelector from '../../Pieces/RemoteSelector';
     import NarrowPromo from "@/admin/Components/NarrowPromo.vue";
-    import debounce from "lodash/debounce";
+    import { debounce } from "lodash-es";
 
     export default {
         name: 'MoveTicket',
@@ -316,12 +331,12 @@
                     return false;
                 }
                 if (!this.move_ticket.move_type) {
-                    alert(this.$t('Please provide You want to move all or custom selected tickets?'));
+                    alert(this.$t('Please choose whether to move all tickets or only the selected ones.'));
                     return false;
                 }
 
                 if (this.move_ticket.move_type == 'Custom' && Object.keys(this.move_ticket.selected_tickets).length < 1) {
-                    alert(this.$t('Please select ticket first'));
+                    alert(this.$t('Please select at least one ticket.'));
                     return false;
                 }
 

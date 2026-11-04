@@ -34,7 +34,7 @@ class TicketCreateCustomerPortalRequest extends RequestGuard
 
         $sanitizeRules = [
             'title' => 'sanitize_text_field',
-            'content' => 'wp_kses_post',
+            'content' => '\FluentSupport\App\Services\Helper::sanitizeHtmlContent',
             'product_id' => 'intval',
             'client_priority' => 'sanitize_text_field'
         ];

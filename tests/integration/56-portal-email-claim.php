@@ -2,17 +2,10 @@
 /**
  * Reconciling a customer record with an account whose address has moved.
  *
- * Fluent Support refuses to follow an unverified email change, which is the
- * safe answer but leaves the record pointing at the previous address: support
- * mail keeps going to an inbox the customer may have abandoned, and tickets
- * they open from the new address land on a second, unlinked record.
- *
- * EmailClaimService closes that by mailing a confirmation link to the address
- * being claimed. The whole design rests on which inbox that mail lands in --
- * somebody pointing their account at an address they do not own sends the link
- * to the real owner -- so these cases pin down both halves: that a confirmed
- * link moves and merges, and that every unconfirmed or replayed variation of
- * one does nothing at all.
+ * Unverified email changes aren't followed, so EmailClaimService mails a
+ * confirmation link to the claimed address; only its real owner can confirm.
+ * These cases check that a confirmed link moves and merges, and that every
+ * unconfirmed or replayed variation does nothing.
  */
 
 use FluentSupport\App\Models\Customer;
@@ -50,10 +43,7 @@ return function () {
     $newEmail       = $marker . '-claim-new@example.invalid';
     $bystanderEmail = $marker . '-claim-bystander@example.invalid';
 
-    // The account starts on its original address. Creating it before the
-    // unlinked record matters: user_register adopts unlinked records carrying
-    // the account's address, and adopting the stray one would remove the very
-    // thing these cases are about.
+    // Create accounts before the stray record, or user_register would adopt it.
     $claimantUserId  = $makeWpUser('claim-owner', $oldEmail);
     $bystanderUserId = $makeWpUser('claim-bystander', $bystanderEmail);
 
@@ -76,9 +66,7 @@ return function () {
             'serial_number' => $serialBase,
         ]);
 
-        // The record an inbound mail from the new address would have created:
-        // no account has ever claimed it, and it is collecting tickets the
-        // customer cannot see from the portal.
+        // The unlinked record an inbound mail from the new address would create.
         $stray = FsFactory::customer([
             'email'   => $newEmail,
             'user_id' => null,
@@ -91,15 +79,12 @@ return function () {
             'serial_number' => $serialBase + 1,
         ]);
 
-        // Custom-field data on both records. One key exists only on the stray
-        // record and has to survive the merge; the other exists on both, and the
-        // record being kept must win.
+        // One key only on the stray (must survive the merge), one on both (kept record wins).
         $stray->updateMeta('fs_claim_carried', 'from-stray');
         $stray->updateMeta('fs_claim_kept', 'from-stray');
         Customer::find($claimant->id)->updateMeta('fs_claim_kept', 'from-claimant');
 
-        // The account holder moves their own address with no confirmation, the
-        // way the REST users endpoint and WooCommerce's account form both do.
+        // The account holder moves their own address with no confirmation.
         $becomeUser($claimantUserId);
         wp_update_user(['ID' => $claimantUserId, 'user_email' => $newEmail]);
         $becomeUser($adminId);
@@ -126,11 +111,9 @@ return function () {
         });
 
         FsTest::case('merging_carries_internal_notification_actors_across', function () use ($serialBase, $marker) {
-            // The notification tables are opt-in: NotificationSettings creates
-            // them the first time internal notifications are switched on, and
-            // the default is off. Skip rather than create them here, so this
-            // reflects whatever the site under test actually has.
-            if (!(new \FluentSupport\App\Services\Notifications\NotificationSettings())->notificationTablesExist()) {
+            // The notification tables only exist once internal notifications are
+            // enabled. Skip rather than create them.
+            if (!\FluentSupport\App\Modules\Notifications\NotificationService::tablesExist()) {
                 FsTest::skip('internal notification tables are not installed');
                 return;
             }
@@ -176,10 +159,8 @@ return function () {
         FsTest::case('an_agent_correcting_the_address_reissues_the_ticket_links', function () use (
             $becomeUser, $adminId, $marker, $serialBase
         ) {
-            // Correcting a customer's address is exactly when the previous inbox
-            // must stop working: a signed ticket link authorises read, reply,
-            // close and reopen on its own, so whoever holds the old address
-            // keeps full access until the hash changes.
+            // A signed ticket link grants full access, so the old inbox must lose
+            // it when the address is corrected.
             $becomeUser($adminId);
 
             $customer = FsFactory::customer(['user_id' => null]);
@@ -193,7 +174,7 @@ return function () {
 
             $before = (string) Ticket::find($ticket->id)->hash;
 
-            (new Customer())->updateCustomer($customer->id, [
+            \FluentSupport\App\Modules\Customers\CustomerService::update(Customer::find($customer->id), [
                 'email'      => $marker . '-agent-corrected@example.invalid',
                 'first_name' => 'Corrected',
                 'last_name'  => 'Customer',
@@ -209,12 +190,9 @@ return function () {
         FsTest::case('a_name_only_edit_holds_the_address_even_when_the_account_email_needs_slashing', function () use (
             $becomeUser, $adminId, $marker, &$aposUserId
         ) {
-            // wp_insert_user() slashes the previous address before firing
-            // profile_update -- core says so in a comment, "Slash current user
-            // email to compare it later with slashed new user email". Comparing
-            // it against the unslashed new address reads an apostrophe address
-            // as changed on every update, and an administrator editing only a
-            // name would move the support address onto it.
+            // wp_insert_user() slashes the previous address before profile_update.
+            // Compared to the unslashed new one, an apostrophe address always
+            // looks changed, so a name-only admin edit would move it.
             $account = "o'" . $marker . '@example.invalid';
             $held    = $marker . '-apos-held@example.invalid';
 
@@ -248,9 +226,8 @@ return function () {
         FsTest::case('a_name_reaches_the_customer_record_as_the_account_holds_it', function () use (
             $becomeUser, $adminId, $makeWpUser, $marker, &$slashUserId
         ) {
-            // wp_insert_user() takes slashed data and profile_update passes that
-            // same array on, so anything written straight through lands with a
-            // literal backslash the customer then sees in the portal.
+            // profile_update passes wp_insert_user()'s slashed data through, so it
+            // must be unslashed before it is stored.
             $email = $marker . '-slash@example.invalid';
             $slashUserId = $makeWpUser('slash-owner', $email);
 
@@ -276,10 +253,8 @@ return function () {
         });
 
         FsTest::case('a_confirmation_link_survives_an_address_containing_the_field_separator', function () {
-            // is_email() accepts a pipe in the local part, and the token joins
-            // its fields on a pipe. Unencoded, such an address splits the
-            // payload into an extra field and the token is rejected -- closed,
-            // but that customer can never use the flow.
+            // is_email() allows a pipe, and the token joins its fields on a pipe.
+            // Unencoded, the token would be rejected for that customer.
             $odd = 'first|last@example.invalid';
 
             $token = EmailClaimService::buildToken(12, 34, 'plain@example.invalid', $odd, time() + 3600);
@@ -302,16 +277,11 @@ return function () {
         FsTest::case('creating_a_portal_ticket_does_not_move_the_held_address', function () use (
             $becomeUser, $adminId, $claimantUserId, $claimant, $oldEmail
         ) {
-            // Holding the address on profile_update is worth nothing if any
-            // other path writes it. This is the one that used to: the portal's
-            // ticket-create route resolves the customer through
-            // Customer::maybeCreateCustomer() with a payload built from the
-            // signed-in account's own email, which WordPress lets that account
-            // change without confirming anything.
+            // Portal ticket-create resolves the customer from the account's own,
+            // unconfirmed email. It must not move the held address either.
             $becomeUser($claimantUserId);
 
-            (new \FluentSupport\App\Services\CustomerPortalService())
-                ->resolveCustomer(null, '127.0.0.1', true);
+            \FluentSupport\App\Modules\CustomerPortal\PortalService::findCustomer([], '127.0.0.1', true);
 
             $stored = Customer::find($claimant->id);
 
@@ -324,10 +294,8 @@ return function () {
         FsTest::case('an_administrator_editing_only_a_name_does_not_move_the_address', function () use (
             $becomeUser, $adminId, $makeWpUser, $marker, &$renameUserId
         ) {
-            // Its own fixtures on purpose. Run against the shared ones, the
-            // collision guard would refuse the move anyway -- the stray record
-            // holds that address -- and the case would pass without ever
-            // exercising the thing it is named after.
+            // Own fixtures: with the shared ones the collision guard (the stray
+            // holds that address) would refuse the move and pass vacuously.
             $before = $marker . '-rename-old@example.invalid';
             $after  = $marker . '-rename-new@example.invalid';
 
@@ -339,19 +307,14 @@ return function () {
                 'first_name' => 'Original',
             ]);
 
-            // The account moves its own address with no confirmation, so the
-            // support address is held where it is.
             $becomeUser($renameUserId);
             wp_update_user(['ID' => $renameUserId, 'user_email' => $after]);
 
             FsTest::assertSame($before, (string) Customer::find($customer->id)->email,
                 'the divergence must exist for this case to mean anything');
 
-            // An administrator has authority over the account, but that is
-            // authority for the change they made. Renaming somebody must not
-            // quietly bless an unverified address the account is already
-            // carrying, which is what happens when the check compares the
-            // record to the account rather than to the update.
+            // An admin rename must not bless an unverified address the account
+            // already carries. The check compares against the update, not the account.
             $becomeUser($adminId);
             wp_update_user(['ID' => $renameUserId, 'first_name' => 'Renamed']);
 
@@ -370,14 +333,12 @@ return function () {
 
             $sent = [];
 
-            // Short-circuits delivery and records what would have gone out.
             $capture = function ($short, $atts) use (&$sent) {
                 $sent[] = $atts;
                 return true;
             };
 
-            // The lab has no portal page assigned, and the link has to point
-            // somewhere for the mail to be worth sending.
+            // The lab has no portal page, and the link needs one.
             $portalUrl = function () {
                 return home_url('/support');
             };
@@ -408,13 +369,9 @@ return function () {
         });
 
         FsTest::case('a_ticket_changing_owner_is_reissued', function () use ($serialBase) {
-            // The mechanism absorb() leans on, exercised on its own. Merging a
-            // record also moves the customer's address, and that rotates every
-            // hash on the record, so a merge alone cannot tell whether the
-            // reparenting itself reissues. This can: absorb() saves each ticket
-            // one at a time purely so this event fires, and a mass update on the
-            // query builder would silently skip it and carry live links across
-            // to the new owner.
+            // Reparenting alone must reissue the hash. A merge also moves the
+            // address, which rotates hashes anyway, so it can't prove this.
+            // absorb() saves tickets one by one so this model event fires.
             $from = FsFactory::customer(['user_id' => null]);
             $to   = FsFactory::customer(['user_id' => null]);
 
@@ -447,11 +404,8 @@ return function () {
                 $claimant->id, $claimantUserId, $oldEmail, $newEmail, time() + 3600
             );
 
-            // Flip one character of the signature. Done on the decoded bytes, not
-            // on the base64 text: the padding is stripped from the encoded form,
-            // so the final character there can carry bits that decode to nothing
-            // and flipping it sometimes leaves the payload identical. The
-            // signature is hex, so changing its last character always changes it.
+            // Flip the last signature byte after decoding. The last base64 char
+            // can carry padding bits, so flipping it may change nothing.
             $raw  = base64_decode(strtr($token, '-_', '+/'), true);
             $last = substr($raw, -1);
             $raw  = substr($raw, 0, -1) . ($last === 'a' ? 'b' : 'a');
@@ -488,9 +442,7 @@ return function () {
         FsTest::case('a_confirmation_link_does_nothing_for_another_signed_in_account', function () use (
             $becomeUser, $adminId, $claimantUserId, $bystanderUserId, $claimant, $oldEmail, $newEmail
         ) {
-            // Reading the inbox is only half the proof. A link forwarded to
-            // somebody else, or opened by whoever is signed in on a shared
-            // machine, must not move anything.
+            // A forwarded link, or one opened by another signed-in user, must not move anything.
             $becomeUser($bystanderUserId);
 
             $token = EmailClaimService::buildToken(
@@ -512,8 +464,7 @@ return function () {
         FsTest::case('no_claim_is_offered_while_another_account_holds_the_address', function () use (
             $becomeUser, $adminId, $claimantUserId, $bystanderUserId, $newEmail, $stray
         ) {
-            // Two accounts disputing one address is not something a confirmation
-            // settles, so nothing is offered and an agent has to look at it.
+            // A confirmation can't settle two accounts disputing one address. An agent must.
             $strayRow = Customer::find($stray->id);
             $strayRow->user_id = $bystanderUserId;
             $strayRow->save();
@@ -572,9 +523,7 @@ return function () {
             FsTest::assert(!Customer::find($stray->id),
                 'an emptied stray record must not be left behind to match future inbound mail');
 
-            // Both sets of links have to die: the ones mailed for the old
-            // address, and the ones mailed while the ticket sat on a record
-            // that has now changed hands.
+            // Links for the old address and for the stray's tickets must both die.
             FsTest::assert($ownHashBefore !== '' && (string) Ticket::find($ownTicket->id)->hash !== $ownHashBefore,
                 'moving the contact address must rotate the hashes that authorise the signed public ticket view');
             FsTest::assert($strayHashBefore !== '' && (string) Ticket::find($strayTicket->id)->hash !== $strayHashBefore,
@@ -593,9 +542,6 @@ return function () {
         FsTest::case('merging_does_not_overwrite_custom_data_the_surviving_record_has', function () use ($claimant) {
             $kept = Customer::find($claimant->id);
 
-            // The surviving record is the one the customer has been using. A
-            // stray record assembled from an inbound email is not a better
-            // source of truth than it.
             FsTest::assertSame('from-claimant', (string) $kept->getMeta('fs_claim_kept'),
                 'a key the surviving record already holds must not be replaced by the absorbed one');
         });
@@ -616,13 +562,9 @@ return function () {
 
             FsTest::assert(!empty($usedToken), 'the previous case must have produced a token for this one to mean anything');
 
-            // Retired by binding the record's address into the link: confirming
-            // moves that address, so the link no longer describes any record
-            // that exists. Nothing is stored, so this is a condition rather
-            // than a stored single use -- putting the record back on the old
-            // address before the link expires makes it work again. It is still
-            // the inbox that proved the address, so that reconfirms what was
-            // already confirmed.
+            // The link binds the record's current address, so confirming retires it.
+            // Nothing is stored: moving the record back before expiry revives it,
+            // which only reconfirms the same inbox.
             $resolved = EmailClaimService::resolveClaim($usedToken);
 
             FsTest::assertSame('stale', $resolved['status'],
@@ -660,8 +602,7 @@ return function () {
     } finally {
         $becomeUser($adminId);
 
-        // fs_persons rows do not cascade their meta, and the factory does not
-        // track fs_meta, so these come out by hand.
+        // Person meta doesn't cascade and the factory doesn't track fs_meta.
         if (!empty($claimant) && !empty($stray)) {
             Meta::where('object_type', 'person_meta')
                 ->whereIn('object_id', [$claimant->id, $stray->id])

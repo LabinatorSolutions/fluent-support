@@ -1,0 +1,55 @@
+{
+    "_comment": "Read by i18n.node.js (generator) and tests/lint/translation-map.js. Paths are relative to the repo root. The `runtime` block is only used by the fluent-plugins-skills installer.",
+    "textDomain": "fluent-support",
+    "namespace": "FluentSupport\\App\\Services",
+    "abspathGuard": true,
+    "helpers": {
+        "t": [
+            "$t"
+        ],
+        "n": [
+            "$_n"
+        ],
+        "x": [
+            "$_x"
+        ]
+    },
+    "reservedWords": "resources/long_translations.json",
+    "targets": [
+        {
+            "name": "admin",
+            "sourceDirs": [
+                "resources/admin",
+                "resources/common"
+            ],
+            "output": "app/Services/TranslationStrings.php",
+            "className": "TranslationStrings",
+            "method": "getAdminStrings"
+        },
+        {
+            "name": "portal",
+            "sourceDirs": [
+                "resources/customer_portal"
+            ],
+            "output": "app/Services/TranslationStrings.php",
+            "className": "TranslationStrings",
+            "method": "getPortalStrings"
+        }
+    ],
+    "mergeMethods": {
+        "getAllStrings": [
+            "admin",
+            "portal"
+        ]
+    },
+    "runtime": {
+        "file": "resources/admin/Bits/i18n.js",
+        "mapGlobal": "window.fluentSupportAdmin.i18n",
+        "definitions": [
+            "resources/admin/Bits/FluentFramework.js:78 ($t)",
+            "resources/admin/Bits/i18n.js:11 ($t)",
+            "resources/customer_portal/portal.js:116 ($t)"
+        ],
+        "packageManager": "pnpm"
+    }
+}

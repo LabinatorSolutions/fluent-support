@@ -42,7 +42,7 @@ export default {
         return {
             activeName: 'overall_activities',
             me: this.appVars.me,
-            ai_enabled: !!(this.appVars.open_ai_integration || this.appVars.fluent_bot_integration),
+            ai_enabled: !!this.appVars.open_ai_integration,
         }
     }
 }

@@ -48,6 +48,30 @@
             </div>
 
             <div class="fs_form_group">
+                <label class="fs_form_label">{{ $t('From Name') }}</label>
+                <el-radio-group v-model="mailbox.settings.from_name_type">
+                    <el-radio value="mailbox">{{ $t('Inbox name') }}</el-radio>
+                    <el-radio value="agent">{{ $t("Replying agent's name") }}</el-radio>
+                    <el-radio value="custom">{{ $t('Custom') }}</el-radio>
+                </el-radio-group>
+                <el-input
+                    v-if="mailbox.settings.from_name_type === 'custom'"
+                    v-model="mailbox.settings.from_name_template"
+                    :placeholder="fromNamePlaceholder"
+                    class="fs_text_input fs_text_input_40"
+                    style="margin-top: 8px;"
+                />
+                <p class="fs_sub_text">
+                    {{ $t('from_name_help') }}
+                    <span v-if="mailbox.settings.from_name_type === 'custom'">
+                        {{ fromNameCodes }}
+                        <!-- translators: %s is the business.name smartcode -->
+                        {{ $t('(%s is this inbox name)', businessNameCode) }}
+                    </span>
+                </p>
+            </div>
+
+            <div class="fs_form_group">
                 <span class="fs_field_label">
                     {{ $t('Admin Email Address') }}
                     <el-tooltip
@@ -134,12 +158,21 @@ export default {
                 '{{ticket.public_url}}': this.$t('Ticket Public URL'),
                 '{{ticket.title}}': this.$t('Ticket Title')
             },
+            fromNamePlaceholder: '{{agent.first_name}} from {{business.name}}',
+            fromNameCodes: '{{agent.first_name}}, {{agent.last_name}}, {{agent.full_name}}, {{business.name}}',
+            businessNameCode: '{{business.name}}',
             saving: false
         }
     },
     mounted() {
         if (!this.mailbox.settings.color) {
             this.mailbox.settings.color = '#189877';
+        }
+        if (!this.mailbox.settings.from_name_type) {
+            this.mailbox.settings.from_name_type = 'mailbox';
+        }
+        if (!this.mailbox.settings.from_name_template) {
+            this.mailbox.settings.from_name_template = this.fromNamePlaceholder;
         }
     },
     methods: {

@@ -98,14 +98,15 @@
                                     <strong>{{ $t('Preview') }}</strong>
                                     <el-tooltip
                                         effect="dark"
-                                        :content="$t('Available times are based off a sample of this event type’s upcoming availability. You can further customize times offered below')"
+                                        :content="$t('FluentBooking_Preview_Help')"
                                         placement="top"
                                         popper-class="fs_tooltip fs_fluent_booking_preview_tooltip"
                                     >
                                         <el-button text class="fs_fluent_booking_preview_info" :aria-label="$t('Preview help')">i</el-button>
                                     </el-tooltip>
                                 </div>
-                                <span>{{ selectedSlots.length }} {{ $t('selected') }}</span>
+                                <!-- translators: %s is the number of selected time slots -->
+                                <span>{{ $t('%s selected', selectedSlots.length) }}</span>
                             </div>
 
                             <div class="fs_fluent_booking_timezone" v-if="availabilityTimezone">
@@ -709,7 +710,8 @@ export default {
             }
 
             if (eventType.duration) {
-                parts.push(`${eventType.duration} ${this.$t('min')}`);
+                // translators: %s is the meeting length in minutes
+                parts.push(this.$t('%s min', eventType.duration));
             }
 
             return parts.join(' • ');

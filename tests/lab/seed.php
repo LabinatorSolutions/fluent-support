@@ -23,8 +23,7 @@ if (!class_exists(Ticket::class)) {
     WP_CLI::error('Fluent Support is not active in the lab.');
 }
 
-// Activation does not create a mailbox (the onboarding wizard does); the lab
-// seeds one so ticket routes have a working inbox.
+// Activation doesn't create a mailbox (onboarding does), so seed one.
 $mailbox = MailBox::first();
 if (!$mailbox) {
     $mailbox = MailBox::create([
@@ -36,8 +35,7 @@ if (!$mailbox) {
     ]);
 }
 
-// The lab admin as a Fluent Support agent (admins pass every policy, but an
-// agent Person row makes assignment/report fixtures meaningful).
+// Admins pass every policy, but assignment/report fixtures need an agent row.
 $adminUser = get_users(['role' => 'administrator', 'number' => 1, 'orderby' => 'ID'])[0];
 $agent = Agent::firstOrCreate(
     ['email' => $adminUser->user_email],
@@ -97,6 +95,18 @@ if (!$ticket) {
         'content'           => '<p>Seed agent response.</p>',
         'source'            => 'web',
     ]);
+}
+
+// Pro-only code paths that run only with these settings on: time tracking
+// (and its table) and the agent feedback counts in reports. The settings are
+// cached per request, so a test can't turn them on itself.
+if (class_exists(\FluentSupportPro\Database\Migrations\TimeTrackMigrator::class)) {
+    $businessSettings = \FluentSupport\App\Services\Helper::getOption('global_business_settings', []);
+    $proSettings = ['agent_time_tracking' => 'yes', 'agent_feedback_rating' => 'yes'];
+    if (array_intersect_assoc($proSettings, (array) $businessSettings) !== $proSettings) {
+        \FluentSupport\App\Services\Helper::updateOption('global_business_settings', array_merge((array) $businessSettings, $proSettings));
+    }
+    \FluentSupportPro\Database\Migrations\TimeTrackMigrator::migrate();
 }
 
 WP_CLI::success(sprintf(

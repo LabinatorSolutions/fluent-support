@@ -5,10 +5,13 @@ namespace FluentSupport\App\Http\Controllers;
 use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Modules\PermissionManager;
+use FluentSupport\App\Modules\CustomerPortal\PortalService;
 use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\App\Services\Helper;
+use FluentSupport\App\Services\Includes\FileSystem;
 use FluentSupport\Framework\Http\Request\Request;
 use FluentSupport\App\Services\Includes\UploadService;
+use FluentSupport\App\Services\Storage\StorageManager;
 
 /**
  * UploaderController class is responsible for uploading file
@@ -18,6 +21,13 @@ use FluentSupport\App\Services\Includes\UploadService;
  */
 class UploaderController extends Controller
 {
+    /**
+     * Uploads sent with on_behalf belong to that customer, and their ticket_id is the
+     * public ticket number. Remote portals check for this constant to know which
+     * ticket reference to send. Don't remove it.
+     */
+    const ON_BEHALF_UPLOADS = true;
+
     /**
      * uploadTicketFiles method will upload all the attached file in a ticket
      * @param Request $request
@@ -39,8 +49,20 @@ class UploaderController extends Controller
             return $partsError;
         }
 
-        $ticketId = $this->resolveTicketId($request);
-        $person = $this->resolvePerson($ticketId, $request);
+        $onBehalf = PortalService::sanitizeOnBehalf($request->get('on_behalf', []));
+
+        if ($onBehalf) {
+            try {
+                list($ticketId, $person) = $this->resolveOnBehalfUploader($onBehalf, $request);
+            } catch (\Exception $e) {
+                return $this->sendError([
+                    'message' => Helper::getSafeErrorMessage($e),
+                ]);
+            }
+        } else {
+            $ticketId = $this->resolveTicketId($request);
+            $person = $this->resolvePerson($ticketId, $request);
+        }
 
         if ($permissionError = $this->checkPermissionToUploadFile($person)) {
             return $permissionError;
@@ -155,7 +177,14 @@ class UploaderController extends Controller
             'file.max'       => sprintf(__('The file cannot be more than %.01fMB. Please upload somewhere like Dropbox/Google Drive and paste the link in the response', 'fluent-support'), $maxFileSize),
         ];
 
-        $this->validate($files, $validationRules, $validationMessages);
+        // The mimetypes rule reads the file's type through wp_check_filetype_and_ext(),
+        // which checks core's list, so the plugin's types (.md, .json) must apply here too.
+        add_filter('upload_mimes', [FileSystem::class, 'allowTicketMimes']);
+        try {
+            $this->validate($files, $validationRules, $validationMessages);
+        } finally {
+            remove_filter('upload_mimes', [FileSystem::class, 'allowTicketMimes']);
+        }
     }
 
     private function resolveTicketId($request)
@@ -173,6 +202,35 @@ class UploaderController extends Controller
         $ticket = Ticket::wherePublicIdentifier($ticketId)->first();
 
         return $ticket ? $ticket->id : null;
+    }
+
+    /**
+     * A remote portal (PortalPolicy has allowed on_behalf) uploads as the customer it
+     * acts for, so the file belongs to that customer and counts toward their quota only.
+     * ticket_id is the public ticket number, as on every other portal endpoint.
+     *
+     * @return array [ticket id or null, customer]
+     * @throws \Exception
+     */
+    private function resolveOnBehalfUploader($onBehalf, Request $request)
+    {
+        $identifier = $request->getSafe('ticket_id', 'intval');
+
+        if (!$identifier) {
+            return [null, PortalService::findCustomer($onBehalf, $request->getIp(), true)];
+        }
+
+        $customer = PortalService::findCustomer($onBehalf, $request->getIp());
+        $ticket = $customer ? Ticket::where('customer_id', $customer->id)->wherePublicIdentifier($identifier)->first() : null;
+
+        if (!$ticket) {
+            throw PortalService::notFound();
+        }
+
+        // The portal's own check, which also holds an agent to their mailboxes.
+        PortalService::assertCanAccess($customer, $ticket, 'response', true);
+
+        return [$ticket->id, $customer];
     }
 
     private function resolvePerson($ticketId, Request $request)
@@ -232,6 +290,7 @@ class UploaderController extends Controller
                 'file_path' => $file['file_path'],
                 'full_url'  => esc_url($file['url']),
                 'title'     => sanitize_file_name($file['name']),
+                'file_size' => (int) @filesize($file['file_path']),
                 'driver'    => 'local',
                 'status'    => 'in-active',
                 'settings'  => [
@@ -248,9 +307,7 @@ class UploaderController extends Controller
                 }
 
                 do_action('fluent_support/attachment_uploaded_as_temp', $attachment, $ticketId);
-                $driver = Helper::getUploadDriverKey();
-
-                do_action_ref_array('fluent_support/attachment_uploaded_as_temp_' . $driver, [&$attachment, $ticketId]);
+                StorageManager::afterTempUpload($attachment, $ticketId);
             } catch (\Exception $exception) {
                 continue;
             }
@@ -259,79 +316,4 @@ class UploaderController extends Controller
         return $imageType == 'direct_paste' ? $directPasteUrl : $attachments;
     }
 
-    public function uploadImage(Request $request)
-    {
-        $images = $request->files();
-        $ticketId = $this->resolveTicketId($request);
-
-        if ($accessError = $this->checkTicketAccess($ticketId)) {
-            return $accessError;
-        }
-
-        $validationError = $this->isValidImageType($images);
-        if ($validationError) {
-            return $validationError;
-        }
-
-        try {
-            $uploadedFiles = UploadService::handleUploadToLocal($ticketId, $images);
-        } catch (\Exception $e) {
-            return $this->sendError([
-                'message' => Helper::getSafeErrorMessage($e),
-            ]);
-        }
-
-        return [
-            'images' => $uploadedFiles,
-        ];
-    }
-
-    private function isValidImageType($images)
-    {
-        if (empty($images['image'])) {
-            return $this->sendError([
-                'message' => __('No image file provided.', 'fluent-support'),
-            ]);
-        }
-
-        $file = $images['image'];
-        $tempPath = $file->getPathname();
-        $extension = strtolower($file->getClientOriginalExtension());
-        $allowedExtensions = ['gif', 'ief', 'jpeg', 'jpg', 'webp', 'pjpeg', 'ktx', 'png'];
-
-        if (!in_array($extension, $allowedExtensions)) {
-            return $this->sendError([
-                'message' => __('Invalid image file type.', 'fluent-support'),
-            ]);
-        }
-
-        $allowedMimes = Helper::getMimeGroups()['images']['mimes'];
-        $realMime = $this->detectMimeType($tempPath);
-
-        if (!$realMime || !in_array($realMime, $allowedMimes)) {
-            return $this->sendError([
-                'message' => __('File content does not match the image type.', 'fluent-support'),
-            ]);
-        }
-
-        return null;
-    }
-
-    private function detectMimeType($filePath)
-    {
-        if (function_exists('finfo_open')) {
-            $finfo = finfo_open(FILEINFO_MIME_TYPE);
-            $mime = finfo_file($finfo, $filePath);
-            finfo_close($finfo);
-            return $mime;
-        }
-
-        if (function_exists('mime_content_type')) {
-            return mime_content_type($filePath);
-        }
-
-        // getimagesize works for standard image formats as last resort
-        $imageInfo = @getimagesize($filePath);
-        return $imageInfo ? $imageInfo['mime'] : false;
-    }
 }

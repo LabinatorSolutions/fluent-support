@@ -17,7 +17,7 @@
                 <span class="fs_taggables_header_title">{{$t('Contacts Tag')}}</span>
                 <div class="fs_taggables_tags">
                     <span class="el-tag el-tag--mini el-tag--plain" v-for="tag in crm_profile.tags" :key="tag.id">{{tag.title }}</span>
-                    <el-popover
+                    <el-popover :persistent="false"
                         v-if="can_add_tags"
                         placement="bottom"
                         :width="400"
@@ -60,7 +60,7 @@
                 <span class="fs_taggables_header_title">{{$t('Contacts List')}}</span>
                 <div class="fs_taggables_tags">
                     <span class="el-tag el-tag--mini el-tag--plain" v-for="list in crm_profile.lists" :key="list.id">{{list.title}}</span>
-                    <el-popover
+                    <el-popover :persistent="false"
                         v-if="can_add_tags"
                         placement="bottom"
                         :width="400"
@@ -104,7 +104,7 @@
 </template>
 
 <script type="text/babel">
-import each from 'lodash/each';
+import { each } from 'lodash-es';
 
 export default {
     name: 'CRMProfile',

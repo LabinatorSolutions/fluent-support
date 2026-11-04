@@ -89,13 +89,7 @@ class ResourceProvider
                 ];
 
             case 'fluentsupport://stats/overview':
-                return [
-                    'total'      => TicketHelper::countAllTickets(),
-                    'new'        => TicketHelper::countNewTickets(),
-                    'active'     => TicketHelper::countActiveTickets(),
-                    'closed'     => TicketHelper::countClosedTickets(),
-                    'unassigned' => TicketHelper::countUnassignedTickets(),
-                ];
+                return TicketHelper::getStatusCounts();
 
             default:
                 return new \WP_Error('not_found', 'Resource not found', ['uri' => sanitize_text_field($uri)]);

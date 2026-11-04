@@ -7,8 +7,16 @@
             </div>
         </div>
 
-        <div v-if="loading_pipe" class="fs_skeleton_loader">
-            <el-skeleton :rows="5" animated/>
+        <div v-if="first_loading" class="fs_skeleton_loader">
+            <el-skeleton animated>
+                <template #template>
+                    <el-skeleton-item variant="h3" style="width: 40%;" />
+                    <el-skeleton-item variant="text" style="width: 85%; margin-top: 12px;" />
+                    <el-skeleton-item variant="text" style="width: 60%; margin-top: 8px;" />
+                    <el-skeleton-item variant="rect" style="width: 100%; max-width: 480px; height: 40px; margin-top: 20px;" />
+                    <el-skeleton-item variant="button" style="width: 140px; margin-top: 16px;" />
+                </template>
+            </el-skeleton>
         </div>
 
         <div v-else-if="email_pipe" class="fs_email_piping_content">
@@ -16,7 +24,7 @@
             <div class="fs_not_issued_state" v-if="email_pipe.status === 'not_issued'">
                 <h2 class="fs_piping_title">{{ $t("You are almost done") }}🎉</h2>
                 <p class="fs_piping_description">
-                    {{ $t('Connect your email address with Fluent Support Email parser, so when your customers send an email or reply from email it will be synced with your support portal') }}
+                    {{ $t('Email_Piping_Connect_Help') }}
                 </p>
 
                 <div class="fs_piping_form">
@@ -53,9 +61,8 @@
             <div class="fs_masked_email_form" v-else-if="email_pipe.status == 'issued'">
                 <h2 class="fs_piping_title">{{ $t('Your masked mailbox email has been issued') }}</h2>
                 <p class="fs_piping_description">
-                    {{ $t('Please enable auto-forwarding your emails from') }}
-                    <strong>{{ mailbox.email }}</strong>
-                    {{ $t('to this following address.') }}
+                    <!-- translators: %s is the mailbox email address -->
+                    {{ $t('Please enable auto-forwarding of your emails from %s to the following address.', mailbox.email) }}
                 </p>
 
                 <div class="fs_piping_form">
@@ -70,12 +77,13 @@
                             class="fs_copy_btn"
                             size="small"
                         >
-                            <img :src="appVars.asset_url + 'images/copy.svg'" alt="">
+                            <DynamicIcon name="Copy"/>
                         </el-button>
                     </div>
 
                     <el-button
                         @click="loadPipeStatus()"
+                        :loading="loading_pipe"
                         type="primary"
                         style="width: fit-content"
                         class="fs_save_settings_btn"
@@ -84,13 +92,14 @@
                     </el-button>
 
                     <div class="fs_highlight">
-                        <p>{{ $t('Once you activate the auto-forward for') }} <strong>{{ mailbox.email }}</strong>, {{ $t('the status will be active.') }}</p>
-                        <p>{{ $t('For the confirmation email from your email service provider, please check the latest ticket. A new ticket should be created with confirmation code.') }}</p>
+                        <!-- translators: %s is the mailbox email address -->
+                        <p>{{ $t('Once you activate auto-forwarding for %s, the status will become active.', mailbox.email) }}</p>
+                        <p>{{ $t('Email_Piping_Confirmation_Help') }}</p>
                         <p>
                             <a
                                 target="_blank"
                                 rel="noopener"
-                                href="https://fluentsupport.com/docs/email-piping-email-based-support-ticket/"
+                                href="https://docs.fluentsupport.com/email-piping-email-based-support-ticket"
                                 class="fs_doc_link"
                             >
                                 {{ $t('Read the email piping documentation') }}
@@ -118,7 +127,7 @@
                         class="fs_copy_btn"
                         size="small"
                     >
-                        <img :src="appVars.asset_url + 'images/copy.svg'" alt="">
+                        <DynamicIcon name="Copy"/>
                     </el-button>
                 </div>
             </div>
@@ -151,7 +160,7 @@
                             class="fs_copy_btn"
                             size="small"
                         >
-                            <img :src="appVars.asset_url + 'images/copy.svg'" alt="">
+                            <DynamicIcon name="Copy"/>
                         </el-button>
                     </div>
                 </div>
@@ -166,14 +175,20 @@
 
 <script type="text/babel">
 import {useRouter} from "vue-router";
+import DynamicIcon from '@/admin/Components/Icons/DynamicIcon.vue';
+
 export default {
     name: 'MailBoxEmailPiping',
+    components: {
+        DynamicIcon
+    },
     props: ['mailbox'],
     data() {
         return {
             status: false,
             email_pipe: false,
             loading_pipe: false,
+            first_loading: true,
             webhook_url: false,
             is_custom_supported: false,
             terms_agree: false,
@@ -198,6 +213,7 @@ export default {
                 })
                 .always(() => {
                     this.loading_pipe = false;
+                    this.first_loading = false;
                 });
         },
 

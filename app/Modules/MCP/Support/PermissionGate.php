@@ -6,27 +6,15 @@ use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Helper;
 
 /**
- * Maps MCP abilities to Fluent Support's existing capability model. The MCP
- * user IS a WordPress user with Fluent Support agent permissions (fst_*),
- * stored in _fluent_support_permissions user meta. We never invent a parallel
- * permission system — we reuse PermissionManager, the same check the admin
- * REST routes use (AgentTicketPolicy calls the same methods for every ticket
- * API request).
- *
- * Two layers:
- *   - transport(): can this user reach the Fluent Support MCP endpoint at all?
- *   - per-ability permission_callback: gating inside AbilitiesRegistrar.
- *
- * Annotations are UX hints only; this class is the transport enforcement boundary.
+ * MCP on/off state and the transport gate. Permissions reuse PermissionManager,
+ * the same fst_* checks the admin REST routes use. Per-ability checks run on top.
  */
 class PermissionGate
 {
     const OPTION_KEY = '_mcp_settings';
 
     /**
-     * Transport gate for the fluent-support MCP server. Runs on every request.
-     * Checks (a) MCP is enabled and (b) user holds at least a Fluent Support
-     * agent permission. Per-ability permission_callback still runs on top.
+     * Runs on every MCP request: MCP must be on and the user must have ticket access.
      *
      * @param mixed $request
      * @return true|\WP_Error
@@ -40,10 +28,8 @@ class PermissionGate
             );
         }
 
-        // Explicit login check for a clear error code; canAccessTicketRoutes()
-        // already returns false for unauthenticated users (user_id 0 → empty
-        // permissions), but the distinct code helps the agent distinguish
-        // "not logged in" from "logged in but no Fluent Support role".
+        // canAccessTicketRoutes() covers this too, but a separate code tells the
+        // agent "not logged in" apart from "no Fluent Support access".
         if (!is_user_logged_in()) {
             return new \WP_Error(
                 'fluent_support_mcp_unauthorized',
@@ -51,7 +37,7 @@ class PermissionGate
             );
         }
 
-        // Reuse the same check AgentTicketPolicy uses for all GET ticket routes.
+        // Same check AgentTicketPolicy uses for ticket routes.
         if (!PermissionManager::canAccessTicketRoutes()) {
             return new \WP_Error(
                 'fluent_support_mcp_forbidden',
@@ -63,8 +49,7 @@ class PermissionGate
     }
 
     /**
-     * Whether the MCP server is enabled. Ships OFF; enabled via the
-     * fluent_kit/mcp_toggle_handlers filter (FluentHub) or a future settings UI.
+     * Off by default.
      */
     public static function isEnabled()
     {
@@ -74,11 +59,8 @@ class PermissionGate
     }
 
     /**
-     * Persist the master on/off switch. Called from the FluentHub toggle handler
-     * and any future settings controller.
-     *
-     * Defense-in-depth: re-check manage_options here because the toolkit toggle
-     * path delegates auth to an external plugin.
+     * Re-checks manage_options because the FluentHub toggle path leaves auth to
+     * another plugin.
      *
      * @param bool $enabled
      * @return bool
@@ -102,7 +84,6 @@ class PermissionGate
 
     /**
      * SLA thresholds used by getSupportContext and getSupportInsights.
-     * Written by McpSettingsController::saveSettings().
      *
      * @return array{first_response_hours: int, resolution_hours: int}
      */
@@ -118,8 +99,8 @@ class PermissionGate
     }
 
     /**
-     * AI guidelines injected into getSupportContext. Sanitized at read time so
-     * anything stored raw before Phase 3 is cleaned on the way out.
+     * AI guidelines for getSupportContext. Sanitized on read, since older
+     * values may have been stored raw.
      *
      * @return string Up to 2000 characters, no HTML.
      */

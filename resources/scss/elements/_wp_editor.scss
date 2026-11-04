@@ -11,19 +11,6 @@
     .wp-media-buttons .insert-media {
         vertical-align: middle;
     }
-
-    .popover-wrapper {
-        z-index: 2;
-        position: absolute;
-        top: 0;
-        right: 0;
-
-        &-plaintext {
-            left: auto;
-            right: 0;
-            top: -32px;
-        }
-    }
 }
 
 .fs_mentions_dropdown {
@@ -66,12 +53,6 @@
     font-weight: 600;
 }
 
-.fs_mentions_option_email {
-    color: var(--fs-text-secondary, #525866);
-    font-size: 12px;
-    line-height: 16px;
-}
-
 .mce-fluentcrm_editor_btn {
     button {
         font-size: 10px !important;
@@ -82,6 +63,11 @@
     &:hover {
         border: 1px solid transparent !important;
     }
+}
+
+.wp_vue_editor_wrapper > .fs_action_buttons {
+    top: 0;
+    height: 32px;
 }
 
 .fs_action_buttons {
@@ -111,7 +97,7 @@
             height: auto ;
 
             &:hover {
-                color: #2271b1;
+                color: var(--fs-text-primary, #0E121B);
                 background: transparent;
             }
 
@@ -182,15 +168,7 @@
     }
 }
 
-.action-bar {
-    background-color: white;
-    border: 1px solid #ccc;
-    padding: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
 .fs_ai_tools_box {
-    .fs_fluent_bot_response_button,
     .fs_openAI_response_button {
         align-items: center;
         padding: 5px 6px;
@@ -209,12 +187,6 @@
             display: flex;
             justify-content: space-between;
             gap: 4px;
-        }
-
-        .fs_fluent_bot_icon {
-            width: 16px;
-            height: 16px;
-            border-radius: 3px;
         }
 
         p {
@@ -236,6 +208,9 @@
         gap: 10px;
         border-radius: 50%;
         background: var(--fs-bg-strong, #0E121B);
+        --el-button-text-color: var(--fs-text-white, #FFFFFF);
+        --el-button-hover-text-color: var(--fs-text-white, #FFFFFF);
+        color: var(--fs-text-white, #FFFFFF);
         height: 30px;
         width: 30px;
 
@@ -366,7 +341,6 @@
             width: 100%;
         }
 
-        .el-range__icon,
         .el-input__prefix,
         .el-input__suffix {
             color: var(--fs-text-secondary, #525866);
@@ -737,7 +711,6 @@
         color: var(--fs-text-muted, #99A0AE);
     }
 
-    .el-date-table td.current:not(.disabled) .el-date-table-cell__text,
     .el-date-table td.selected .el-date-table-cell__text {
         background-color: var(--fs-btn-primary-bg, #0E121B) !important;
         color: var(--fs-text-white, #FFFFFF) !important;
@@ -760,37 +733,17 @@
         box-shadow: none !important;
     }
 
-    .el-picker-panel__footer .el-button.is-plain,
-    .el-picker-panel__footer .el-button--default {
+    .el-picker-panel__footer .el-button.is-plain {
         border: 1px solid var(--fs-border-default, #E1E4EA) !important;
         background: var(--fs-bg-primary, #FFFFFF) !important;
         color: var(--fs-text-secondary, #525866) !important;
     }
 
     .el-picker-panel__footer .el-button.is-plain:hover,
-    .el-picker-panel__footer .el-button.is-plain:focus,
-    .el-picker-panel__footer .el-button--default:hover,
-    .el-picker-panel__footer .el-button--default:focus {
+    .el-picker-panel__footer .el-button.is-plain:focus {
         border-color: var(--fs-border-default, #E1E4EA) !important;
         background: var(--fs-bg-subtle, #F5F7FA) !important;
         color: var(--fs-text-primary, #0E121B) !important;
-    }
-
-    .fs_fluent_booking_specific_dates_cancel {
-        margin-right: 8px;
-    }
-
-    .el-picker-panel__footer .el-button--primary {
-        border: 1px solid var(--fs-bg-strong, #0E121B) !important;
-        background: var(--fs-bg-strong, #0E121B) !important;
-        color: var(--fs-text-white, #FFFFFF) !important;
-    }
-
-    .el-picker-panel__footer .el-button--primary:hover,
-    .el-picker-panel__footer .el-button--primary:focus {
-        border-color: var(--fs-bg-muted, #2B303B) !important;
-        background: var(--fs-bg-muted, #2B303B) !important;
-        color: var(--fs-text-white, #FFFFFF) !important;
     }
 }
 
@@ -969,30 +922,6 @@
 }
 
 .fs_shortcode_box {
-    .el-dropdown-menu {
-        max-height: 300px;
-        overflow-y: auto;
-        z-index: 9999 !important;
-        position: relative;
-
-        &::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        &::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 3px;
-        }
-
-        &::-webkit-scrollbar-thumb {
-            background: #c1c1c1;
-            border-radius: 3px;
-
-            &:hover {
-                background: #a8a8a8;
-            }
-        }
-    }
 
     i {
         margin-left: 5px;
@@ -1025,12 +954,6 @@
     }
 }
 
-.el-dropdown-menu.fs_shortcode_dropdown.el-popper {
-    max-height: 300px !important;
-    overflow-y: auto !important;
-    z-index: 9999 !important;
-    position: fixed !important;
-}
 
 .wp-editor-wrap {
     .wp-editor-container {
@@ -1048,7 +971,7 @@
     }
 
     .mce-container-body.mce-stack-layout {
-        background: var(--fs-bg-weak, #F5F7FA);
+        background: var(--fs-bg-subtle, #F5F7FA);
 
         .mce-first .mce-last {
             padding: 2px 4px;
@@ -1074,11 +997,11 @@
         }
 
         &:hover {
-            background-color: var(--fs-bg-weak, #F5F7FA) !important;
+            background-color: var(--fs-bg-subtle, #F5F7FA) !important;
         }
 
         &.mce-active {
-            background-color: var(--fs-bg-weak, #F5F7FA) !important;
+            background-color: var(--fs-bg-subtle, #F5F7FA) !important;
 
             i.mce-ico {
                 color: var(--fs-text-strong, #0E121B) !important;
@@ -1118,18 +1041,22 @@
 
     .wp-media-buttons {
         float: left;
-        margin-bottom: var(--fs-spacing-sm, 8px);
+        margin: 0 8px var(--fs-spacing-sm, 8px) 0;
 
         .insert-media {
             display: inline-flex;
             align-items: center;
             gap: var(--fs-spacing-xs, 4px);
-            padding: var(--fs-spacing-xs, 4px) var(--fs-spacing-sm, 8px);
+            box-sizing: border-box;
+            height: 32px;
+            min-height: 32px;
+            margin: 0;
+            padding: 0 10px 0 8px;
             background-color: var(--fs-bg-primary, #FFFFFF);
 
             font-size: 14px;
             font-weight: 500;
-            line-height: 16px;
+            line-height: 20px;
             text-decoration: none;
 
             border-radius: var(--fs-radius-md, 8px);
@@ -1159,11 +1086,13 @@
     }
 
     .wp-editor-tabs {
+        box-sizing: border-box;
+        height: 32px;
         padding: 2px;
         float: left;
         border-radius: var(--fs-radius-md, 8px);
         border: 1px solid var(--fs-border-default, #E1E4EA);
-        background-color: var(--fs-bg-weak, #F5F7FA);
+        background-color: var(--fs-bg-subtle, #F5F7FA);
         margin-bottom: var(--fs-spacing-sm, 8px);
         display: flex;
         gap: var(--fs-spacing-xs, 4px);
@@ -1172,14 +1101,15 @@
         .wp-switch-editor {
             top: auto;
             margin: 0;
-            height: auto;
+            box-sizing: border-box;
+            height: 26px;
             border-radius: var(--fs-radius-sm, 4px);
             border-width: 0px;
-            font-size: 12px;
-            line-height: 16px;
+            font-size: 13px;
+            line-height: 18px;
             font-weight: 500;
             color: var(--fs-text-sub, #525866);
-            padding: var(--fs-spacing-xs, 4px) var(--fs-spacing-sm, 8px);
+            padding: 4px 10px;
             background-color: transparent;
             outline: none;
             box-shadow: none;
