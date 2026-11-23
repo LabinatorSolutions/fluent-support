@@ -71,6 +71,7 @@ return function () {
         FsTest::case('ledger: create', function () use ($record, $marker, $adopt, $portalCustomer, $as, $adminId) {
             $customer = FsFactory::customer();
             $record('create: admin, existing customer', fn() => FsTest::rest('POST', 'tickets', ['ticket' => ['title' => 'Ledger ' . $marker, 'content' => '<p>Body</p>', 'customer_id' => $customer->id]]));
+            $record('create: admin, start with an internal note', fn() => FsTest::rest('POST', 'tickets', ['ticket' => ['title' => 'Ledger logged ' . $marker, 'content' => '<p>Body</p>', 'customer_id' => $customer->id, 'start_with_note' => 'yes']]));
             $record('create: admin, new customer', fn() => FsTest::rest('POST', 'tickets', ['ticket' => ['title' => 'Ledger new ' . $marker, 'content' => '<p>Body</p>', 'create_customer' => 'yes'], 'newCustomer' => ['email' => $marker . '-ledger-new@example.invalid', 'first_name' => 'New']]));
             $record('create: MCP, new customer', fn() => TicketTools::createTicket(['title' => 'Ledger mcp ' . $marker, 'content' => 'Body', 'customer_email' => $marker . '-ledger-mcp@example.invalid']));
             $record('create: MCP, with an agent', fn() => TicketTools::createTicket(['title' => 'Ledger mcp agent ' . $marker, 'content' => 'Body', 'customer_email' => $marker . '-ledger-mcp@example.invalid', 'agent_id' => FsFactory::agent()->id]));

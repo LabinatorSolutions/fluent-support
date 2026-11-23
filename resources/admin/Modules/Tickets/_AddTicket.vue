@@ -150,7 +150,7 @@
                         <error :error="errors.get('title')"/>
                     </el-form-item>
 
-                    <el-form-item :label="$t('Ticket Details')" class="fs_reply_editor">
+                    <el-form-item :label="ticket.start_with_note === 'yes' ? $t('Internal note (the customer will not see this)') : $t('Ticket Details')" class="fs_reply_editor">
                         <wp-editor
                             :height="150"
                             :autofocus="true"
@@ -211,8 +211,11 @@
                     <custom-field-form :custom_data="ticket.custom_fields" :ticket="ticket" type="create_ticket" v-if="has_pro"/>
 
                     <el-form-item>
-                        <el-checkbox true-value="yes" false-value="no" v-model="ticket.agent_initiated">
+                        <el-checkbox true-value="yes" false-value="no" v-model="ticket.agent_initiated" @change="value => value === 'yes' && (ticket.start_with_note = 'no')">
                             {{ $t('Initiated by agent') }}
+                        </el-checkbox>
+                        <el-checkbox true-value="yes" false-value="no" v-model="ticket.start_with_note" @change="value => value === 'yes' && (ticket.agent_initiated = 'no')">
+                            {{ $t('Save as an internal note') }}
                         </el-checkbox>
                     </el-form-item>
                 </div>
@@ -303,6 +306,7 @@ export default {
                 create_customer: 'no',
                 create_wp_user: 'no',
                 agent_initiated: 'no',
+                start_with_note: 'no',
             },
             new_customer: {},
             customer_search_item: {

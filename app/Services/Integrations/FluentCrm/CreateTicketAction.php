@@ -147,14 +147,29 @@ class CreateTicketAction extends BaseAction
             $ticketData['priority'] = sanitize_text_field($sequence->settings['priority']);
         }
 
-        $customerData = Arr::only($subscriber->toArray(), (new Customer())->getFillable());
+        // The contact's status and hash are FluentCRM's own; a new customer gets the defaults.
+        $customerData = Arr::except(
+            Arr::only($subscriber->toArray(), (new Customer())->getFillable()),
+            ['status', 'hash']
+        );
 
         $customerData['user_id'] = $subscriber->getWpUserId();
-        // Override status to 'active' — FluentCRM subscriber status (e.g. 'subscribed') should not carry over to fs_persons
-        $customerData['status'] = 'active';
         $customerData = array_filter($customerData);
 
-        $customer = CustomerService::findOrCreate($customerData);
+        $customer = CustomerService::findBlockedByEmail($subscriber->email, Arr::get($customerData, 'user_id'))
+            ?: CustomerService::findOrCreate($customerData);
+
+        // Older versions copied the contact's 'subscribed' status onto the customer; make those customers active.
+        // Only while still 'subscribed', so an agent's block made meanwhile is kept.
+        if ($customer && $customer->exists && $customer->status === 'subscribed') {
+            Customer::where('id', $customer->id)->where('status', 'subscribed')->update(['status' => 'active']);
+            $customer = $customer->fresh();
+        }
+
+        if (!$customer || !$customer->exists || $customer->isBlocked()) {
+            FunnelHelper::changeFunnelSubSequenceStatus($funnelSubscriberId, $sequence->id, 'skipped');
+            return false;
+        }
 
         $ticketData['customer_id'] = $customer->id;
         (new TicketService())->storeCustomerTicket($ticketData, $customer);

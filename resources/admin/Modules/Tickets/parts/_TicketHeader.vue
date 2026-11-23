@@ -75,11 +75,11 @@
             <!-- With no composer open, one bar starts a reply or a note. -->
             <div v-if="showComposerPrompt" class="fs_composer_prompt">
                 <el-button text class="fs_composer_prompt_reply" @click="$emit('toggle-reply')">
-                    <el-icon class="fs_composer_prompt_icon"><ChatLineSquare /></el-icon>
+                    <el-icon class="fs_composer_prompt_icon"><DynamicIcon name="ChatLineIcon" /></el-icon>
                     <span class="fs_composer_prompt_text">{{ replyPromptParts[0] }}<strong>{{ replyPromptParts[1] }}</strong>{{ replyPromptParts[2] }}</span>
                 </el-button>
                 <el-button v-if="canManageTickets" text class="fs_composer_prompt_note" @click="$emit('toggle-note')">
-                    <el-icon class="fs_composer_prompt_icon"><Lock /></el-icon>
+                    <el-icon class="fs_composer_prompt_icon"><DynamicIcon name="DraftLineIcon" /></el-icon>
                     <span>{{ $t('Note') }}</span>
                 </el-button>
             </div>
@@ -113,7 +113,7 @@
                 <span v-tip="$t('Business Inbox')" >
                     <el-dropdown :persistent="false" v-if="appVars.me.permissions.includes('fst_manage_settings') && ticket.mailbox_id && mailboxes && mailboxes.length > 1" trigger="click" @command="$emit('change-mailbox', $event)">
                                 <el-button class="fs_outline_btn fs_header_dropdown">
-                                    <el-icon class="fs_header_icon"><OfficeBuilding /></el-icon>
+                                    <el-icon class="fs_header_icon fs_header_lead_icon"><OfficeBuilding /></el-icon>
                                     <span class="fs_header_dropdown_text">{{ getMailboxName(ticket.mailbox_id) }}</span>
                                     <el-icon class="fs_header_icon"><ArrowDown /></el-icon>
                                 </el-button>

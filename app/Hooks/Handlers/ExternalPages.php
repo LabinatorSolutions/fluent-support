@@ -201,13 +201,38 @@ class ExternalPages
         }
 
         if ('local' !== $attachment->driver) {
-            StorageManager::serve($attachment);
+            StorageManager::serve($attachment, $this->isPreviewRequest($attachment));
         }
 
         if (!file_exists($attachment->file_path)) {
-            die('File could not be found');
+            wp_die(esc_html__('File could not be found', 'fluent-support'), esc_html__('Not Found', 'fluent-support'), ['response' => 404]);
         }
         $this->serveLocalAttachment($attachment);
+    }
+
+    /**
+     * The preview dialog shows PDFs in an iframe and reads Markdown with fetch(). A redirect to
+     * remote storage can block both (CORS, framing rules, forced downloads), so stream those here.
+     */
+    private function isPreviewRequest($attachment)
+    {
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Only picks how an already authorized file is sent
+        if (empty($_GET['fs_preview']) || (int) $attachment->file_size > 10 * MB_IN_BYTES) {
+            return false;
+        }
+
+        if ($attachment->file_type === 'application/pdf') {
+            return true;
+        }
+
+        // Uploaded .md files are stored as text/plain; the name alone must not turn another type into a preview.
+        if (!in_array($attachment->file_type, ['text/plain', 'text/markdown', 'text/x-markdown'], true)) {
+            return false;
+        }
+
+        $extension = strtolower(pathinfo((string) $attachment->title, PATHINFO_EXTENSION));
+
+        return in_array($extension, ['md', 'markdown'], true) || 'text/plain' !== $attachment->file_type;
     }
 
     private function getAttachmentByHash($attachmentHash)

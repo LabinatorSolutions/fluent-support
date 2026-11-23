@@ -1,16 +1,17 @@
 <template>
-    <div v-if="has_pro" class="fs_activity_page">
+    <div class="fs_activity_page">
         <div class="fs_activity_header">
             <div class="fs_activity_header_row">
                 <h3 class="fs_page_title">{{ $t("Activity") }}</h3>
                 <LiveSnapshotSelector
+                    v-if="has_pro"
                     v-model="trendLiveMode"
                     v-model:selected-snapshot="trendSelectedSnapshot"
                     report-type="response_activity"
                     @change="handleTrendLiveSnapshotChange"
                 />
             </div>
-            <div class="fs_activity_header_row fs_activity_toolbar">
+            <div v-if="has_pro" class="fs_activity_header_row fs_activity_toolbar">
                 <div class="fs_toolbar_left">
                     <div class="fs_date_button_group">
                         <div class="fs_date_button_group_item fs_date_picker_wrapper">
@@ -37,9 +38,14 @@
                     </div>
                 </div>
             </div>
+            <SnapshotBanner
+                v-if="trendLiveMode === 'snapshot' && trendSelectedSnapshot"
+                :snapshot="trendSelectedSnapshot"
+                @back="handleTrendLiveSnapshotChange({ mode: 'live', snapshot: null })"
+            />
         </div>
 
-        <div class="fs_activity_content">
+        <div v-if="has_pro" class="fs_activity_content">
             <!-- Activity Trends by Time of Day -->
             <div class="fs_overview_section">
                 <div class="fs_section_header">
@@ -162,21 +168,46 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <NarrowPromo
-        v-else
-        :heading="$t('get_overall_reports')"
-        :description="$t('pro_promo')"
-        :button-text="$t('Upgrade To Pro')"
-        utm-content="feature_lock_activity_by_time_reports"
-    />
+        <!-- Shown instead of the report when Pro is not active -->
+        <div v-else class="fs_report_pro_showcase">
+            <ProShowcase
+                :feature="$t('Activity')"
+                :heading="$t('See when your customers need you most')"
+                :description="$t('A day-by-hour heatmap of new tickets, agent replies and customer replies shows your busiest times, so you can plan who is on shift.')"
+                :specifics="promoSpecifics"
+                utm-content="feature_lock_report_activity-reports"
+                docs-url="https://docs.fluentsupport.com/activity-reports"
+            >
+                <template #preview>
+                    <div class="fs_pro_preview">
+                        <div class="fs_pro_preview_card fs_pro_preview_fields">
+                            <div class="fs_pro_preview_title">
+                                <span class="fs_pro_preview_checkbox"></span>
+                                {{ $t('Activity Trends by Time of Day') }}
+                            </div>
+                            <div class="fs_pro_preview_row fs_pro_preview_reveal" style="--fs-row-index: 0">
+                                <span class="fs_pro_preview_row_label">{{ $t('All Tickets') }}</span>
+                            </div>
+                            <div class="fs_pro_preview_row fs_pro_preview_reveal" style="--fs-row-index: 1">
+                                <span class="fs_pro_preview_row_label">{{ $t('Customer Response') }}</span>
+                            </div>
+                            <div class="fs_pro_preview_row fs_pro_preview_row_focal fs_pro_preview_reveal" style="--fs-row-index: 2">
+                                <span class="fs_pro_preview_row_label">{{ $t('Agent Response') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </ProShowcase>
+        </div>
+    </div>
 </template>
 
 <script>
-import NarrowPromo from "@/admin/Components/NarrowPromo";
+import ProShowcase from "@/admin/Components/ProShowcase.vue";
 import LineChartBase from "./Charts/LineChartBase";
 import LiveSnapshotSelector from "./AdvanceReport/Parts/LiveSnapshotSelector.vue";
+import SnapshotBanner from "./AdvanceReport/Parts/SnapshotBanner.vue";
 import IconPack from "@/admin/Components/IconPack";
 import { ArrowDown } from "@element-plus/icons-vue";
 import { shortcuts } from "./Utils/dateShortCuts";
@@ -193,9 +224,10 @@ export default {
     props: ["date_range"],
     emits: ["date-change"],
     components: {
-        NarrowPromo,
+        ProShowcase,
         LineChartBase,
         LiveSnapshotSelector,
+        SnapshotBanner,
         IconPack,
         ArrowDown
     },
@@ -242,6 +274,13 @@ export default {
     },
 
     computed: {
+        promoSpecifics() {
+            return [
+                this.$t('New tickets, agent replies and customer replies by weekday and hour'),
+                this.$t('New tickets vs. agent replies over time'),
+                this.$t('Narrow agent replies to one agent')
+            ];
+        },
         heatmapHasData() {
             // Keep the last grid on screen while a new one loads; the skeleton shows only before the first grid.
             return !!this.dataItems && this.days.every(day => !!this.dataItems[day]);
@@ -461,6 +500,9 @@ export default {
         disabledDate: isFutureDate,
 
         fetchStats() {
+            if (!this.has_pro) {
+                return;
+            }
             this.appReady = false;
             this.heatmapFetchError = false;
             const requestId = ++this.heatmapFetchRequestId;
@@ -510,6 +552,9 @@ export default {
         },
 
         fetchResponseActivity() {
+            if (!this.has_pro) {
+                return;
+            }
             if (!this.trendDateRange || this.trendDateRange.length !== 2) {
                 this.trendFetchRequestId++;
                 this.responseActivityChartData = null;

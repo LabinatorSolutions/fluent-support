@@ -142,6 +142,10 @@
       "_app.js"
     ]
   },
+  "_ticketStats.js": {
+    "file": "admin/js/ticketStats.js",
+    "name": "ticketStats"
+  },
   "_vendor-echarts.js": {
     "file": "admin/js/vendor-echarts.js",
     "name": "vendor-echarts"
@@ -279,8 +283,10 @@
       "_vendor-echarts.js",
       "_TableSkeleton.js",
       "_dateShortCuts.js",
-      "_NarrowPromo.js",
-      "_Modal.js"
+      "_ProShowcase.js",
+      "_ticketStats.js",
+      "_Modal.js",
+      "_NarrowPromo.js"
     ]
   },
   "resources/admin/Modules/SavedReplies/Replies.vue": {
@@ -302,7 +308,7 @@
     "isDynamicEntry": true,
     "imports": [
       "_app.js",
-      "_NarrowPromo.js"
+      "_ProShowcase.js"
     ]
   },
   "resources/admin/Modules/Settings/AutoCloseSettings.vue": {
@@ -563,6 +569,7 @@
       "__CustomerForm.js",
       "_RemoteSelector.js",
       "__StructuredWidget.js",
+      "_ticketStats.js",
       "__Tags.js",
       "_TableSkeleton.js",
       "_NarrowPromo.js"
@@ -589,6 +596,12 @@
       "_app.js",
       "_vuedraggable.umd.js"
     ]
+  },
+  "resources/admin/community_ticket_menu.js": {
+    "file": "admin/js/community_ticket_menu.js",
+    "name": "community_ticket_menu",
+    "src": "resources/admin/community_ticket_menu.js",
+    "isEntry": true
   },
   "resources/admin/global_admin.js": {
     "file": "admin/js/global_admin.js",

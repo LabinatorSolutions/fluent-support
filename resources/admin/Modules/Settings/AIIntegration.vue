@@ -122,22 +122,48 @@
             </div>
         </template>
 
-        <NarrowPromo
-            v-else
-            :heading="$t('Use AI for responses, ticket summaries, and sentiment analysis')"
-            :description="$t('pro_promo')"
-            :button-text="$t('Upgrade To Pro')"
-             utm-content="feature_lock_ai_integration"
-        />
+        <div v-else class="fs_box_body">
+            <ProShowcase
+                :feature="$t('AI Model Setup')"
+                :heading="$t('Use AI for responses, ticket summaries, and sentiment analysis')"
+                :description="$t('ai_integration_promo_description')"
+                :specifics="promoSpecifics"
+                utm-content="feature_lock_ai_integration"
+                docs-url="https://docs.fluentsupport.com/openai-integration-with-fluent-support"
+            >
+                <template #preview>
+                    <div class="fs_pro_preview">
+                        <div class="fs_pro_preview_card fs_pro_preview_fields">
+                            <div class="fs_pro_preview_title">
+                                <span class="fs_pro_preview_checkbox"></span>
+                                {{ $t('AI Intelligence') }}
+                            </div>
+                            <div class="fs_pro_preview_row fs_pro_preview_reveal" style="--fs-row-index: 0">
+                                <span class="fs_pro_preview_row_label">{{ $t('Enable AI') }}</span>
+                                <span class="fs_pro_preview_switch fs_pro_preview_switch_on"></span>
+                            </div>
+                            <div class="fs_pro_preview_row fs_pro_preview_reveal" style="--fs-row-index: 1">
+                                <span class="fs_pro_preview_row_label">{{ $t('Provider') }}</span>
+                                <span class="fs_pro_preview_row_value">Anthropic Claude</span>
+                            </div>
+                            <div class="fs_pro_preview_row fs_pro_preview_row_focal fs_pro_preview_reveal" style="--fs-row-index: 2">
+                                <span class="fs_pro_preview_row_label">{{ $t('Tone of customer') }}</span>
+                                <span class="fs_pro_preview_badge fs_pro_preview_badge_warning">{{ $t('Negative') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </ProShowcase>
+        </div>
     </div>
 </template>
 
 <script type="text/babel">
-import NarrowPromo from "@/admin/Components/NarrowPromo.vue";
+import ProShowcase from "@/admin/Components/ProShowcase.vue";
 
 export default {
     name: "AIIntegration",
-    components: { NarrowPromo },
+    components: { ProShowcase },
     data() {
         return {
             loading: false,
@@ -156,6 +182,13 @@ export default {
         };
     },
     computed: {
+        promoSpecifics() {
+            return [
+                this.$t('Generate and enhance replies with AI'),
+                this.$t('Ticket summary and customer tone from the ticket view'),
+                this.$t('OpenAI, Google Gemini or Anthropic Claude')
+            ];
+        },
         isKeySaved() {
             return this.apiKey && this.apiKey.startsWith('****');
         },

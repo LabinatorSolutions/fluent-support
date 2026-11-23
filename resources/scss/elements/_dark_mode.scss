@@ -207,6 +207,15 @@ body.fluent_theme_dark {
             box-shadow: none;
             border: none;
             color: var(--fs-text-primary, #0E121B);
+
+            // Browser autofill paints a light background; cover it with the input's own colours.
+            &.el-input__inner:-webkit-autofill,
+            &.el-input__inner:-webkit-autofill:hover,
+            &.el-input__inner:-webkit-autofill:focus {
+                box-shadow: 0 0 0 1000px var(--fs-bg-primary, #151D26) inset;
+                -webkit-text-fill-color: var(--fs-text-primary, #F5F6F7);
+                caret-color: var(--fs-text-primary, #F5F6F7);
+            }
         }
     }
 
@@ -652,7 +661,8 @@ body.fluent_theme_dark {
         }
 
         &[aria-disabled="true"],
-        &[aria-disabled="true"]:hover {
+        &[aria-disabled="true"]:hover,
+        &.is-disabled[aria-disabled="true"]:hover {
             background: var(--fs-bg-subtle, #1C2732);
             color: var(--fs-btn-disabled, #5A5F66);
         }
@@ -1113,6 +1123,7 @@ body.fluent_theme_dark {
 
     .fs_skeleton,
     .fs_skeleton_wrap,
+    .fs_st_skeleton,
     .fs_component_skeleton,
     .fs_widget_skeleton,
     .fs_skeleton_loader,
@@ -1281,12 +1292,6 @@ body.fluent_theme_dark {
 
     .fs_schedule_form_body .el-button.fs_schedule_submit:hover {
         background: var(--fs-btn-filled-hover-bg, #E1E4EA);
-    }
-
-    .fs_schedule_empty_notice {
-        border-color: var(--fs-stat-icon-warning-bg, rgba(255, 132, 71, 0.15));
-        background: var(--fs-stat-icon-warning-bg, rgba(255, 132, 71, 0.15));
-        color: var(--fs-stat-icon-warning-color, #FF8447);
     }
 
     .fs_create_response .fs_editor_needs_text .wp-editor-container {

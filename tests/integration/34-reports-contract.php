@@ -220,6 +220,27 @@ return function () {
             FsTest::assert(is_array($data['suggested_tickets'] ?? null), 'suggested_tickets');
         });
 
+        FsTest::case('average and longest wait read the same when one ticket waits', function () {
+            $agent = FsFactory::agent(['first_name' => 'Wynn']);
+            // 6h10m: the old average rounded up to "7 hours" while the longest wait read "6 hours".
+            $waiting = fn($seconds) => wp_date('Y-m-d H:i:s', time() - $seconds);
+            $one = FsFactory::ticket(['agent_id' => $agent->id, 'status' => 'active']);
+            Ticket::where('id', $one->id)->toBase()->update(['waiting_since' => $waiting(6 * HOUR_IN_SECONDS + 600), 'last_customer_response' => $waiting(6 * HOUR_IN_SECONDS + 600), 'last_agent_response' => null]);
+
+            $wait = \FluentSupport\App\Modules\Reports\Reports::waitStats(['agent_id' => $agent->id]);
+            FsTest::assertSame(1, $wait['waiting_tickets'], 'one ticket waits');
+            FsTest::assertSame('6 hours', $wait['max_waiting'], 'longest wait');
+            FsTest::assertSame($wait['max_waiting'], $wait['average_waiting'], 'the average of one ticket is its wait');
+
+            // The average never reads longer than the longest wait.
+            $two = FsFactory::ticket(['agent_id' => $agent->id, 'status' => 'active']);
+            Ticket::where('id', $two->id)->toBase()->update(['waiting_since' => $waiting(3 * HOUR_IN_SECONDS + 600), 'last_customer_response' => $waiting(3 * HOUR_IN_SECONDS + 600), 'last_agent_response' => null]);
+            $wait = \FluentSupport\App\Modules\Reports\Reports::waitStats(['agent_id' => $agent->id]);
+            FsTest::assertSame(2, $wait['waiting_tickets'], 'two tickets wait');
+            FsTest::assertSame('6 hours', $wait['max_waiting'], 'longest wait of two');
+            FsTest::assertSame('5 hours', $wait['average_waiting'], 'average of 6h10m and 3h10m is 4h40m, read as hours');
+        });
+
         // -------------------------------------------------------------- MCP
 
         FsTest::case('MCP support insights: volume, times, waiting and one agent\'s row', function () {

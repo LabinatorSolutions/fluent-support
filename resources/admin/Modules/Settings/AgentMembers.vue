@@ -49,7 +49,7 @@
                             </el-empty>
                         </div>
                     </template>
-                    <el-table-column :label="$t('Staff')" width="220">
+                    <el-table-column fixed="left" :label="$t('Staff')" width="220">
                         <template #default="scope">
                             <div
                                 class="fs_as_profile_picture"
@@ -229,7 +229,7 @@
             v-if="editing_agent"
             width="60%"
             @close="resetAgentModal()"
-            class="fs_dialog"
+            class="fs_dialog fs_dialog_md"
         >
             <el-form label-position="top" :data="editing_agent">
                 <el-row :gutter="20">

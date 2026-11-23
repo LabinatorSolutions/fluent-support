@@ -16,7 +16,7 @@
                             :fill="iconColor"
                             class="fs_personal_performance_icon"
                         />
-                        <span class="fs_personal_performance_label">{{ $t('Interactions') }}</span>
+                        <span class="fs_personal_performance_label">{{ $t('Interactions') }}<InfoTip :content="$t('Different tickets you replied to in the date range.')" /></span>
                     </div>
                     <span class="fs_personal_performance_value">{{ stats?.interactions || 0 }}</span>
                 </div>
@@ -29,7 +29,7 @@
                             :fill="iconColor"
                             class="fs_personal_performance_icon"
                         />
-                        <span class="fs_personal_performance_label">{{ $t('Waiting Tickets') }}</span>
+                        <span class="fs_personal_performance_label">{{ $t('Waiting Tickets') }}<InfoTip :content="$t('Your open tickets where the customer sent the last reply. The date range does not change this number.')" /></span>
                     </div>
                     <span class="fs_personal_performance_value">{{ stats?.waiting_tickets || 0 }}</span>
                 </div>
@@ -42,7 +42,7 @@
                             :fill="iconColor"
                             class="fs_personal_performance_icon"
                         />
-                        <span class="fs_personal_performance_label">{{ $t('Average Waiting') }}</span>
+                        <span class="fs_personal_performance_label">{{ $t('Average Waiting') }}<InfoTip :content="$t('Average time those tickets have been waiting so far. The date range does not change this number.')" /></span>
                     </div>
                     <span class="fs_personal_performance_value">{{ stats?.average_waiting || 0 }}</span>
                 </div>
@@ -55,7 +55,7 @@
                             :fill="iconColor"
                             class="fs_personal_performance_icon"
                         />
-                        <span class="fs_personal_performance_label">{{ $t('Max Waiting') }}</span>
+                        <span class="fs_personal_performance_label">{{ $t('Max Waiting') }}<InfoTip :content="$t('Longest time one of those tickets has been waiting so far. The date range does not change this number.')" /></span>
                     </div>
                     <span class="fs_personal_performance_value">{{ stats?.max_waiting || 0 }}</span>
                 </div>
@@ -114,10 +114,12 @@
 
 <script type="text/babel">
 import IconPack from "@/admin/Components/IconPack.vue";
+import InfoTip from "@/admin/Components/InfoTip.vue";
 
 export default {
     name: "MyPerformanceReport",
     components: {
+        InfoTip,
         IconPack
     },
     props: {

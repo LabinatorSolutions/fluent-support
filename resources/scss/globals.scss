@@ -168,8 +168,9 @@
         cursor: not-allowed;
     }
 
-    /* Disable hover effect when disabled */
-    &[aria-disabled="true"]:hover {
+    /* Disable hover effect when disabled; .is-disabled outranks local :hover rules */
+    &[aria-disabled="true"]:hover,
+    &.is-disabled[aria-disabled="true"]:hover {
         background-color: var(--fs-bg-subtle, #F5F7FA);
         /* Same as normal background */
         color: var(--fs-btn-disabled, #CACFD8);
@@ -465,6 +466,11 @@
         justify-content: center;
         flex-wrap: wrap;
     }
+}
+
+// Percentage-width dialogs that stop growing on large screens.
+.el-dialog.fs_dialog_md {
+    max-width: 800px;
 }
 
 .fs_box_wrapper {
@@ -1026,6 +1032,11 @@ a.el-button {
             border-bottom: none;
         }
     }
+}
+
+// Element Plus can leave its `hover-row` class on several rows when a table has fixed columns; only the row under the mouse keeps it.
+.el-table__body tr.fs_table_row.hover-row:not(:hover) > td.el-table__cell {
+    background-color: var(--el-table-tr-bg-color);
 }
 
 .fs_table_wrapper {
@@ -2345,4 +2356,22 @@ a:focus {
     }
 }
 
+// InfoTip: small "i" after a label that opens a help tooltip on hover or focus.
+.fs_info_tip {
+    display: inline-flex;
+    margin-inline-start: 4px;
+    vertical-align: -3px;
+    color: var(--fs-text-muted, #99A0AE);
+    cursor: help;
+    border-radius: var(--fs-radius-full, 999px);
 
+    &:hover,
+    &:focus-visible {
+        color: var(--fs-text-secondary, #525866);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--fs-stroke-strong, #0E121B);
+        outline-offset: 1px;
+    }
+}

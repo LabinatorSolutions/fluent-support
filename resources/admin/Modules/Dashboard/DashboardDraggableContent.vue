@@ -94,7 +94,7 @@
         </el-row>
     </div>
 
-    <div class="fs_padded_20" v-else aria-busy="true">
+    <div class="dashboard fs_box_wrapper" v-else aria-busy="true">
         <el-row :gutter="20">
             <el-col v-for="column in ['first_column', 'second_column']" :key="column" :span="12">
                 <div

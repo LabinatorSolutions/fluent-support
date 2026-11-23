@@ -35,6 +35,11 @@ class IntegrationInit
         if (defined('FLUENT_COMMUNITY_PLUGIN_VERSION') && class_exists('\FluentSupport\App\Services\Integrations\FluentCommunity\FluentCommunityIntegration')) {
             (new \FluentSupport\App\Services\Integrations\FluentCommunity\FluentCommunityIntegration())->boot();
         }
+
+        if (defined('FLUENT_COMMUNITY_PLUGIN_VERSION') && class_exists('\FluentSupport\App\Services\Integrations\FluentCommunity\CommunityTicketMenu')) {
+            (new \FluentSupport\App\Services\Integrations\FluentCommunity\CommunityTicketMenu())->boot();
+            (new \FluentSupport\App\Services\Integrations\FluentCommunity\CommunityTicketData())->boot();
+        }
     }
 
     private function registerWooCommercePortal()

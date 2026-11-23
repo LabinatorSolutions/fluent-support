@@ -53,7 +53,8 @@ interface StorageDriverInterface
     public function getDownloadUrl($attachment);
 
     /**
-     * Send the file to the browser and exit. Only called when getDownloadUrl() returns null.
+     * Send the file to the browser and exit. Called when getDownloadUrl() returns null, or first
+     * for preview requests (PDF and Markdown) that must be read from this site.
      *
      * @param \FluentSupport\App\Models\Attachment $attachment
      * @return void|\WP_Error

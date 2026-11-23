@@ -178,6 +178,7 @@ import IconPack from '@/admin/Components/IconPack.vue';
 import DynamicIcon from '@/admin/Components/Icons/DynamicIcon.vue';
 import { mapState, mapActions, mapWritableState } from 'pinia';
 import { useTicketListStore } from '@/admin/stores/ticketList.store';
+import { countAdvancedFilterData } from './RichFilters/advancedFilterUtils';
 
 /**
  * The advanced filter builder (Pro; free sees it as a preview and gets the
@@ -209,6 +210,7 @@ export default {
         }
     },
     methods: {
+        countAdvancedFilterData,
         ...mapActions(useTicketListStore, {
             storeResetAdvancedFilters: 'resetAdvancedFilters',
             storeHandleSaveSearch: 'handleSaveSearch',
@@ -226,26 +228,6 @@ export default {
             if (this.advanced_filters.length > 1) {
                 this.advanced_filters.splice(index, 1);
             }
-        },
-
-        countAdvancedFilterData(filters) {
-            return filters.reduce((total, innerArray) => {
-                if (Array.isArray(innerArray)) {
-                    const validEntries = innerArray.filter((item) => {
-                        if (typeof item.value === 'string') {
-                            return item.value.trim() !== "";
-                        }
-
-                        if (Array.isArray(item.value)) {
-                            return item.value.some(val => typeof val === 'string' && val.trim() !== "");
-                        }
-
-                        return false;
-                    });
-                    return total + validEntries.length;
-                }
-                return total;
-            }, 0);
         },
 
         applyAdvancedFilter() {

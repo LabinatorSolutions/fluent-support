@@ -182,7 +182,7 @@
             v-model="tag_modal"
             v-if="editing_tag"
             width="60%"
-            class="fs_dialog"
+            class="fs_dialog fs_dialog_md"
         >
             <el-form label-position="top" :data="editing_tag">
             <el-form-item :label="$t('Tag Name')" class="fs_form_item">

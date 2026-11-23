@@ -357,10 +357,15 @@ class FeedIntegration extends IntegrationManagerController
 
         $customerData['last_ip_address'] = $entry->ip;
 
-        $customer = CustomerService::findOrCreate($customerData);
+        $customer = CustomerService::findBlockedByEmail($customerData['email'], Arr::get($customerData, 'user_id'))
+            ?: CustomerService::findOrCreate($customerData);
+
+        if (!$customer || !$customer->exists) {
+            return false;
+        }
 
         // Don't create a ticket if customer is blocked
-        if($this->isBlockedCustomer($customerData['email'])) {
+        if ($customer->isBlocked()) {
             do_action('fluentform/log_data', [
                 'title'            => $feed['settings']['name'],
                 'status'           => 'failed',
@@ -374,6 +379,9 @@ class FeedIntegration extends IntegrationManagerController
         }
 
         $ticketData['customer_id'] = $customer->id;
+
+        // Lets Pro drop values the form did not offer this customer, such as another buyer's order.
+        $ticketData['custom_fields'] = (array) apply_filters('fluent_support/portal_ticket_custom_data', $ticketData['custom_fields'], $customer);
 
         // The form's files are form uploads, attached below from their URLs; the
         // shared create path only knows uploads made through Fluent Support.
@@ -464,18 +472,6 @@ class FeedIntegration extends IntegrationManagerController
     public function isEnabled()
     {
         return true;
-    }
-
-    // check if customer is blocked or not
-    private function isBlockedCustomer($customerEmail)
-    {
-        $customer = Customer::where('email', $customerEmail)->first();
-
-        if (!$customer) {
-            return false;
-        }
-
-        return $customer->isBlocked();
     }
 
 }

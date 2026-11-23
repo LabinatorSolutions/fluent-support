@@ -147,7 +147,7 @@ return function () {
 
     FsTest::case('upload_limits_list_the_extensions_the_check_accepts', function () use ($png, $removeAttachments) {
         ManagementTools::invalidateSupportContextCache();
-        $uploads = json_decode(wp_json_encode(ManagementTools::getSupportContext([])['data']['uploads']), true);
+        $uploads = json_decode(wp_json_encode(ManagementTools::getSupportContext(['include' => ['uploads']])['data']['uploads']), true);
         $extensions = $uploads['allowed_extensions'] ?? [];
 
         FsTest::assert(in_array('png', $extensions, true), 'png is listed, got: ' . implode(',', $extensions));
@@ -284,6 +284,46 @@ return function () {
         FsTest::assertSame('Prefers email', (string) Customer::find($customer->id)->note, 'nothing else changed in the refused call');
         FsTest::assertSame('invalid_param', $errorCode(CustomerTools::updateCustomer(['customer_id' => $customer->id])), 'nothing to change');
         FsTest::assertSame('invalid_param', $errorCode(CustomerTools::updateCustomer(['customer_id' => $customer->id, 'first_name' => ''])), 'first_name cannot be cleared');
+    });
+
+    FsTest::case('customer_tickets_by_name_lists_the_matches_instead_of_picking_one', function () use ($result, $errorCode) {
+        $name = 'Samename' . FsTest::uniq('n');
+        $first = FsFactory::customer(['first_name' => $name, 'last_name' => 'Alpha']);
+        $second = FsFactory::customer(['first_name' => $name, 'last_name' => 'Beta']);
+        $ticket = FsFactory::ticket(['customer_id' => $first->id]);
+
+        $data = $result(CustomerTools::getCustomerTickets(['name' => $name]));
+        $ids = array_map('intval', array_column($data['data']['candidates'] ?? [], 'id'));
+        sort($ids);
+
+        FsTest::assertSame([(int) $first->id, (int) $second->id], $ids, 'both matches are listed');
+        FsTest::assert(array_key_exists('customer', $data['data']) && $data['data']['customer'] === null, 'no customer is picked');
+        FsTest::assert(!array_key_exists('tickets', $data['data']), 'no ticket list that could read as an empty result');
+        FsTest::assertSame([true, 2], [$data['meta']['ambiguous'] ?? null, $data['meta']['match_count'] ?? null], 'meta says how many matched');
+
+        // The full name, the email and the id each name one customer.
+        foreach ([['name' => $name . ' Alpha'], ['email' => $first->email], ['customer_id' => $first->id]] as $args) {
+            $one = $result(CustomerTools::getCustomerTickets($args));
+            FsTest::assertSame(
+                [(int) $first->id, [(int) $ticket->id]],
+                [(int) ($one['data']['customer']['id'] ?? 0), array_map('intval', array_column($one['data']['tickets'] ?? [], 'id'))],
+                'one customer by ' . key($args)
+            );
+        }
+
+        FsTest::assertSame('not_found', $errorCode(CustomerTools::getCustomerTickets(['name' => $name . ' Nobody'])), 'no match');
+        FsTest::assertSame('not_found', $errorCode(CustomerTools::getCustomerTickets(['name' => '%' . substr($name, 4) . '_'])), '% and _ are literal text, not wildcards');
+        FsTest::assertSame(0, (int) $result(CustomerTools::searchCustomers(['search' => $name . '%']))['meta']['paging']['total'], 'search-customers reads % literally');
+    });
+
+    FsTest::case('per_page_above_the_maximum_is_reported_in_meta_warnings', function () use ($result) {
+        $clamped = $result(AbilitiesRegistrar::warnClampedPerPage(CustomerTools::searchCustomers(['per_page' => 500]), ['per_page' => 500]));
+        FsTest::assertSame(\FluentSupport\App\Modules\MCP\Helpers\MCPHelper::MAX_PER_PAGE, $clamped['meta']['paging']['per_page'], 'per_page is clamped');
+        FsTest::assertSame(1, count($clamped['meta']['warnings'] ?? []), 'one warning');
+        FsTest::assert(strpos($clamped['meta']['warnings'][0], '500') !== false, 'the warning names the value asked for');
+
+        $kept = $result(AbilitiesRegistrar::warnClampedPerPage(CustomerTools::searchCustomers(['per_page' => 5]), ['per_page' => 5]));
+        FsTest::assert(!array_key_exists('warnings', $kept['meta']), 'no warning when per_page is within the maximum');
     });
 
     FsTest::case('update_customer_respects_mailbox_restrictions', function () use ($errorCode) {

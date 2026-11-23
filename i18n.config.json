@@ -29,7 +29,8 @@
         {
             "name": "portal",
             "sourceDirs": [
-                "resources/customer_portal"
+                "resources/customer_portal",
+                "resources/common"
             ],
             "output": "app/Services/TranslationStrings.php",
             "className": "TranslationStrings",

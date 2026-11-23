@@ -82,7 +82,7 @@ class Product extends Model
      */
     public function createProduct ( $data )
     {
-        $data = wp_unslash($data);
+        $data = $this->sanitizeTitle(wp_unslash($data));
         $product = $this->create($data);
 
         return [
@@ -98,7 +98,7 @@ class Product extends Model
      */
     public function updateProduct ( $productId, $data )
     {
-        $data = wp_unslash($data);
+        $data = $this->sanitizeTitle(wp_unslash($data));
         $product = $this->findOrFail($productId);
         $product->fill($data);
         $product->save();
@@ -107,6 +107,15 @@ class Product extends Model
             'message' => __('Product has been updated', 'fluent-support'),
             'product' => $product
         ];
+    }
+
+    private function sanitizeTitle($data)
+    {
+        if (isset($data['title'])) {
+            $data['title'] = sanitize_text_field($data['title']);
+        }
+
+        return $data;
     }
 
     /**

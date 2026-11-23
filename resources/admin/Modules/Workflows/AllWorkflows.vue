@@ -60,11 +60,13 @@
                     >
                         <el-table-column
                             type="selection"
+                            fixed="left"
                             width="50"
                             align="center"
                         ></el-table-column>
                         <el-table-column
                             prop="id"
+                            fixed="left"
                             :label="$t('ID')"
                             width="90"
                             sortable
@@ -223,7 +225,7 @@
             v-model="showAddModal"
             :title="$t('Add a New Workflow')"
             width="60%"
-            class="fs_dialog"
+            class="fs_dialog fs_dialog_md"
         >
             <el-form :data="new_workflow" label-position="top">
                 <el-form-item :label="$t('Your Workflow Name')" class="fs_form_item">

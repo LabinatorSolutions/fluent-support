@@ -62,7 +62,11 @@
                                 {{ scope.row.stats?.interactions }}
                             </template>
                         </el-table-column>
-                        <el-table-column width="160" sortable="custom" prop="opens" :label="$t('Open Tickets')" align="center">
+                        <el-table-column width="180" sortable="custom" prop="opens" :label="$t('Open Tickets')" align="center">
+                            <template #header>
+                                {{ $t('Open Tickets') }}
+                                <InfoTip :content="$t('Open tickets assigned to the agent. The date range does not change this number.')" />
+                            </template>
                             <template #default="scope">
                                 {{ scope.row.stats?.opens }}
                             </template>
@@ -86,7 +90,11 @@
                             </template>
                         </el-table-column>
 
-                        <el-table-column width="220" :label="$t('Current Overall')">
+                        <el-table-column width="220" :label="$t('Waiting')">
+                            <template #header>
+                                {{ $t('Waiting') }}
+                                <InfoTip :content="$t('Open tickets where the customer sent the last reply, and how long they have waited. The date range does not change these numbers.')" />
+                            </template>
                             <template #default="scope">
                                 <template v-if="scope.row.active_stat">
                                     <ul style="margin: 0; padding: 0; list-style: none;">
@@ -188,6 +196,7 @@
 import { each } from "lodash-es";
 import MyPerformanceReport from "./MyPerformanceReport";
 import TableSkeleton from "@/admin/Components/TableSkeleton.vue";
+import InfoTip from "@/admin/Components/InfoTip.vue";
 import { formatDateRangeForAPI, handleCheckAllChange as handleCheckAllChangeUtil, handleColumnChanges as handleColumnChangesUtil } from "./Utils/reportHelpers";
 
 export default {
@@ -195,6 +204,7 @@ export default {
     components: {
         MyPerformanceReport,
         TableSkeleton,
+        InfoTip,
     },
     props: {
         url: String,

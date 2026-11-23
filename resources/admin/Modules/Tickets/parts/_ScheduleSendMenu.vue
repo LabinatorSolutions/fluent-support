@@ -61,12 +61,9 @@
             </div>
             <div class="fs_schedule_form_body">
                 <p v-if="mode === 'upsell'" class="fs_schedule_form_desc">{{ $t('Write a reply now and have it sent at the date and time you pick.') }}</p>
-                <div v-else-if="needsText" class="fs_schedule_empty_notice" role="status">
-                    <el-icon><EditPen /></el-icon>
-                    <span class="fs_schedule_empty_notice_text">
-                        <strong>{{ $t('Your reply is empty') }}</strong>
-                        <span>{{ $t('Write your reply in the editor first, then pick when it should be sent.') }}</span>
-                    </span>
+                <div v-else-if="needsText" class="fs_schedule_alert" role="status">
+                    <el-icon><WarningFilled /></el-icon>
+                    <span>{{ $t('Write a reply before you send or schedule it.') }}</span>
                 </div>
                 <p v-else class="fs_schedule_form_desc">{{ $t('Choose a date and time in the future when you want this reply to be sent.') }}</p>
                 <div class="fs_schedule_fields">

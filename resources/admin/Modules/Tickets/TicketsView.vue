@@ -36,7 +36,7 @@
                         <!-- translators: %s is the internal ticket ID number -->
                         <span v-tip="$t('Internal Ticket ID: #%s', currentActualTicketNumber)" class="fs_breadcrumb_current">#{{ currentTicketNumber }}</span>
                     </div>
-                    <div id="fs_top_bar_ticket_chip_slot" class="fs_breadcrumb_item"></div>
+                    <div id="fs_top_bar_ticket_chip_slot" class="fs_breadcrumb_item fs_breadcrumb_chip"></div>
                 </div>
 
                 <!-- Position in the list and previous/next, teleported here from ViewTicket.vue -->

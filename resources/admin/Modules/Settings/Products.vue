@@ -125,7 +125,7 @@
             "
             v-model="ticket_modal"
             width="60%"
-            class="fs_dialog"
+            class="fs_dialog fs_dialog_md"
         >
             <el-form label-position="top" :data="editing_product">
                 <el-form-item :label="$t('Title')" class="fs_form_item">

@@ -7,7 +7,7 @@ use FluentSupport\App\Models\Meta;
 use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\Includes\FileSystem;
-use FluentSupport\App\Services\Integrations\Maintenance;
+use FluentSupport\App\Services\Integrations\UsageStats;
 use FluentSupport\App\Modules\SystemTools\DataCleanup;
 use FluentSupport\App\Services\Storage\StorageManager;
 
@@ -126,7 +126,7 @@ class CleanupHandler
 
     public function maybeMaintanceTask()
     {
-        (new Maintenance())->maybeProcessData();
+        (new UsageStats())->maybeSend();
 
         $this->maybeRemoveOldScheuledActionLogs();
     }

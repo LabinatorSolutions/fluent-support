@@ -9,6 +9,16 @@ add_filter('fluent_support/parse_smartcode_data', function ($string, $data) {
     return (new \FluentSupport\App\Services\Parser\Parser())->parse($string, $data);
 }, 10, 2);
 
+// A ticket the customer can't see yet (logged as an internal note) sends them no email.
+add_filter('fluent_support/should_send_notification', function ($shouldSend, $channel = '', $type = '', $ticket = null) {
+    if ($shouldSend && $channel === 'email' && substr((string) $type, -12) === '_to_customer'
+        && $ticket instanceof \FluentSupport\App\Models\Ticket && $ticket->isHiddenFromCustomer()) {
+        return false;
+    }
+
+    return $shouldSend;
+}, 10, 4);
+
 add_filter('fluent_support/dashboard_notice', function ($messages) {
     if(defined('FLUENTSUPPORTPRO_PLUGIN_VERSION') && version_compare(FLUENT_SUPPORT_PRO_MIN_VERSION, FLUENTSUPPORTPRO_PLUGIN_VERSION, '>')) {
         $updateUrl = admin_url('plugins.php?s=fluent-support-pro&plugin_status=all&fluentsupport_pro_check_update=' . time());

@@ -176,7 +176,7 @@
                                 <el-icon style="vertical-align: middle;">
                                     <paperclip/>
                                 </el-icon>
-                                <a target="_blank" rel="noopener" :href="attachment.secureUrl">{{
+                                <a target="_blank" rel="noopener" :href="attachment.secureUrl" @click="previewAttachment($event, attachment)">{{
                                     attachment.title
                                 }}</a>
                             </li>
@@ -199,7 +199,7 @@
                 </div>
             </div>
         </article>
-        <article v-if="!isAgentInitiated" class="fs_conversation_message fs_thread_starter">
+        <article v-if="!startedByAgent" class="fs_conversation_message fs_thread_starter">
             <!-- Message Container -->
             <div class="fs_message_container">
                 <!-- Avatar -->
@@ -273,7 +273,7 @@
                                 <el-icon style="vertical-align: middle;">
                                     <paperclip/>
                                 </el-icon>
-                                <a target="_blank" rel="noopener" :href="attachment.secureUrl">{{
+                                <a target="_blank" rel="noopener" :href="attachment.secureUrl" @click="previewAttachment($event, attachment)">{{
                                     attachment.title
                                 }}</a>
                             </li>
@@ -283,10 +283,16 @@
                 </div>
             </div>
         </article>
-        <!-- Agent-initiated: the agent's first response above is the opening message; the body is only a placeholder. -->
+        <!-- Started by an agent: the first response (outreach) or note (logged) above opens it; the body is only a placeholder. -->
         <div v-else class="fs_thread_started_by_agent">
-            <!-- translators: %s is the agent's name -->
-            {{ $t('%s started this conversation', ticket.created_by_agent.full_name) }}
+            <template v-if="ticket.created_by_agent.agent_logged">
+                <!-- translators: %s is the agent's name -->
+                {{ $t('%s logged this ticket', ticket.created_by_agent.full_name) }}
+            </template>
+            <template v-else>
+                <!-- translators: %s is the agent's name -->
+                {{ $t('%s started this conversation', ticket.created_by_agent.full_name) }}
+            </template>
             <span class="fs_message_separator"> • </span>
             <span :title="ticket.created_at">{{ $timeDiff(ticket.created_at) }}</span>
         </div>
@@ -334,6 +340,7 @@
             </div>
         </article>
 
+        <AttachmentPreviewDialog v-model="previewVisible" :attachment="previewItem"/>
     </div>
 </template>
 
@@ -346,6 +353,8 @@ import LazyDropdown from '@/admin/Components/LazyDropdown.vue';
 import IconPack from '@/admin/Components/IconPack.vue';
 import DynamicIcon from '@/admin/Components/Icons/DynamicIcon.vue';
 import CcList from '@/admin/Components/CcList.vue';
+import AttachmentPreviewDialog from '@/common/AttachmentPreviewDialog.vue';
+import { shouldPreviewAttachment } from '@/common/attachmentPreview';
 
 // Activity sources shown as events, with their icon.
 const SYSTEM_ACTIVITY_ICONS = {
@@ -366,13 +375,15 @@ const SANITIZED_CACHE_LIMIT = 500;
  */
 export default {
     name: 'TicketThread',
-    components: { CustomFieldForm, TicketSourceBadge, LazyDropdown, IconPack, DynamicIcon, CcList },
+    components: { CustomFieldForm, TicketSourceBadge, LazyDropdown, IconPack, DynamicIcon, CcList, AttachmentPreviewDialog },
     props: ['ticket', 'conversations', 'showSavedDraft', 'draftData', 'draftResponse', 'canManageTickets', 'draftReplyPermission', 'draftReplyApprovePermission'],
     emits: ['edit-draft', 'discard-draft', 'response-command', 'approve-draft', 'custom-data'],
     data() {
         return {
             showCustomDataEditForm: false,
-            conversationRefs: {}
+            conversationRefs: {},
+            previewVisible: false,
+            previewItem: {}
         };
     },
     computed: {
@@ -380,11 +391,22 @@ export default {
             return (this.ticket?.carbon_copy || '').split(',').map(e => e.trim()).filter(Boolean);
         },
 
-        isAgentInitiated() {
-            return !!(this.ticket.created_by_agent && this.ticket.created_by_agent.agent_initiated);
+        startedByAgent() {
+            const creator = this.ticket.created_by_agent;
+            return !!(creator && (creator.agent_initiated || creator.agent_logged));
         }
     },
     methods: {
+        // PDF and Markdown attachments open in a preview dialog.
+        previewAttachment(event, attachment) {
+            if (!shouldPreviewAttachment(event, attachment)) {
+                return;
+            }
+            event.preventDefault();
+            this.previewItem = attachment;
+            this.previewVisible = true;
+        },
+
         // Scrolls to the reply in the URL's last #fragment, if it is in this thread.
         scrollToConversation(id) {
             if (id && this.conversationRefs[id]) {

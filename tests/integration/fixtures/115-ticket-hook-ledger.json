@@ -94,6 +94,11 @@
         "fluent_support/ticket_created",
         "fluent_support/ticket_created_behalf_of_customer"
     ],
+    "create: admin, start with an internal note": [
+        "fluent_support/before_ticket_create",
+        "fluent_support/ticket_created",
+        "fluent_support/ticket_created_behalf_of_customer"
+    ],
     "create: admin, new customer": [
         "fluent_support/customer_created",
         "fluent_support/before_ticket_create",

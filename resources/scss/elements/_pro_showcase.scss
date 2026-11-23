@@ -247,6 +247,11 @@
     color: var(--fs-badge-sm-info-text, #122368);
 }
 
+.fs_pro_preview_badge_warning {
+    background: var(--fs-badge-sm-warning-bg, #FFF3EB);
+    color: var(--fs-badge-sm-warning-text, #71330A);
+}
+
 // Open dropdown under a .fs_pro_preview_fields card; in the flow so the stage reserves room for it.
 .fs_pro_preview_menu {
     position: relative;

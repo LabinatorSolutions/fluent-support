@@ -336,6 +336,7 @@ import CollapsibleWidget from "@/admin/Modules/Tickets/parts/_CollapsibleWidget.
 import StructuredWidget, { WIDGET_ICONS, isStructuredWidget, filterRenderableWidgets } from "@/admin/Modules/Tickets/parts/_StructuredWidget.vue";
 import { sanitizeWidgetHtml } from '@/common/domPurifyGuards';
 import { canDeleteCustomers } from './customerPermissions';
+import { isSafeRestUrl } from '@/common/restUrlGuard';
 
 export default {
     name: "CustomerPage",
@@ -379,7 +380,9 @@ export default {
     },
     computed: {
         upload_url() {
-            return this.appVars.rest.url + `/customers/profile_image/${this.customer_id}`;
+            // el-upload sends this itself, outside the REST helper, so it gets the same URL check
+            const url = this.appVars.rest.url + `/customers/profile_image/${this.customer_id}`;
+            return isSafeRestUrl(url, this.appVars.rest.url) ? url : '';
         },
         statusTabs() {
             return {

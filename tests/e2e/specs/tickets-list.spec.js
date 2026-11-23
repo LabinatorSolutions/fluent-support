@@ -3,7 +3,7 @@
 // run's tickets by searching for the run marker.
 import { test, expect } from '@playwright/test';
 import { api, fixtures, openTicketList, rowTitles, rows, searchMarker, watchErrors } from '../lib/app.js';
-import { reseed, ticket } from '../lib/lab.js';
+import { conversations, mailSent, php, reseed, ticket } from '../lib/lab.js';
 
 const titles = (fx, keys) => keys.map(key => `${key.charAt(0).toUpperCase() + key.slice(1).replace('_', ' ')} ticket ${fx.marker}`).sort();
 
@@ -90,6 +90,60 @@ test.describe('ticket list', () => {
         const dialog = page.locator('.fs_tk_dialog');
         await expect(dialog).toBeVisible();
         await expect(dialog.getByPlaceholder(/Search or provide email address|Full email address/)).toBeVisible();
+    });
+
+    test('a call logged with "Save as an internal note" opens as a note and emails the customer nothing', async ({ page }) => {
+        const email = `carla-${fx.marker}@example.test`;
+        const title = `Logged call ${fx.marker}`;
+        const mailBefore = mailSent().length;
+
+        await page.locator('.fs_add_ticket_btn').click();
+        const dialog = page.locator('.fs_tk_dialog');
+        const search = dialog.getByPlaceholder(/Search or provide email address|Full email address/);
+        await search.fill(email);
+        await search.press('Enter');
+        // Picking the contact moves straight to the ticket step.
+        await dialog.locator('.fs_contact_results li').filter({ hasText: email }).click();
+
+        await dialog.getByPlaceholder('What\'s this support ticket about?').fill(title);
+        const body = dialog.frameLocator('iframe').locator('body');
+        await body.click();
+        await page.keyboard.type(`Customer called about the license ${fx.marker}`);
+
+        // The two options exclude each other, and the editor says the text stays internal.
+        const note = dialog.locator('.el-checkbox').filter({ hasText: 'Save as an internal note' });
+        const outreach = dialog.locator('.el-checkbox').filter({ hasText: 'Initiated by agent' });
+        await note.click();
+        await expect(dialog).toContainText('Internal note (the customer will not see this)');
+        await outreach.click();
+        await expect(note).not.toHaveClass(/is-checked/);
+        await note.click();
+        await expect(outreach).not.toHaveClass(/is-checked/);
+
+        const created = api(page, 'POST', 'tickets');
+        await dialog.getByRole('button', { name: 'Create Ticket' }).click();
+        const ticketId = (await (await created).json()).ticket.id;
+
+        try {
+            await expect(page.locator('.fs_view_ticket .fs_ticket_title')).toHaveText(title);
+            await expect(page.locator('.fs_thread_started_by_agent')).toContainText('logged this ticket');
+            await expect(page.locator('.fs_threads_container article.fs_thread_starter')).toHaveCount(0);
+            await expect(page.locator('.fs_threads_container')).toContainText(`Customer called about the license ${fx.marker}`);
+
+            expect(ticket(ticketId).source).toBe('agent_logged');
+            expect(conversations(ticketId).map(row => row.conversation_type)).toEqual(['note']);
+            expect(mailSent().slice(mailBefore).map(mail => mail.to).flat().join(',')).not.toContain(email);
+
+            // The list shows the bundled source icon, not the letter fallback for a missing image.
+            await openTicketList(page);
+            await searchMarker(page);
+            const row = rows(page).filter({ hasText: title });
+            await expect(row.locator('.fs_ticket_source_wrap svg')).toHaveCount(1);
+            await expect(row.locator('.fs_source_initial_badge')).toHaveCount(0);
+        } finally {
+            // Other cases count this run's tickets.
+            php(`\\FluentSupport\\App\\Models\\Ticket::find(${Number(ticketId)})->delete(); echo '[]';`);
+        }
     });
 
     test('clicking a row opens the ticket', async ({ page }) => {

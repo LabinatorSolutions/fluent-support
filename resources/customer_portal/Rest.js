@@ -1,6 +1,11 @@
+import {isSafeRestUrl, INVALID_ROUTE_ERROR} from '../common/restUrlGuard.js';
+
 function recursiveFlatten(obj, prefix = '') {
     let newObj = {};
     Object.keys(obj).forEach(key => {
+        if (obj[key] === null || obj[key] === undefined) {
+            return;
+        }
         if (typeof obj[key] === 'object') {
             newObj = Object.assign(newObj, recursiveFlatten(obj[key], `${prefix}[${key}]`));
         } else {
@@ -10,8 +15,14 @@ function recursiveFlatten(obj, prefix = '') {
     return newObj;
 }
 
+// Fixed text: the route comes from the page URL and must not reach an error notice
+function invalidRoute() {
+    return Promise.reject(Object.assign({}, INVALID_ROUTE_ERROR));
+}
+
 const request = function (method, route, data = {}) {
-    const baseUrl = `${window.fs_customer_portal.rest.url}/${route}`;
+    const restBase = window.fs_customer_portal.rest.url;
+    const baseUrl = `${restBase}/${route}`;
     const headers = {
         'X-WP-Nonce': window.fs_customer_portal.rest.nonce
     };
@@ -21,40 +32,46 @@ const request = function (method, route, data = {}) {
         method = 'POST';
     }
 
+    // a copy, so the caller's object is not changed
+    data = Object.assign({}, data);
     data.query_timestamp = Date.now();
+
+    let url = baseUrl;
+    if (method.toUpperCase() === 'GET') {
+
+        let formattedData = {};
+
+        // filter out null or false values
+        Object.keys(data).forEach(key => {
+            if (data[key] === null || data[key] === false) {
+                delete data[key];
+            } else {
+                // check if the value is an array or object
+                if (typeof data[key] === 'object') {
+                    // use recursiveFlatten to flatten the object
+                    formattedData = Object.assign(formattedData, recursiveFlatten(data[key], key));
+                } else {
+                    formattedData[key] = data[key];
+                }
+            }
+        });
+
+        let queryStrings = new URLSearchParams(formattedData).toString();
+
+        // if the url already has query strings
+        if (url.indexOf('?') !== -1) {
+            url += '&' + queryStrings;
+        } else {
+            url += '?' + queryStrings;
+        }
+    }
+
+    if (!isSafeRestUrl(url, restBase)) {
+        return invalidRoute();
+    }
 
     return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
-
-        let url = baseUrl;
-        if (method.toUpperCase() === 'GET') {
-
-            let formattedData = {};
-
-            // filter out null or false values
-            Object.keys(data).forEach(key => {
-                if (data[key] === null || data[key] === false) {
-                    delete data[key];
-                } else {
-                    // check if the value is an array or object
-                    if (typeof data[key] === 'object') {
-                        // use recursiveFlatten to flatten the object
-                        formattedData = Object.assign(formattedData, recursiveFlatten(data[key], key));
-                    } else {
-                        formattedData[key] = data[key];
-                    }
-                }
-            });
-
-            let queryStrings = new URLSearchParams(formattedData).toString();
-
-            // if the url already has query strings
-            if (url.indexOf('?') !== -1) {
-                url += '&' + queryStrings;
-            } else {
-                url += '?' + queryStrings;
-            }
-        }
 
         xhr.open(method, url, true);
         Object.keys(headers).forEach(key => {
@@ -204,6 +221,9 @@ export default {
     },
     uploadFile(route, data = {}) {
         const url = `${window.fs_customer_portal.rest.url}/${route}`;
+        if (!isSafeRestUrl(url, window.fs_customer_portal.rest.url)) {
+            return invalidRoute();
+        }
         const headers = {'X-WP-Nonce': window.fs_customer_portal.rest.nonce};
 
         return new Promise((resolve, reject) => {
@@ -216,10 +236,20 @@ export default {
             });
 
             xhr.onload = function () {
+                let payload;
+
+                // a non-JSON body used to throw here, leaving the promise unsettled
+                try {
+                    payload = JSON.parse(xhr.responseText);
+                } catch (e) {
+                    reject({message: 'Upload failed. The server returned an unexpected response.'});
+                    return;
+                }
+
                 if (this.status >= 200 && this.status < 300) {
-                    resolve(JSON.parse(xhr.responseText));
+                    resolve(payload);
                 } else {
-                    reject(JSON.parse(xhr.responseText));
+                    reject(payload);
                 }
             };
 

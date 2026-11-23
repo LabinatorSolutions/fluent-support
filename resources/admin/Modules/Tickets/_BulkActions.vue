@@ -17,40 +17,40 @@
             <template v-else>
                 <div class="fs_bb_left">
                     <button type="button" class="fs_bb_btn is-icon" :aria-label="$t('Clear selection')" :title="$t('Clear selection (Esc)')" @click="deselect">
-                        <el-icon><Close /></el-icon>
+                        <DynamicIcon name="CloseLine"/>
                     </button>
-                    <span class="fs_bb_count">
-                        <!-- translators: %s is the number of selected tickets -->
-                        {{ $t('%s selected', ticket_selections.length) }}
-                    </span>
+                    <span class="fs_bb_sep" aria-hidden="true"></span>
+                    <span class="fs_bb_count">{{ countLabel.before }}<strong>{{ countLabel.count }}</strong>{{ countLabel.after }}</span>
                 </div>
 
-                <div v-if="!compact" class="fs_bb_actions">
-                    <button
-                        v-for="action in catalog.primary"
-                        :key="action.key"
-                        type="button"
-                        class="fs_bb_btn"
-                        :data-panel="action.key"
-                        :aria-haspopup="action.input === 'reply' ? 'dialog' : 'true'"
-                        :aria-expanded="rootPanel === action.key ? 'true' : 'false'"
-                        @click="onPrimary(action, $event.currentTarget)"
-                    >
-                        <el-icon><component :is="primaryIcons[action.key]" /></el-icon>
-                        {{ action.label }}
-                    </button>
-                    <button
-                        type="button"
-                        class="fs_bb_btn"
-                        data-panel="more"
-                        aria-haspopup="true"
-                        :aria-expanded="rootPanel === 'more' ? 'true' : 'false'"
-                        @click="openPanel('more', $event.currentTarget)"
-                    >
-                        <el-icon><MoreFilled /></el-icon>
-                        {{ $t('More') }}
-                        <el-icon class="fs_bb_chev"><ArrowDown /></el-icon>
-                    </button>
+                <template v-if="!compact">
+                    <span class="fs_bb_sep" aria-hidden="true"></span>
+                    <div class="fs_bb_actions">
+                        <button
+                            v-for="action in catalog.primary"
+                            :key="action.key"
+                            type="button"
+                            class="fs_bb_btn"
+                            :data-panel="action.key"
+                            :aria-haspopup="action.input === 'reply' ? 'dialog' : 'true'"
+                            :aria-expanded="rootPanel === action.key ? 'true' : 'false'"
+                            @click="onPrimary(action, $event.currentTarget)"
+                        >
+                            <DynamicIcon :name="primaryIcons[action.key]"/>
+                            <span class="fs_bb_btn_text">{{ action.label }}</span>
+                        </button>
+                        <button
+                            type="button"
+                            class="fs_bb_btn"
+                            data-panel="more"
+                            aria-haspopup="true"
+                            :aria-expanded="rootPanel === 'more' ? 'true' : 'false'"
+                            @click="openPanel('more', $event.currentTarget)"
+                        >
+                            <span class="fs_bb_btn_text">{{ $t('More') }}</span>
+                            <DynamicIcon name="ArrowDownSLine"/>
+                        </button>
+                    </div>
                     <template v-if="catalog.destructive">
                         <span class="fs_bb_sep" aria-hidden="true"></span>
                         <button
@@ -63,10 +63,10 @@
                             :title="$t('Delete tickets')"
                             @click="openPanel('delete', $event.currentTarget)"
                         >
-                            <el-icon><Delete /></el-icon>
+                            <DynamicIcon name="DeleteBinLine"/>
                         </button>
                     </template>
-                </div>
+                </template>
                 <button
                     v-else
                     type="button"
@@ -76,8 +76,8 @@
                     :aria-expanded="rootPanel === 'menu' ? 'true' : 'false'"
                     @click="openPanel('menu', $event.currentTarget)"
                 >
-                    {{ $t('Actions') }}
-                    <el-icon class="fs_bb_chev"><ArrowDown /></el-icon>
+                    <span class="fs_bb_btn_text">{{ $t('Actions') }}</span>
+                    <DynamicIcon name="ArrowDownSLine"/>
                 </button>
             </template>
         </div>
@@ -97,7 +97,7 @@
             <div class="fs_bb_panel_head">
                 <div class="fs_bb_panel_title">
                     <button v-if="panelStack.length > 1" type="button" class="fs_bb_back" :aria-label="$t('Back')" @click="popPanel">
-                        <el-icon><ArrowLeft /></el-icon>
+                        <DynamicIcon name="ArrowLeftSLine"/>
                     </button>
                     <span>{{ panelTitle }}</span>
                 </div>
@@ -112,7 +112,7 @@
                 <template v-if="!currentAction">
                     <template v-if="activePanel === 'menu'">
                         <button v-for="action in catalog.primary" :key="action.key" type="button" class="fs_bb_menu_item" @click="onMenuPrimary(action)">
-                            <el-icon><component :is="primaryIcons[action.key]" /></el-icon>
+                            <DynamicIcon :name="primaryIcons[action.key]"/>
                             <span>{{ action.label }}</span>
                         </button>
                     </template>
@@ -125,7 +125,7 @@
                     <template v-if="activePanel === 'menu' && catalog.destructive">
                         <div class="fs_bb_group_label">{{ $t('Danger zone') }}</div>
                         <button type="button" class="fs_bb_menu_item is-danger" @click="pushPanel('delete')">
-                            <el-icon><Delete /></el-icon>
+                            <DynamicIcon name="DeleteBinLine"/>
                             <span>{{ $t('Delete tickets') }}</span>
                         </button>
                     </template>
@@ -196,7 +196,7 @@
 </template>
 
 <script type="text/babel">
-import { Close, Delete, MoreFilled, ArrowDown, ArrowLeft, ChatLineSquare, User, PriceTag, CircleCheck } from '@element-plus/icons-vue';
+import DynamicIcon from '@/admin/Components/Icons/DynamicIcon.vue';
 import { mapState, mapWritableState } from 'pinia';
 import CreateResponse from './_CreateResponse';
 import BulkOptionList from './BulkActions/BulkOptionList.vue';
@@ -218,15 +218,7 @@ export default {
     components: {
         CreateResponse,
         BulkOptionList,
-        Close,
-        Delete,
-        MoreFilled,
-        ArrowDown,
-        ArrowLeft,
-        ChatLineSquare,
-        User,
-        PriceTag,
-        CircleCheck
+        DynamicIcon
     },
     emits: ['fetchTickets'],
     data() {
@@ -256,10 +248,21 @@ export default {
             return buildTicketBulkCatalog({ $t: this.$t, appVars: this.appVars });
         },
         primaryIcons() {
-            return { reply: 'ChatLineSquare', assign: 'User', tags: 'PriceTag', close: 'CircleCheck' };
+            return { reply: 'Message2Line', assign: 'CustomerServiceLine', tags: 'PriceTag3Line', close: 'CheckDoubleLine' };
         },
         visible() {
             return this.ticket_selections.length > 0 || this.working;
+        },
+        // The count is bold inside one translatable sentence, so split the translation around it.
+        countLabel() {
+            const count = String(this.ticket_selections.length);
+            // Wrap the count in a marker so the bold part is the placeholder, never another digit.
+            const marker = '\u0001';
+            const parts = this.selectedLabel(marker + count + marker).split(marker);
+            if (parts.length !== 3) {
+                return { before: parts.join(''), count: '', after: '' };
+            }
+            return { before: parts[0], count: parts[1], after: parts[2] };
         },
         selectedTickets() {
             const ids = this.ticket_selections.map(String);
@@ -290,8 +293,7 @@ export default {
                 return this.currentAction.label;
             }
             if (this.activePanel === 'menu') {
-                // translators: %s is the number of selected tickets
-                return this.$t('%s selected', this.ticket_selections.length);
+                return this.selectedLabel(this.ticket_selections.length);
             }
             return this.$t('More actions');
         },
@@ -437,6 +439,11 @@ export default {
         }
     },
     methods: {
+        // One wording for the bar and the compact menu title.
+        selectedLabel(count) {
+            // translators: %s is the number of selected tickets
+            return this.$_n('%s item Selected', '%s items Selected', count);
+        },
         findAction(key) {
             if (!key || key === 'menu' || key === 'more') {
                 return null;

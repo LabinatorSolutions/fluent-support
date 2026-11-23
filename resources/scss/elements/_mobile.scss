@@ -678,6 +678,11 @@
             }
         }
 
+        // Cards do not scroll sideways, so the desktop pinned columns stay in the flow.
+        .el-table__body td.el-table-fixed-column--left {
+            position: static;
+        }
+
         // Line 1 is sized to leave no room for the meta cells, so they wrap to line 2.
         .el-table__body td.el-table-column--selection {
             flex: 0 0 24px;

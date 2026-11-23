@@ -324,11 +324,11 @@ abstract class BaseImporter
         }
 
         if ($firstResponseTimestamp && $createdAt) {
-            $ticketUpdateData['first_response_time'] = strtotime($firstResponseTimestamp) - strtotime($createdAt);
+            $ticketUpdateData['first_response_time'] = $this->siteSeconds($firstResponseTimestamp) - $this->siteSeconds($createdAt);
         }
 
         if ($createdTicket->status == 'closed' && !empty($createdTicket->resolved_at) && $createdAt) {
-            $ticketUpdateData['total_close_time'] = strtotime((string) $createdTicket->resolved_at) - strtotime($createdAt);
+            $ticketUpdateData['total_close_time'] = $this->siteSeconds((string) $createdTicket->resolved_at) - $this->siteSeconds($createdAt);
         }
 
         if ($ticketUpdateData) {
@@ -465,6 +465,55 @@ abstract class BaseImporter
             ->first();
 
         return !!$exist;
+    }
+
+    /** Site-time string => the Unix timestamp the source sent, filled by siteTime(). */
+    protected $sourceSeconds = [];
+
+    /**
+     * A date the source service sent, as the site-time string the helpdesk tables
+     * hold. The services send ISO 8601 in UTC (a Z or an offset); a ticket created
+     * here is stored in the site's timezone, so an imported one must be too, or it
+     * shows hours off in the ticket view and lands on the wrong day in reports.
+     *
+     * @param string|null $remoteDate
+     * @return string|null
+     */
+    protected function siteTime($remoteDate)
+    {
+        $timestamp = $remoteDate ? strtotime((string) $remoteDate) : false;
+        if (!$timestamp) {
+            return null;
+        }
+
+        // Kept for siteSeconds(): the hour that repeats when the clocks go back
+        // cannot be told apart from the site-time string alone.
+        $siteDate = wp_date('Y-m-d H:i:s', $timestamp);
+        $this->sourceSeconds[$siteDate] = $timestamp;
+
+        return $siteDate;
+    }
+
+    /**
+     * The moment a stored site-time string stands for, as a Unix timestamp. For
+     * elapsed time: two wall-clock strings on either side of a daylight-saving
+     * change are an hour off when they are subtracted as they are.
+     *
+     * @param string $siteDate Y-m-d H:i:s in the site's timezone.
+     * @return int
+     */
+    protected function siteSeconds($siteDate)
+    {
+        // The source's own moment, when this date came through siteTime().
+        if (isset($this->sourceSeconds[(string) $siteDate])) {
+            return $this->sourceSeconds[(string) $siteDate];
+        }
+
+        try {
+            return (new \DateTime((string) $siteDate, wp_timezone()))->getTimestamp();
+        } catch (\Exception $e) {
+            return (int) strtotime((string) $siteDate);
+        }
     }
 
     protected function addMetaData($ticketData)

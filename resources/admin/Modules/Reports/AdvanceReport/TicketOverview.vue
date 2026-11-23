@@ -5,13 +5,14 @@
             <div class="fs_ticket_overview_header_row">
                 <h3 class="fs_page_title">{{ $t("Ticket Overview") }}</h3>
                 <LiveSnapshotSelector
+                    v-if="has_pro"
                     v-model="liveMode"
                     v-model:selected-snapshot="selectedSnapshot"
                     report-type="ticket_overview"
                     @change="handleLiveSnapshotChange"
                 />
             </div>
-            <div class="fs_ticket_overview_header_row fs_ticket_overview_toolbar">
+            <div v-if="has_pro" class="fs_ticket_overview_header_row fs_ticket_overview_toolbar">
                 <div class="fs_toolbar_left">
                     <el-dropdown trigger="click" :disabled="isSnapshotMode" @command="handleProductChange">
                         <button class="fs_pill_dropdown_btn" :disabled="isSnapshotMode">
@@ -58,14 +59,15 @@
                 </div>
             </div>
 
-            <div class="fs_snapshot_banner" v-if="liveMode === 'snapshot' && selectedSnapshot">
-                <!-- translators: %1$s is the snapshot date, %2$s the snapshot time -->
-                {{ $t('Viewing snapshot from %1$s at %2$s', formattedSnapshotDate, selectedSnapshot.time) }}
-            </div>
+            <SnapshotBanner
+                v-if="liveMode === 'snapshot' && selectedSnapshot"
+                :snapshot="selectedSnapshot"
+                @back="handleLiveSnapshotChange({ mode: 'live', snapshot: null })"
+            />
         </div>
 
         <!-- Main Content -->
-        <div class="fs_ticket_overview_content" v-loading="loading">
+        <div v-if="has_pro" class="fs_ticket_overview_content" v-loading="loading">
             <div class="fs_page_error" v-if="fetchError">
                 <p>{{ $t("Couldn't load this data.") }}</p>
                 <el-button size="small" @click="retryFetch">{{ $t("Retry") }}</el-button>
@@ -89,10 +91,7 @@
                                         <IconPack icon-key="clock" :width="20" :height="20" />
                                     </span>
                                     <div class="fs_workload_card_text">
-                                        <div class="fs_workload_card_label_row">
-                                            <p class="fs_stat_label">{{ $t("Tickets Awaiting Reply") }}</p>
-                                            <IconPack icon-key="info_custom_fill" :width="20" :height="20" />
-                                        </div>
+                                        <p class="fs_stat_label">{{ $t("Tickets Awaiting Reply") }}<InfoTip :content="$t('Open tickets where the customer sent the last reply. The date range does not change this number.')" /></p>
                                         <span class="fs_stat_value">{{ formatStatValue(stats.awaitingReply) }}</span>
                                     </div>
                                 </div>
@@ -102,7 +101,7 @@
                                         <IconPack icon-key="user_unfollow_line" :width="20" :height="20" />
                                     </span>
                                     <div class="fs_workload_card_text">
-                                        <p class="fs_stat_label">{{ $t("Unassigned Tickets") }}</p>
+                                        <p class="fs_stat_label">{{ $t("Unassigned Tickets") }}<InfoTip :content="$t('Open tickets with no agent assigned. The date range does not change this number.')" /></p>
                                         <span class="fs_stat_value">{{ formatStatValue(stats.unassignedTickets) }}</span>
                                     </div>
                                 </div>
@@ -112,7 +111,7 @@
                                         <IconPack icon-key="history_line" :width="20" :height="20" />
                                     </span>
                                     <div class="fs_workload_card_text">
-                                        <p class="fs_stat_label">{{ $t("Avg. Waiting Time") }}</p>
+                                        <p class="fs_stat_label">{{ $t("Avg. Waiting Time") }}<InfoTip :content="$t('Average time the tickets awaiting reply have been waiting. The date range does not change this number.')" /></p>
                                         <span class="fs_stat_value">{{ stats.avgWaitingTime }}</span>
                                     </div>
                                 </div>
@@ -140,7 +139,7 @@
 
                                 <div class="fs_stat_card">
                                     <div class="fs_stat_content">
-                                        <p class="fs_stat_label">{{ $t("Not Responded Yet") }}</p>
+                                        <p class="fs_stat_label">{{ $t("Not Responded Yet") }}<InfoTip :content="$t('Tickets created in the date range that have no reply yet.')" /></p>
                                         <div class="fs_stat_value_row">
                                             <span class="fs_stat_value">{{ formatStatValue(stats.notResponded) }}</span>
                                         </div>
@@ -201,7 +200,7 @@
 
                                 <div class="fs_stat_card">
                                     <div class="fs_stat_content">
-                                        <p class="fs_stat_label">{{ $t("Tickets Handled") }}</p>
+                                        <p class="fs_stat_label">{{ $t("Tickets Handled") }}<InfoTip :content="$t('Tickets that got at least one agent reply in the date range.')" /></p>
                                         <div class="fs_stat_value_row">
                                             <span class="fs_stat_value">{{ formatStatValue(stats.ticketsHandled) }}</span>
                                         </div>
@@ -223,7 +222,7 @@
 
                                 <div class="fs_stat_card">
                                     <div class="fs_stat_content">
-                                        <p class="fs_stat_label">{{ $t("Avg. Response") }}</p>
+                                        <p class="fs_stat_label">{{ $t("Avg. Response") }}<InfoTip :content="$t('Agent replies per active agent in the date range.')" /></p>
                                         <div class="fs_stat_value_row">
                                             <span class="fs_stat_value">{{ formatStatValue(stats.avgResponse) }}</span>
                                         </div>
@@ -298,7 +297,7 @@
                     <!-- Same-Day Response Rate -->
                     <div class="fs_overview_section" style="margin-top: 24px;">
                         <div class="fs_section_header">
-                            <h4 class="fs_section_title">{{ $t("Same-Day Response Rate") }}</h4>
+                            <h4 class="fs_section_title">{{ $t("Same-Day Response Rate") }}<InfoTip :content="$t('Tickets created in the date range whose first agent reply came on the same day.')" /></h4>
                         </div>
                         <div class="fs_section_body">
                             <div class="fs_chart_container" style="height: 220px;">
@@ -330,13 +329,51 @@
                 </div>
             </div>
         </div>
+
+        <!-- Shown instead of the report when Pro is not active -->
+        <div v-else class="fs_report_pro_showcase">
+            <ProShowcase
+                :feature="$t('Ticket Overview')"
+                :heading="$t('See how your support queue is moving')"
+                :description="$t('Follow new, closed and waiting tickets day by day, with response and waiting times, so you always know how the queue is moving.')"
+                :specifics="promoSpecifics"
+                utm-content="feature_lock_report_ticket-overview"
+                docs-url="https://docs.fluentsupport.com/ticket-overview"
+            >
+                <template #preview>
+                    <div class="fs_pro_preview">
+                        <div class="fs_pro_preview_card fs_pro_preview_fields">
+                            <div class="fs_pro_preview_title">
+                                <span class="fs_pro_preview_checkbox"></span>
+                                {{ $t('Last 30 days') }}
+                            </div>
+                            <div class="fs_pro_preview_row fs_pro_preview_reveal" style="--fs-row-index: 0">
+                                <span class="fs_pro_preview_row_label">{{ $t('New Tickets') }}</span>
+                                <span class="fs_pro_preview_row_value">1,284</span>
+                            </div>
+                            <div class="fs_pro_preview_row fs_pro_preview_reveal" style="--fs-row-index: 1">
+                                <span class="fs_pro_preview_row_label">{{ $t('Closed Ticket') }}</span>
+                                <span class="fs_pro_preview_row_value">1,190</span>
+                            </div>
+                            <div class="fs_pro_preview_row fs_pro_preview_row_focal fs_pro_preview_reveal" style="--fs-row-index: 2">
+                                <span class="fs_pro_preview_row_label">{{ $t('Avg. Response') }}</span>
+                                <span class="fs_pro_preview_badge fs_pro_preview_badge_success">1h 12m</span>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </ProShowcase>
+        </div>
     </div>
 </template>
 
 <script type="text/babel">
 import BarChartBase from "../Charts/BarChartBase";
 import IconPack from "@/admin/Components/IconPack.vue";
+import InfoTip from "@/admin/Components/InfoTip.vue";
 import LiveSnapshotSelector from "./Parts/LiveSnapshotSelector.vue";
+import SnapshotBanner from "./Parts/SnapshotBanner.vue";
+import ProShowcase from "@/admin/Components/ProShowcase.vue";
 import DonutChart from "../Charts/DonutChart.vue";
 import { ArrowDown } from "@element-plus/icons-vue";
 import { shortcuts } from "../Utils/dateShortCuts";
@@ -348,11 +385,14 @@ export default {
     props: ["url", "date_range"],
     emits: ["date-change"],
     components: {
+        InfoTip,
         BarChartBase,
         IconPack,
         LiveSnapshotSelector,
+        SnapshotBanner,
         DonutChart,
-        ArrowDown
+        ArrowDown,
+        ProShowcase
     },
     data() {
         return {
@@ -394,6 +434,13 @@ export default {
         };
     },
     computed: {
+        promoSpecifics() {
+            return [
+                this.$t('New, closed and waiting tickets for any date range'),
+                this.$t('Average response and waiting times'),
+                this.$t('Daily and hourly ticket and response charts')
+            ];
+        },
         productOptions() {
             return [
                 { id: "all", name: this.$t("All Products") },
@@ -406,12 +453,6 @@ export default {
         },
         formattedDateRange() {
             return formatDateRangeForDisplay(this.localDateRange);
-        },
-        formattedSnapshotDate() {
-            if (!this.selectedSnapshot) {
-                return "";
-            }
-            return dayjs(this.selectedSnapshot.date).format("MMM DD, YYYY");
         },
         ticketChartTitle() {
             return this.activityGranularity === "day" ? this.$t("Daily Ticket Creation") : this.$t("Hourly Ticket Creation");
@@ -625,6 +666,9 @@ export default {
             this.setupResponseChart();
         },
         fetchTicketOverview() {
+            if (!this.has_pro) {
+                return;
+            }
             if (!this.localDateRange || this.localDateRange.length !== 2) {
                 // Invalidate any in-flight request so its callbacks can't
                 // repopulate the page after the range has been cleared.
@@ -713,7 +757,7 @@ export default {
     align-items: center;
     gap: 2px;
     padding: 6px;
-    min-height: 40px;
+    min-height: 36px;
     flex-shrink: 0;
     border-radius: var(--fs-radius-md, 8px);
     border: 1px solid var(--fs-stroke-soft, #E1E4EA);
@@ -734,14 +778,6 @@ export default {
 
 .fs_dropdown_arrow {
     font-size: 14px;
-}
-
-.fs_snapshot_banner {
-    padding: 10px var(--fs-report-gutter, 32px);
-    background: var(--fs-state-away-lighter, #FFFAEB);
-    color: var(--fs-state-away-dark, #624C18);
-    font-size: 13px;
-    font-weight: 500;
 }
 
 .fs_ticket_overview_content {
@@ -800,7 +836,7 @@ export default {
 .fs_section_header {
     border-bottom: 1px solid var(--fs-stroke-soft, #E1E4EA);
     padding: 12px 20px;
-    height: 56px;
+    height: 57px;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -908,17 +944,6 @@ export default {
     flex-direction: column;
     gap: 4px;
     width: 100%;
-}
-
-.fs_workload_card_label_row {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    width: 100%;
-
-    .fs_stat_label {
-        margin: 0;
-    }
 }
 
 .fs_stat_label {

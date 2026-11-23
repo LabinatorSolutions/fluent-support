@@ -27,13 +27,19 @@ class EmailNotificationHandler
         $emailSettings = (new Settings())->getBoxEmailSettings($mailbox, 'ticket_created_email_to_customer');
 
         // Blocked customers get no email; the admin copy below still goes out.
+        // An agent's ticket gets the "Logged by Agent" email instead when it is on (ticketCreatedByAgent()).
         if ($customer && $customer->canReceiveNotifications()
+            && !($ticket->created_by && $this->isEmailEnabled($mailbox, 'ticket_created_by_agent_email_to_customer'))
             && $this->shouldSendEmail($emailSettings, 'ticket_created_email_to_customer', $ticket, $customer)) {
             $subject = apply_filters('fluent_support/parse_smartcode_data', $emailSettings['email_subject'], [
                 'customer' => $customer,
                 'business' => $mailbox,
                 'ticket'   => $ticket
             ]);
+
+            if ($ticket->created_by) {
+                $subject = $this->withoutReplyPrefix($subject);
+            }
 
             $subject = apply_filters('fluent_support/ticket_email_subject', $subject, $ticket, 'ticket_created_email_to_customer');
 
@@ -325,7 +331,7 @@ class EmailNotificationHandler
                 'ticket'   => $ticket
             ]);
 
-            $subject = apply_filters('fluent_support/ticket_email_subject', $subject, $ticket, 'ticket_created_by_agent_email_to_customer');
+            $subject = apply_filters('fluent_support/ticket_email_subject', $this->withoutReplyPrefix($subject), $ticket, 'ticket_created_by_agent_email_to_customer');
 
             $emailBody = $this->parseEmailBody($emailSettings['email_body'], [
                 'customer'   => $customer,
@@ -440,6 +446,22 @@ class EmailNotificationHandler
         $emogrifier = new Emogrifier($emailBody, $this->emailTemplateCss());
         $emogrifier->disableInvisibleNodeRemoval();
         return $emogrifier->emogrify();
+    }
+
+    /**
+     * An agent's ticket answers no email from the customer, so its first email is not a reply,
+     * even when the mailbox template starts with "Re:" (email mailboxes lock it).
+     */
+    private function withoutReplyPrefix($subject)
+    {
+        return preg_replace('/^\s*Re:\s*/i', '', (string) $subject);
+    }
+
+    private function isEmailEnabled($mailbox, $emailType)
+    {
+        $emailSettings = (new Settings())->getBoxEmailSettings($mailbox, $emailType);
+
+        return $emailSettings && Arr::get($emailSettings, 'status') === 'yes';
     }
 
     protected function shouldSendEmail($emailSettings, $emailType, $ticket, $person = null)

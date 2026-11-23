@@ -172,7 +172,7 @@
                     {{ getFilterLabel(key) }}
                 </div>
                 <div class="fs_filter_value" v-if="key !== 'product_id'">
-                    <span>{{ getFilterDisplayValue(key, filter) }}</span>
+                    <span :title="getFilterDisplayValue(key, filter)">{{ getFilterDisplayValue(key, filter) }}</span>
                 </div>
                 <!-- Product dropdown -->
                 <div class="fs_filter_value" v-else>

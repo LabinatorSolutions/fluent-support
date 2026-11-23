@@ -2,6 +2,7 @@
 @use "~element-plus/theme-chalk/el-icon.css";
 @use "~element-plus/theme-chalk/el-notification.css";
 @use "../scss/date.scss" as dateScss;
+@use "../common/attachmentPreview.scss";
 
 /* ── Portal-scoped design tokens ─────────────────────────────────────────────
    Scoped to the portal wrapper so they don't leak into other WP plugins.
@@ -1483,6 +1484,10 @@ html.dark .el-popper.fs_portal_sort_popover {
         top: 5.23px;
         left: 7.08px;
         color: var(--fs-text-strong);
+
+        [dir='rtl'] & {
+            transform: scaleX(-1);
+        }
     }
 
     .fs_back_btn {
@@ -2669,4 +2674,39 @@ html.dark .el-popper.fs_portal_sort_popover {
 @keyframes fs-portal-skeleton-loading {
     0% { background-position: 100% 50%; }
     100% { background-position: 0 50%; }
+}
+
+// Attachment preview dialog (resources/common/AttachmentPreviewDialog.vue): appended to <body>, outside
+// .fs_client_portal, so it reads the admin token names html.dark defines, with the light values as fallbacks.
+// The portal has no shared button classes, so its footer buttons are styled here.
+.fs_attachment_preview_dialog .fs_attachment_preview_footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+
+    .el-button.fs_attachment_preview_btn {
+        margin: 0;
+        height: 32px;
+        border-radius: 8px;
+        border: 1px solid var(--fs-border-default, #E1E4EA);
+        background: var(--fs-bg-primary, #FFFFFF);
+        color: var(--fs-text-primary, #0E121B);
+        font-size: 14px;
+        font-weight: 500;
+
+        &:hover {
+            background: var(--fs-bg-subtle, #F5F7FA);
+        }
+    }
+
+    .el-button.fs_attachment_preview_btn_primary {
+        border-color: var(--fs-btn-primary-bg, #18181B);
+        background: var(--fs-btn-primary-bg, #18181B);
+        color: var(--fs-text-white, #FFFFFF);
+
+        &:hover {
+            background: var(--fs-btn-primary-bg, #18181B);
+            opacity: 0.9;
+        }
+    }
 }

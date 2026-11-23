@@ -99,6 +99,23 @@ class CustomerService
     }
 
     /**
+     * The blocked customer find() would miss: it skips the email lookup for a user_id with no linked customer.
+     *
+     * @return Customer|null
+     */
+    public static function findBlockedByEmail($email, $userId)
+    {
+        if (!$email || !$userId || Customer::where('user_id', (int) $userId)->exists()) {
+            return null;
+        }
+
+        // A row linked to another account is that account's block, not this user's.
+        $customer = Customer::unclaimed()->where('email', $email)->orderBy('id', 'ASC')->first();
+
+        return ($customer && $customer->isBlocked()) ? $customer : null;
+    }
+
+    /**
      * Updates the fields given (others are kept). Email and first name are
      * required. A WordPress user owning the new email is linked only by an
      * admin, and only when no other customer has it.

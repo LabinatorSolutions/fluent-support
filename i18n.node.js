@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @fluent-i18n-toolkit v2
+ * @fluent-i18n-toolkit v6
  *
  * Builds the PHP translation map(s) behind the Vue app's $t() / $_n() / $_x()
  * helpers, from i18n.config.json in this directory.
@@ -24,6 +24,13 @@
  *    that are only reached dynamically ("open": "Open").
  * 4. Each output file is rewritten from scratch on every run: strings that
  *    left the source leave the map. There is no manual merge step.
+ * 5. A $_n('one', 'many', n) call becomes one plural entry, keyed
+ *    `one + NUL + many`, whose value is every translated form of the string
+ *    (`_n_noop()`, so the POT gets a real msgid_plural entry). The map also
+ *    carries the site language's plural rule as a table of form indexes for
+ *    counts 0..199 under the key `NUL + plural_index`; $_n() in the runtime
+ *    helper picks the form from it, so languages with three or more plural
+ *    forms (Russian, Polish, Arabic, ...) get the right one.
  *
  * Usage: node i18n.node.js            (or: npm run translate / pnpm run translate)
  *        require('./i18n.node.js')    exposes generate() for the lint gate
@@ -42,6 +49,13 @@ const CONFIG_FILE = path.join(PROJECT_ROOT, 'i18n.config.json');
 // `context + DELIMITER + text`, and $_x() in the runtime helper builds the
 // same key.
 const CONTEXT_DELIMITER = '\u0004';
+
+// gettext's singular/plural separator (NUL). A $_n() entry is keyed as
+// `singular + DELIMITER + plural`; $_n() in the runtime helper builds the same key.
+const PLURAL_DELIMITER = '\u0000';
+
+// The map key of the plural rule table (see renderPluralHelpers()).
+const PLURAL_RULE_KEY = PLURAL_DELIMITER + 'plural_index';
 
 // A key with no whitespace and an underscore, or a `.desc`/`.title` suffix,
 // is a reserved key by convention. One that is missing from the reserved
@@ -241,7 +255,14 @@ function lineNumberAt(lineStarts, index) {
     return low + 1;
 }
 
-const TRANSLATOR_COMMENT = /(?:\/\*|<!--|\/\/)\s*(translators?\s*:\s*[\s\S]*?)\s*(?:\*\/|-->)?\s*$/i;
+// A note on its own line: `// translators: ...`, `/* translators: ... */` or
+// `<!-- translators: ... -->`, with nothing after the close token. An unclosed
+// opener is accepted too (the note continues on the next lines).
+const TRANSLATOR_COMMENT = /^(?:\/\*|<!--|\/\/)\s*(translators?\s*:(?:(?!\*\/|-->)[\s\S])*?)\s*(?:\*\/|-->)?\s*$/i;
+
+// A note in front of the call on the same line, followed only by glue such as
+// `this.`, `{{ ` or `? `. Code with a string in it (another call) breaks the link.
+const INLINE_TRANSLATOR_COMMENT = /(?:\/\*|<!--)\s*(translators?\s*:(?:(?!\*\/|-->)[\s\S])*?)\s*(?:\*\/|-->)[^'"`]*$/i;
 
 /**
  * Find a `translators:` note for the call that starts at `callIndex`.
@@ -254,7 +275,7 @@ const TRANSLATOR_COMMENT = /(?:\/\*|<!--|\/\/)\s*(translators?\s*:\s*[\s\S]*?)\s
 function findTranslatorComment(lines, lineNumber, callIndex, lineStarts) {
     const current = lines[lineNumber - 1] || '';
     const beforeCall = current.slice(0, callIndex - lineStarts[lineNumber - 1]);
-    const inline = TRANSLATOR_COMMENT.exec(beforeCall);
+    const inline = INLINE_TRANSLATOR_COMMENT.exec(beforeCall);
     if (inline) {
         return normalizeComment(inline[1]);
     }
@@ -272,26 +293,6 @@ function findTranslatorComment(lines, lineNumber, callIndex, lineStarts) {
 }
 
 /**
- * Index of the last `/*` in `text` that opens a block comment, or -1.
- *
- * A comment opener follows the line start, whitespace or punctuation. A `/*`
- * after a word character or `*` is part of a value, such as
- * `accept="image/*"` or `"*\/*"`. Counting it as an opener would hide every
- * call after it in the file.
- */
-function lastBlockCommentOpen(text) {
-    let at = text.lastIndexOf('/*');
-    while (at !== -1) {
-        if (at === 0 || !/[\w*]/.test(text[at - 1])) {
-            return at;
-        }
-        at = text.lastIndexOf('/*', at - 1);
-    }
-
-    return -1;
-}
-
-/**
  * True when `index` sits inside a comment: a `//` line comment, a `/* *\/`
  * block (including docblocks), or an HTML `<!-- -->` comment. Example calls
  * written in documentation must not become map entries.
@@ -305,14 +306,53 @@ function isInsideComment(content, index, lineStarts) {
     }
 
     const before = content.slice(0, index);
-    const blockOpen = lastBlockCommentOpen(before);
+    const blockOpen = lastOpenerOutsideString(content, before, '/*', lineStarts);
     if (blockOpen !== -1 && before.lastIndexOf('*/') < blockOpen) {
         return true;
     }
 
-    const htmlOpen = before.lastIndexOf('<!--');
+    const htmlOpen = lastOpenerOutsideString(content, before, '<!--', lineStarts);
 
     return htmlOpen !== -1 && before.lastIndexOf('-->') < htmlOpen;
+}
+
+/**
+ * Last position of a comment opener in `before` that is not inside a quoted
+ * string on its own line, so a MIME glob literal such as '*' + '/' + '*'
+ * does not swallow every translation call after it.
+ */
+function lastOpenerOutsideString(content, before, opener, lineStarts) {
+    let position = before.lastIndexOf(opener);
+
+    while (position !== -1) {
+        const lineStart = lineStarts[lineNumberAt(lineStarts, position) - 1];
+        if (!isInsideQuotes(content.slice(lineStart, position))) {
+            return position;
+        }
+        position = position === 0 ? -1 : before.lastIndexOf(opener, position - 1);
+    }
+
+    return -1;
+}
+
+/** True when a line prefix ends inside an unterminated ', " or ` string. */
+function isInsideQuotes(prefix) {
+    let quote = null;
+
+    for (let i = 0; i < prefix.length; i++) {
+        const char = prefix[i];
+        if (quote) {
+            if (char === '\\') {
+                i++;
+            } else if (char === quote) {
+                quote = null;
+            }
+        } else if (char === "'" || char === '"' || char === '`') {
+            quote = char;
+        }
+    }
+
+    return quote !== null;
 }
 
 function normalizeComment(text) {
@@ -321,6 +361,11 @@ function normalizeComment(text) {
         .replace(/\*\//g, '* /') // a stray close token would end the PHP comment early
         .replace(/\s+/g, ' ')
         .trim();
+}
+
+/** True when a string has a %s, %d or numbered %1$s placeholder (%1s too, which the runtime fills the same way). */
+function hasPlaceholder(text) {
+    return /%(?:\d+\$?)?[sd]/.test(text);
 }
 
 function escapeRegExp(value) {
@@ -332,12 +377,12 @@ function escapeRegExp(value) {
  * captured so the caller knows whether to expect one, two, or a contextual
  * pair of string arguments. A name must not be preceded by an identifier
  * character, so `fooTransWith(` is not `transWith(`; a `.` is fine
- * (`this.$t(`).
+ * (`this.$t(`), and so is optional-call syntax (`translate?.(`).
  */
 function buildCallPattern(helpers) {
     const names = [...helpers.t, ...helpers.n, ...helpers.x].map(escapeRegExp).sort((a, b) => b.length - a.length);
 
-    return new RegExp(`(?<![\\w$])(${names.join('|')})\\s*\\(\\s*(['"\`])`, 'g');
+    return new RegExp(`(?<![\\w$])(${names.join('|')})\\s*(?:\\?\\.)?\\(\\s*(['"\`])`, 'g');
 }
 
 function helperKind(helpers, name) {
@@ -386,21 +431,28 @@ function extractCalls(content, file, helpers = DEFAULT_HELPERS) {
             continue;
         }
 
-        const comment = findTranslatorComment(lines, line, match.index, lineStarts);
+        const note = findTranslatorComment(lines, line, match.index, lineStarts);
         callStart.lastIndex = first.endIndex;
 
+        // A note describes placeholders, so it only attaches to a call that has
+        // one; another call on the same line must not inherit it.
         if (kind === 't') {
-            entries.push({ text: first.value, context: null, comment, file, line });
+            const comment = hasPlaceholder(first.value) ? note : null;
+            // `note` is kept for a reserved key: its placeholders live in the reserved text.
+            entries.push({ text: first.value, context: null, comment, note, file, line });
             continue;
         }
 
         const second = readNextStringArgument(content, first.endIndex);
 
         if (kind === 'n') {
-            entries.push({ text: first.value, context: null, comment, file, line });
+            // Both plural forms share the note (WordPress convention), as long as either has a placeholder.
+            const comment = hasPlaceholder(first.value) || (second && hasPlaceholder(second.value)) ? note : null;
             if (second && !second.interpolated) {
-                entries.push({ text: second.value, context: null, comment, file, line });
+                entries.push({ text: first.value, plural: second.value, context: null, comment, file, line });
                 callStart.lastIndex = second.endIndex;
+            } else {
+                problems.push({ file, line, type: 'dynamic-plural', text: first.value });
             }
             continue;
         }
@@ -408,7 +460,7 @@ function extractCalls(content, file, helpers = DEFAULT_HELPERS) {
         // $_x('text', 'context'): without a literal context the key cannot be
         // built, so the call falls back to the plain text at runtime.
         if (second && !second.interpolated) {
-            entries.push({ text: first.value, context: second.value, comment, file, line });
+            entries.push({ text: first.value, context: second.value, comment: hasPlaceholder(first.value) ? note : null, file, line });
             callStart.lastIndex = second.endIndex;
         } else {
             problems.push({ file, line, type: 'dynamic-context', text: first.value });
@@ -435,12 +487,16 @@ function loadReservedWords(file) {
 }
 
 function mapKey(entry) {
+    if (entry.plural) {
+        return entry.text + PLURAL_DELIMITER + entry.plural;
+    }
     return entry.context === null ? entry.text : entry.context + CONTEXT_DELIMITER + entry.text;
 }
 
 /**
  * Turn scanned entries plus the reserved words into the ordered rows of one
- * map method. The first translator comment seen for a key wins. Only the
+ * map method. The first translator comment seen for a key wins; a reserved
+ * key takes the note from its call site when its text has a placeholder. Only the
  * reserved keys in `alwaysInclude` are added when no call references them.
  */
 function buildRows(entries, reserved, alwaysInclude) {
@@ -452,19 +508,22 @@ function buildRows(entries, reserved, alwaysInclude) {
             rows[key] = {
                 key,
                 text: Object.prototype.hasOwnProperty.call(reserved, key) ? reserved[key] : entry.text,
+                plural: entry.plural || null,
                 context: entry.context,
                 comment: null,
                 reserved: Object.prototype.hasOwnProperty.call(reserved, key)
             };
         }
-        if (entry.comment && !rows[key].comment) {
-            rows[key].comment = entry.comment;
+        const comment = entry.comment
+            || (rows[key].reserved && entry.note && hasPlaceholder(rows[key].text) ? entry.note : null);
+        if (comment && !rows[key].comment) {
+            rows[key].comment = comment;
         }
     });
 
     alwaysInclude.forEach((key) => {
         if (!rows[key]) {
-            rows[key] = { key, text: reserved[key], context: null, comment: null, reserved: true };
+            rows[key] = { key, text: reserved[key], plural: null, context: null, comment: null, reserved: true };
         }
     });
 
@@ -492,7 +551,10 @@ function renderRow(row, textDomain) {
         lines.push(`            /* ${row.comment} */`);
     }
 
-    if (row.context !== null) {
+    if (row.plural) {
+        const key = escapeDoubleQuoted(row.text) + '\\x00' + escapeDoubleQuoted(row.plural);
+        lines.push(`            "${key}" => self::pluralForms(_n_noop('${escapeSingleQuoted(row.text)}', '${escapeSingleQuoted(row.plural)}', '${textDomain}')),`);
+    } else if (row.context !== null) {
         const key = escapeDoubleQuoted(row.context) + '\\x04' + escapeDoubleQuoted(row.text);
         lines.push(`            "${key}" => _x('${escapeSingleQuoted(row.text)}', '${escapeSingleQuoted(row.context)}', '${textDomain}'),`);
     } else {
@@ -510,6 +572,8 @@ function renderMethod(target, rows, textDomain, root) {
         `    public static function ${target.method}()`,
         '    {',
         '        return [',
+        // The plural rule travels with any method that has a $_n() entry, so whichever map the app loads has it.
+        ...(rows.some((row) => row.plural) ? [`            "\\x00plural_index" => self::pluralRule('${textDomain}')['index'],`] : []),
         ...rows.map((row) => renderRow(row, textDomain)),
         '        ];',
         '    }'
@@ -523,6 +587,73 @@ function renderMergeMethod(method, targets) {
         `    public static function ${method}()`,
         '    {',
         `        return array_merge(${calls});`,
+        '    }'
+    ].join('\n');
+}
+
+/**
+ * PHP helpers behind the $_n() entries. pluralRule() evaluates the site
+ * language's Plural-Forms expression with WordPress's own Plural_Forms parser
+ * for counts 0..199: every gettext plural rule depends only on n, n % 10 and
+ * n % 100, so $_n() reduces a larger count to n % 100 + 100 and the table
+ * covers all counts. pluralForms() translates one sample count per form index.
+ */
+function renderPluralHelpers() {
+    return [
+        '    /**',
+        '     * Every translated form of a $_n() string, in the order of the site language\'s plural rule.',
+        '     *',
+        '     * @param array $noop From _n_noop()',
+        '     * @return string[]',
+        '     */',
+        '    private static function pluralForms($noop)',
+        '    {',
+        "        $samples = self::pluralRule($noop['domain'])['samples'];",
+        '        $forms = [];',
+        '        foreach ($samples as $count) {',
+        "            $forms[] = translate_nooped_plural($noop, $count, $noop['domain']);",
+        '        }',
+        '        return $forms;',
+        '    }',
+        '',
+        '    /**',
+        '     * The plural form index for counts 0..199 (`index`) and the first count of each form (`samples`).',
+        '     *',
+        '     * @param string $domain Text domain',
+        '     * @return array{index: int[], samples: int[]}',
+        '     */',
+        '    public static function pluralRule($domain)',
+        '    {',
+        '        static $rules = [];',
+        '        if (isset($rules[$domain])) {',
+        '            return $rules[$domain];',
+        '        }',
+        '',
+        "        $expression = 'n != 1';",
+        '        $translations = get_translations_for_domain($domain);',
+        '        foreach ((array) $translations->headers as $name => $value) {',
+        "            if (strtolower($name) === 'plural-forms' && preg_match('/plural\\s*=\\s*(.+)$/', (string) $value, $match)) {",
+        "                $expression = rtrim(trim($match[1]), ';');",
+        '            }',
+        '        }',
+        '        try {',
+        '            $rule = new \\Plural_Forms($expression);',
+        '        } catch (\\Exception $e) {',
+        "            $rule = new \\Plural_Forms('n != 1');",
+        '        }',
+        '',
+        '        $index = [];',
+        '        $samples = [];',
+        '        for ($count = 0; $count < 200; $count++) {',
+        '            $form = (int) $rule->get($count);',
+        '            $index[] = $form;',
+        '            if (!isset($samples[$form])) {',
+        '                $samples[$form] = $count;',
+        '            }',
+        '        }',
+        '        ksort($samples);',
+        '',
+        "        return $rules[$domain] = ['index' => $index, 'samples' => array_values($samples)];",
         '    }'
     ].join('\n');
 }
@@ -544,6 +675,10 @@ function renderPhp(config, outputTargets, rowsByTarget) {
             methods.push(renderMergeMethod(method, names.map((name) => outputTargets.find((t) => t.name === name))));
         }
     });
+
+    if (outputTargets.some((target) => rowsByTarget[target.name].some((row) => row.plural))) {
+        methods.push(renderPluralHelpers());
+    }
 
     return [
         '<?php',
@@ -689,6 +824,8 @@ module.exports = {
     CONFIG_FILE,
     CONTEXT_DELIMITER,
     DEFAULT_HELPERS,
+    PLURAL_DELIMITER,
+    PLURAL_RULE_KEY,
     DEFAULT_RESERVED_KEY_PATTERN,
     buildCallPattern,
     extractCalls,

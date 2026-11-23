@@ -165,20 +165,21 @@
                                 <div v-if="show_essential" class="fs_essential_details">
                                     <p>
                                         Server environment details (php, mysql, server, WordPress versions), Site language, Number
-                                        of active plugins, Site name and url, Your name and email address. No sensitive data is
-                                        tracked.
+                                        of active plugins, Site name and url, Your name and email address, and usage counts
+                                        (number of tickets, agents, customers, mailboxes and products). No ticket content or
+                                        other sensitive data is tracked.
                                     </p>
                                 </div>
-                            </div>
 
-                            <!-- Hidden FluentForms section for backward compatibility -->
-                            <div v-if="!has_fluentform">
-                                <el-checkbox
-                                    true-label="yes"
-                                    false-label="no"
-                                    v-model="install_fluentforms">
-                                    {{ $t('Install Fluent Forms Plugin for custom Ticket Forms.') }}
-                                </el-checkbox>
+                                <!-- Hidden FluentForms section for backward compatibility -->
+                                <div v-if="!has_fluentform">
+                                    <el-checkbox
+                                        true-label="yes"
+                                        false-label="no"
+                                        v-model="install_fluentforms">
+                                        {{ $t('Install Fluent Forms Plugin for custom Ticket Forms.') }}
+                                    </el-checkbox>
+                                </div>
                             </div>
                         </div>
                     </div>

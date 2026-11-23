@@ -9,7 +9,7 @@
             />
         </div>
         <div class="fs_stat_content">
-            <p class="fs_stat_label">{{ label }}</p>
+            <p class="fs_stat_label">{{ label }}<InfoTip v-if="tooltip" :content="tooltip" /></p>
             <span class="fs_stat_value">{{ value }}</span>
         </div>
     </div>
@@ -17,16 +17,22 @@
 
 <script type="text/babel">
 import IconPack from "@/admin/Components/IconPack.vue";
+import InfoTip from "@/admin/Components/InfoTip.vue";
 
 export default {
     name: "StatBox",
     components: {
+        InfoTip,
         IconPack
     },
     props: {
         label: {
             type: String,
             required: true
+        },
+        tooltip: {
+            type: String,
+            default: ''
         },
         value: {
             type: [String, Number],

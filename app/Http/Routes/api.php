@@ -128,6 +128,7 @@ $router->prefix('settings')->withPolicy('AdminSettingsPolicy')->group(function (
     $router->get('/mcp', 'McpSettingsController@getStatus');
     $router->post('/mcp/toggle', 'McpSettingsController@toggle');
     $router->post('/mcp/install-adapter', 'McpSettingsController@installAdapter');
+    $router->post('/mcp/enable-hub', 'McpSettingsController@enableHub');
     $router->get('/mcp/config-snippets', 'McpSettingsController@getConfigSnippets');
 });
 

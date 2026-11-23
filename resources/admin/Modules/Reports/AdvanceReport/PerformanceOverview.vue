@@ -5,13 +5,14 @@
             <div class="fs_performance_overview_header_row">
                 <h3 class="fs_page_title">{{ $t("Agent Performance") }}</h3>
                 <LiveSnapshotSelector
+                    v-if="has_pro"
                     v-model="liveMode"
                     v-model:selected-snapshot="selectedSnapshot"
                     report-type="performance_overview"
                     @change="handleLiveModeChange"
                 />
             </div>
-            <div class="fs_performance_overview_header_row fs_performance_overview_toolbar">
+            <div v-if="has_pro" class="fs_performance_overview_header_row fs_performance_overview_toolbar">
                 <div class="fs_toolbar_left">
                     <el-dropdown trigger="click" :hide-on-click="false" :disabled="isSnapshotMode" @command="() => {}">
                         <button class="fs_pill_dropdown_btn fs_team_pill_btn" :disabled="isSnapshotMode" :title="selectedTeamLabel">
@@ -144,6 +145,11 @@
                     </button>
                 </div>
             </div>
+            <SnapshotBanner
+                v-if="liveMode === 'snapshot' && selectedSnapshot"
+                :snapshot="selectedSnapshot"
+                @back="handleLiveModeChange({ mode: 'live', snapshot: null })"
+            />
         </div>
 
         <el-dialog
@@ -179,7 +185,7 @@
         </el-dialog>
 
         <!-- Main Content -->
-        <div class="fs_performance_overview_content" v-loading="loading">
+        <div v-if="has_pro" class="fs_performance_overview_content" v-loading="loading">
             <div class="fs_page_error" v-if="filtersError || fetchError">
                 <p>{{ $t("Couldn't load this data.") }}</p>
                 <el-button size="small" @click="handleRetry">{{ $t("Retry") }}</el-button>
@@ -192,7 +198,10 @@
                         <IconPack :icon-key="stat.icon" :width="20" :height="20" />
                     </span>
                     <div class="fs_stat_card_text">
-                        <p class="fs_stat_label">{{ stat.label }}</p>
+                        <p class="fs_stat_label">
+                            {{ stat.label }}
+                            <InfoTip v-if="stat.tooltip" :content="stat.tooltip" />
+                        </p>
                         <div class="fs_stat_card_value_row">
                             <span class="fs_stat_value">{{ stat.value }}</span>
                             <span class="fs_stat_value_suffix" v-if="stat.suffix">{{ stat.suffix }}</span>
@@ -286,6 +295,43 @@
 
             </template>
         </div>
+
+        <!-- Shown instead of the report when Pro is not active -->
+        <div v-else class="fs_report_pro_showcase">
+            <ProShowcase
+                :feature="$t('Agent Performance')"
+                :heading="$t('Know how every agent is doing')"
+                :description="$t('Compare responses, closed tickets and hourly activity for every agent, so you can balance the workload and coach the team.')"
+                :specifics="promoSpecifics"
+                utm-content="feature_lock_report_agent-performance"
+                docs-url="https://docs.fluentsupport.com/agents-report"
+            >
+                <template #preview>
+                    <div class="fs_pro_preview">
+                        <div class="fs_pro_preview_card fs_pro_preview_fields">
+                            <div class="fs_pro_preview_title">
+                                <span class="fs_pro_preview_checkbox"></span>
+                                {{ $t('Agent response comparison') }}
+                            </div>
+                            <div class="fs_pro_preview_row fs_pro_preview_reveal" style="--fs-row-index: 0">
+                                <span class="fs_pro_preview_row_label">Sarah Miller</span>
+                                <!-- translators: %s is the number of replies an agent sent -->
+                                <span class="fs_pro_preview_row_value">{{ $_n('%s response', '%s responses', 142) }}</span>
+                            </div>
+                            <div class="fs_pro_preview_row fs_pro_preview_reveal" style="--fs-row-index: 1">
+                                <span class="fs_pro_preview_row_label">Tom Becker</span>
+                                <!-- translators: %s is the number of replies an agent sent -->
+                                <span class="fs_pro_preview_row_value">{{ $_n('%s response', '%s responses', 118) }}</span>
+                            </div>
+                            <div class="fs_pro_preview_row fs_pro_preview_row_focal fs_pro_preview_reveal" style="--fs-row-index: 2">
+                                <span class="fs_pro_preview_row_label">{{ $t('Total Responses') }}</span>
+                                <span class="fs_pro_preview_badge fs_pro_preview_badge_success">260</span>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </ProShowcase>
+        </div>
     </div>
 </template>
 
@@ -293,10 +339,14 @@
 import BarChartBase from "../Charts/BarChartBase";
 import ComparisonBarChart from "../Charts/ComparisonBarChart.vue";
 import LiveSnapshotSelector from "./Parts/LiveSnapshotSelector.vue";
+import SnapshotBanner from "./Parts/SnapshotBanner.vue";
 import IconPack from "@/admin/Components/IconPack.vue";
+import InfoTip from "@/admin/Components/InfoTip.vue";
 import AgentReports from "../AgentReports.vue";
+import ProShowcase from "@/admin/Components/ProShowcase.vue";
 import { ArrowDown } from "@element-plus/icons-vue";
 import { shortcuts } from "../Utils/dateShortCuts";
+import { formatDuration } from "@/admin/Modules/Tickets/parts/ticketStats";
 import {
     formatDateRangeForDisplay,
     formatStatValue,
@@ -327,9 +377,12 @@ export default {
         BarChartBase,
         ComparisonBarChart,
         LiveSnapshotSelector,
+        SnapshotBanner,
         IconPack,
         AgentReports,
-        ArrowDown
+        InfoTip,
+        ArrowDown,
+        ProShowcase
     },
     data() {
         return {
@@ -352,7 +405,7 @@ export default {
             checkAll: false,
             isIndeterminate: false,
             agentStats: [],
-            ticketTotals: { closed: null, open: null },
+            ticketTotals: { closed: null, open: null, first_response: null },
             localDateRange: this.date_range,
             shortcuts: shortcuts,
             activityGranularity: "hour",
@@ -369,6 +422,13 @@ export default {
         };
     },
     computed: {
+        promoSpecifics() {
+            return [
+                this.$t('Responses, open and closed tickets for each agent'),
+                this.$t('Compare agents side by side'),
+                this.$t('Export the agent summary')
+            ];
+        },
         selectedAgents() {
             return this.agentStats;
         },
@@ -432,8 +492,15 @@ export default {
                 {
                     icon: "line_chart_line",
                     variant: "warning",
-                    label: this.$t("Open Ticket"),
+                    label: this.$t("Open Tickets"),
+                    tooltip: this.$t("Open tickets assigned to the selected agents. The date range does not change this number."),
                     value: formatStatValue(this.ticketTotals.open, "--")
+                },
+                {
+                    icon: "pulse_line",
+                    variant: "away",
+                    label: this.$t("Average first response"),
+                    value: this.ticketTotals.first_response ? formatDuration(this.ticketTotals.first_response, this.$t) : "--"
                 },
                 {
                     icon: "time_sheet",
@@ -586,7 +653,7 @@ export default {
                         return;
                     }
                     this.agentStats = [];
-                    this.ticketTotals = { closed: null, open: null };
+                    this.ticketTotals = { closed: null, open: null, first_response: null };
                     this.activitySeries = [];
                     this.hourlyLabels = [];
                     this.growthData = { tickets: {}, resolved: {}, responses: {} };
@@ -818,11 +885,14 @@ export default {
             this.activityGranularity = response.activity.granularity;
             this.hourlyLabels = response.activity.labels;
             this.activitySeries = response.activity.series;
-            this.ticketTotals = response.totals || { closed: null, open: null };
+            this.ticketTotals = response.totals || { closed: null, open: null, first_response: null };
             this.growthData = response.growth || { tickets: {}, resolved: {}, responses: {} };
             this.setupHourlyActivityChart();
         },
         fetchPerformanceOverview() {
+            if (!this.has_pro) {
+                return;
+            }
             if (!this.localDateRange || this.localDateRange.length !== 2 || !this.selectedAgentIds.length) {
                 // Invalidate any in-flight request so its callbacks can't
                 // repopulate the page after the range/selection has been cleared.
@@ -830,7 +900,7 @@ export default {
                 this.loading = false;
                 this.fetchError = false;
                 this.agentStats = [];
-                this.ticketTotals = { closed: null, open: null };
+                this.ticketTotals = { closed: null, open: null, first_response: null };
                 this.activitySeries = [];
                 this.hourlyLabels = [];
                 this.growthData = { tickets: {}, resolved: {}, responses: {} };
@@ -858,7 +928,7 @@ export default {
                         return;
                     }
                     this.agentStats = [];
-                    this.ticketTotals = { closed: null, open: null };
+                    this.ticketTotals = { closed: null, open: null, first_response: null };
                     this.activitySeries = [];
                     this.hourlyLabels = [];
                     this.growthData = { tickets: {}, resolved: {}, responses: {} };
@@ -874,6 +944,9 @@ export default {
         }
     },
     mounted() {
+        if (!this.has_pro) {
+            return;
+        }
         this.fetchFilters().then(() => {
             if (!this.filtersError) {
                 this.fetchPerformanceOverview();

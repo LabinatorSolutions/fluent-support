@@ -131,7 +131,7 @@
             v-model="dialogVisible"
             @close="closeDialog"
             width="60%"
-            class="fs_dialog"
+            class="fs_dialog fs_dialog_md"
             :append-to-body="true"
         >
             <o-auth2-settings

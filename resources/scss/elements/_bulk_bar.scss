@@ -10,30 +10,35 @@
 
 .fs_bb_bar {
     // Light page: dark bar.
-    --fs-bb-bg: #0E121B;
+    --fs-bb-bg: #181B25;
     --fs-bb-text: #FFFFFF;
+    --fs-bb-label: #FFFFFF;
+    --fs-bb-icon: #CACFD8;
     --fs-bb-muted: #99A0AE;
-    --fs-bb-border: rgba(255, 255, 255, 0.16);
-    --fs-bb-hover: rgba(255, 255, 255, 0.1);
-    --fs-bb-danger: #FF6B78;
+    --fs-bb-border: #2B303B;
+    --fs-bb-hover: #363A45;
+    --fs-bb-danger: #E93544;
+    --fs-bb-danger-bg: rgba(251, 55, 72, 0.1);
+    --fs-bb-danger-hover: rgba(251, 55, 72, 0.18);
     --fs-bb-focus: #34D399;
 
     position: fixed;
     z-index: 1000;
     bottom: calc(16px + env(safe-area-inset-bottom, 0px));
     transform: translateX(-50%);
+    box-sizing: border-box;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 12px;
+    // Start-aligned so an overflow clips the right end, never the clear (X) button.
+    justify-content: flex-start;
+    gap: 16px;
     width: max-content;
     min-height: 52px;
-    padding: 8px 8px 8px 6px;
-    border-radius: var(--fs-radius-lg, 12px);
+    padding: 8px 16px;
+    border-radius: var(--fs-radius-md, 8px);
     background: var(--fs-bb-bg);
     color: var(--fs-bb-text);
-    border: 1px solid var(--fs-bb-border);
-    box-shadow: 0 16px 40px rgba(14, 18, 27, 0.18), 0 2px 6px rgba(14, 18, 27, 0.08);
+    box-shadow: 0 16px 16px rgba(14, 18, 27, 0.24);
     overflow: hidden;
     animation: fs-bb-in 0.18s ease-out;
 }
@@ -42,10 +47,13 @@
 body.fluent_theme_dark .fs_bb_bar {
     --fs-bb-bg: #FFFFFF;
     --fs-bb-text: #0E121B;
+    --fs-bb-label: #525866;
+    --fs-bb-icon: #525866;
     --fs-bb-muted: #525866;
     --fs-bb-border: #E1E4EA;
     --fs-bb-hover: #F2F5F8;
     --fs-bb-danger: #E5303F;
+    --fs-bb-danger-bg: rgba(251, 55, 72, 0.1);
     --fs-bb-focus: #089360;
 }
 
@@ -59,26 +67,38 @@ body.fluent_theme_dark .fs_bb_bar {
     flex: none;
     display: flex;
     align-items: center;
-    gap: 4px;
 
     > * {
         flex: none;
     }
 }
 
+.fs_bb_left {
+    gap: 16px;
+}
+
+.fs_bb_actions {
+    gap: 8px;
+}
+
 .fs_bb_btn {
-    height: 34px;
-    padding: 0 10px;
+    box-sizing: border-box;
+    height: 32px;
+    margin: 0;
+    padding: 6px;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    justify-content: center;
+    gap: 2px;
     border: 0;
     border-radius: var(--fs-radius-md, 8px);
     background: transparent;
-    color: var(--fs-bb-text);
+    color: var(--fs-bb-icon);
+    font-family: inherit;
     font-size: 14px;
     font-weight: 500;
     line-height: 20px;
+    letter-spacing: -0.084px;
     white-space: nowrap;
     cursor: pointer;
 
@@ -93,47 +113,58 @@ body.fluent_theme_dark .fs_bb_bar {
     }
 
     &.is-icon {
-        width: 34px;
-        padding: 0;
-        justify-content: center;
+        width: 32px;
     }
 
     &.is-danger {
+        background: var(--fs-bb-danger-bg);
         color: var(--fs-bb-danger);
+
+        &:hover,
+        &[aria-expanded="true"] {
+            background: var(--fs-bb-danger-hover);
+        }
     }
 
     &.is-menu {
         background: var(--fs-bb-hover);
     }
 
-    .el-icon {
-        font-size: 16px;
+    svg {
+        flex: none;
+        width: 20px;
+        height: 20px;
     }
 
-    .fs_bb_chev {
-        font-size: 12px;
-        color: var(--fs-bb-muted);
+    .fs_bb_btn_text {
+        padding: 0 4px;
+        color: var(--fs-bb-label);
     }
 }
 
 .fs_bb_sep {
+    flex: none;
     width: 1px;
-    height: 20px;
-    margin: 0 4px;
+    height: 12px;
     background: var(--fs-bb-border);
 }
 
+// white-space: pre keeps the spaces around the bold count.
 .fs_bb_count {
     display: inline-flex;
     align-items: center;
-    height: 28px;
-    padding: 0 10px;
-    border: 1px solid var(--fs-bb-border);
-    border-radius: var(--fs-radius-full, 999px);
     font-size: 14px;
-    font-weight: 500;
-    white-space: nowrap;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: -0.084px;
+    color: var(--fs-bb-label);
+    white-space: pre;
     font-variant-numeric: tabular-nums;
+
+    strong {
+        font-weight: 500;
+        color: var(--fs-bb-text);
+    }
 }
 
 .fs_bb_run {
@@ -249,6 +280,11 @@ body.fluent_theme_dark .fs_bb_panel {
 
     &:hover {
         background: var(--fs-bg-subtle, #F5F7FA);
+    }
+
+    svg {
+        width: 16px;
+        height: 16px;
     }
 }
 
@@ -407,6 +443,12 @@ body.fluent_theme_dark .fs_bb_apply:not(.is-danger) {
         outline: 2px solid var(--fs-text-link, #089360);
         outline-offset: -2px;
     }
+}
+
+.fs_bb_menu_item > svg {
+    flex: none;
+    width: 16px;
+    height: 16px;
 }
 
 .fs_bb_menu_item > span:first-of-type {

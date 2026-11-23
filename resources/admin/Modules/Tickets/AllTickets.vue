@@ -36,7 +36,7 @@
                     <el-dropdown :persistent="false" trigger="click" @command="handleMoreAction">
                         <el-button class="fs_outline_btn fs_more_action_btn" :aria-label="$t('More Action')">
                             <span class="fs_btn_label">{{ $t("More Action") }}</span>
-                            <el-icon class="el-icon--right fs_btn_label"><ArrowDown /></el-icon>
+                            <DynamicIcon name="ArrowDownLine" class="fs_btn_trailing_icon fs_btn_label" />
                             <el-icon class="fs_btn_icon_mobile"><MoreFilled /></el-icon>
                         </el-button>
                         <template #dropdown>
@@ -52,9 +52,10 @@
                     <el-button
                         @click="add_ticket_modal = true"
                         class="fs_filled_btn fs_add_ticket_btn"
-                        icon="Plus"
                         :aria-label="$t('Add Ticket')"
-                    ><span class="fs_btn_label">{{ $t("Add Ticket") }}</span>
+                    >
+                        <DynamicIcon name="AddLine" class="fs_btn_leading_icon" />
+                        <span class="fs_btn_label">{{ $t("Add Ticket") }}</span>
                     </el-button>
                 </div>
             </div>
@@ -112,7 +113,7 @@
             :append-to-body="true"
             v-model="add_ticket_modal"
             width="50%"
-            class="fs_dialog fs_tk_dialog">
+            class="fs_dialog fs_tk_dialog fs_dialog_md">
             <add-ticket @close="add_ticket_modal = false"></add-ticket>
         </el-dialog>
 
@@ -132,6 +133,7 @@ import TicketListFilterBar from "./parts/_TicketListFilterBar";
 import AdvancedTicketFilter from "./parts/_AdvancedTicketFilter";
 import TicketListRows from "./parts/_TicketListRows";
 import IconPack from "@/admin/Components/IconPack.vue";
+import DynamicIcon from "@/admin/Components/Icons/DynamicIcon.vue";
 import { mapState, mapActions, mapWritableState } from 'pinia';
 import { useTicketListStore } from '@/admin/stores/ticketList.store';
 import { shortcutModifiers, isTypingTarget } from '@/admin/Bits/shortcuts';
@@ -146,6 +148,7 @@ export default {
     name: "AllTickets",
     components: {
         IconPack,
+        DynamicIcon,
         Pagination,
         AddTicket,
         TicketBulkActions,

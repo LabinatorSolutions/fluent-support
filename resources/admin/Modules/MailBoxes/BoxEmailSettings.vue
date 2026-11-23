@@ -51,7 +51,7 @@
         v-model="edit_modal"
         v-if="active_email_settings"
         width="60%"
-        class="fs_dialog fs_email_settings_modal"
+        class="fs_dialog fs_email_settings_modal fs_dialog_md"
     >
         <el-form label-position="top" :data="active_email_settings">
             <h3 class="fs_email_settings_modal_title" v-if="active_email_settings.description">{{active_email_settings.description}}</h3>

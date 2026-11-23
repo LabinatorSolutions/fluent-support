@@ -269,8 +269,8 @@ class ZendeskTickets extends BaseImporter
                         'status' => $this->getStatus($ticket->status),
                         'client_priority' => $this->getPriority($ticket->priority),
                         'priority' => $this->getPriority($ticket->priority),
-                        'created_at' => $ticket->created_at ? gmdate('Y-m-d H:i:s', strtotime($ticket->created_at)) : null,
-                        'updated_at' => $ticket->updated_at ? gmdate('Y-m-d H:i:s', strtotime($ticket->updated_at)) : null,
+                        'created_at' => $ticket->created_at ? $this->siteTime($ticket->created_at) : null,
+                        'updated_at' => $ticket->updated_at ? $this->siteTime($ticket->updated_at) : null,
                         'last_customer_response' => NULL,
                         'last_agent_response' => NULL,
                         'attachments' => $ticketAttacments
@@ -306,8 +306,8 @@ class ZendeskTickets extends BaseImporter
             $ticketReply = [
                 'content' => wp_kses_post(Helper::decodeNonMarkupEntities($reply->body)),
                 'conversation_type' => 'response',
-                'created_at' => $reply->created_at ? gmdate('Y-m-d H:i:s', strtotime($reply->created_at)) : null,
-                'updated_at' => !empty($reply->updated_at) ? gmdate('Y-m-d H:i:s', strtotime($reply->updated_at)) : null,
+                'created_at' => $reply->created_at ? $this->siteTime($reply->created_at) : null,
+                'updated_at' => !empty($reply->updated_at) ? $this->siteTime($reply->updated_at) : null,
             ];
 
             $ticketReply = $this->populatePersonInfo($ticketReply, $reply, $replies->users);

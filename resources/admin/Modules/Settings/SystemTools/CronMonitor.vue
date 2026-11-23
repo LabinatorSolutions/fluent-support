@@ -15,7 +15,12 @@
                     <div class="fs_st_rest_grid">
                         <div v-for="check in restChecks" :key="check.method" class="fs_st_rest_tile">
                             <p class="fs_st_label">{{ check.label }}</p>
-                            <div class="fs_st_rest_badge" :class="'is_' + check.state">
+                            <el-skeleton v-if="check.state === 'checking'" animated class="fs_st_skeleton">
+                                <template #template>
+                                    <el-skeleton-item variant="button" style="width: 100px; height: 26px; border-radius: 6px;" />
+                                </template>
+                            </el-skeleton>
+                            <div v-else class="fs_st_rest_badge" :class="'is_' + check.state">
                                 <el-icon v-if="check.state === 'ok'"><CircleCheckFilled/></el-icon>
                                 <el-icon v-else-if="check.state === 'error'"><CircleCloseFilled/></el-icon>
                                 <el-icon v-else><WarningFilled/></el-icon>
@@ -36,7 +41,27 @@
                 <div class="fs_st_card_header">
                     <h4>{{ $t('Cron Job Status') }}</h4>
                 </div>
-                <div class="fs_st_card_body" v-loading="loading">
+                <div class="fs_st_card_body" v-loading="loading && !!server">
+                    <el-skeleton v-if="loading && !server" animated class="fs_st_skeleton">
+                        <template #template>
+                            <div class="fs_st_server_stats">
+                                <div v-for="n in 3" :key="n" class="fs_st_server_stat">
+                                    <el-skeleton-item variant="text" style="width: 120px;" />
+                                    <el-skeleton-item variant="text" style="width: 60px;" />
+                                </div>
+                            </div>
+                            <div class="fs_st_list">
+                                <div v-for="n in 4" :key="n" class="fs_st_list_item">
+                                    <div class="fs_st_list_info">
+                                        <el-skeleton-item variant="text" style="width: 220px;" />
+                                        <el-skeleton-item variant="text" style="width: 160px;" />
+                                    </div>
+                                    <el-skeleton-item variant="button" style="width: 130px; height: 32px;" />
+                                </div>
+                            </div>
+                        </template>
+                    </el-skeleton>
+
                     <div v-if="server" class="fs_st_server_stats">
                         <div class="fs_st_server_stat">
                             <p class="fs_st_label">{{ $t('Server Memory Limit') }}</p>
@@ -174,8 +199,7 @@ export default {
             const texts = {
                 ok: this.$t('Operational'),
                 slow: this.$t('Slow Response'),
-                error: this.$t('Down'),
-                checking: this.$t('Checking...')
+                error: this.$t('Down')
             };
 
             return texts[state];

@@ -20,7 +20,7 @@ class PromptsRegistrar
     {
         return [
             'fluent-support/triage-queue' => [
-                'label'       => __('Triage my queue', 'fluent-support'),
+                'label'       => 'Triage my queue',
                 'description' => 'Go through the tickets waiting on an agent and propose an action for each, without sending anything until you approve.',
                 'input_schema' => [
                     'type'       => 'object',
@@ -31,7 +31,7 @@ class PromptsRegistrar
                 'execute_callback' => [self::class, 'triageQueue'],
             ],
             'fluent-support/draft-reply' => [
-                'label'       => __('Draft a reply', 'fluent-support'),
+                'label'       => 'Draft a reply',
                 'description' => 'Read a ticket and save a draft reply for review. Nothing is sent.',
                 'input_schema' => [
                     'type'       => 'object',
@@ -44,7 +44,7 @@ class PromptsRegistrar
                 'execute_callback' => [self::class, 'draftReply'],
             ],
             'fluent-support/summarize-ticket' => [
-                'label'       => __('Summarize a ticket', 'fluent-support'),
+                'label'       => 'Summarize a ticket',
                 'description' => 'Summarize a ticket for a teammate taking it over, and optionally save the summary as an internal note.',
                 'input_schema' => [
                     'type'       => 'object',
@@ -57,7 +57,7 @@ class PromptsRegistrar
                 'execute_callback' => [self::class, 'summarizeTicket'],
             ],
             'fluent-support/support-report' => [
-                'label'       => __('Support report', 'fluent-support'),
+                'label'       => 'Support report',
                 'description' => 'Write a short report on support volume, response times and workload for a period.',
                 'input_schema' => [
                     'type'       => 'object',
@@ -97,13 +97,13 @@ class PromptsRegistrar
 
         $source = $team
             ? '1. Call get-support-context, then list-tickets with waiting_for_reply=true, sort_by=waiting_since, order=ASC, per_page=25. Use meta.paging.next_cursor for more pages.'
-            : '1. Call get-support-context and start with my_queue.awaiting_your_reply. If awaiting_your_reply_truncated is true, call list-tickets with agent_id set to your agent ID, waiting_for_reply=true, sort_by=waiting_since, order=ASC.';
+            : '1. Call get-support-context and start with the ticket ids in my_queue.awaiting_your_reply; their rows are under tickets. If awaiting_your_reply_truncated is true, call list-tickets with agent_id set to your agent ID, waiting_for_reply=true, sort_by=waiting_since, order=ASC.';
 
         return self::messages(implode("\n", [
             'Triage my Fluent Support queue.',
             '',
             $source,
-            '2. Use each row\'s preview, customer, tags and waiting time. Open a ticket with get-ticket only when the preview is not enough to decide.',
+            '2. Use each row\'s title, customer and waiting time; list-tickets rows also have a preview and tags. Open a ticket with get-ticket only when that is not enough to decide.',
             '3. For each ticket choose one action: reply, ask a teammate (internal note with a mention), assign, tag, close, or leave it.',
             '4. Show me a table first: ticket, customer, waiting time, proposed action and a one-line reason. Oldest first.',
             '5. Wait for my go-ahead. Then save replies as drafts (reply-to-ticket with draft=true) unless I say to send them. Never close or delete a ticket without my approval.',

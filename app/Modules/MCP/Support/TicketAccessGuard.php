@@ -30,12 +30,12 @@ class TicketAccessGuard
     public static function assert(Ticket $ticket)
     {
         if (!PermissionManager::canAccessTicket($ticket)) {
-            return MCPHelper::error('forbidden', __('You do not have access to this ticket', 'fluent-support'));
+            return MCPHelper::error('forbidden', 'You do not have access to this ticket');
         }
 
         $restricted = self::restrictedMailboxIds();
         if ($restricted && in_array((int) $ticket->mailbox_id, array_map('intval', $restricted), true)) {
-            return MCPHelper::error('forbidden', __('You do not have access to this ticket', 'fluent-support'));
+            return MCPHelper::error('forbidden', 'You do not have access to this ticket');
         }
 
         return null;
@@ -49,7 +49,7 @@ class TicketAccessGuard
     {
         $restricted = self::restrictedMailboxIds();
         if ($restricted && in_array($mailboxId, array_map('intval', $restricted), true)) {
-            return MCPHelper::error('forbidden', __('You do not have access to the specified mailbox', 'fluent-support'));
+            return MCPHelper::error('forbidden', 'You do not have access to the specified mailbox');
         }
         return null;
     }
@@ -71,7 +71,7 @@ class TicketAccessGuard
         $checkMailboxId = $mailboxId === null ? (int) $ticket->mailbox_id : (int) $mailboxId;
 
         if ($agentRestricted && in_array($checkMailboxId, array_map('intval', $agentRestricted), true)) {
-            return MCPHelper::error('forbidden', __("That agent is restricted from this ticket's mailbox", 'fluent-support'));
+            return MCPHelper::error('forbidden', "That agent is restricted from this ticket's mailbox");
         }
 
         return null;

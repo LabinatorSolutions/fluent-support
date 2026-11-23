@@ -62,6 +62,63 @@ test.describe('ticket view', () => {
         await expect.poll(() => mailSent().slice(mailBefore).map(mail => mail.to).flat().join(',')).toContain(`carla-${fx.marker}@example.test`);
     });
 
+    test('switching between Reply and Notes keeps the text, and it sends as the open mode', async ({ page }) => {
+        await openTicket(page, fx.ticket_view);
+        const header = page.locator('.fs_action_group');
+        const editorBody = page.frameLocator('.fs_create_response iframe').locator('body');
+
+        await page.locator('.fs_composer_prompt_reply').click();
+        await typeInComposer(page, `Switch text ${fx.marker}`);
+
+        await header.getByRole('button', { name: 'Notes', exact: true }).click();
+        await expect(page.locator('.fs_note_warning')).toBeVisible();
+        await expect(editorBody).toContainText(`Switch text ${fx.marker}`);
+
+        await header.getByRole('button', { name: 'Reply', exact: true }).click();
+        await expect(page.locator('.fs_note_warning')).toHaveCount(0);
+        await expect(editorBody).toContainText(`Switch text ${fx.marker}`);
+
+        await header.getByRole('button', { name: 'Notes', exact: true }).click();
+        const sent = api(page, 'POST', `tickets/${fx.ticket_view}/responses`);
+        await page.locator('.fs_create_response .fs_reply_btn:not(.fs_reply_split_toggle)').click();
+        await sent;
+
+        const saved = conversations(fx.ticket_view).pop();
+        expect(saved.conversation_type).toBe('note');
+        expect(saved.content).toContain(`Switch text ${fx.marker}`);
+    });
+
+    test('a saved draft opens in Notes too, so switching to Reply never overwrites it', async ({ page }) => {
+        const ticketId = Number(fx.ticket_view);
+        const key = `ticket_no_${ticketId}_agent_id_${Number(fx.admin_agent)}_response_draft`;
+        php(`$s = \\FluentSupport\\App\\Services\\Helper::getOption('global_business_settings', []);
+            update_option('fs_e2e_draft_mode_was', isset($s['enable_draft_mode']) ? $s['enable_draft_mode'] : 'no');
+            $s['enable_draft_mode'] = 'yes';
+            \\FluentSupport\\App\\Services\\Helper::updateOption('global_business_settings', $s);
+            \\FluentSupport\\App\\Models\\Meta::where('key', '${key}')->delete();
+            \\FluentSupport\\App\\Models\\Meta::insert(['object_type' => '_fs_auto_draft', 'object_id' => ${ticketId}, 'key' => '${key}',
+                'value' => maybe_serialize(['content' => '<p>Saved draft ${fx.marker}</p>', 'conversation_type' => 'response'])]);
+            echo '{}';`);
+
+        try {
+            await openTicket(page, fx.ticket_view);
+            const editorBody = page.frameLocator('.fs_create_response iframe').locator('body');
+
+            await page.locator('.fs_composer_prompt_note').click();
+            await expect(editorBody).toContainText(`Saved draft ${fx.marker}`);
+
+            await page.locator('.fs_action_group').getByRole('button', { name: 'Reply', exact: true }).click();
+            await expect(editorBody).toContainText(`Saved draft ${fx.marker}`);
+        } finally {
+            php(`$s = \\FluentSupport\\App\\Services\\Helper::getOption('global_business_settings', []);
+                $s['enable_draft_mode'] = get_option('fs_e2e_draft_mode_was', 'no');
+                \\FluentSupport\\App\\Services\\Helper::updateOption('global_business_settings', $s);
+                delete_option('fs_e2e_draft_mode_was');
+                \\FluentSupport\\App\\Models\\Meta::where('key', '${key}')->delete();
+                echo '{}';`);
+        }
+    });
+
     test('a note is saved as a note and emails nobody outside the team', async ({ page }) => {
         await openTicket(page, fx.ticket_view);
         const mailBefore = mailSent().length;

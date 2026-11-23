@@ -130,6 +130,7 @@ class Settings
             'ticket_prefix'        => '',
             'min_serial_number'    => 1,
             'enable_fluent_booking_integration' => 'no',
+            'enable_community_tickets' => 'no',
             'report_snapshot_retention' => '15',
         ];
 
@@ -381,6 +382,17 @@ class Settings
                 'false-label'    => 'no',
                 'checkbox_label' => __('Enable Fluent Booking Integration', 'fluent-support'),
                 'inline_help'    => __('If you enable this, agents can create booking links and view meeting details inside tickets.', 'fluent-support')
+            ];
+        }
+
+        if (defined('FLUENT_COMMUNITY_PLUGIN_VERSION')) {
+            $fields['enable_community_tickets'] = [
+                'wrapper_class'  => '',
+                'type'           => 'inline-checkbox',
+                'true_label'     => 'yes',
+                'false-label'    => 'no',
+                'checkbox_label' => __('Create Support Tickets from FluentCommunity', 'fluent-support'),
+                'inline_help'    => __('If you enable this, community moderators who are also support agents get a Create Support Ticket item in the post and comment menus.', 'fluent-support')
             ];
         }
 

@@ -153,6 +153,20 @@ class TicketController extends Controller
                 $ticketData['attachments'] = $data['attachments'];
             }
 
+            // Checked before a customer or WordPress user is created below.
+            if (Arr::get($ticketData, 'agent_initiated') === 'yes' && Arr::get($ticketData, 'start_with_note') === 'yes') {
+                return $this->sendError([
+                    'message' => __('Choose either "Initiated by agent" or "Save as an internal note", not both.', 'fluent-support')
+                ]);
+            }
+
+            // storeTicket() refuses this too, but only after the customer below exists.
+            if (Arr::get($ticketData, 'start_with_note') === 'yes' && !Helper::getAgentByUserId()) {
+                return $this->sendError([
+                    'message' => __('Only a support agent can start a ticket with an internal note.', 'fluent-support')
+                ], 403);
+            }
+
             if (empty($ticketData['customer_id'])) {
                 // findOrCreate() below links the new customer to this user by email.
                 if (Arr::get($ticketData, 'create_wp_user') == 'yes' && !empty($maybeNewCustomer['username']) && !username_exists($maybeNewCustomer['username'])) {
@@ -383,6 +397,8 @@ class TicketController extends Controller
                         'id'        => $ticket->created_by_person->id,
                         'full_name' => $ticket->created_by_person->full_name,
                         'agent_initiated' => $isAgentInitiated,
+                        // Logged as an internal note: the body is a placeholder, the note opens the thread.
+                        'agent_logged'    => $ticket->source === Ticket::SOURCE_AGENT_LOGGED,
                     ];
                 }
                 $ticket->unsetRelation('created_by_person');
@@ -901,7 +917,16 @@ class TicketController extends Controller
     {
         try {
             $action = $request->getSafe('bulk_action', 'sanitize_text_field');
-            $ticketIds = array_map('intval', (array) $request->get('ticket_ids', null, []));
+            // Keep integer ids only: intval() turns a nested array or `true` into ticket #1.
+            $ticketIds = array_values(array_unique(array_filter(array_map(function ($id) {
+                return (is_int($id) || (is_string($id) && ctype_digit($id))) ? (int) $id : 0;
+            }, (array) $request->get('ticket_ids', [])), function ($id) {
+                return $id > 0;
+            })));
+
+            if (!$ticketIds) {
+                throw new \Exception(esc_html__('Please select at least one ticket.', 'fluent-support'), 422);
+            }
 
             if (count($ticketIds) > self::MAX_BULK_TICKETS) {
                 throw new \Exception(sprintf(

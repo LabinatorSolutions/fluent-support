@@ -53,6 +53,32 @@ const chunkCacheBustPlugin = {
 
 const appModuleId = path.resolve(__dirname, 'resources/admin/app.js');
 
+// FluentCommunity's shared runtime (@fluentcommunity/vue, /element-plus, /ui): its portal
+// page maps these through an import map, so add-on scripts import them and never bundle a copy.
+// The build keeps the bare imports. The dev server rewrites them to /@id/@fluentcommunity/x,
+// so it answers that path with a re-export, which the browser resolves through the same map.
+const fluentCommunityRuntimePlugin = {
+    name: 'fluent-community-runtime',
+    enforce: 'pre',
+    resolveId(id) {
+        if (id.startsWith('@fluentcommunity/')) {
+            return {id, external: true};
+        }
+        return null;
+    },
+    configureServer(server) {
+        server.middlewares.use((req, res, next) => {
+            const match = /^\/@id\/(@fluentcommunity\/[a-z-]+)(?:\?|$)/.exec(req.url || '');
+            if (!match) {
+                return next();
+            }
+            res.setHeader('Content-Type', 'text/javascript');
+            res.setHeader('Access-Control-Allow-Origin', '*');
+            res.end(`export * from '${match[1]}';`);
+        });
+    }
+};
+
 // Fail the build when a chunk imports a file the bundle does not contain
 // (for example a CSS-only chunk Vite removed), instead of shipping a page that 404s.
 const verifyChunkImportsPlugin = {
@@ -90,6 +116,7 @@ const inputs = [
     "resources/admin/start.js",
     "resources/admin/global_admin.js",
     "resources/admin/global_summary.js",
+    "resources/admin/community_ticket_menu.js",
     "resources/customer_portal/login_helper.js",
     "resources/scss/alpha-admin.scss",
     "resources/scss/all_public.scss",
@@ -302,6 +329,7 @@ export default defineConfig({
         }
     },
     plugins: [
+        fluentCommunityRuntimePlugin,
         AutoImport({
             resolvers: [ElementPlusResolver()],
         }),

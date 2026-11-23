@@ -3,7 +3,7 @@ Contributors: techjewel, wpmanageninja, adreastrian
 Tags: wordpress support ticket, Support Ticket, support plugin, helpdesk, customer support plugin
 Requires at least: 5.6
 Tested up to: 7.1
-Stable tag: 2.5.0
+Stable tag: 2.5.1
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -286,6 +286,20 @@ No external connections are established, and all processing occurs within your o
 9. All Customers
 
 == Changelog ==
+= 2.5.1 (Date: November 20, 2026) =
+* Added: Create support tickets from FluentCommunity posts and comments
+* Added: Log a ticket that starts with an internal note, hidden from the customer until the first reply
+* Added: PDF and Markdown attachment preview
+* Added: Metric tooltips and average first response in Reports
+* Added: One-URL MCP connect with FluentHub
+* Improved: Reply and Notes share one composer, so your text stays when you switch
+* Improved: Redesigned ticket list toolbar, filters and bulk action bar
+* Improved: Clearer Live/Snapshot selector in Reports
+* Fixed: Agent Performance counts and imported ticket times
+* Fixed: FluentCRM and Fluent Forms ticket actions now respect blocked customers
+* Fixed: Several Pro integration issues (ticket tags, email piping, chat, FluentCommunity)
+* Security: Hardening through ongoing audits
+
 = 2.5.0 (Date: November 2, 2026) =
 * Added: Scheduled Replies (Pro) — send later, then edit, send now or cancel
 * Added: System Admin Tools — Cron Job Monitor, Database Health and Data Cleanup

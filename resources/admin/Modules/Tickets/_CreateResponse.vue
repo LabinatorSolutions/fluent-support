@@ -1,6 +1,6 @@
 <template>
     <div class="fs_create_response" :class="'fs_reply_type_'+type">
-        <div class="fs_row" v-if="ticket.source === 'email'">
+        <div class="fs_row" v-if="ticket.source === 'email' && type !== 'note'">
             <el-form-item :label="$t('Cc')" v-if="selected_cc?.length || show_cc_option">
                 <el-select v-model="selected_cc" multiple filterable remote
                            :placeholder="$t('Please enter email')"
@@ -21,7 +21,7 @@
                 </el-select>
             </el-form-item>
         </div>
-        <wp-editor :autofocus="true" v-if="editor_ready" :class="{ fs_editor_needs_text: highlightEmptyEditor }" v-model="response_body" :height="170" :ticketId="ticket.id" :productID="ticket.product_id" :is_agent="is_agent" :is_direct_paste="true" :editor_shortcodes="shortcodes" :openAIIntegration="openAIIntegration"
+        <wp-editor ref="editor" :autofocus="true" v-if="editor_ready" :class="{ fs_editor_needs_text: highlightEmptyEditor }" v-model="response_body" :height="170" :ticketId="ticket.id" :productID="ticket.product_id" :is_agent="is_agent" :is_direct_paste="true" :editor_shortcodes="shortcodes" :openAIIntegration="openAIIntegration"
                    :show-fluent-booking="type === 'response' && !!appVars.fluent_booking?.active"
                    :show-saved-replies="true" :show-cc-toggle-button="ticket.source === 'email' && type !== 'note'" :add_cc="selected_cc?.length > 0 || show_cc_option" @toggleCcOption="toggleCcOption"/>
         <div class="fs_row fs_attachment_section">
@@ -46,12 +46,9 @@
             </span>
             <el-button text @click="discardScheduleEdit">{{ $t('Discard changes') }}</el-button>
         </div>
-        <div v-if="editingSchedule && isEditorEmpty" class="fs_schedule_empty_notice fs_schedule_edit_empty" role="status">
-            <el-icon><EditPen /></el-icon>
-            <span class="fs_schedule_empty_notice_text">
-                <strong>{{ $t('Your reply is empty') }}</strong>
-                <span>{{ $t('Write your reply in the editor before you save it.') }}</span>
-            </span>
+        <div v-if="editingSchedule && isEditorEmpty" class="fs_schedule_alert fs_schedule_edit_empty" role="status">
+            <el-icon><WarningFilled /></el-icon>
+            <span>{{ $t('Write your reply in the editor before you save it.') }}</span>
         </div>
         <div class="fs_draft_response_actions fs_row fs_actions_row">
             <div class="fs_half fs_left_section">
@@ -206,7 +203,8 @@ export default {
                     this.removeDraft();
                 }
 
-                if (this.type === 'response' || this.type === 'draft_response') {
+                // Notes are never saved as a draft.
+                if (this.type !== 'note') {
                     this.saveResponseDraft();
                 }
             }
@@ -221,15 +219,15 @@ export default {
                     this.removeDraft();
                 }
 
-                if (this.type === 'response' || this.type === 'draft_response') {
+                // Notes are never saved as a draft.
+                if (this.type !== 'note') {
                     this.saveResponseDraft();
                 }
             }
         },
         // The parent learns a new draft's ID after this box loaded it; take it so sending removes the draft.
-        // Reply composers only, like loadDraft(): a note must never delete the reply draft.
         'draft.id'(id) {
-            if (id && !this.draftID && ['response', 'draft_response'].includes(this.type)) {
+            if (id && !this.draftID) {
                 this.draftID = id;
             }
         },
@@ -262,11 +260,23 @@ export default {
             },
             immediate: true
         },
-        'type'(newType) {
-            if (newType === 'note') {
-                this.show_cc_option = false;
-                this.selected_cc = [];
+        // Reply and Note share one box: the text, Cc and attachments stay when the agent switches.
+        type(newType) {
+            if (this.appVars.enable_draft_mode === 'yes' && !Array.isArray(this.ticket) && !this.editingSchedule) {
+                if (newType === 'note') {
+                    // Keep the reply edits made before the switch; nothing typed as a note is saved.
+                    if (this.saveResponseDraftTimer) {
+                        clearTimeout(this.saveResponseDraftTimer);
+                        this.saveResponseDraftTimer = null;
+                        this.flushResponseDraft();
+                    }
+                } else if (this.response_body !== '') {
+                    // Back on Reply, the text in the box is the reply draft again.
+                    this.saveResponseDraft();
+                }
             }
+
+            this.$nextTick(() => this.focusEditor());
         }
     },
     methods: {
@@ -347,7 +357,8 @@ export default {
             });
         },
 
-        create(closed = 'no', forceSend = false, scheduledAt = null) {
+        // The mode is fixed at the click: Reply and Notes share this box, so it can change while a send waits.
+        create(closed = 'no', forceSend = false, scheduledAt = null, type = this.type) {
             if (this.attachmentUploadState.uploading) {
                 this.notifyAttachmentUploadPending();
                 return;
@@ -363,7 +374,7 @@ export default {
                     }
                     this._pendingDraftSave = null;
                     this.creating = false;
-                    this.create(closed, forceSend, scheduledAt);
+                    this.create(closed, forceSend, scheduledAt, type);
                 });
                 return;
             }
@@ -371,11 +382,12 @@ export default {
             this.isCreatingResponse = true;
             const data = {
                 content: this.response_body,
-                conversation_type: this.type,
+                conversation_type: type,
                 close_ticket: closed,
                 attachments: this.attachments,
-                cc_emails: this.selected_cc,
-                informational_reply: this.informational_reply,
+                // Cc and informational are kept for when the agent switches back to Reply; a note sends neither.
+                cc_emails: type === 'note' ? [] : this.selected_cc,
+                informational_reply: type === 'response' && this.informational_reply,
             };
 
             if (scheduledAt) {
@@ -383,7 +395,7 @@ export default {
             }
 
             // 0 means the thread had no replies yet; still checked.
-            if (!Array.isArray(this.ticket) && this.type === 'response' && Number.isInteger(this.last_conversation_id)) {
+            if (!Array.isArray(this.ticket) && type === 'response' && Number.isInteger(this.last_conversation_id)) {
                 data.last_conversation_id = this.last_conversation_id;
                 if (forceSend) {
                     data.force_send = 'yes';
@@ -428,7 +440,7 @@ export default {
                     this.isCreatingResponse = false;
                     const body = errors && errors.responseJSON;
                     if (body && body.code === 'fs_newer_responses') {
-                        this.confirmDespiteNewerResponses(body.new_responses || [], closed, scheduledAt);
+                        this.confirmDespiteNewerResponses(body.new_responses || [], closed, scheduledAt, type);
                         return;
                     }
                     this.$handleError(errors);
@@ -511,6 +523,16 @@ export default {
             });
         },
 
+        focusEditor() {
+            const id = this.$refs.editor?.editor_id;
+            const tiny = id && window.tinyMCE?.get(id);
+            if (tiny) {
+                tiny.focus();
+            } else if (id) {
+                document.getElementById(id)?.focus();
+            }
+        },
+
         // The editor reads its content only when it mounts, so remount it after replacing the text
         refreshEditor() {
             if (!this.isMounted) {
@@ -527,7 +549,7 @@ export default {
          * Someone replied while the agent was writing. Show the new replies
          * (the draft stays in the editor) or send anyway.
          */
-        confirmDespiteNewerResponses(newResponses, closed, scheduledAt = null) {
+        confirmDespiteNewerResponses(newResponses, closed, scheduledAt = null, type = this.type) {
             const names = [...new Set(newResponses.map(item => item.person_name).filter(Boolean))];
             let message;
             if (newResponses.length === 1 && names.length === 1) {
@@ -547,7 +569,7 @@ export default {
                 type: 'warning'
             })
                 .then(() => {
-                    this.create(closed, true, scheduledAt);
+                    this.create(closed, true, scheduledAt, type);
                 })
                 .catch((action) => {
                     if (action === 'cancel') {
@@ -558,11 +580,6 @@ export default {
 
         loadDraft() {
             if (this.appVars.enable_draft_mode !== 'yes' || Array.isArray(this.ticket) || !this.draft) {
-                return;
-            }
-
-            // Reply drafts only; never prefill an internal note with customer-facing text.
-            if (!['response', 'draft_response'].includes(this.type)) {
                 return;
             }
 

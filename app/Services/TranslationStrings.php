@@ -14,6 +14,7 @@ class TranslationStrings
     public static function getAdminStrings()
     {
         return [
+            "\x00plural_index" => self::pluralRule('fluent-support')['index'],
             /* translators: %1$s is a field name, %2$s the text it must contain */
             '%1$s contains "%2$s"' => __('%1$s contains "%2$s"', 'fluent-support'),
             /* translators: %1$s is a field name, %2$s the text it must not contain */
@@ -45,9 +46,7 @@ class TranslationStrings
             /* translators: %1$s is the number of selected tickets, %2$s the total number of tickets */
             '%1$s out of %2$s tickets' => __('%1$s out of %2$s tickets', 'fluent-support'),
             /* translators: %1$s is the number of tickets waiting for a reply, %2$s the average wait (e.g. 3 hours), %3$s the longest wait */
-            '%1$s ticket is waiting for a reply, with an average wait of %2$s and a longest wait of %3$s.' => __('%1$s ticket is waiting for a reply, with an average wait of %2$s and a longest wait of %3$s.', 'fluent-support'),
-            /* translators: %1$s is the number of tickets waiting for a reply, %2$s the average wait (e.g. 3 hours), %3$s the longest wait */
-            '%1$s tickets are waiting for a reply, with an average wait of %2$s and a longest wait of %3$s.' => __('%1$s tickets are waiting for a reply, with an average wait of %2$s and a longest wait of %3$s.', 'fluent-support'),
+            "%1\$s ticket is waiting for a reply, with an average wait of %2\$s and a longest wait of %3\$s.\x00%1\$s tickets are waiting for a reply, with an average wait of %2\$s and a longest wait of %3\$s." => self::pluralForms(_n_noop('%1$s ticket is waiting for a reply, with an average wait of %2$s and a longest wait of %3$s.', '%1$s tickets are waiting for a reply, with an average wait of %2$s and a longest wait of %3$s.', 'fluent-support')),
             /* translators: 1: ticket title, 2: ticket status, 3: ticket number, 4: relative time such as "2 days ago" */
             '%1$s, %2$s, ticket #%3$s, updated %4$s' => __('%1$s, %2$s, ticket #%3$s, updated %4$s', 'fluent-support'),
             /* translators: %1$s is a field name, %2$s the chosen option, such as "Has an attachment" */
@@ -57,101 +56,69 @@ class TranslationStrings
             /* translators: a duration, %1$s is hours and %2$s is minutes, for example "2h 14m" */
             '%1$sh %2$sm' => __('%1$sh %2$sm', 'fluent-support'),
             /* translators: %d is how many items a workflow condition lists */
-            '%d item' => __('%d item', 'fluent-support'),
-            /* translators: %d is how many items a workflow condition lists */
-            '%d items' => __('%d items', 'fluent-support'),
+            "%d item\x00%d items" => self::pluralForms(_n_noop('%d item', '%d items', 'fluent-support')),
             /* translators: %d is the number of replies the agent wrote today */
-            '%d response' => __('%d response', 'fluent-support'),
-            /* translators: %d is the number of replies the agent wrote today */
-            '%d responses' => __('%d responses', 'fluent-support'),
+            "%d response\x00%d responses" => self::pluralForms(_n_noop('%d response', '%d responses', 'fluent-support')),
             /* translators: %d is the number of missing database tables */
             '%d table(s) are missing.' => __('%d table(s) are missing.', 'fluent-support'),
             /* translators: %d is the number of the agent's tickets waiting for a reply */
-            '%d ticket waiting' => __('%d ticket waiting', 'fluent-support'),
-            /* translators: %d is the number of the agent's tickets waiting for a reply */
-            '%d tickets waiting' => __('%d tickets waiting', 'fluent-support'),
+            "%d ticket waiting\x00%d tickets waiting" => self::pluralForms(_n_noop('%d ticket waiting', '%d tickets waiting', 'fluent-support')),
             /* translators: %s is the integration name, e.g. Slack */
             '%s Integration Settings' => __('%s Integration Settings', 'fluent-support'),
-            /* translators: %s is the number of agents viewing this ticket */
-            '%s People Watching' => __('%s People Watching', 'fluent-support'),
             /* translators: %s is the number of permissions the agent has */
-            '%s Permission' => __('%s Permission', 'fluent-support'),
-            /* translators: %s is the number of permissions the agent has */
-            '%s Permissions' => __('%s Permissions', 'fluent-support'),
+            "%s Permission\x00%s Permissions" => self::pluralForms(_n_noop('%s Permission', '%s Permissions', 'fluent-support')),
             /* translators: %s is the number of agents viewing this ticket */
-            '%s Person Watching' => __('%s Person Watching', 'fluent-support'),
+            "%s Person Watching\x00%s People Watching" => self::pluralForms(_n_noop('%s Person Watching', '%s People Watching', 'fluent-support')),
             /* translators: %s is the number of teams selected in the filter */
-            '%s Team' => __('%s Team', 'fluent-support'),
-            /* translators: %s is the number of teams selected in the filter */
-            '%s Teams' => __('%s Teams', 'fluent-support'),
+            "%s Team\x00%s Teams" => self::pluralForms(_n_noop('%s Team', '%s Teams', 'fluent-support')),
             /* translators: %s is a comma-separated list of search field keys the user typed, such as "zip:, area:" */
             '%s are not search fields, so they were matched as plain text.' => __('%s are not search fields, so they were matched as plain text.', 'fluent-support'),
             /* translators: %s: number of selected customers */
-            '%s customer selected' => __('%s customer selected', 'fluent-support'),
-            /* translators: %s: number of selected customers */
-            '%s customers selected' => __('%s customers selected', 'fluent-support'),
+            "%s customer selected\x00%s customers selected" => self::pluralForms(_n_noop('%s customer selected', '%s customers selected', 'fluent-support')),
             /* translators: %s: number of days */
-            '%s day' => __('%s day', 'fluent-support'),
-            /* translators: %s: number of days */
-            '%s days' => __('%s days', 'fluent-support'),
+            "%s day\x00%s days" => self::pluralForms(_n_noop('%s day', '%s days', 'fluent-support')),
             /* translators: %s is the estimated time, e.g. "2h" */
             '%s estimated' => __('%s estimated', 'fluent-support'),
             /* translators: %s: number of files */
-            '%s file could not be removed from the remote storage after its ticket was deleted.' => __('%s file could not be removed from the remote storage after its ticket was deleted.', 'fluent-support'),
+            "%s file could not be removed from the remote storage after its ticket was deleted.\x00%s files could not be removed from the remote storage after their tickets were deleted." => self::pluralForms(_n_noop('%s file could not be removed from the remote storage after its ticket was deleted.', '%s files could not be removed from the remote storage after their tickets were deleted.', 'fluent-support')),
             /* translators: %s: number of files */
-            '%s file could not be uploaded and was kept on this server.' => __('%s file could not be uploaded and was kept on this server.', 'fluent-support'),
+            "%s file could not be uploaded and was kept on this server.\x00%s files could not be uploaded and were kept on this server." => self::pluralForms(_n_noop('%s file could not be uploaded and was kept on this server.', '%s files could not be uploaded and were kept on this server.', 'fluent-support')),
             /* translators: %s: number of files */
-            '%s file is stored here. It stays on the remote storage; you can still open it from its ticket while the storage account exists.' => __('%s file is stored here. It stays on the remote storage; you can still open it from its ticket while the storage account exists.', 'fluent-support'),
-            /* translators: %s: number of files */
-            '%s files are stored here. They stay on the remote storage; you can still open them from their tickets while the storage account exists.' => __('%s files are stored here. They stay on the remote storage; you can still open them from their tickets while the storage account exists.', 'fluent-support'),
-            /* translators: %s: number of files */
-            '%s files could not be removed from the remote storage after their tickets were deleted.' => __('%s files could not be removed from the remote storage after their tickets were deleted.', 'fluent-support'),
-            /* translators: %s: number of files */
-            '%s files could not be uploaded and were kept on this server.' => __('%s files could not be uploaded and were kept on this server.', 'fluent-support'),
+            "%s file is stored here. It stays on the remote storage; you can still open it from its ticket while the storage account exists.\x00%s files are stored here. They stay on the remote storage; you can still open them from their tickets while the storage account exists." => self::pluralForms(_n_noop('%s file is stored here. It stays on the remote storage; you can still open it from its ticket while the storage account exists.', '%s files are stored here. They stay on the remote storage; you can still open them from their tickets while the storage account exists.', 'fluent-support')),
             /* translators: %s is a search field key the user typed, such as "zip:" */
             '%s is not a search field, so it was matched as plain text.' => __('%s is not a search field, so it was matched as plain text.', 'fluent-support'),
+            /* translators: %s is the number of selected tickets */
+            "%s item Selected\x00%s items Selected" => self::pluralForms(_n_noop('%s item Selected', '%s items Selected', 'fluent-support')),
             /* translators: %s is the total time logged, e.g. "1h 30m" */
             '%s logged' => __('%s logged', 'fluent-support'),
+            /* translators: %s is the agent's name */
+            '%s logged this ticket' => __('%s logged this ticket', 'fluent-support'),
             /* translators: %s: number of tickets */
-            '%s matching ticket' => __('%s matching ticket', 'fluent-support'),
-            /* translators: %s: number of tickets */
-            '%s matching tickets' => __('%s matching tickets', 'fluent-support'),
+            "%s matching ticket\x00%s matching tickets" => self::pluralForms(_n_noop('%s matching ticket', '%s matching tickets', 'fluent-support')),
             /* translators: %s is the meeting length in minutes */
             '%s min' => __('%s min', 'fluent-support'),
             /* translators: %s is the number of matching options not shown in the list */
             '%s more. Search to narrow the list.' => __('%s more. Search to narrow the list.', 'fluent-support'),
             /* translators: %s is the number of replies added while the agent was writing */
-            '%s new replies arrived while you were writing.' => __('%s new replies arrived while you were writing.', 'fluent-support'),
-            /* translators: %s is the number of replies added while the agent was writing */
-            '%s new reply arrived while you were writing.' => __('%s new reply arrived while you were writing.', 'fluent-support'),
+            "%s new reply arrived while you were writing.\x00%s new replies arrived while you were writing." => self::pluralForms(_n_noop('%s new reply arrived while you were writing.', '%s new replies arrived while you were writing.', 'fluent-support')),
             /* translators: %s is the customer's name */
             '%s replied after you scheduled this. Check it before it sends.' => __('%s replied after you scheduled this. Check it before it sends.', 'fluent-support'),
             /* translators: %s is the name of the customer or agent who replied */
             '%s replied while you were writing.' => __('%s replied while you were writing.', 'fluent-support'),
-            /* translators: %s is the number of selected tickets */
+            /* translators: %s is the number of replies an agent sent */
+            "%s response\x00%s responses" => self::pluralForms(_n_noop('%s response', '%s responses', 'fluent-support')),
+            /* translators: %s is the number of selected time slots */
             '%s selected' => __('%s selected', 'fluent-support'),
             /* translators: %s is the agent's name */
             '%s started this conversation' => __('%s started this conversation', 'fluent-support'),
             /* translators: %s is the number of chosen tags. Used inside "Add %1$s to %2$s" */
-            '%s tag' => __('%s tag', 'fluent-support'),
-            /* translators: %s is the number of chosen tags. Used inside "Add %1$s to %2$s" */
-            '%s tags' => __('%s tags', 'fluent-support'),
+            "%s tag\x00%s tags" => self::pluralForms(_n_noop('%s tag', '%s tags', 'fluent-support')),
             /* translators: %s is the number of selected tickets. Used inside button labels such as "Close 3 tickets" */
-            '%s ticket' => __('%s ticket', 'fluent-support'),
+            "%s ticket\x00%s tickets" => self::pluralForms(_n_noop('%s ticket', '%s tickets', 'fluent-support')),
             /* translators: %s is the number of selected tickets */
-            '%s ticket selected' => __('%s ticket selected', 'fluent-support'),
+            "%s ticket selected\x00%s tickets selected" => self::pluralForms(_n_noop('%s ticket selected', '%s tickets selected', 'fluent-support')),
             /* translators: %s is the number of tickets the audit run could not process */
-            '%s ticket wasn\'t audited in this run. Click Run Audit again to retry it.' => __('%s ticket wasn\'t audited in this run. Click Run Audit again to retry it.', 'fluent-support'),
-            /* translators: %s is the number of selected tickets. Used inside button labels such as "Close 3 tickets" */
-            '%s tickets' => __('%s tickets', 'fluent-support'),
-            /* translators: %s is the number of selected tickets */
-            '%s tickets selected' => __('%s tickets selected', 'fluent-support'),
-            /* translators: %s is the number of tickets the audit run could not process */
-            '%s tickets weren\'t audited in this run. Click Run Audit again to retry any that still need it.' => __('%s tickets weren\'t audited in this run. Click Run Audit again to retry any that still need it.', 'fluent-support'),
-            /* translators: %s is the number of MCP tools registered */
-            '%s tool registered' => __('%s tool registered', 'fluent-support'),
-            /* translators: %s is the number of MCP tools registered */
-            '%s tools registered' => __('%s tools registered', 'fluent-support'),
+            "%s ticket wasn't audited in this run. Click Run Audit again to retry it.\x00%s tickets weren't audited in this run. Click Run Audit again to retry any that still need it." => self::pluralForms(_n_noop('%s ticket wasn\'t audited in this run. Click Run Audit again to retry it.', '%s tickets weren\'t audited in this run. Click Run Audit again to retry any that still need it.', 'fluent-support')),
             /* translators: a duration in minutes, for example "45m" */
             '%sm' => __('%sm', 'fluent-support'),
             /* translators: %s is the business.name smartcode */
@@ -165,8 +132,10 @@ class TranslationStrings
             '(opens in a new tab)' => __('(opens in a new tab)', 'fluent-support'),
             /* translators: %s is the number of additional items not shown */
             '+%s more' => __('+%s more', 'fluent-support'),
+            'A day-by-hour heatmap of new tickets, agent replies and customer replies shows your busiest times, so you can plan who is on shift.' => __('A day-by-hour heatmap of new tickets, agent replies and customer replies shows your busiest times, so you can plan who is on shift.', 'fluent-support'),
             /* translators: %s is the last four characters of the saved API key */
             'A key ending in %s is saved.' => __('A key ending in %s is saved.', 'fluent-support'),
+            'A saved copy of this report, taken every 6 hours. Use it to see how things looked earlier.' => __('A saved copy of this report, taken every 6 hours. Use it to see how things looked earlier.', 'fluent-support'),
             'A ticket can have one scheduled reply. Edit or cancel it to schedule this one.' => __('A ticket can have one scheduled reply. Edit or cancel it to schedule this one.', 'fluent-support'),
             'A ticket must match every AND group. Inside a group, matching one OR row is enough. Leave the rows empty to run on every ticket.' => __('A ticket must match every AND group. Inside a group, matching one OR row is enough. Leave the rows empty to run on every ticket.', 'fluent-support'),
             'AI Activities' => __('AI Activities', 'fluent-support'),
@@ -195,6 +164,7 @@ class TranslationStrings
             'Activity Logs are currently disabled' => __('Activity Logs are currently disabled', 'fluent-support'),
             'Activity Trends by Time of Day' => __('Activity Trends by Time of Day', 'fluent-support'),
             'Adapter' => __('Adapter', 'fluent-support'),
+            'Adapter Required' => __('Adapter Required', 'fluent-support'),
             'Add' => __('Add', 'fluent-support'),
             /* translators: %1$s is a number of tags such as "2 tags", %2$s is the tickets such as "3 tickets" */
             'Add %1$s to %2$s' => __('Add %1$s to %2$s', 'fluent-support'),
@@ -223,10 +193,13 @@ class TranslationStrings
             'Add an action' => __('Add an action', 'fluent-support'),
             'Add an action here' => __('Add an action here', 'fluent-support'),
             'Add new customer' => __('Add new customer', 'fluent-support'),
+            'Add new properties' => __('Add new properties', 'fluent-support'),
             'Add or remove' => __('Add or remove', 'fluent-support'),
             'Add or remove tags automatically with workflows' => __('Add or remove tags automatically with workflows', 'fluent-support'),
             'Add tags to one ticket or many at once' => __('Add tags to one ticket or many at once', 'fluent-support'),
             'Add team members to handle support tickets' => __('Add team members to handle support tickets', 'fluent-support'),
+            'Add this URL to your AI app and sign in with your WordPress account. There is no password to copy, and the same URL gives the app your other Fluent plugins.' => __('Add this URL to your AI app and sign in with your WordPress account. There is no password to copy, and the same URL gives the app your other Fluent plugins.', 'fluent-support'),
+            'Add this URL to your AI app and sign in with your WordPress account. There is no password to copy.' => __('Add this URL to your AI app and sign in with your WordPress account. There is no password to copy.', 'fluent-support'),
             'Add to home' => __('Add to home', 'fluent-support'),
             'Add your own fields to the ticket form' => __('Add your own fields to the ticket form', 'fluent-support'),
             'Added' => __('Added', 'fluent-support'),
@@ -236,6 +209,7 @@ class TranslationStrings
             'Address' => __('Address', 'fluent-support'),
             'Address Line 1' => __('Address Line 1', 'fluent-support'),
             'Address Line 2' => __('Address Line 2', 'fluent-support'),
+            'Adds NODE_TLS_REJECT_UNAUTHORIZED=0 so the proxy accepts the certificate.' => __('Adds NODE_TLS_REJECT_UNAUTHORIZED=0 so the proxy accepts the certificate.', 'fluent-support'),
             'Admin Email Address' => __('Admin Email Address', 'fluent-support'),
             'Admin Label (Optional)' => __('Admin Label (Optional)', 'fluent-support'),
             'Admin Priority' => __('Admin Priority', 'fluent-support'),
@@ -261,6 +235,8 @@ class TranslationStrings
             'Agent Signature' => __('Agent Signature', 'fluent-support'),
             'Agent Title' => __('Agent Title', 'fluent-support'),
             'Agent outreach' => __('Agent outreach', 'fluent-support'),
+            'Agent replies per active agent in the date range.' => __('Agent replies per active agent in the date range.', 'fluent-support'),
+            'Agent replies sent in the date range.' => __('Agent replies sent in the date range.', 'fluent-support'),
             'Agent response comparison' => __('Agent response comparison', 'fluent-support'),
             'Agent_Mention_Notification_Help' => __('Agents will receive notifications when they are mentioned in replies or internal notes. This cannot be disabled from these settings.', 'fluent-support'),
             'Agents' => __('Agents', 'fluent-support'),
@@ -282,7 +258,6 @@ class TranslationStrings
             'Allow Fluent Support to collect non-sensitive data and usage information.' => __('Allow Fluent Support to collect non-sensitive data and usage information.', 'fluent-support'),
             /* translators: %1$s is a comma-separated list of the escalation steps that succeeded, e.g. "agent assigned, note added"; %2$s is the label of the Escalate ticket button */
             'Already done: %1$s. The rest failed. Click "%2$s" again to retry it.' => __('Already done: %1$s. The rest failed. Click "%2$s" again to retry it.', 'fluent-support'),
-            /* translators: Short badge next to a tag name. %1$s is how many selected tickets have it, %2$s is the number of selected tickets */
             'Already on all' => __('Already on all', 'fluent-support'),
             'Already set' => __('Already set', 'fluent-support'),
             'An agent runs it' => __('An agent runs it', 'fluent-support'),
@@ -292,7 +267,7 @@ class TranslationStrings
             'Answered same day' => __('Answered same day', 'fluent-support'),
             'App ID' => __('App ID', 'fluent-support'),
             'App Secret' => __('App Secret', 'fluent-support'),
-            'Application password' => __('Application password', 'fluent-support'),
+            'Application password (xxxx xxxx xxxx xxxx xxxx xxxx)' => __('Application password (xxxx xxxx xxxx xxxx xxxx xxxx)', 'fluent-support'),
             'Apply' => __('Apply', 'fluent-support'),
             'Apply / Remove Lists on FluentCRM Profile' => __('Apply / Remove Lists on FluentCRM Profile', 'fluent-support'),
             'Apply / Remove Tags on FluentCRM Profile' => __('Apply / Remove Tags on FluentCRM Profile', 'fluent-support'),
@@ -307,13 +282,9 @@ class TranslationStrings
             'Are you sure to delete this?' => __('Are you sure to delete this?', 'fluent-support'),
             'Are you sure to delete this? All associate data will be deleted' => __('Are you sure to delete this? All associate data will be deleted', 'fluent-support'),
             /* translators: %s is the number of customers selected for deletion */
-            'Are you sure you want to delete %s customer? All data associated with this customer will be deleted.' => __('Are you sure you want to delete %s customer? All data associated with this customer will be deleted.', 'fluent-support'),
-            /* translators: %s is the number of customers selected for deletion */
-            'Are you sure you want to delete %s customers? All data associated with these customers will be deleted.' => __('Are you sure you want to delete %s customers? All data associated with these customers will be deleted.', 'fluent-support'),
+            "Are you sure you want to delete %s customer? All data associated with this customer will be deleted.\x00Are you sure you want to delete %s customers? All data associated with these customers will be deleted." => self::pluralForms(_n_noop('Are you sure you want to delete %s customer? All data associated with this customer will be deleted.', 'Are you sure you want to delete %s customers? All data associated with these customers will be deleted.', 'fluent-support')),
             /* translators: %s is the number of workflows selected for deletion */
-            'Are you sure you want to delete %s workflow? All associated data will be deleted.' => __('Are you sure you want to delete %s workflow? All associated data will be deleted.', 'fluent-support'),
-            /* translators: %s is the number of workflows selected for deletion */
-            'Are you sure you want to delete %s workflows? All associated data will be deleted.' => __('Are you sure you want to delete %s workflows? All associated data will be deleted.', 'fluent-support'),
+            "Are you sure you want to delete %s workflow? All associated data will be deleted.\x00Are you sure you want to delete %s workflows? All associated data will be deleted." => self::pluralForms(_n_noop('Are you sure you want to delete %s workflow? All associated data will be deleted.', 'Are you sure you want to delete %s workflows? All associated data will be deleted.', 'fluent-support')),
             'Are you sure you want to merge these tickets?' => __('Are you sure you want to merge these tickets?', 'fluent-support'),
             'Are you sure you want to regenerate the webhook URL? You will need to update every service that uses the current URL.' => __('Are you sure you want to regenerate the webhook URL? You will need to update every service that uses the current URL.', 'fluent-support'),
             'Ascending' => __('Ascending', 'fluent-support'),
@@ -341,12 +312,12 @@ class TranslationStrings
             'Assigner Full Name' => __('Assigner Full Name', 'fluent-support'),
             'Assigner Last Name' => __('Assigner Last Name', 'fluent-support'),
             'Assignment' => __('Assignment', 'fluent-support'),
+            'Attachment preview is not available. Please download the file to view it.' => __('Attachment preview is not available. Please download the file to view it.', 'fluent-support'),
             'Attachments' => __('Attachments', 'fluent-support'),
             'Audit incomplete' => __('Audit incomplete', 'fluent-support'),
             'Audited' => __('Audited', 'fluent-support'),
             'Auditing tickets…' => __('Auditing tickets…', 'fluent-support'),
             'Author Name' => __('Author Name', 'fluent-support'),
-            /* translators: %s is the label of the Authorization Code field */
             'Authorization Code' => __('Authorization Code', 'fluent-support'),
             'Auto Close Settings' => __('Auto Close Settings', 'fluent-support'),
             'Auto close' => __('Auto close', 'fluent-support'),
@@ -360,15 +331,21 @@ class TranslationStrings
             'Automatically delete activity logs after days' => __('Automatically delete activity logs after days', 'fluent-support'),
             'Automation' => __('Automation', 'fluent-support'),
             'Available Shortcodes' => __('Available Shortcodes', 'fluent-support'),
+            'Available Tools' => __('Available Tools', 'fluent-support'),
             'Available times' => __('Available times', 'fluent-support'),
             'Average Waiting' => __('Average Waiting', 'fluent-support'),
             /* translators: %s is the average time tickets have been waiting, e.g. 3 hours */
             'Average Waiting: %s' => __('Average Waiting: %s', 'fluent-support'),
+            'Average first response' => __('Average first response', 'fluent-support'),
+            'Average response and waiting times' => __('Average response and waiting times', 'fluent-support'),
+            'Average time the tickets awaiting reply have been waiting. The date range does not change this number.' => __('Average time the tickets awaiting reply have been waiting. The date range does not change this number.', 'fluent-support'),
+            'Average time those tickets have been waiting so far. The date range does not change this number.' => __('Average time those tickets have been waiting so far. The date range does not change this number.', 'fluent-support'),
             'Avg. Customer Wait' => __('Avg. Customer Wait', 'fluent-support'),
             'Avg. Response' => __('Avg. Response', 'fluent-support'),
             'Avg. Sentiment Score' => __('Avg. Sentiment Score', 'fluent-support'),
             'Avg. Waiting Time' => __('Avg. Waiting Time', 'fluent-support'),
             'Back' => __('Back', 'fluent-support'),
+            'Back to live' => __('Back to live', 'fluent-support'),
             'Batch limited' => __('Batch limited', 'fluent-support'),
             'Best matches first' => __('Best matches first', 'fluent-support'),
             'Billing' => __('Billing', 'fluent-support'),
@@ -382,6 +359,7 @@ class TranslationStrings
             'Build a better Fluent Support' => __('Build a better Fluent Support', 'fluent-support'),
             'Bulk Action' => __('Bulk Action', 'fluent-support'),
             'Bulk actions' => __('Bulk actions', 'fluent-support'),
+            'Busiest product' => __('Busiest product', 'fluent-support'),
             'Business Box Statistics' => __('Business Box Statistics', 'fluent-support'),
             'Business Boxes' => __('Business Boxes', 'fluent-support'),
             'Business Email' => __('Business Email', 'fluent-support'),
@@ -410,20 +388,14 @@ class TranslationStrings
             'Changes saved. Still sends %s' => __('Changes saved. Still sends %s', 'fluent-support'),
             'Channel' => __('Channel', 'fluent-support'),
             'Check all' => __('Check all', 'fluent-support'),
-            'Checking...' => __('Checking...', 'fluent-support'),
             'Choose Mailbox' => __('Choose Mailbox', 'fluent-support'),
             'Choose a date and time in the future when you want this reply to be sent.' => __('Choose a date and time in the future when you want this reply to be sent.', 'fluent-support'),
-            /* translators: %1$s is the tickets such as "3 tickets", %2$s is an agent group name */
             'Choose a group' => __('Choose a group', 'fluent-support'),
             'Choose a meeting type, review available times, then insert selected booking links into your reply.' => __('Choose a meeting type, review available times, then insert selected booking links into your reply.', 'fluent-support'),
-            /* translators: %1$s is the tickets such as "3 tickets", %2$s is a priority such as Critical */
             'Choose a priority' => __('Choose a priority', 'fluent-support'),
-            /* translators: %1$s is the tickets such as "3 tickets", %2$s is a product name */
             'Choose a product' => __('Choose a product', 'fluent-support'),
             'Choose a trigger' => __('Choose a trigger', 'fluent-support'),
-            /* translators: %1$s is a workflow name, %2$s is the tickets such as "3 tickets" */
             'Choose a workflow' => __('Choose a workflow', 'fluent-support'),
-            /* translators: %1$s is the tickets such as "3 tickets", %2$s is an agent name */
             'Choose an agent' => __('Choose an agent', 'fluent-support'),
             'Choose tags' => __('Choose tags', 'fluent-support'),
             'Choose the AI model for text generation.' => __('Choose the AI model for text generation.', 'fluent-support'),
@@ -453,9 +425,7 @@ class TranslationStrings
             'Close tickets after a number of days without activity' => __('Close tickets after a number of days without activity', 'fluent-support'),
             'Closed' => __('Closed', 'fluent-support'),
             /* translators: %d is the number of tickets the agent closed today */
-            'Closed %d ticket' => __('Closed %d ticket', 'fluent-support'),
-            /* translators: %d is the number of tickets the agent closed today */
-            'Closed %d tickets' => __('Closed %d tickets', 'fluent-support'),
+            "Closed %d ticket\x00Closed %d tickets" => self::pluralForms(_n_noop('Closed %d ticket', 'Closed %d tickets', 'fluent-support')),
             'Closed Ticket' => __('Closed Ticket', 'fluent-support'),
             'Closes ticket' => __('Closes ticket', 'fluent-support'),
             'Collapse Sidebar' => __('Collapse Sidebar', 'fluent-support'),
@@ -463,6 +433,8 @@ class TranslationStrings
             'Columns' => __('Columns', 'fluent-support'),
             'Combine AND/OR conditions to narrow your results' => __('Combine AND/OR conditions to narrow your results', 'fluent-support'),
             'Compact' => __('Compact', 'fluent-support'),
+            'Compare agents side by side' => __('Compare agents side by side', 'fluent-support'),
+            'Compare responses, closed tickets and hourly activity for every agent, so you can balance the workload and coach the team.' => __('Compare responses, closed tickets and hourly activity for every agent, so you can balance the workload and coach the team.', 'fluent-support'),
             'Completed successfully' => __('Completed successfully', 'fluent-support'),
             'Condition Match Type' => __('Condition Match Type', 'fluent-support'),
             'Condition Value' => __('Condition Value', 'fluent-support'),
@@ -480,10 +452,13 @@ class TranslationStrings
             'Congrats! Your Support Portal' => __('Congrats! Your Support Portal', 'fluent-support'),
             'Connect a client' => __('Connect a client', 'fluent-support'),
             'Connect the two with a one-time key and disconnect at any time' => __('Connect the two with a one-time key and disconnect at any time', 'fluent-support'),
+            'Connect with one URL' => __('Connect with one URL', 'fluent-support'),
+            'Connect with one URL and no password to copy.' => __('Connect with one URL and no password to copy.', 'fluent-support'),
             'Connect with wp-config.php' => __('Connect with wp-config.php', 'fluent-support'),
             'Connect your knowledge base so articles are suggested before a ticket is sent' => __('Connect your knowledge base so articles are suggested before a ticket is sent', 'fluent-support'),
             'Connect your main site' => __('Connect your main site', 'fluent-support'),
             'Connected' => __('Connected', 'fluent-support'),
+            'Connected AI apps can then read and change this plugin\'s data, for the users the plugin allows. To turn a plugin off, use FluentHub.' => __('Connected AI apps can then read and change this plugin\'s data, for the users the plugin allows. To turn a plugin off, use FluentHub.', 'fluent-support'),
             'Connected as' => __('Connected as', 'fluent-support'),
             'Connection' => __('Connection', 'fluent-support'),
             'Connection snippet copied' => __('Connection snippet copied', 'fluent-support'),
@@ -529,10 +504,8 @@ class TranslationStrings
             'Create Ticket' => __('Create Ticket', 'fluent-support'),
             'Create Workflow' => __('Create Workflow', 'fluent-support'),
             'Create a Ticket' => __('Create a Ticket', 'fluent-support'),
-            'Create a WordPress application password for your account, enter it below, then copy the snippet for your AI client.' => __('Create a WordPress application password for your account, enter it below, then copy the snippet for your AI client.', 'fluent-support'),
             'Create a new one.' => __('Create a new one.', 'fluent-support'),
             'Create a page automatically with the shortcode' => __('Create a page automatically with the shortcode', 'fluent-support'),
-            'Create an application password' => __('Create an application password', 'fluent-support'),
             'Create custom filters to find the exact tickets you need.' => __('Create custom filters to find the exact tickets you need.', 'fluent-support'),
             'Create templates for frequently asked questions' => __('Create templates for frequently asked questions', 'fluent-support'),
             'Create, rename and remove your own tags' => __('Create, rename and remove your own tags', 'fluent-support'),
@@ -544,9 +517,10 @@ class TranslationStrings
             'Critical' => __('Critical', 'fluent-support'),
             'Cron Job Monitor' => __('Cron Job Monitor', 'fluent-support'),
             'Cron Job Status' => __('Cron Job Status', 'fluent-support'),
-            'Current Overall' => __('Current Overall', 'fluent-support'),
             'Current Support Workload' => __('Current Support Workload', 'fluent-support'),
             'Current Usage' => __('Current Usage', 'fluent-support'),
+            'Current numbers. They update as tickets change.' => __('Current numbers. They update as tickets change.', 'fluent-support'),
+            'Current workload for each business inbox' => __('Current workload for each business inbox', 'fluent-support'),
             /* translators: %s is the date and time the reply will be sent */
             'Currently %s' => __('Currently %s', 'fluent-support'),
             'Currently no migration is available for this site' => __('Currently no migration is available for this site', 'fluent-support'),
@@ -589,6 +563,7 @@ class TranslationStrings
             'Daily Response Distribution' => __('Daily Response Distribution', 'fluent-support'),
             'Daily Team Activity' => __('Daily Team Activity', 'fluent-support'),
             'Daily Ticket Creation' => __('Daily Ticket Creation', 'fluent-support'),
+            'Daily and hourly ticket and response charts' => __('Daily and hourly ticket and response charts', 'fluent-support'),
             'Danger zone' => __('Danger zone', 'fluent-support'),
             'Dark' => __('Dark', 'fluent-support'),
             'Data Cleanup' => __('Data Cleanup', 'fluent-support'),
@@ -603,24 +578,24 @@ class TranslationStrings
             /* translators: %s is the tickets such as "3 tickets" */
             'Delete %s' => __('Delete %s', 'fluent-support'),
             /* translators: %s is the number of selected tickets */
-            'Delete %s ticket?' => __('Delete %s ticket?', 'fluent-support'),
-            /* translators: %s is the number of selected tickets */
-            'Delete %s tickets?' => __('Delete %s tickets?', 'fluent-support'),
+            "Delete %s ticket?\x00Delete %s tickets?" => self::pluralForms(_n_noop('Delete %s ticket?', 'Delete %s tickets?', 'fluent-support')),
             'Delete Action' => __('Delete Action', 'fluent-support'),
             'Delete Agent Group' => __('Delete Agent Group', 'fluent-support'),
             'Delete Imported Tickets' => __('Delete Imported Tickets', 'fluent-support'),
             'Delete Response' => __('Delete Response', 'fluent-support'),
+            'Delete Section' => __('Delete Section', 'fluent-support'),
             'Delete Ticket' => __('Delete Ticket', 'fluent-support'),
             'Delete custom field' => __('Delete custom field', 'fluent-support'),
             'Delete customer' => __('Delete customer', 'fluent-support'),
             'Delete row' => __('Delete row', 'fluent-support'),
             'Delete tickets' => __('Delete tickets', 'fluent-support'),
-            /* translators: %s is the name of the bulk action being applied */
             'Deleting tickets' => __('Deleting tickets', 'fluent-support'),
             'Deleting...' => __('Deleting...', 'fluent-support'),
             'Descending' => __('Descending', 'fluent-support'),
             'Describe this log entry' => __('Describe this log entry', 'fluent-support'),
             'Description' => __('Description', 'fluent-support'),
+            'Different tickets that got an agent reply in the date range.' => __('Different tickets that got an agent reply in the date range.', 'fluent-support'),
+            'Different tickets you replied to in the date range.' => __('Different tickets you replied to in the date range.', 'fluent-support'),
             'Direct paste is not enabled for this editor.' => __('Direct paste is not enabled for this editor.', 'fluent-support'),
             'Disable Activity Logs' => __('Disable Activity Logs', 'fluent-support'),
             'Disabled' => __('Disabled', 'fluent-support'),
@@ -637,6 +612,7 @@ class TranslationStrings
             'Don\'t have a license key?' => __('Don\'t have a license key?', 'fluent-support'),
             'Done' => __('Done', 'fluent-support'),
             'Down' => __('Down', 'fluent-support'),
+            'Download' => __('Download', 'fluent-support'),
             'Download the connector plugin (.zip)' => __('Download the connector plugin (.zip)', 'fluent-support'),
             'Draft' => __('Draft', 'fluent-support'),
             /* translators: %s is the date and time the draft was created */
@@ -680,10 +656,10 @@ class TranslationStrings
             'End' => __('End', 'fluent-support'),
             'End date' => __('End date', 'fluent-support'),
             'Ending soon' => __('Ending soon', 'fluent-support'),
-            'Endpoint URL' => __('Endpoint URL', 'fluent-support'),
-            'Endpoint URL copied' => __('Endpoint URL copied', 'fluent-support'),
             'Enhance Responses with AI' => __('Enhance Responses with AI', 'fluent-support'),
             'Enter a new key to replace the saved one' => __('Enter a new key to replace the saved one', 'fluent-support'),
+            'Enter fullscreen' => __('Enter fullscreen', 'fluent-support'),
+            'Enter the username and application password above to get a ready-to-paste snippet.' => __('Enter the username and application password above to get a ready-to-paste snippet.', 'fluent-support'),
             'Enter workflow title to search' => __('Enter workflow title to search', 'fluent-support'),
             'Enter your API key' => __('Enter your API key', 'fluent-support'),
             'Enter your API key. It will be stored securely.' => __('Enter your API key. It will be stored securely.', 'fluent-support'),
@@ -694,20 +670,22 @@ class TranslationStrings
             'Equal' => __('Equal', 'fluent-support'),
             'Error' => __('Error', 'fluent-support'),
             'Escalate' => __('Escalate', 'fluent-support'),
-            /* translators: %1$s is a comma-separated list of the escalation steps that succeeded, e.g. "agent assigned, note added"; %2$s is the label of the Escalate ticket button */
             'Escalate ticket' => __('Escalate ticket', 'fluent-support'),
+            'Escalate to Critical, assign an agent and add a note' => __('Escalate to Critical, assign an agent and add a note', 'fluent-support'),
             'Escalated' => __('Escalated', 'fluent-support'),
             'Escalation incomplete' => __('Escalation incomplete', 'fluent-support'),
             'Every ticket. Click to add conditions.' => __('Every ticket. Click to add conditions.', 'fluent-support'),
             'Everyone sees assignments and closed tickets' => __('Everyone sees assignments and closed tickets', 'fluent-support'),
             'Ex: +123456789' => __('Ex: +123456789', 'fluent-support'),
             'Example' => __('Example', 'fluent-support'),
+            'Exit fullscreen' => __('Exit fullscreen', 'fluent-support'),
             'Expand Sidebar' => __('Expand Sidebar', 'fluent-support'),
             'Expired' => __('Expired', 'fluent-support'),
             'Expires' => __('Expires', 'fluent-support'),
             'Export' => __('Export', 'fluent-support'),
             'Export Agents Summary' => __('Export Agents Summary', 'fluent-support'),
             'Export not working' => __('Export not working', 'fluent-support'),
+            'Export the agent summary' => __('Export the agent summary', 'fluent-support'),
             'Failed' => __('Failed', 'fluent-support'),
             'Failed to copy link' => __('Failed to copy link', 'fluent-support'),
             'Failed to copy shortcode' => __('Failed to copy shortcode', 'fluent-support'),
@@ -724,35 +702,46 @@ class TranslationStrings
             'File failed to upload' => __('File failed to upload', 'fluent-support'),
             'Fillable Fields' => __('Fillable Fields', 'fluent-support'),
             'Filter' => __('Filter', 'fluent-support'),
+            'Filter by date range' => __('Filter by date range', 'fluent-support'),
             'Filter by status, priority, inbox, product, tags, and date' => __('Filter by status, priority, inbox, product, tags, and date', 'fluent-support'),
             'Filter by ticket title' => __('Filter by ticket title', 'fluent-support'),
             'Filter tags' => __('Filter tags', 'fluent-support'),
             'Filter ticket' => __('Filter ticket', 'fluent-support'),
             'Filtered Tickets' => __('Filtered Tickets', 'fluent-support'),
             'Find a contact by their full email address' => __('Find a contact by their full email address', 'fluent-support'),
+            'Find the products that need the most help' => __('Find the products that need the most help', 'fluent-support'),
             'Find the right tickets faster' => __('Find the right tickets faster', 'fluent-support'),
             'Finish' => __('Finish', 'fluent-support'),
             'First Name' => __('First Name', 'fluent-support'),
             'First name' => __('First name', 'fluent-support'),
             'First response' => __('First response', 'fluent-support'),
             'Fluent Forms Pro' => __('Fluent Forms Pro', 'fluent-support'),
+            'Fluent Support is switched off in the FluentHub MCP server.' => __('Fluent Support is switched off in the FluentHub MCP server.', 'fluent-support'),
             'Fluent Support ships AI agent tools, but they only become available once FluentHub is installed and active.' => __('Fluent Support ships AI agent tools, but they only become available once FluentHub is installed and active.', 'fluent-support'),
             'Fluent Support stores tickets, replies, customers and settings in these tables. If an update was interrupted, a table may be missing. Repairing recreates it safely.' => __('Fluent Support stores tickets, replies, customers and settings in these tables. If an update was interrupted, a table may be missing. Repairing recreates it safely.', 'fluent-support'),
+            'Fluent plugins on this URL' => __('Fluent plugins on this URL', 'fluent-support'),
             'FluentBooking_Preview_Help' => __('Available times are based on a sample of this event type\'s upcoming availability. You can adjust the times offered below.', 'fluent-support'),
             'FluentCRM Integration' => __('FluentCRM Integration', 'fluent-support'),
             'FluentCRM Profile' => __('FluentCRM Profile', 'fluent-support'),
+            /* translators: %s is the FluentHub version number */
+            'FluentHub %s' => __('FluentHub %s', 'fluent-support'),
+            'FluentHub can give AI apps one URL for this site, with sign-in through WordPress and no password to copy. Its MCP server is off.' => __('FluentHub can give AI apps one URL for this site, with sign-in through WordPress and no password to copy. Its MCP server is off.', 'fluent-support'),
+            'FluentHub needs a newer MCP adapter for it.' => __('FluentHub needs a newer MCP adapter for it.', 'fluent-support'),
+            'FluentHub sign-in' => __('FluentHub sign-in', 'fluent-support'),
+            'Follow new, closed and waiting tickets day by day, with response and waiting times, so you always know how the queue is moving.' => __('Follow new, closed and waiting tickets day by day, with response and waiting times, so you always know how the queue is moving.', 'fluent-support'),
             'Follow your tickets from Telegram' => __('Follow your tickets from Telegram', 'fluent-support'),
             'Freshdesk Domain' => __('Freshdesk Domain', 'fluent-support'),
             'Fri' => __('Fri', 'fluent-support'),
             'From' => __('From', 'fluent-support'),
             'From Email Address' => __('From Email Address', 'fluent-support'),
             'From Name' => __('From Name', 'fluent-support'),
+            'Frustrated' => __('Frustrated', 'fluent-support'),
             'Full email address' => __('Full email address', 'fluent-support'),
             'GET Request Status' => __('GET Request Status', 'fluent-support'),
             'Generate Responses with AI' => __('Generate Responses with AI', 'fluent-support'),
             'Generate a new key' => __('Generate a new key', 'fluent-support'),
+            'Generate and enhance replies with AI' => __('Generate and enhance replies with AI', 'fluent-support'),
             'Generate connection key' => __('Generate connection key', 'fluent-support'),
-            /* translators: %s is the label of the Get Authorized button */
             'Get Authorized' => __('Get Authorized', 'fluent-support'),
             'Get FluentHub' => __('Get FluentHub', 'fluent-support'),
             'Get Piping Email Details' => __('Get Piping Email Details', 'fluent-support'),
@@ -777,11 +766,13 @@ class TranslationStrings
             'Has open tickets' => __('Has open tickets', 'fluent-support'),
             'Have a new license key?' => __('Have a new license key?', 'fluent-support'),
             'Healthy' => __('Healthy', 'fluent-support'),
+            'Help desk services' => __('Help desk services', 'fluent-support'),
             'Help us to make FluentSupport better' => __('Help us to make FluentSupport better', 'fluent-support'),
             'Help_Scout_Redirect_Url_Help' => __('Add this URL as the Redirection URL of your Help Scout app. Help Scout needs it to authorize the app before the import can start:', 'fluent-support'),
             'Helpdesk' => __('Helpdesk', 'fluent-support'),
             'Hide Badge in Tickets' => __('Hide Badge in Tickets', 'fluent-support'),
             'Hide Bulk Action' => __('Hide Bulk Action', 'fluent-support'),
+            'Hide the application password method' => __('Hide the application password method', 'fluent-support'),
             'Hourly Activity' => __('Hourly Activity', 'fluent-support'),
             'Hourly Response Distribution' => __('Hourly Response Distribution', 'fluent-support'),
             'Hourly Team Activity' => __('Hourly Team Activity', 'fluent-support'),
@@ -827,6 +818,7 @@ class TranslationStrings
             /* translators: %s is the internal ticket ID number */
             'Internal Ticket ID: #%s' => __('Internal Ticket ID: #%s', 'fluent-support'),
             'Internal note' => __('Internal note', 'fluent-support'),
+            'Internal note (the customer will not see this)' => __('Internal note (the customer will not see this)', 'fluent-support'),
             'Invalid' => __('Invalid', 'fluent-support'),
             'Invalid image' => __('Invalid image', 'fluent-support'),
             'Is after' => __('Is after', 'fluent-support'),
@@ -836,15 +828,18 @@ class TranslationStrings
             'Job Title' => __('Job Title', 'fluent-support'),
             'Join Meeting' => __('Join Meeting', 'fluent-support'),
             'Just type' => __('Just type', 'fluent-support'),
+            'Keep every inbox under control' => __('Keep every inbox under control', 'fluent-support'),
             'Keep responses consistent across your support team' => __('Keep responses consistent across your support team', 'fluent-support'),
             'Keep scheduled' => __('Keep scheduled', 'fluent-support'),
             'Keep the helpdesk on its own site' => __('Keep the helpdesk on its own site', 'fluent-support'),
             'Keep the whole team in the loop in Slack' => __('Keep the whole team in the loop in Slack', 'fluent-support'),
+            'Know how every agent is doing' => __('Know how every agent is doing', 'fluent-support'),
             'Know what every ticket is about at a glance' => __('Know what every ticket is about at a glance', 'fluent-support'),
             'Label' => __('Label', 'fluent-support'),
             'Last 1 Year' => __('Last 1 Year', 'fluent-support'),
             'Last 2 Weeks' => __('Last 2 Weeks', 'fluent-support'),
             'Last 3 Months' => __('Last 3 Months', 'fluent-support'),
+            'Last 30 days' => __('Last 30 days', 'fluent-support'),
             'Last 6 Months' => __('Last 6 Months', 'fluent-support'),
             'Last 7 Days' => __('Last 7 Days', 'fluent-support'),
             'Last Activity' => __('Last Activity', 'fluent-support'),
@@ -868,6 +863,7 @@ class TranslationStrings
             'Less' => __('Less', 'fluent-support'),
             'Less than' => __('Less than', 'fluent-support'),
             'Let AI draft ticket responses for you.' => __('Let AI draft ticket responses for you.', 'fluent-support'),
+            'Let AI flag the tickets that need you' => __('Let AI flag the tickets that need you', 'fluent-support'),
             'License Key' => __('License Key', 'fluent-support'),
             'License Management' => __('License Management', 'fluent-support'),
             'License key' => __('License key', 'fluent-support'),
@@ -884,12 +880,17 @@ class TranslationStrings
             'Loading available dates...' => __('Loading available dates...', 'fluent-support'),
             'Loading snapshots…' => __('Loading snapshots…', 'fluent-support'),
             'Loading...' => __('Loading...', 'fluent-support'),
-            'Local / self-signed site (disable TLS verification)' => __('Local / self-signed site (disable TLS verification)', 'fluent-support'),
+            'Local site with a self-signed SSL certificate' => __('Local site with a self-signed SSL certificate', 'fluent-support'),
             'Location' => __('Location', 'fluent-support'),
             'Logged at:' => __('Logged at:', 'fluent-support'),
+            'Logged by agent' => __('Logged by agent', 'fluent-support'),
             'Login Form' => __('Login Form', 'fluent-support'),
+            'Longest time one of those tickets has been waiting so far. The date range does not change this number.' => __('Longest time one of those tickets has been waiting so far. The date range does not change this number.', 'fluent-support'),
             'Looks like your license has expired.' => __('Looks like your license has expired.', 'fluent-support'),
+            'MCP adapter detected' => __('MCP adapter detected', 'fluent-support'),
             'MCP for AI Agents' => __('MCP for AI Agents', 'fluent-support'),
+            "MCP server state\x04Off" => _x('Off', 'MCP server state', 'fluent-support'),
+            "MCP server state\x04On" => _x('On', 'MCP server state', 'fluent-support'),
             'Mailbox' => __('Mailbox', 'fluent-support'),
             /* translators: %s is the mailbox name */
             'Mailbox: %s' => __('Mailbox: %s', 'fluent-support'),
@@ -898,6 +899,8 @@ class TranslationStrings
             'Manage' => __('Manage', 'fluent-support'),
             'Manage Application Passwords' => __('Manage Application Passwords', 'fluent-support'),
             'Manage Subscription' => __('Manage Subscription', 'fluent-support'),
+            'Manage connections in FluentHub' => __('Manage connections in FluentHub', 'fluent-support'),
+            'Manage your connected apps' => __('Manage your connected apps', 'fluent-support'),
             'Manual' => __('Manual', 'fluent-support'),
             'Manual_Workflow_Example' => __('When a customer writes in with a specific question, you run this workflow to send a reply, add a tag and assign the ticket to someone on your team.', 'fluent-support'),
             'Manual_Workflow_Help' => __('A manual workflow does nothing until you run it. When you apply a manual workflow to a ticket, Fluent Support performs all of its actions.', 'fluent-support'),
@@ -911,8 +914,10 @@ class TranslationStrings
             'Max Waiting' => __('Max Waiting', 'fluent-support'),
             /* translators: %s is the longest time a ticket has been waiting, e.g. 2 days */
             'Max Waiting: %s' => __('Max Waiting: %s', 'fluent-support'),
-            'Mcp_Intro_Help' => __('MCP (Model Context Protocol) lets compatible AI clients like Claude Desktop, OpenAI Codex, and Cursor read and write your support data with your authorization. Enable the toggle above to connect an AI client to Fluent Support.', 'fluent-support'),
-            'Mcp_Toggle_Help' => __('When enabled, Fluent Support exposes its tools through the WordPress Abilities API so AI agents can read and update support tickets with your authorization.', 'fluent-support'),
+            'Mcp_Hub_Turn_On_Help' => __('This makes every Fluent plugin that has MCP switched on reachable through one URL. A site administrator reaches all of them; anyone else reaches only the plugins that give them access. It also lets AI apps register themselves and ask a user to sign in. To turn it off again, use FluentHub.', 'fluent-support'),
+            'Mcp_Password_Method_Help' => __('Clients sign in with a WordPress application password. Create one from your profile page, then enter your username and the application password below to fill in the snippet. They stay in your browser and are not saved.', 'fluent-support'),
+            'Mcp_Toggle_Help' => __('When enabled, an AI agent such as Claude or ChatGPT can read and work on your support tickets through the Model Context Protocol (MCP). The agent acts as the support agent who connects it, and can only do what that agent can do in Fluent Support.', 'fluent-support'),
+            'Mcp_Who_Can_Connect' => __('Support agents with access to the Fluent Support admin can connect. Customers cannot. Each agent gets only the tools their permissions allow, and a reply an agent sends reaches the customer by email under the connected agent\'s name.', 'fluent-support'),
             'Meeting' => __('Meeting', 'fluent-support'),
             'Meeting Type' => __('Meeting Type', 'fluent-support'),
             'Members' => __('Members', 'fluent-support'),
@@ -929,6 +934,7 @@ class TranslationStrings
             'Model' => __('Model', 'fluent-support'),
             'Mon' => __('Mon', 'fluent-support'),
             'Mood' => __('Mood', 'fluent-support'),
+            'Mood, score out of 10 and AI summary for every audited ticket' => __('Mood, score out of 10 and AI summary for every audited ticket', 'fluent-support'),
             'More' => __('More', 'fluent-support'),
             'More Action' => __('More Action', 'fluent-support'),
             'More Actions' => __('More Actions', 'fluent-support'),
@@ -947,11 +953,13 @@ class TranslationStrings
             'Name or email containing every word' => __('Name or email containing every word', 'fluent-support'),
             'Name or email contains' => __('Name or email contains', 'fluent-support'),
             'Name:' => __('Name:', 'fluent-support'),
+            'Narrow agent replies to one agent' => __('Narrow agent replies to one agent', 'fluent-support'),
             'Need Help?' => __('Need Help?', 'fluent-support'),
             'Need attention' => __('Need attention', 'fluent-support'),
             'Needs Attention' => __('Needs Attention', 'fluent-support'),
             'Needs attention first' => __('Needs attention first', 'fluent-support'),
             'Needs review' => __('Needs review', 'fluent-support'),
+            'Negative' => __('Negative', 'fluent-support'),
             'Never' => __('Never', 'fluent-support'),
             'New Option' => __('New Option', 'fluent-support'),
             'New Tickets' => __('New Tickets', 'fluent-support'),
@@ -960,6 +968,9 @@ class TranslationStrings
             'New ticket' => __('New ticket', 'fluent-support'),
             'New tickets and customer replies arrive in Telegram as they happen' => __('New tickets and customer replies arrive in Telegram as they happen', 'fluent-support'),
             'New tickets and customer replies post to the channel you choose' => __('New tickets and customer replies post to the channel you choose', 'fluent-support'),
+            'New tickets vs. agent replies over time' => __('New tickets vs. agent replies over time', 'fluent-support'),
+            'New tickets, agent replies and customer replies by weekday and hour' => __('New tickets, agent replies and customer replies by weekday and hour', 'fluent-support'),
+            'New, closed and waiting tickets for any date range' => __('New, closed and waiting tickets for any date range', 'fluent-support'),
             'Next' => __('Next', 'fluent-support'),
             'Next 14 days' => __('Next 14 days', 'fluent-support'),
             'Next 3 days' => __('Next 3 days', 'fluent-support'),
@@ -999,7 +1010,7 @@ class TranslationStrings
             'No public FluentBooking event types found. Please enable calendar sharing or publish an event type.' => __('No public FluentBooking event types found. Please enable calendar sharing or publish an event type.', 'fluent-support'),
             'No runs yet. Runs are kept as long as the activity log keeps its entries.' => __('No runs yet. Runs are kept as long as the activity log keeps its entries.', 'fluent-support'),
             'No saved replies found.' => __('No saved replies found.', 'fluent-support'),
-            'No snapshots yet.' => __('No snapshots yet.', 'fluent-support'),
+            'No snapshots yet. The first one is saved within 6 hours.' => __('No snapshots yet. The first one is saved within 6 hours.', 'fluent-support'),
             'No tags yet' => __('No tags yet', 'fluent-support'),
             'No tickets found' => __('No tickets found', 'fluent-support'),
             'No tickets found for this range.' => __('No tickets found for this range.', 'fluent-support'),
@@ -1041,10 +1052,10 @@ class TranslationStrings
             'Offer Availability' => __('Offer Availability', 'fluent-support'),
             /* translators: Short badge next to a tag name. %1$s is how many selected tickets have it, %2$s is the number of selected tickets */
             'On %1$s of %2$s' => __('On %1$s of %2$s', 'fluent-support'),
-            /* translators: Short badge next to a tag name. %1$s is how many selected tickets have it, %2$s is the number of selected tickets */
             'On all' => __('On all', 'fluent-support'),
             /* translators: %s is the mailbox email address */
             'Once you activate auto-forwarding for %s, the status will become active.' => __('Once you activate auto-forwarding for %s, the status will become active.', 'fluent-support'),
+            'One URL for all your Fluent plugins, with no password to copy.' => __('One URL for all your Fluent plugins, with no password to copy.', 'fluent-support'),
             'One secure URL for each business box' => __('One secure URL for each business box', 'fluent-support'),
             'Only FluentBooking available dates can be selected' => __('Only FluentBooking available dates can be selected', 'fluent-support'),
             'Only a site administrator can connect, disconnect or switch Remote Portal.' => __('Only a site administrator can connect, disconnect or switch Remote Portal.', 'fluent-support'),
@@ -1055,12 +1066,21 @@ class TranslationStrings
             'Only tags' => __('Only tags', 'fluent-support'),
             'Open' => __('Open', 'fluent-support'),
             'Open FluentBooking' => __('Open FluentBooking', 'fluent-support'),
-            'Open Ticket' => __('Open Ticket', 'fluent-support'),
+            'Open FluentHub' => __('Open FluentHub', 'fluent-support'),
             'Open Ticket in New Tab' => __('Open Ticket in New Tab', 'fluent-support'),
             'Open Tickets' => __('Open Tickets', 'fluent-support'),
             'Open exact booking in FluentBooking' => __('Open exact booking in FluentBooking', 'fluent-support'),
+            'Open in new tab' => __('Open in new tab', 'fluent-support'),
+            'Open profile → Application Passwords' => __('Open profile → Application Passwords', 'fluent-support'),
             'Open tickets' => __('Open tickets', 'fluent-support'),
+            'Open tickets assigned to the agent. The date range does not change this number.' => __('Open tickets assigned to the agent. The date range does not change this number.', 'fluent-support'),
+            'Open tickets assigned to the selected agents. The date range does not change this number.' => __('Open tickets assigned to the selected agents. The date range does not change this number.', 'fluent-support'),
+            'Open tickets where the customer sent the last reply, and how long they have waited. The date range does not change these numbers.' => __('Open tickets where the customer sent the last reply, and how long they have waited. The date range does not change these numbers.', 'fluent-support'),
+            'Open tickets where the customer sent the last reply. The date range does not change this number.' => __('Open tickets where the customer sent the last reply. The date range does not change this number.', 'fluent-support'),
+            'Open tickets with no agent assigned. The date range does not change this number.' => __('Open tickets with no agent assigned. The date range does not change this number.', 'fluent-support'),
             'Open tickets, but no activity since the start of 2026' => __('Open tickets, but no activity since the start of 2026', 'fluent-support'),
+            'Open, closed and unanswered tickets per product' => __('Open, closed and unanswered tickets per product', 'fluent-support'),
+            'OpenAI, Google Gemini or Anthropic Claude' => __('OpenAI, Google Gemini or Anthropic Claude', 'fluent-support'),
             'Operational' => __('Operational', 'fluent-support'),
             'Operator' => __('Operator', 'fluent-support'),
             'Option Value' => __('Option Value', 'fluent-support'),
@@ -1204,9 +1224,7 @@ class TranslationStrings
             'Renew your license to keep receiving plugin updates, new features and support.' => __('Renew your license to keep receiving plugin updates, new features and support.', 'fluent-support'),
             'Reopen' => __('Reopen', 'fluent-support'),
             /* translators: %s is the number of closed tickets to reopen */
-            'Reopen %s ticket' => __('Reopen %s ticket', 'fluent-support'),
-            /* translators: %s is the number of closed tickets to reopen */
-            'Reopen %s tickets' => __('Reopen %s tickets', 'fluent-support'),
+            "Reopen %s ticket\x00Reopen %s tickets" => self::pluralForms(_n_noop('Reopen %s ticket', 'Reopen %s tickets', 'fluent-support')),
             'Reopen This ticket' => __('Reopen This ticket', 'fluent-support'),
             'Repair Now' => __('Repair Now', 'fluent-support'),
             'Replies' => __('Replies', 'fluent-support'),
@@ -1247,6 +1265,7 @@ class TranslationStrings
             'Response Stats' => __('Response Stats', 'fluent-support'),
             'Response Title' => __('Response Title', 'fluent-support'),
             'Responses' => __('Responses', 'fluent-support'),
+            'Responses, open and closed tickets for each agent' => __('Responses, open and closed tickets for each agent', 'fluent-support'),
             'Restrictions' => __('Restrictions', 'fluent-support'),
             'Result' => __('Result', 'fluent-support'),
             'Results' => __('Results', 'fluent-support'),
@@ -1262,6 +1281,7 @@ class TranslationStrings
             'Run Audit' => __('Run Audit', 'fluent-support'),
             'Run Manually' => __('Run Manually', 'fluent-support'),
             'Run Workflow' => __('Run Workflow', 'fluent-support'),
+            'Run an audit for a date range: AI reads each open ticket and gives it a mood, a sentiment score and a one-line summary, so you can see who is unhappy.' => __('Run an audit for a date range: AI reads each open ticket and gives it a mood, a sentiment score and a one-line summary, so you can see who is unhappy.', 'fluent-support'),
             'Run support on one site, serve customers on another' => __('Run support on one site, serve customers on another', 'fluent-support'),
             'Run workflow' => __('Run workflow', 'fluent-support'),
             /* translators: %s is the workflow name */
@@ -1274,6 +1294,7 @@ class TranslationStrings
             'Save Reply' => __('Save Reply', 'fluent-support'),
             'Save Settings' => __('Save Settings', 'fluent-support'),
             'Save Workflow' => __('Save Workflow', 'fluent-support'),
+            'Save as an internal note' => __('Save as an internal note', 'fluent-support'),
             'Save changes' => __('Save changes', 'fluent-support'),
             'Save filters for quick access anytime' => __('Save filters for quick access anytime', 'fluent-support'),
             'Save search' => __('Save search', 'fluent-support'),
@@ -1310,7 +1331,11 @@ class TranslationStrings
             'Search...' => __('Search...', 'fluent-support'),
             'Secret Key' => __('Secret Key', 'fluent-support'),
             'See how it works' => __('See how it works', 'fluent-support'),
+            'See how your support queue is moving' => __('See how your support queue is moving', 'fluent-support'),
             'See what customers entered on every ticket' => __('See what customers entered on every ticket', 'fluent-support'),
+            'See when your customers need you most' => __('See when your customers need you most', 'fluent-support'),
+            'See which products bring in the most tickets and how many are still unanswered, so you know where customers need help.' => __('See which products bring in the most tickets and how many are still unanswered, so you know where customers need help.', 'fluent-support'),
+            'See which tickets have waited longest' => __('See which tickets have waited longest', 'fluent-support'),
             'Select' => __('Select', 'fluent-support'),
             'Select Agent' => __('Select Agent', 'fluent-support'),
             'Select Agents' => __('Select Agents', 'fluent-support'),
@@ -1387,8 +1412,12 @@ class TranslationStrings
             'Show less' => __('Show less', 'fluent-support'),
             'Show new replies' => __('Show new replies', 'fluent-support'),
             'Show or hide fields on the ticket form' => __('Show or hide fields on the ticket form', 'fluent-support'),
+            'Sign-in is switched off in FluentHub.' => __('Sign-in is switched off in FluentHub.', 'fluent-support'),
+            'Sign-in needs application passwords, which are switched off on this site. They need HTTPS, and a security plugin can turn them off.' => __('Sign-in needs application passwords, which are switched off on this site. They need HTTPS, and a security plugin can turn them off.', 'fluent-support'),
+            'Sign-in needs pretty permalinks. Change them in Settings, Permalinks.' => __('Sign-in needs pretty permalinks. Change them in Settings, Permalinks.', 'fluent-support'),
             'Signup Form' => __('Signup Form', 'fluent-support'),
             'Site Key' => __('Site Key', 'fluent-support'),
+            'Site administrators can use this URL for every Fluent plugin. Support agents can use it for Fluent Support.' => __('Site administrators can use this URL for every Fluent plugin. Support agents can use it for Fluent Support.', 'fluent-support'),
             'Slack Integration' => __('Slack Integration', 'fluent-support'),
             'Slack User ID' => __('Slack User ID', 'fluent-support'),
             'Slack notifications' => __('Slack notifications', 'fluent-support'),
@@ -1397,6 +1426,8 @@ class TranslationStrings
             'Slug (Optional)' => __('Slug (Optional)', 'fluent-support'),
             'Smart Codes' => __('Smart Codes', 'fluent-support'),
             'Snapshot' => __('Snapshot', 'fluent-support'),
+            /* translators: %s is the snapshot date and time, e.g. "Nov 18, 2:00 PM" */
+            'Snapshot: %s' => __('Snapshot: %s', 'fluent-support'),
             'Some General Prompts' => __('Some General Prompts', 'fluent-support'),
             'Something went wrong' => __('Something went wrong', 'fluent-support'),
             'Sorry, settings could not be loaded' => __('Sorry, settings could not be loaded', 'fluent-support'),
@@ -1444,9 +1475,10 @@ class TranslationStrings
             'Templates' => __('Templates', 'fluent-support'),
             'Terms & Condition' => __('Terms & Condition', 'fluent-support'),
             'Test connection' => __('Test connection', 'fluent-support'),
+            'The FluentHub MCP server is off. A site administrator can turn it on.' => __('The FluentHub MCP server is off. A site administrator can turn it on.', 'fluent-support'),
+            'The MCP server needs WordPress 6.9 or newer.' => __('The MCP server needs WordPress 6.9 or newer.', 'fluent-support'),
             'The agent who wrote this reply is no longer available, so it was not sent.' => __('The agent who wrote this reply is no longer available, so it was not sent.', 'fluent-support'),
             'The connection key expired. Generate a new one.' => __('The connection key expired. Generate a new one.', 'fluent-support'),
-            /* translators: %s is the customer's name */
             'The customer' => __('The customer', 'fluent-support'),
             'The exact phrase in the full name or email' => __('The exact phrase in the full name or email', 'fluent-support'),
             'The following settings will be applied to the newly created' => __('The following settings will be applied to the newly created', 'fluent-support'),
@@ -1454,6 +1486,7 @@ class TranslationStrings
             'The main site\'s wp-config.php' => __('The main site\'s wp-config.php', 'fluent-support'),
             'The settings could not be loaded.' => __('The settings could not be loaded.', 'fluent-support'),
             'The text goes back to the editor as a draft.' => __('The text goes back to the editor as a draft.', 'fluent-support'),
+            'The unhappiest tickets shown first under Needs attention' => __('The unhappiest tickets shown first under Needs attention', 'fluent-support'),
             'Then' => __('Then', 'fluent-support'),
             /* translators: %d is the position of an action in a workflow (1, 2, 3...) */
             'Then, step %d' => __('Then, step %d', 'fluent-support'),
@@ -1522,8 +1555,10 @@ class TranslationStrings
             'Ticket form settings' => __('Ticket form settings', 'fluent-support'),
             'Ticket has been escalated.' => __('Ticket has been escalated.', 'fluent-support'),
             'Ticket not found' => __('Ticket not found', 'fluent-support'),
+            'Ticket summary and customer tone from the ticket view' => __('Ticket summary and customer tone from the ticket view', 'fluent-support'),
             'Ticket tags' => __('Ticket tags', 'fluent-support'),
             'Ticket volume by product' => __('Ticket volume by product', 'fluent-support'),
+            'Ticket volume for every product' => __('Ticket volume for every product', 'fluent-support'),
             'Ticket_Audit_Empty_Help' => __('Pick a date range and run an audit to get the mood, sentiment score and a one-line summary for every ticket. Tickets that already have a recent audit are skipped automatically.', 'fluent-support'),
             'Ticket_Migration_Plugins_Help' => __('If you use another ticketing plugin such as Awesome Support or Support Candy, you can migrate its tickets from this section.', 'fluent-support'),
             'Tickets' => __('Tickets', 'fluent-support'),
@@ -1531,8 +1566,13 @@ class TranslationStrings
             'Tickets Handled' => __('Tickets Handled', 'fluent-support'),
             'Tickets Waiting Longest' => __('Tickets Waiting Longest', 'fluent-support'),
             'Tickets audited' => __('Tickets audited', 'fluent-support'),
+            'Tickets awaiting reply and unassigned tickets' => __('Tickets awaiting reply and unassigned tickets', 'fluent-support'),
             'Tickets closed' => __('Tickets closed', 'fluent-support'),
+            'Tickets created in the date range that are still open.' => __('Tickets created in the date range that are still open.', 'fluent-support'),
+            'Tickets created in the date range that have no reply yet.' => __('Tickets created in the date range that have no reply yet.', 'fluent-support'),
+            'Tickets created in the date range whose first agent reply came on the same day.' => __('Tickets created in the date range whose first agent reply came on the same day.', 'fluent-support'),
             'Tickets that are already closed are skipped. Customers get the ticket closed email if it is turned on for the inbox.' => __('Tickets that are already closed are skipped. Customers get the ticket closed email if it is turned on for the inbox.', 'fluent-support'),
+            'Tickets that got at least one agent reply in the date range.' => __('Tickets that got at least one agent reply in the date range.', 'fluent-support'),
             'Time' => __('Time', 'fluent-support'),
             'Time Logging' => __('Time Logging', 'fluent-support'),
             'Time Range (days)' => __('Time Range (days)', 'fluent-support'),
@@ -1563,6 +1603,8 @@ class TranslationStrings
             'Try' => __('Try', 'fluent-support'),
             'Try again' => __('Try again', 'fluent-support'),
             'Tue' => __('Tue', 'fluent-support'),
+            'Turn on' => __('Turn on', 'fluent-support'),
+            'Turn on FluentHub sign-in' => __('Turn on FluentHub sign-in', 'fluent-support'),
             'Turn requests from other tools into tickets' => __('Turn requests from other tools into tickets', 'fluent-support'),
             'Twilio Integration' => __('Twilio Integration', 'fluent-support'),
             'Type' => __('Type', 'fluent-support'),
@@ -1607,12 +1649,11 @@ class TranslationStrings
             'Uploading 1 attachment. Please wait before submitting.' => __('Uploading 1 attachment. Please wait before submitting.', 'fluent-support'),
             'Use AI for responses, ticket summaries, and sentiment analysis' => __('Use AI for responses, ticket summaries, and sentiment analysis', 'fluent-support'),
             'Use Shortcode' => __('Use Shortcode', 'fluent-support'),
+            'Use an application password instead' => __('Use an application password instead', 'fluent-support'),
             'Use reCAPTCHA on' => __('Use reCAPTCHA on', 'fluent-support'),
             'Use wp-config.php instead' => __('Use wp-config.php instead', 'fluent-support'),
             /* translators: %s: number of tickets */
-            'Used on %s ticket' => __('Used on %s ticket', 'fluent-support'),
-            /* translators: %s: number of tickets */
-            'Used on %s tickets' => __('Used on %s tickets', 'fluent-support'),
+            "Used on %s ticket\x00Used on %s tickets" => self::pluralForms(_n_noop('Used on %s ticket', 'Used on %s tickets', 'fluent-support')),
             'Username' => __('Username', 'fluent-support'),
             'Username is required for WordPress user.' => __('Username is required for WordPress user.', 'fluent-support'),
             'Username on this site' => __('Username on this site', 'fluent-support'),
@@ -1635,6 +1676,7 @@ class TranslationStrings
             /* translators: %s: WordPress user ID */
             'WP User: #%s' => __('WP User: #%s', 'fluent-support'),
             'Wait Time' => __('Wait Time', 'fluent-support'),
+            'Waiting' => __('Waiting', 'fluent-support'),
             'Waiting For Reply' => __('Waiting For Reply', 'fluent-support'),
             'Waiting Since' => __('Waiting Since', 'fluent-support'),
             'Waiting Tickets' => __('Waiting Tickets', 'fluent-support'),
@@ -1651,6 +1693,7 @@ class TranslationStrings
             'Warning' => __('Warning', 'fluent-support'),
             /* translators: %s is the date and time the scheduled reply was due */
             'Was due %s' => __('Was due %s', 'fluent-support'),
+            'Watch the workload in every business inbox, from tickets awaiting a reply to the longest waits, before customers notice.' => __('Watch the workload in every business inbox, from tickets awaiting a reply to the longest waits, before customers notice.', 'fluent-support'),
             /* translators: %s is the number of agents watching the ticket */
             'Watchers (%s)' => __('Watchers (%s)', 'fluent-support'),
             'We could not verify this license.' => __('We could not verify this license.', 'fluent-support'),
@@ -1667,6 +1710,9 @@ class TranslationStrings
             'When enabled, AI will be available for response suggestions and ticket summaries.' => __('When enabled, AI will be available for response suggestions and ticket summaries.', 'fluent-support'),
             'When new agents are created without being assigned to any group, they will automatically be added to the default group.' => __('When new agents are created without being assigned to any group, they will automatically be added to the default group.', 'fluent-support'),
             'When should this workflow run?' => __('When should this workflow run?', 'fluent-support'),
+            /* translators: %s is the MCP Adapter plugin version number */
+            'WordPress MCP Adapter %s' => __('WordPress MCP Adapter %s', 'fluent-support'),
+            'WordPress plugins' => __('WordPress plugins', 'fluent-support'),
             'WordPress user' => __('WordPress user', 'fluent-support'),
             'WordPress user ID' => __('WordPress user ID', 'fluent-support'),
             'WordPress username' => __('WordPress username', 'fluent-support'),
@@ -1679,9 +1725,9 @@ class TranslationStrings
             'Workflow title is required' => __('Workflow title is required', 'fluent-support'),
             'Workflows' => __('Workflows', 'fluent-support'),
             'Works with any form, app or script that can send a webhook' => __('Works with any form, app or script that can send a webhook', 'fluent-support'),
+            'Write a reply before you send or schedule it.' => __('Write a reply before you send or schedule it.', 'fluent-support'),
             'Write a reply now and have it sent at the date and time you pick.' => __('Write a reply now and have it sent at the date and time you pick.', 'fluent-support'),
             'Write your reply in the editor before you save it.' => __('Write your reply in the editor before you save it.', 'fluent-support'),
-            'Write your reply in the editor first, then pick when it should be sent.' => __('Write your reply in the editor first, then pick when it should be sent.', 'fluent-support'),
             'Yes' => __('Yes', 'fluent-support'),
             'Yes, Count me in!' => __('Yes, Count me in!', 'fluent-support'),
             'Yes, Deactivate' => __('Yes, Deactivate', 'fluent-support'),
@@ -1694,9 +1740,7 @@ class TranslationStrings
             'You can not change the slug once save a custom field' => __('You can not change the slug once save a custom field', 'fluent-support'),
             'You can select up to 7 dates.' => __('You can select up to 7 dates.', 'fluent-support'),
             /* translators: %s is the maximum number of files allowed per upload */
-            'You can upload a maximum of %s file.' => __('You can upload a maximum of %s file.', 'fluent-support'),
-            /* translators: %s is the maximum number of files allowed per upload */
-            'You can upload a maximum of %s files.' => __('You can upload a maximum of %s files.', 'fluent-support'),
+            "You can upload a maximum of %s file.\x00You can upload a maximum of %s files." => self::pluralForms(_n_noop('You can upload a maximum of %s file.', 'You can upload a maximum of %s files.', 'fluent-support')),
             'You have unsaved changes. Leave this page anyway?' => __('You have unsaved changes. Leave this page anyway?', 'fluent-support'),
             'You\'re Almost There!' => __('You\'re Almost There!', 'fluent-support'),
             'Your Account' => __('Your Account', 'fluent-support'),
@@ -1704,23 +1748,24 @@ class TranslationStrings
             'Your Bookmarked Tickets' => __('Your Bookmarked Tickets', 'fluent-support'),
             'Your Help Scout authorization code is:' => __('Your Help Scout authorization code is:', 'fluent-support'),
             'Your Workflow Name' => __('Your Workflow Name', 'fluent-support'),
+            'Your account has no access to this plugin\'s AI tools.' => __('Your account has no access to this plugin\'s AI tools.', 'fluent-support'),
             /* translators: %s is the date the license expired */
             'Your license expired on %s' => __('Your license expired on %s', 'fluent-support'),
             /* translators: %d is the number of days until the license expires */
-            'Your license expires in %d day' => __('Your license expires in %d day', 'fluent-support'),
-            /* translators: %d is the number of days until the license expires */
-            'Your license expires in %d days' => __('Your license expires in %d days', 'fluent-support'),
+            "Your license expires in %d day\x00Your license expires in %d days" => self::pluralForms(_n_noop('Your license expires in %d day', 'Your license expires in %d days', 'fluent-support')),
             'Your license expires today.' => __('Your license expires today.', 'fluent-support'),
             'Your license has expired.' => __('Your license has expired.', 'fluent-support'),
             /* translators: %s is the license expiry date */
             'Your license will not renew on its own. It expires on %s.' => __('Your license will not renew on its own. It expires on %s.', 'fluent-support'),
             'Your mailbox is active.' => __('Your mailbox is active.', 'fluent-support'),
             'Your masked mailbox email has been issued' => __('Your masked mailbox email has been issued', 'fluent-support'),
+            'Your open tickets where the customer sent the last reply. The date range does not change this number.' => __('Your open tickets where the customer sent the last reply. The date range does not change this number.', 'fluent-support'),
             'Your reply has not been sent. Leave this ticket?' => __('Your reply has not been sent. Leave this ticket?', 'fluent-support'),
-            'Your reply is empty' => __('Your reply is empty', 'fluent-support'),
             /* translators: %s is the subscription status, e.g. "Cancelled" or "Paused" */
             'Your subscription is not active (%s)' => __('Your subscription is not active (%s)', 'fluent-support'),
             'Your support portal is now configured and ready to help your customers.' => __('Your support portal is now configured and ready to help your customers.', 'fluent-support'),
+            'Your tickets created in the date range that are still open.' => __('Your tickets created in the date range that are still open.', 'fluent-support'),
+            'Your tickets created in the date range that still have the New status.' => __('Your tickets created in the date range that still have the New status.', 'fluent-support'),
             'Zendesk Domain' => __('Zendesk Domain', 'fluent-support'),
             'active' => __('Active', 'fluent-support'),
             'active_tickets_by_products' => __('Today\'s Active Tickets By Products', 'fluent-support'),
@@ -1729,6 +1774,7 @@ class TranslationStrings
             'agent_delete_warning' => __('Are you sure to delete this agent? All associated data will be deleted', 'fluent-support'),
             'agent_signature_help' => __('The signature is added to emails through the {{agent.signature}} smartcode in your inbox email templates (Inbox Settings > Email Settings). Templates you saved before version 2.4.5 need it added to include the signature.', 'fluent-support'),
             'agent_title' => __('Agent Job Title( ex: Developer, Support Staff )', 'fluent-support'),
+            'ai_integration_promo_description' => __('Connect OpenAI, Google Gemini or Anthropic Claude with your own API key, then draft and refine replies, summarize tickets and read customer sentiment.', 'fluent-support'),
             'all' => __('All', 'fluent-support'),
             'allowed_files_and_size' => __('Files with a size less than 2MB. Supported Types: images, text, pdf, zip', 'fluent-support'),
             'and' => __('and', 'fluent-support'),
@@ -1752,16 +1798,12 @@ class TranslationStrings
             'exclude_or_include_in_summary' => __('Include Agents in Summary', 'fluent-support'),
             'exclude_or_include_summary_column' => __('Select columns that you want to export', 'fluent-support'),
             /* translators: %d is the number of days since the license expired */
-            'expired %d day ago' => __('expired %d day ago', 'fluent-support'),
-            /* translators: %d is the number of days since the license expired */
-            'expired %d days ago' => __('expired %d days ago', 'fluent-support'),
+            "expired %d day ago\x00expired %d days ago" => self::pluralForms(_n_noop('expired %d day ago', 'expired %d days ago', 'fluent-support')),
             'expires today' => __('expires today', 'fluent-support'),
             'from_name_help' => __('Applies to replies and outreach emails written by an agent. Automatic emails, such as confirmations, always use the inbox name. The email address stays the same, so customer replies still reach this inbox.', 'fluent-support'),
             'get_overall_reports' => __('Get Overall reports of all the support agents and their performance', 'fluent-support'),
             /* translators: %d is the number of days until the license expires */
-            'in %d day' => __('in %d day', 'fluent-support'),
-            /* translators: %d is the number of days until the license expires */
-            'in %d days' => __('in %d days', 'fluent-support'),
+            "in %d day\x00in %d days" => self::pluralForms(_n_noop('in %d day', 'in %d days', 'fluent-support')),
             'incoming_webhook_promo_description' => __('Point a form, an app or a script at your webhook URL and every submission becomes a ticket in the business box you choose.', 'fluent-support'),
             'informational_reply_info' => __('This reply will be visible to the customer but will not update the ticket\'s \'waiting since\' timestamp.', 'fluent-support'),
             'install_fluentcrm' => __('Install & Activate FluentCRM (it\'s free)', 'fluent-support'),
@@ -1803,14 +1845,13 @@ class TranslationStrings
         ];
     }
 
-    // portal: resources/customer_portal
+    // portal: resources/customer_portal, resources/common
     public static function getPortalStrings()
     {
         return [
+            "\x00plural_index" => self::pluralRule('fluent-support')['index'],
             /* translators: %s: number of replies on the ticket */
-            '%s replies' => __('%s replies', 'fluent-support'),
-            /* translators: %s: number of replies on the ticket */
-            '%s reply' => __('%s reply', 'fluent-support'),
+            "%s reply\x00%s replies" => self::pluralForms(_n_noop('%s reply', '%s replies', 'fluent-support')),
             'Add Attachment' => __('Add Attachment', 'fluent-support'),
             'Additional info' => __('Additional info', 'fluent-support'),
             'All' => __('All', 'fluent-support'),
@@ -1818,16 +1859,22 @@ class TranslationStrings
             'All Tickets' => __('All Tickets', 'fluent-support'),
             'Apply' => __('Apply', 'fluent-support'),
             'Ascending' => __('Ascending', 'fluent-support'),
+            'Attachment preview is not available. Please download the file to view it.' => __('Attachment preview is not available. Please download the file to view it.', 'fluent-support'),
             'Back to All Tickets' => __('Back to All Tickets', 'fluent-support'),
             'Browse Files' => __('Browse Files', 'fluent-support'),
             'Check the spelling or try other words.' => __('Check the spelling or try other words.', 'fluent-support'),
             'Clear search' => __('Clear search', 'fluent-support'),
             'Click Here to Write a reply' => __('Click Here to Write a reply', 'fluent-support'),
+            'Close' => __('Close', 'fluent-support'),
             'Close Ticket' => __('Close Ticket', 'fluent-support'),
             'Closed' => __('Closed', 'fluent-support'),
             'Completed' => __('Completed', 'fluent-support'),
             'Created at' => __('Created at', 'fluent-support'),
             'Descending' => __('Descending', 'fluent-support'),
+            'Direct paste is not enabled for this editor.' => __('Direct paste is not enabled for this editor.', 'fluent-support'),
+            'Download' => __('Download', 'fluent-support'),
+            'Enter fullscreen' => __('Enter fullscreen', 'fluent-support'),
+            'Exit fullscreen' => __('Exit fullscreen', 'fluent-support'),
             'Failed' => __('Failed', 'fluent-support'),
             'If you still need help with this issue, reopen the ticket and reply.' => __('If you still need help with this issue, reopen the ticket and reply.', 'fluent-support'),
             'Log Out' => __('Log Out', 'fluent-support'),
@@ -1839,6 +1886,7 @@ class TranslationStrings
             'No tickets match "%s"' => __('No tickets match "%s"', 'fluent-support'),
             'Normal' => __('Normal', 'fluent-support'),
             'Open' => __('Open', 'fluent-support'),
+            'Open in new tab' => __('Open in new tab', 'fluent-support'),
             /* translators: %1$s is the current page number, %2$s the total number of pages */
             'Page %1$s of %2$s' => __('Page %1$s of %2$s', 'fluent-support'),
             'Please verify that you are not a robot.' => __('Please verify that you are not a robot.', 'fluent-support'),
@@ -1900,5 +1948,61 @@ class TranslationStrings
     public static function getAllStrings()
     {
         return array_merge(self::getAdminStrings(), self::getPortalStrings());
+    }
+
+    /**
+     * Every translated form of a $_n() string, in the order of the site language's plural rule.
+     *
+     * @param array $noop From _n_noop()
+     * @return string[]
+     */
+    private static function pluralForms($noop)
+    {
+        $samples = self::pluralRule($noop['domain'])['samples'];
+        $forms = [];
+        foreach ($samples as $count) {
+            $forms[] = translate_nooped_plural($noop, $count, $noop['domain']);
+        }
+        return $forms;
+    }
+
+    /**
+     * The plural form index for counts 0..199 (`index`) and the first count of each form (`samples`).
+     *
+     * @param string $domain Text domain
+     * @return array{index: int[], samples: int[]}
+     */
+    public static function pluralRule($domain)
+    {
+        static $rules = [];
+        if (isset($rules[$domain])) {
+            return $rules[$domain];
+        }
+
+        $expression = 'n != 1';
+        $translations = get_translations_for_domain($domain);
+        foreach ((array) $translations->headers as $name => $value) {
+            if (strtolower($name) === 'plural-forms' && preg_match('/plural\s*=\s*(.+)$/', (string) $value, $match)) {
+                $expression = rtrim(trim($match[1]), ';');
+            }
+        }
+        try {
+            $rule = new \Plural_Forms($expression);
+        } catch (\Exception $e) {
+            $rule = new \Plural_Forms('n != 1');
+        }
+
+        $index = [];
+        $samples = [];
+        for ($count = 0; $count < 200; $count++) {
+            $form = (int) $rule->get($count);
+            $index[] = $form;
+            if (!isset($samples[$form])) {
+                $samples[$form] = $count;
+            }
+        }
+        ksort($samples);
+
+        return $rules[$domain] = ['index' => $index, 'samples' => array_values($samples)];
     }
 }

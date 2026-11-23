@@ -37,7 +37,7 @@ class AttachmentStager
         }
 
         if (!is_array($files) || array_values($files) !== $files) {
-            return MCPHelper::error('invalid_param', __('attachments must be a list of files', 'fluent-support'), ['fields' => ['attachments']]);
+            return MCPHelper::error('invalid_param', 'attachments must be a list of files', ['fields' => ['attachments']]);
         }
 
         $settings = (new Settings())->globalBusinessSettings();
@@ -47,8 +47,7 @@ class AttachmentStager
         if (count($files) > $limit) {
             return MCPHelper::error(
                 'invalid_param',
-                /* translators: %d is the maximum number of files */
-                sprintf(__('You can attach at most %d files.', 'fluent-support'), $limit),
+                sprintf('You can attach at most %d files.', $limit),
                 ['fields' => ['attachments']]
             );
         }
@@ -65,8 +64,7 @@ class AttachmentStager
             if ($name === '' || $raw === false || $raw === '') {
                 return MCPHelper::error(
                     'invalid_param',
-                    /* translators: %s is the field name, e.g. attachments[0] */
-                    sprintf(__('%s needs a filename and base64 content_base64', 'fluent-support'), $field),
+                    sprintf('%s needs a filename and base64 content_base64', $field),
                     ['fields' => [$field]]
                 );
             }
@@ -74,8 +72,7 @@ class AttachmentStager
             if ($maxMb > 0 && strlen($raw) > $maxMb * 1024 * 1024) {
                 return MCPHelper::error(
                     'file_too_large',
-                    /* translators: 1: file name, 2: maximum size in MB */
-                    sprintf(__('%1$s is larger than the %2$sMB limit.', 'fluent-support'), $name, $maxMb),
+                    sprintf('%1$s is larger than the %2$sMB limit.', $name, $maxMb),
                     ['fields' => [$field]]
                 );
             }
@@ -84,8 +81,7 @@ class AttachmentStager
             if (!$type['type'] || !in_array($type['type'], $accepted, true)) {
                 return MCPHelper::error(
                     'file_type_not_allowed',
-                    /* translators: 1: file name, 2: comma-separated list of allowed file extensions */
-                    sprintf(__('%1$s is not an allowed file type. Allowed extensions: %2$s', 'fluent-support'), $name, implode(', ', self::allowedExtensions())),
+                    sprintf('%1$s is not an allowed file type. Allowed extensions: %2$s', $name, implode(', ', self::allowedExtensions())),
                     ['fields' => [$field]]
                 );
             }
@@ -102,7 +98,7 @@ class AttachmentStager
 
             if (!is_array($put) || !empty($put['error']) || empty($put['file'])) {
                 self::discard($written);
-                return MCPHelper::error('upload_failed', __('Could not store the attachment. Try again.', 'fluent-support'), ['retryable' => true]);
+                return MCPHelper::error('upload_failed', 'Could not store the attachment. Try again.', ['retryable' => true]);
             }
 
             // The extension passed above; the content must match it too. Core checks the
@@ -115,8 +111,7 @@ class AttachmentStager
                 self::discard($written);
                 return MCPHelper::error(
                     'file_type_not_allowed',
-                    /* translators: %s is the file name */
-                    sprintf(__('The content of %s does not match its file type.', 'fluent-support'), $name),
+                    sprintf('The content of %s does not match its file type.', $name),
                     ['fields' => ['attachments[' . $index . ']']]
                 );
             }

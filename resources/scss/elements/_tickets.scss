@@ -18,10 +18,42 @@
 
 }
 
+// wp-admin desktop single ticket: the thread and the sidebar scroll on their own, so a long sidebar
+// no longer scrolls the conversation out of view. The front-end portal scrolls the page instead.
+@media (min-width: 1025px) {
+    .wp-admin .fs_is_viewing_ticket .fs_tickets_view .fs_tk_inner_body {
+        height: calc(100vh - 96px);
+        overflow: hidden;
+    }
+
+    .wp-admin .fs_is_viewing_ticket .fs_view_ticket {
+        height: 100%;
+        margin-top: 0;
+        padding-top: 77px;
+        box-sizing: border-box;
+
+        .fs_ticket_body,
+        .fs_ticket_sidebar {
+            max-height: 100%;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            scrollbar-width: none;
+
+            &::-webkit-scrollbar {
+                display: none;
+            }
+        }
+    }
+}
+
 .fs_view_ticket {
     display: flex;
     width: 100%;
     margin-top: 77px;
+    // The top bar is in the flow below 1025px, so the 77px that clears the fixed bar is only a gap.
+    @media (max-width: 1024px) {
+        margin-top: 20px;
+    }
     @media (max-width: 768px) {
         margin-top: 30px;
     }
@@ -1738,14 +1770,27 @@
     }
 
     .fs_tickets_actions_btn {
-        gap: 8px;
+        gap: 10px;
         .el-button + .el-button {
             margin-left: 0;
         }
-        .el-button.fs_refresh_btn{
-            background-color: var(--fs-bg-primary, #FFFFFF);
-            font-size: 14px;
-            padding: 8px;
+        .el-button {
+            height: 32px;
+            padding: 6px;
+            font-size: 13px;
+            line-height: 18px;
+
+            > span {
+                gap: 4px;
+                padding: 0 4px;
+            }
+        }
+        .el-button.fs_refresh_btn {
+            width: 32px;
+
+            > span {
+                padding: 0;
+            }
         }
         .el-button.fs_waiting_reply_btn {
             gap: 6px;

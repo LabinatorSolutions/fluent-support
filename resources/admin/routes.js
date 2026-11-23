@@ -83,7 +83,7 @@ export default [
             },
             {
                 name: 'view_ticket',
-                path: ':ticket_id/view',
+                path: ':ticket_id(\\d+)/view',
                 component: ViewTicket,
                 props: true
             },
@@ -223,7 +223,7 @@ export default [
         }
     },
     {
-        path: '/mailboxes/:box_id',
+        path: '/mailboxes/:box_id(\\d+)',
         component: MailBoxRoot,
         props: true,
         meta: {
@@ -259,7 +259,7 @@ export default [
         }
     },
     {
-        path: '/customers/:customer_id',
+        path: '/customers/:customer_id(\\d+)',
         name: 'view_customer',
         component: CustomerPage,
         props: true,
@@ -292,7 +292,7 @@ export default [
         }
     },
     {
-        path: '/workflows/:workflow_id/edit',
+        path: '/workflows/:workflow_id(\\d+)/edit',
         name: 'edit-workflow',
         component: EditWorkFlow,
         props: true,

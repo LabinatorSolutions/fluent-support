@@ -40,7 +40,7 @@ class HtmlToMarkdown
 
         // Plain text: keep its own line breaks.
         if (strpos($html, '<') === false) {
-            $text = html_entity_decode($html, ENT_QUOTES, 'UTF-8');
+            $text = html_entity_decode($html, ENT_QUOTES | ENT_HTML5, 'UTF-8');
             return self::tidy(str_replace(["\r\n", "\r"], "\n", $text));
         }
 

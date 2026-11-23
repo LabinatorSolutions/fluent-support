@@ -164,6 +164,36 @@ return function () {
             FsTest::assert(strpos((string) $content, '<a href="https://example.com">link</a>') !== false, 'link kept: ' . $content);
         });
 
+        FsTest::case('bulk actions refuse a missing, empty or invalid ticket selection', function () use ($bulk, $ticket) {
+            $a = $ticket(['priority' => 'normal']);
+            $first = Ticket::orderBy('id')->first();
+            $firstPriority = $first ? $first->priority : null;
+
+            $selections = [
+                'missing' => null,
+                'empty'   => [],
+                'blank'   => [''],
+                'text'    => ['abc'],
+                'zero'    => ['0'],
+                'nested'  => [[$a->id]],
+                'boolean' => [true],
+            ];
+
+            foreach ($selections as $label => $ids) {
+                $params = ['bulk_action' => 'change_priority', 'priority' => 'critical'];
+                if ($ids !== null) {
+                    $params['ticket_ids'] = $ids;
+                }
+                $result = $bulk($params);
+                FsTest::assertSame(422, $result['status'], $label . ' status');
+            }
+
+            FsTest::assertSame('normal', Ticket::where('id', $a->id)->value('priority'), 'selected ticket unchanged');
+            if ($first) {
+                FsTest::assertSame($firstPriority, Ticket::where('id', $first->id)->value('priority'), 'lowest-id ticket unchanged');
+            }
+        });
+
         FsTest::case('bulk actions refuse more than 200 tickets', function () use ($bulk, $ticket) {
             $a = $ticket(['priority' => 'normal']);
             $ids = array_merge([$a->id], range(900000001, 900000200));

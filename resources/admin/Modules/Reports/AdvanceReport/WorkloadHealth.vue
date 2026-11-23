@@ -5,13 +5,14 @@
             <div class="fs_workload_health_header_row">
                 <h3 class="fs_page_title">{{ $t("Business Boxes") }}</h3>
                 <LiveSnapshotSelector
+                    v-if="has_pro"
                     v-model="liveMode"
                     v-model:selected-snapshot="selectedSnapshot"
                     report-type="workload_health"
                     @change="handleLiveModeChange"
                 />
             </div>
-            <div class="fs_workload_health_header_row fs_workload_health_toolbar">
+            <div v-if="has_pro" class="fs_workload_health_header_row fs_workload_health_toolbar">
                 <div class="fs_toolbar_left">
                     <el-dropdown trigger="click" :disabled="isSnapshotMode" @command="handleMailboxChange">
                         <button class="fs_pill_dropdown_btn" :disabled="isSnapshotMode">
@@ -56,10 +57,15 @@
                     </div>
                 </div>
             </div>
+            <SnapshotBanner
+                v-if="liveMode === 'snapshot' && selectedSnapshot"
+                :snapshot="selectedSnapshot"
+                @back="handleLiveModeChange({ mode: 'live', snapshot: null })"
+            />
         </div>
 
         <!-- Main Content -->
-        <div class="fs_workload_health_content" v-loading="loading">
+        <div v-if="has_pro" class="fs_workload_health_content" v-loading="loading">
             <div class="fs_page_error" v-if="fetchError">
                 <p>{{ $t("Couldn't load this data.") }}</p>
             </div>
@@ -165,16 +171,54 @@
             </div>
             </template>
         </div>
+
+        <!-- Shown instead of the report when Pro is not active -->
+        <div v-else class="fs_report_pro_showcase">
+            <ProShowcase
+                :feature="$t('Business Boxes')"
+                :heading="$t('Keep every inbox under control')"
+                :description="$t('Watch the workload in every business inbox, from tickets awaiting a reply to the longest waits, before customers notice.')"
+                :specifics="promoSpecifics"
+                utm-content="feature_lock_report_business-boxes"
+                docs-url="https://docs.fluentsupport.com/business-boxes-reports"
+            >
+                <template #preview>
+                    <div class="fs_pro_preview">
+                        <div class="fs_pro_preview_card fs_pro_preview_fields">
+                            <div class="fs_pro_preview_title">
+                                <span class="fs_pro_preview_checkbox"></span>
+                                {{ $t('Current Support Workload') }}
+                            </div>
+                            <div class="fs_pro_preview_row fs_pro_preview_reveal" style="--fs-row-index: 0">
+                                <span class="fs_pro_preview_row_label">{{ $t('Tickets Awaiting Reply') }}</span>
+                                <span class="fs_pro_preview_row_value">23</span>
+                            </div>
+                            <div class="fs_pro_preview_row fs_pro_preview_reveal" style="--fs-row-index: 1">
+                                <span class="fs_pro_preview_row_label">{{ $t('Unassigned Tickets') }}</span>
+                                <span class="fs_pro_preview_row_value">7</span>
+                            </div>
+                            <div class="fs_pro_preview_row fs_pro_preview_row_focal fs_pro_preview_reveal" style="--fs-row-index: 2">
+                                <span class="fs_pro_preview_row_label">{{ $t('Tickets Waiting Longest') }}</span>
+                                <!-- translators: %s: number of days -->
+                                <span class="fs_pro_preview_badge fs_pro_preview_badge_warning">{{ $_n('%s day', '%s days', 2) }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </ProShowcase>
+        </div>
     </div>
 </template>
 
 <script type="text/babel">
 import LiveSnapshotSelector from "./Parts/LiveSnapshotSelector.vue";
+import SnapshotBanner from "./Parts/SnapshotBanner.vue";
 import TicketsChart from "../Charts/TicketsGrowth";
 import ResolveChart from "../Charts/ResolveGrowth";
 import ResponseChart from "../Charts/ResponseGrowth";
 import IconPack from "@/admin/Components/IconPack.vue";
 import Pagination from "@/admin/Pieces/Pagination";
+import ProShowcase from "@/admin/Components/ProShowcase.vue";
 import { ArrowDown } from "@element-plus/icons-vue";
 import { shortcuts } from "../Utils/dateShortCuts";
 import { formatDateRangeForDisplay, formatStatValue, isFutureDate } from "../Utils/reportHelpers";
@@ -186,12 +230,14 @@ export default {
     emits: ["date-change"],
     components: {
         LiveSnapshotSelector,
+        SnapshotBanner,
         TicketsChart,
         ResolveChart,
         ResponseChart,
         IconPack,
         Pagination,
-        ArrowDown
+        ArrowDown,
+        ProShowcase
     },
     data() {
         return {
@@ -220,6 +266,13 @@ export default {
         };
     },
     computed: {
+        promoSpecifics() {
+            return [
+                this.$t('Current workload for each business inbox'),
+                this.$t('Tickets awaiting reply and unassigned tickets'),
+                this.$t('See which tickets have waited longest')
+            ];
+        },
         mailboxOptions() {
             return [
                 { id: "all", name: this.$t("All Mailboxes") },
@@ -372,6 +425,9 @@ export default {
             this.pagination.current_page = 1;
         },
         fetchWorkloadHealth() {
+            if (!this.has_pro) {
+                return;
+            }
             this.loading = true;
             this.fetchError = false;
             const requestId = ++this.fetchRequestId;
@@ -451,7 +507,7 @@ export default {
     align-items: center;
     gap: 2px;
     padding: 6px;
-    min-height: 40px;
+    min-height: 36px;
     border-radius: var(--fs-radius-md, 8px);
     border: 1px solid var(--fs-stroke-soft, #E1E4EA);
     background: var(--fs-bg-primary, #FFF);
@@ -572,7 +628,7 @@ export default {
 
 .fs_section_header {
     padding: 12px 20px;
-    height: 56px;
+    height: 57px;
     display: flex;
     align-items: center;
     justify-content: space-between;

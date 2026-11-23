@@ -94,7 +94,7 @@
         left: 0;
         width: 50%; /* 50% for step 1 of 2 */
         height: 8px;
-        background-color: var(--fs-bg-strong);
+        background-color: var(--fs-text-primary, #0E121B);
         border-radius: 999px;
     }
 
@@ -320,6 +320,10 @@
         display: flex;
         gap: 8px;
         align-items: center;
+
+        .el-button + .el-button {
+            margin-left: 0;
+        }
     }
 
     .fs_setup_content {

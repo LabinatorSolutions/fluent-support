@@ -35,6 +35,7 @@
 @use "elements/rtl.scss";
 @use "elements/notifications.scss";
 @use "elements/system_tools";
+@use "../common/attachmentPreview.scss";
 
 @include date.fs-date-range-picker-panel;
 
@@ -64,6 +65,109 @@
 .fst_front #alpha_app .el-select__wrapper {
     background: var(--fs-bg-primary, #FFF);
     min-height: 40px;
+}
+
+// Undo WP admin's input[type="text"] padding, border and shadow on an Element Plus inner input.
+@mixin fs-inner-input-reset($height) {
+    height: $height;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    box-shadow: none;
+    background: transparent;
+    line-height: $height;
+}
+
+// Ticket list fields. The id prefix beats the 36px/40px base above and WP admin's input[type="text"] rules.
+.toplevel_page_fluent-support #alpha_app,
+.fst_front #alpha_app {
+    .fs_all_tickets .fs_search_bar_section .fs_table_search_input .el-input__wrapper {
+        height: 36px;
+        min-height: 36px;
+        padding-top: 0;
+        padding-bottom: 0;
+        border-radius: var(--fs-radius-md, 8px);
+
+        input {
+            @include fs-inner-input-reset(34px);
+        }
+    }
+
+    // Table header search, bulk action and Time Sheet selects: 32px controls in the 57px toolbar.
+    .fs_table_header .fs_bulk_actions .el-select__wrapper,
+    .fs_table_header .fs_time_sheet_filter_panel .el-select__wrapper {
+        min-height: 32px;
+        padding-top: 3px;
+        padding-bottom: 3px;
+    }
+
+    .fs_table_header .fs_table_search_input {
+        .el-input__wrapper {
+            height: 32px;
+            min-height: 32px;
+            padding: 0 8px;
+            border-radius: var(--fs-radius-md, 8px);
+        }
+
+        .el-input__wrapper input,
+        .el-input__inner {
+            @include fs-inner-input-reset(30px);
+            font-size: 14px;
+        }
+
+        .el-input__prefix,
+        .el-input__suffix {
+            align-items: center;
+        }
+    }
+
+    .fs_rich_container .fs_rich_filter {
+        .el-select__wrapper {
+            min-height: 32px;
+            padding-top: 3px;
+            padding-bottom: 3px;
+            border-radius: var(--fs-radius-md, 8px);
+            font-size: 13px;
+            line-height: 24px;
+        }
+
+        .el-input__wrapper,
+        .el-date-editor.el-input__wrapper,
+        .el-range-editor.el-input__wrapper {
+            height: 32px;
+            min-height: 32px;
+            padding-top: 0;
+            padding-bottom: 0;
+            border-radius: var(--fs-radius-md, 8px);
+            font-size: 13px;
+        }
+
+        .el-select__selected-item,
+        .el-select__placeholder {
+            font-size: 13px;
+            line-height: 24px;
+        }
+
+        // WP admin pads and borders the inner input, which pushed it past its field.
+        .el-input .el-input__wrapper input,
+        .el-input__inner,
+        .el-range-input {
+            @include fs-inner-input-reset(30px);
+            border-radius: 0;
+            font-size: 13px;
+        }
+
+        .el-select__selection .el-tag {
+            height: 22px;
+            font-size: 12px;
+        }
+
+        .fs_action_filter_field {
+            font-size: 13px;
+            line-height: 18px;
+        }
+    }
 }
 // The admin page body class, or the [fluent_support_admin_portal] shortcode wrapper on the front end.
 .toplevel_page_fluent-support,
@@ -551,10 +655,11 @@ body.toplevel_page_fluent-support,
                 display: none !important;
             }
 
-            // Match the 52px sticky .fs_box_header so both bottom borders meet at the divider.
+            // Match the 57px sticky .fs_box_header so both bottom borders meet at the divider.
             // Sticky so a scrolled rail never hides the toggle.
             .fs_sidebar_topbar {
-                min-height: 52px;
+                min-height: 57px;
+                height: 57px;
                 position: sticky;
                 top: 0;
                 z-index: 1;
@@ -704,7 +809,7 @@ body.toplevel_page_fluent-support,
                 border-bottom: 1px solid var(--fs-border-default, #E1E4EA);
                 background: var(--fs-bg-primary, #FFF);
                 backdrop-filter: blur(12px);
-                height: 52px;
+                height: 57px;
 
                 @media all and (max-width: 768px) {
                     position: absolute;
@@ -923,11 +1028,11 @@ ul.el-upload-list.el-upload-list--picture {
         flex-direction: column;
         justify-content: center;
         align-items: flex-start;
-        gap: 12px;
+        gap: 8px;
         align-self: stretch;
-        border-radius: var(--fs-radius-sm, 4px);
-        background: var(--fs-bg-primary, #FFFFFF);
-        border: 1px solid rgb(234 236 240);
+        border-radius: var(--fs-radius-md, 8px);
+        background: var(--fs-subtle-btn-bg, #F9FAFB);
+        border: 1px solid var(--fs-stroke-soft, #E1E4EA);
 
         .fs_rich_filters {
             width: 100%;
@@ -942,7 +1047,7 @@ ul.el-upload-list.el-upload-list--picture {
 
                 .fs_rich_filters_body {
                     display: grid;
-                    gap: 12px;
+                    gap: 8px;
                 }
 
                 .fs_rich_filter_item {
@@ -964,19 +1069,43 @@ ul.el-upload-list.el-upload-list--picture {
                     color: var(--fs-text-secondary, #525866);
                 }
 
-                .fs_add_action_property {
-                    border-radius: var(--radius-6, 6px);
+                .el-button.fs_add_action_property {
+                    box-sizing: border-box;
+                    height: 32px;
+                    margin: 0;
+                    padding: 0 12px 0 8px;
+                    border-radius: var(--fs-radius-md, 8px);
                     border: 1px solid var(--fs-stroke-soft, #E1E4EA);
                     background: var(--fs-bg-primary, #FFFFFF);
-                    box-shadow: 0 1px 2px 0 rgba(10, 13, 20, 0.03);
-                    display: flex;
-                    padding: 14px 6px;
-                    justify-content: center;
-                    align-items: center;
-                    gap: 2px;
-                    font-size: 14px;
-                    font-style: normal;
+                    box-shadow: 0 1px 2px 0 var(--fs-shadow-light, rgba(10, 13, 20, 0.03));
+                    color: var(--fs-text-primary, #0E121B);
+                    font-size: 13px;
                     font-weight: 500;
+                    line-height: 18px;
+                    letter-spacing: -0.084px;
+
+                    > span {
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 4px;
+                    }
+
+                    svg {
+                        width: 20px;
+                        height: 20px;
+                    }
+
+                    &:hover {
+                        background: var(--fs-bg-subtle, #F5F7FA);
+                        color: var(--fs-text-primary, #0E121B);
+                    }
+                }
+
+                .fs_rich_filter_add_group {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    min-width: 0;
                 }
 
                 .fs_filter_operator {
@@ -985,17 +1114,46 @@ ul.el-upload-list.el-upload-list--picture {
                     }
                 }
 
+                .fs_add_new_properties_text {
+                    margin: 0;
+                    overflow: hidden;
+                    color: var(--fs-text-secondary, #525866);
+                    font-size: 14px;
+                    font-weight: 400;
+                    line-height: 20px;
+                    letter-spacing: -0.084px;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                }
+
                 .fs_delete_condition_btn {
                     display: flex;
-                    padding: 6px;
+                    box-sizing: border-box;
+                    width: 24px;
+                    height: 24px;
+                    flex: none;
+                    padding: 0;
                     justify-content: center;
                     align-items: center;
-                    gap: 2px;
                     cursor: pointer;
-                    border-radius: var(--fs-radius-md, 8px);
+                    border-radius: var(--fs-radius-6, 6px);
                     border: 1px solid var(--fs-border-default, #E1E4EA);
-                    background: var(--fs-bg-primary, #FFF);
-                    box-shadow: 0 1px 2px 0 rgba(10, 13, 20, 0.03);
+                    background: var(--fs-state-faded-light, #F2F5F8);
+                    color: var(--fs-text-muted, #99A0AE);
+
+                    svg {
+                        width: 14px;
+                        height: 14px;
+                    }
+
+                    &:hover {
+                        color: var(--fs-text-red, #FB3748);
+                    }
+
+                    &:focus-visible {
+                        outline: 2px solid var(--fs-stroke-strong, #0E121B);
+                        outline-offset: 1px;
+                    }
                 }
 
             }
@@ -1518,8 +1676,9 @@ form {
 
 .fs_integration {
     .fs_settings_sub_menu {
-        margin: -20px;
-        width: inherit;
+        margin: -20px -20px 0;
+        width: calc(100% + 40px);
+        max-width: none;
         background: none;
     }
 }
@@ -2343,10 +2502,9 @@ textarea {
 
 .fs_notification_integration_settings_form {
     width: 100%;
-    padding-top: 20px;
 
     .fs_integration_header {
-        margin-bottom: 24px;
+        margin-bottom: 16px;
         h3 {
             margin-top: 0;
             color: var(--fs-text-primary, #0E121B);
@@ -2354,6 +2512,13 @@ textarea {
         p{
             color: var(--fs-text-secondary, #525866);
         }
+        p:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    .fs_global_form_builder .fs_field_wrapper:first-child .fs_field_label {
+        margin-top: 0;
     }
 }
 
@@ -2361,10 +2526,18 @@ textarea {
     width: 100%;
     max-width: 100%;
     overflow: hidden;
-    padding: 20px;
+    // Match the loaded form: the box body already pads the sides.
+    padding: 20px 0 0;
+
+    .fs_form_skeleton {
+        padding: 0;
+    }
 }
 
+// Toolbar standard: 57px with 32px controls.
 .fs_table_header {
+    box-sizing: border-box;
+    min-height: 57px;
     padding: 12px 20px;
     border-bottom: 0;
     width: 100%;
@@ -2580,7 +2753,8 @@ textarea {
                 padding: 8px 12px;
                 border-radius: 0 8px 8px 0;
                 min-width: 40px;
-                height: 34px;
+                height: 40px;
+                margin-left: 0;
 
                 &:hover {
                     background-color: #f3f4f6;
@@ -3155,14 +3329,20 @@ textarea {
     }
 
     .fs_mailbox_header {
+        box-sizing: border-box;
         display: flex;
-        padding: 12px 16px;
+        min-height: 57px;
+        padding: 10px 16px;
         align-items: center;
         gap: 14px;
         align-self: stretch;
         border-bottom: 1px solid var(--fs-border-default, #E1E4EA);
         background: var(--fs-bg-primary, #FFF);
         justify-content: space-between;
+
+        .fs_mailbox_header_actions {
+            margin-top: 0;
+        }
     }
 
     .fs_mailbox_title {
@@ -3484,15 +3664,45 @@ textarea {
         padding: 0 20px !important;
     }
 
+    // The inset white card of the settings layout; the groups fill it edge to edge.
+    .fs_box_body.fs_importer_body {
+        padding: 0 !important;
+        border: 1px solid var(--fs-stroke-soft, #E1E4EA);
+        border-radius: var(--fs-radius-lg, 12px);
+        overflow: hidden;
+    }
+
     .fs_importer_list {
         padding: 0;
+    }
+
+    .fs_importer_group_label {
+        padding: 12px 24px;
+        background: var(--fs-bg-subtle, #F5F7FA);
+        border-bottom: 1px solid var(--fs-stroke-soft, #E1E4EA);
+        color: var(--fs-text-secondary, #525866);
+        font-size: 12px;
+        line-height: 16px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .fs_importer_title .fs_last_migration_inline {
+        margin-inline-start: 8px;
     }
 
     .fs_importer_item {
         justify-content: space-between;
         align-items: center;
-        padding: 20px 0 20px 0;
+        padding: 18px 24px;
+        border-bottom: 1px solid var(--fs-stroke-soft, #E1E4EA);
         position: relative;
+
+        // The card border closes the last row.
+        .fs_importer_group:last-child &:last-child {
+            border-bottom: 0;
+        }
     }
 
     .fs_importer_content {
@@ -3745,7 +3955,7 @@ textarea {
             border-right: none;
             background: var(--fs-bg-primary, #FFF);
             box-shadow: 0px 1px 2px 0px var(--fs-shadow-light, rgba(10, 13, 20, 0.03));
-            height: 36px;
+            height: 32px;
         }
 
         .el-select__placeholder {
@@ -3762,8 +3972,8 @@ textarea {
     }
 
     .fs_bulk_action_apply {
-        height: 36px;
-        padding: 19px 16px;
+        height: 32px;
+        padding: 0 16px;
         border-radius: 0 var(--fs-radius-md, 8px) var(--fs-radius-md, 8px) 0;
         background: var(--fs-bg-strong, #0E121B);
         border: 1px solid var(--fs-bg-strong, #0E121B);
@@ -4358,10 +4568,42 @@ textarea {
 }
 
 /* Filters Section */
+// 32px controls + 12px padding + 1px border = 57px, the same as the ticket list filter bar.
 .fs_activity_filters_section {
-    padding: 20px 32px;
+    box-sizing: border-box;
+    min-height: 57px;
+    padding: 12px 32px;
     border-bottom: 1px solid var(--fs-border-default, #E1E4EA);
     background: var(--fs-bg-primary, #FFF);
+
+    // 1px border + 30px item = 32px.
+    .fs_date_button_group {
+        min-height: 32px;
+
+        .fs_date_button_group_item.fs_date_picker_wrapper {
+            min-height: 30px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+        }
+    }
+
+    .fs_settings_button {
+        box-sizing: border-box;
+        width: 32px;
+        height: 32px;
+        padding: 0;
+    }
+}
+
+// The id prefix beats the 40px #alpha_app select base.
+.toplevel_page_fluent-support #alpha_app,
+.fst_front #alpha_app {
+    .fs_activity_filters_section .fs_staff_filter .el-select__wrapper {
+        min-height: 32px;
+        padding-top: 3px;
+        padding-bottom: 3px;
+        border-radius: var(--fs-radius-md, 8px);
+    }
 }
 
 .fs_activity_filters {
@@ -4391,10 +4633,6 @@ textarea {
 
 .fs_staff_filter {
     min-width: 180px;
-
-    .el-select__wrapper {
-        min-height: 36px;
-    }
 }
 
 /* Timeline Section */
@@ -4524,7 +4762,7 @@ textarea {
 
 .fs_activity_time {
     color: var(--fs-text-muted, #99A0AE);
-    font-size: 14px;
+    font-size: 12px;
     font-style: normal;
     font-weight: 400;
     line-height: 20px;
@@ -4663,7 +4901,7 @@ textarea {
 
     .fs_personal_report_header {
         display: flex;
-        height: 56px;
+        height: 57px;
         padding: 12px 20px;
         align-items: center;
         justify-content: space-between;
@@ -4856,15 +5094,13 @@ textarea {
         }
     }
 
-    .fs_sidebar_header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        height: 56px;
-        padding: 0 20px;
-        border-bottom: 1px solid var(--fs-border-default, #E1E4EA);
+    // The shared .fs_sidebar_topbar (Reports, Settings), sized to the 57px filter bar.
+    .fs_sidebar_topbar {
+        height: 57px;
+        padding: 10px 18px;
 
         @media (max-width: 1024px) {
+            width: auto;
             border-bottom: none;
             border-right: 1px solid var(--fs-border-default, #E1E4EA);
         }
@@ -4873,35 +5109,13 @@ textarea {
             display: none;
             visibility: hidden;
         }
-
-        .fs_sidebar_title {
-            margin: 0;
-            font-size: 16px;
-            font-weight: 500;
-            color: var(--fs-text-primary, #0E121B);
-            white-space: nowrap;
-        }
-
-        .fs_tickets_collapse_btn {
-            margin-left: auto;
-
-            img,
-            svg {
-                transition: transform 0.3s ease;
-            }
-
-            &.collapsed img,
-            &.collapsed svg {
-                transform: rotate(180deg);
-            }
-        }
     }
 
     &.is-collapsed {
-        .fs_sidebar_header {
+        .fs_sidebar_topbar {
             justify-content: center;
 
-            .fs_sidebar_title {
+            .fs_sidebar_topbar_title {
                 display: none;
             }
         }
@@ -5140,11 +5354,13 @@ textarea {
     width: 100%;
     margin-bottom: 20px;
 
+    // Filter bar: 32px controls + 12px padding + 1px border = 57px, the sidebar header height.
     .fs_box_header {
-        background: var(--fs-bg-primary, #FFFFFF);
-        border-bottom: 1px solid var(--fs-status-blocked-border, #E1E4EA);
+        box-sizing: border-box;
+        min-height: 57px;
         background: var(--fs-bg-primary, #FFF);
-        padding: 16px 20px;
+        border-bottom: 1px solid var(--fs-status-blocked-border, #E1E4EA);
+        padding: 12px 20px;
     }
 
     .fs_box_head {
@@ -5319,6 +5535,28 @@ textarea {
 
     .fs_box_body {
         border-radius: 0 0 var(--fs-radius-md, 8px) var(--fs-radius-md, 8px);
+    }
+
+    // List fields: no drop shadow or focus ring; focus only darkens the 1px border.
+    .fs_search_bar_section .fs_table_search_input,
+    .fs_rich_container {
+        .el-input__wrapper,
+        .el-select__wrapper,
+        .el-date-editor.el-input__wrapper {
+            border: 1px solid var(--fs-stroke-soft, #E1E4EA);
+            box-shadow: none;
+
+            &:hover:not(.is-disabled) {
+                box-shadow: none;
+            }
+
+            &.is-focus,
+            &.is-focused,
+            &.is-active {
+                border-color: var(--fs-stroke-strong, #0E121B);
+                box-shadow: none;
+            }
+        }
     }
 }
 

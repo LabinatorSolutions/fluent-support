@@ -197,10 +197,12 @@ class Ticket extends Model
             'web'                          => __('Web', 'fluent-support'),
             'email'                        => __('Email', 'fluent-support'),
             self::SOURCE_AGENT_INITIATED   => __('Agent outreach', 'fluent-support'),
+            self::SOURCE_AGENT_LOGGED      => __('Logged by agent', 'fluent-support'),
             'mcp'                          => __('MCP (AI agents)', 'fluent-support'),
             'telegram'                     => __('Telegram', 'fluent-support'),
             'slack'                        => __('Slack', 'fluent-support'),
             'whatsapp'                     => __('WhatsApp', 'fluent-support'),
+            'fluent_community'             => __('FluentCommunity', 'fluent-support'),
             'awesome-support'              => __('Imported: Awesome Support', 'fluent-support'),
             'freshdesk'                    => __('Imported: Freshdesk', 'fluent-support'),
             'helpscout'                    => __('Imported: Help Scout', 'fluent-support'),
@@ -267,6 +269,27 @@ class Ticket extends Model
     }
 
     /**
+     * Tickets we answered last, waiting on the customer: every ticket
+     * scopeWaitingOnly() leaves out. A tie counts as answered, as there: a ticket
+     * an agent opened (outreach) has both timestamps set to its creation time.
+     * Callers add the status filter.
+     *
+     * @param $query
+     * @return mixed
+     */
+    public function scopeWaitingOnCustomer($query)
+    {
+        // A missing customer timestamp counts as answered too, so the two scopes
+        // leave no open ticket out.
+        return $query->where('status', '!=', 'new')
+            ->whereNotNull('last_agent_response')
+            ->where(function ($q) {
+                $q->whereNull('last_customer_response')
+                    ->orWhereColumn('last_customer_response', '<=', 'last_agent_response');
+            });
+    }
+
+    /**
      * @param ModelQueryBuilder $query
      * @param int $productId
      * @return ModelQueryBuilder
@@ -306,6 +329,31 @@ class Ticket extends Model
 
     /** source value for a ticket an agent opened to reach out to the customer. */
     const SOURCE_AGENT_INITIATED = 'agent_initiated';
+
+    /** source value for a call or visit an agent logged as an internal note. */
+    const SOURCE_AGENT_LOGGED = 'agent_logged';
+
+    /**
+     * A logged ticket stays hidden from the customer until its first response row.
+     *
+     * @return bool
+     */
+    public function isHiddenFromCustomer()
+    {
+        return $this->source === self::SOURCE_AGENT_LOGGED && (int) $this->response_count === 0;
+    }
+
+    /**
+     * The SQL form of isHiddenFromCustomer(): only tickets the customer may see.
+     */
+    public function scopeVisibleToCustomer($query)
+    {
+        return $query->where(function ($q) {
+            $q->where('source', '!=', self::SOURCE_AGENT_LOGGED)
+                ->orWhereNull('source')
+                ->orWhere('response_count', '>', 0);
+        });
+    }
 
     /**
      * Whether an agent opened this ticket to reach out. The message is then the
@@ -557,7 +605,8 @@ class Ticket extends Model
 
             if ($value) {
                 if (in_array($fieldType, $customRenderers) && $rendered) {
-                    $value = apply_filters('fluent_support/custom_field_render_' . $fieldType, $value, $scope);
+                    // The ticket lets a renderer check the value against the ticket's customer.
+                    $value = apply_filters('fluent_support/custom_field_render_' . $fieldType, $value, $scope, $this);
                 } else if (in_array($fieldType, ['checkbox', 'date-range'])) {
                     $value = array_values(array_filter(explode('|', $value)));
                 }

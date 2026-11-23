@@ -105,6 +105,9 @@ $app->router->group(function ($router) {
     require FLUENT_SUPPORT_PLUGIN_PATH . 'app/Modules/Notifications/routes.php';
 });
 $app->router->group(function ($router) {
+    require FLUENT_SUPPORT_PLUGIN_PATH . 'app/Modules/CommunityTicket/routes.php';
+});
+$app->router->group(function ($router) {
     require FLUENT_SUPPORT_PLUGIN_PATH . 'app/Modules/AgentGroups/routes.php';
 });
 $app->router->group(function ($router) {

@@ -105,7 +105,7 @@
 </template>
 
 <script type="text/babel">
-import { parseMarkdown } from '@/admin/Composable/useMarkdown';
+import { parseMarkdown } from '@/common/markdown';
 import DynamicIcon from '@/admin/Components/Icons/DynamicIcon.vue';
 
 export default {

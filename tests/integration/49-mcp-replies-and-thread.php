@@ -259,7 +259,7 @@ return function () {
 
         $context = function () use ($agent) {
             \FluentSupport\App\Modules\MCP\Tools\ManagementTools::invalidateSupportContextCache();
-            return json_decode(wp_json_encode(\FluentSupport\App\Modules\MCP\Tools\ManagementTools::getSupportContext([])['data']), true);
+            return json_decode(wp_json_encode(\FluentSupport\App\Modules\MCP\Tools\ManagementTools::getSupportContext(['include' => ['mailboxes']])['data']), true);
         };
         $box = function ($data, $id) {
             foreach ($data['mailboxes'] as $mailbox) {
@@ -503,6 +503,22 @@ return function () {
         FsTest::assert(strpos($content, "- one\n  two\n- three") !== false, 'list item lines must stay under the marker, got: ' . $content);
         FsTest::assert(strpos($content, '### Heading') !== false, 'heading text must stay on the heading line, got: ' . $content);
         FsTest::assert(strpos($content, '[Open ticket](https://example.com/x)') !== false, 'link text must stay inside the brackets, got: ' . $content);
+    });
+
+    FsTest::case('mcp_get_ticket_returns_the_whole_conversation_of_a_long_ticket', function () use ($getTicket) {
+        $ticket = FsFactory::ticket();
+        $ids = [];
+        for ($i = 0; $i < 60; $i++) {
+            $ids[] = (int) FsFactory::conversation($ticket, ['content' => '<p>Message ' . $i . ' ' . esc_html(FsFactory::marker()) . '</p>'])->id;
+        }
+
+        $data = $getTicket(['ticket_id' => $ticket->id, 'with_integrations' => false]);
+        if (!$data) {
+            return;
+        }
+
+        FsTest::assertSame($ids, array_map('intval', array_column($data['responses'], 'id')), 'all 60 messages, oldest first');
+        FsTest::assertSame(false, $data['responses_meta']['has_more'], 'nothing is left for another page');
     });
 
     FsTest::case('mcp_widgets_use_mcp_data_markdown_and_key_scope', function () use ($getTicket) {

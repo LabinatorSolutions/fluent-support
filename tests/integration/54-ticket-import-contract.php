@@ -124,13 +124,14 @@ return function () {
 
             FsTest::assertSame('Printer on fire [' . $marker . ']', $ticket->title, 'title');
             FsTest::assertSame('active', $ticket->status, 'status 2 is active');
-            FsTest::assertSame('2024-03-05 15:30:00', (string) $ticket->created_at, 'created_at keeps its afternoon hour');
+            // Stored in site time, whatever zone the lab is in.
+            FsTest::assertSame(wp_date('Y-m-d H:i:s', strtotime('2024-03-05T15:30:00Z')), (string) $ticket->created_at, 'created_at is the same moment in site time');
             FsTest::assertSame($customerEmail, (string) Person::where('id', $ticket->customer_id)->value('email'), 'customer');
 
             $replies = Conversation::where('ticket_id', $ticketId)->orderBy('id')->get(['person_id', 'created_at'])->toArray();
             FsTest::assertSame(2, count($replies), 'both replies');
-            FsTest::assertSame('2024-03-05 16:45:00', (string) ($replies[0]['created_at'] ?? ''), 'agent reply time');
-            FsTest::assertSame('2024-03-05 17:10:00', (string) ($replies[1]['created_at'] ?? ''), 'customer reply time');
+            FsTest::assertSame(wp_date('Y-m-d H:i:s', strtotime('2024-03-05T16:45:00Z')), (string) ($replies[0]['created_at'] ?? ''), 'agent reply time');
+            FsTest::assertSame(wp_date('Y-m-d H:i:s', strtotime('2024-03-05T17:10:00Z')), (string) ($replies[1]['created_at'] ?? ''), 'customer reply time');
 
             $last = $import(2);
             FsTest::assertHealthy($last, 'import page 2');
@@ -148,6 +149,49 @@ return function () {
             FsTest::assertSame([], $again['data']['insert_ids'] ?? null, 'nothing new');
             FsTest::assertSame(1, (int) ($again['data']['skips'] ?? 0), 'the ticket is skipped');
             FsTest::assertSame(1, (int) Meta::where('object_type', 'ticket_meta')->where('key', '_freshdesk_origin_id')->where('value', $originId)->count(), 'imported once');
+        });
+
+        // The helpdesk tables hold site time. The services send UTC, so each date is
+        // moved to the site's zone on the way in, as a ticket created here would have it.
+        FsTest::case('importer_stores_remote_dates_in_site_time', function () use ($import, $originId) {
+            if (gethostbyname('fstest.freshdesk.com') === 'fstest.freshdesk.com') {
+                FsTest::skip('no DNS in the lab');
+                return;
+            }
+
+            $previous = [get_option('timezone_string'), get_option('gmt_offset')];
+            update_option('timezone_string', 'America/New_York');
+            // Forget the first import, so the same source ticket comes in again.
+            Meta::where('object_type', 'ticket_meta')->where('key', '_freshdesk_origin_id')->where('value', $originId)->delete();
+
+            try {
+                FsTest::assertHealthy($import(1), 'import under America/New_York');
+                $ticketId = (int) Meta::where('object_type', 'ticket_meta')->where('key', '_freshdesk_origin_id')->where('value', $originId)->value('object_id');
+                $ticket = Ticket::find($ticketId);
+                FsFactory::adoptRestTicket($ticket);
+
+                // 15:30 UTC is 10:30 in New York (UTC-5 in March before DST).
+                FsTest::assertSame('2024-03-05 10:30:00', (string) $ticket->created_at, 'ticket created_at');
+                FsTest::assertSame(
+                    ['2024-03-05 11:45:00', '2024-03-05 12:10:00'],
+                    array_map('strval', array_column(Conversation::where('ticket_id', $ticketId)->orderBy('id')->get(['created_at'])->toArray(), 'created_at')),
+                    'reply times'
+                );
+                FsTest::assertSame(
+                    ['2024-03-05 11:45:00', '2024-03-05 12:10:00', 4500],
+                    [(string) $ticket->last_agent_response, (string) $ticket->last_customer_response, (int) $ticket->first_response_time],
+                    'reply bookkeeping is on the same clock; the first response took 75 minutes'
+                );
+            } finally {
+                update_option('timezone_string', $previous[0]);
+                update_option('gmt_offset', $previous[1]);
+            }
+        });
+
+        FsTest::case('importers_never_write_a_utc_date_string', function () {
+            foreach (glob(dirname(__DIR__, 2) . '/app/Modules/TicketImport/Importers/*.php') as $file) {
+                FsTest::assert(strpos(file_get_contents($file), "gmdate('Y-m-d H:i:s'") === false, basename($file) . ' stores dates through siteTime()');
+            }
         });
 
         // The page loop Awesome Support, SupportCandy and JS Help Desk share. Their plugins

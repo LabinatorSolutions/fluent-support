@@ -108,7 +108,7 @@
             >
                 <el-icon v-if="ticket.status !== 'closed'"><Check /></el-icon>
                 <el-icon v-if="ticket.status === 'closed'"><RefreshRight /></el-icon>
-                <span>{{ ticket.status === 'closed' ? $t('Re-open') : $t('Close Ticket') }}</span>
+                <span class="fs_close_ticket_label">{{ ticket.status === 'closed' ? $t('Re-open') : $t('Close Ticket') }}</span>
             </el-button>
 
             <!-- More Actions Button -->
@@ -154,6 +154,7 @@
         <div v-if="listPosition" class="fs_ticket_position">
             <!-- translators: %1$s is the ticket's position in the list, %2$s is the number of tickets in the list -->
             <span class="fs_ticket_position_text">{{ $t('%1$s of %2$s', listPosition.number, listPosition.total) }}</span>
+            <div class="fs_ticket_step_group">
             <el-button v-tip.bottom="$t('Previous ticket')"
                 class="fs_outline_btn fs_ticket_step_btn"
                 :aria-label="$t('Previous ticket')"
@@ -170,6 +171,7 @@
             >
                 <el-icon><ArrowDown /></el-icon>
             </el-button>
+            </div>
         </div>
     </Teleport>
 </template>

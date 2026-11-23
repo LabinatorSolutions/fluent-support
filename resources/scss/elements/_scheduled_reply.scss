@@ -82,32 +82,21 @@
     box-shadow: 0 0 0 3px var(--fs-dot-warning-glow, #FFF1EB);
 }
 
-.fs_schedule_empty_notice {
+.fs_schedule_alert {
     display: flex;
-    gap: 10px;
-    padding: 12px;
-    border: 1px solid var(--fs-state-away-light, #FFECC0);
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
     border-radius: var(--fs-radius-md, 8px);
-    background: var(--fs-state-away-lighter, #FFFAEB);
-    color: var(--fs-state-away-dark, #624C18);
+    background: var(--fs-state-information-light, #FFEBEC);
+    color: var(--fs-text-primary, #0E121B);
+    font-size: 13px;
+    line-height: 20px;
 
     .el-icon {
         flex: none;
-        margin-top: 1px;
-        font-size: 18px;
-    }
-}
-
-.fs_schedule_empty_notice_text {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    font-size: 13px;
-    line-height: 1.45;
-
-    strong {
-        font-size: 14px;
-        font-weight: 600;
+        font-size: 16px;
+        color: var(--fs-state-information-dark, #FB3748);
     }
 }
 
@@ -324,8 +313,9 @@
     }
 
     .fs_schedule_form_title {
-        font-size: 17px;
-        font-weight: 700;
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 24px;
         color: var(--fs-text-primary, #0E121B);
     }
 }
@@ -346,9 +336,9 @@
     .fs_schedule_tz,
     .fs_schedule_error {
         margin: 0;
-        font-size: 12.5px;
+        font-size: 12px;
         line-height: 1.45;
-        color: var(--fs-text-muted, #99A0AE);
+        color: var(--fs-text-secondary, #525866);
     }
 
     .fs_schedule_error {
@@ -368,8 +358,6 @@
         width: 100%;
         height: 40px;
         margin: 0;
-        font-size: 14.5px;
-        font-weight: 600;
 
         &:hover {
             background: var(--fs-bg-muted, #2B303B);
@@ -394,8 +382,10 @@
 
 .fs_narrow_promo.fs_schedule_upsell {
     align-items: stretch;
+    gap: 8px;
     max-width: none;
-    margin: 0;
+    // 4px on top of the body's 12px gap sets the upsell apart from the form fields
+    margin: 4px 0 0;
     padding: 0;
     background: transparent;
     text-align: start;
@@ -412,7 +402,7 @@
     a.el-button {
         width: 100%;
         height: 40px;
-        margin-top: 4px;
+        margin-top: 0;
     }
 }
 

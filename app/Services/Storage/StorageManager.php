@@ -671,12 +671,17 @@ class StorageManager
      * Redirect to, or stream, a remote attachment. Exits.
      *
      * @param Attachment $attachment
+     * @param bool       $stream Try to send the file from this site first (same-origin reads); redirects if that fails.
      */
-    public static function serve($attachment)
+    public static function serve($attachment, $stream = false)
     {
         $driver = self::getDriver($attachment->driver);
 
         if ($driver) {
+            if ($stream) {
+                $driver->stream($attachment); // Exits once the file is sent.
+            }
+
             $url = $driver->getDownloadUrl($attachment);
 
             if ($url === null) {

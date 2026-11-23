@@ -197,11 +197,39 @@
         white-space: nowrap;
     }
 
+    .fs_ticket_step_group {
+        display: inline-flex;
+    }
+
     .el-button.fs_ticket_step_btn {
         width: 32px;
         height: 32px;
         padding: 0;
         margin-left: 0;
+
+        &:first-child {
+            border-start-end-radius: 0;
+            border-end-end-radius: 0;
+        }
+
+        &:last-child {
+            margin-inline-start: -1px;
+            border-start-start-radius: 0;
+            border-end-start-radius: 0;
+        }
+
+        &:focus:not(:focus-visible),
+        &:active:not(:focus-visible) {
+            border-color: var(--fs-stroke-soft, #E1E4EA);
+            box-shadow: none;
+            color: var(--fs-text-secondary, #525866);
+        }
+
+        &:hover,
+        &:focus-visible {
+            position: relative;
+            z-index: 1;
+        }
     }
 }
 
@@ -250,6 +278,89 @@
         .el-button:not(.fs_action_btn_with_text) svg {
             width: 16px;
             height: 16px;
+        }
+    }
+}
+
+// The shared .fs_action_buttons rule makes the actions absolute, so on narrow screens they covered the
+// breadcrumb. Keep them in the row and let the breadcrumb give up the space: the chip first, then
+// the "All Tickets" link; the ticket number stays whole.
+@media (min-width: 769px) {
+    .fs_top_bar_right {
+        flex: 1 1 0;
+        min-width: 0;
+    }
+
+    .fs_breadcrumbs_group {
+        min-width: 0;
+        overflow: hidden;
+
+        .fs_breadcrumb_item {
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
+        .fs_breadcrumb_item:first-child {
+            flex-shrink: 1;
+            min-width: 0;
+
+            .fs_breadcrumb_link {
+                display: block;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+
+        .fs_breadcrumb_chip {
+            flex-shrink: 100;
+            min-width: 0;
+
+            .fs_scheduled_reply_badge {
+                max-width: 100%;
+                box-sizing: border-box;
+
+                > span {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+            }
+        }
+    }
+
+    .fs_top_bar_position {
+        flex-shrink: 0;
+    }
+
+    .fs_top_bar_actions {
+        flex-shrink: 0;
+        margin-inline-start: auto;
+
+        .fs_action_buttons {
+            position: static;
+            padding: 0;
+        }
+    }
+}
+
+// Below 1280px the actions compact so the breadcrumb keeps room: shorter agent name, icon-only Close.
+@media (min-width: 769px) and (max-width: 1279px) {
+    .fs_top_bar_actions {
+        .el-button.fs_agent_selector_btn .fs_agent_name_display {
+            max-width: 90px;
+        }
+
+        .el-button.fs_close_ticket_btn {
+            width: 32px;
+            padding: 0;
+        }
+
+        .fs_close_ticket_label {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            clip: rect(0 0 0 0);
+            white-space: nowrap;
         }
     }
 }

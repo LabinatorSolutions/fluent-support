@@ -22,13 +22,18 @@ use FluentSupport\App\Services\Tickets\TicketService;
 
 class TicketTools
 {
-    const MAX_RESPONSES = 50;
+    /**
+     * Messages in one get-ticket result. A ticket is one entity: its whole
+     * conversation comes back in one call. The ceiling only guards against a
+     * runaway thread; past it the conversation is paged.
+     */
+    const MAX_RESPONSES = 500;
 
     public static function listTickets($params)
     {
         $agent = MCPHelper::resolveAgent();
         if (!$agent) {
-            return MCPHelper::error('unauthorized', __('No agent found for current user', 'fluent-support'));
+            return MCPHelper::error('unauthorized', 'No agent found for current user');
         }
 
         $args = self::listArgs($params);
@@ -68,7 +73,7 @@ class TicketTools
         if ($cursor !== '') {
             $decoded = self::decodeListCursor($cursor);
             if (!$decoded || $decoded['sort_by'] !== $sortBy || $decoded['sort_type'] !== $sortType) {
-                return MCPHelper::error('invalid_param', __('Invalid or expired cursor, or it was generated with a different sort_by/sort_type than this request', 'fluent-support'), ['fields' => ['cursor'], 'next_step' => 'Use the same sort_by/sort_type as the call that produced this cursor, or omit cursor to start a fresh sweep']);
+                return MCPHelper::error('invalid_param', 'Invalid or expired cursor, or it was generated with a different sort_by/sort_type than this request', ['fields' => ['cursor'], 'next_step' => 'Use the same sort_by/sort_type as the call that produced this cursor, or omit cursor to start a fresh sweep']);
             }
 
             self::applyCursorWhere($query, $sortBy, $sortType, $decoded);
@@ -83,7 +88,7 @@ class TicketTools
                 ? self::encodeListCursor($rows->last(), $sortBy, $sortType)
                 : null;
 
-            $summary = sprintf(_n('Found %d ticket', 'Found %d tickets', $rows->count(), 'fluent-support'), $rows->count());
+            $summary = sprintf((int) $rows->count() === 1 ? 'Found %d ticket' : 'Found %d tickets', $rows->count());
 
             $customerMeta = CustomerMetaEnricher::resolve($rows, [
                 'surface'  => 'ticket_list',
@@ -103,8 +108,7 @@ class TicketTools
 
         $total   = $paginated->total();
         $summary = sprintf(
-            /* translators: %1$d is the number of tickets found, %2$d is the current page, %3$d is the last page */
-            _n('Found %1$d ticket (page %2$d of %3$d)', 'Found %1$d tickets (page %2$d of %3$d)', $total, 'fluent-support'),
+            (int) $total === 1 ? 'Found %1$d ticket (page %2$d of %3$d)' : 'Found %1$d tickets (page %2$d of %3$d)',
             $total,
             $paginated->currentPage(),
             $paginated->lastPage()
@@ -118,8 +122,9 @@ class TicketTools
         ]);
 
         $meta = MCPHelper::pagingMeta($paginated);
-        // Lets a sweep switch from page/offset to keyset pagination.
-        $meta['paging']['next_cursor'] = !empty($items)
+        // Lets a sweep switch from page/offset to keyset pagination. Null on the
+        // last page, so an agent does not follow a cursor to an empty result.
+        $meta['paging']['next_cursor'] = !empty($items) && $paginated->hasMorePages()
             ? self::encodeListCursor(end($items), $sortBy, $sortType)
             : null;
 
@@ -213,11 +218,21 @@ class TicketTools
             'ticket_tags'          => !empty($params['tags']) ? array_map('intval', (array) $params['tags']) : null,
             'unassigned'           => !empty($params['unassigned']),
             'needs_first_response' => !empty($params['needs_first_response']),
+            // TicketQuery escapes % and _ itself, so they are literal text.
             'search'               => sanitize_text_field($params['search'] ?? ''),
             'deep_search'          => true,
         ]);
 
         $waitingOn = $params['waiting_on'] ?? '';
+        // A closed ticket waits on no one: with closed tickets in the list, the rows
+        // would carry waiting_on=null and contradict the filter.
+        if ((!empty($params['waiting_for_reply']) || $waitingOn) && in_array($params['status'] ?? '', ['closed', 'all'], true)) {
+            return MCPHelper::error(
+                'invalid_param',
+                'waiting_on and waiting_for_reply list open tickets only. Use status open, new or active, or leave status out.',
+                ['fields' => ['status', $waitingOn ? 'waiting_on' : 'waiting_for_reply']]
+            );
+        }
         if (!empty($params['status'])) {
             $args['status_type'] = $params['status'];
         } elseif (!empty($params['waiting_for_reply']) || $waitingOn) {
@@ -236,10 +251,40 @@ class TicketTools
                 continue;
             }
             try {
-                $args[$field] = (new \DateTime(sanitize_text_field($params[$field])))->format('Y-m-d H:i:s');
+                // created_at is stored in site time. A value without an offset is site
+                // time; one with an offset (as the dates the tools return) is converted.
+                $value = trim(sanitize_text_field($params[$field]));
+                // DateTime also reads words and single letters ("x" is a timezone, "tomorrow"
+                // a date), which would hide a mistake: take a written date only.
+                // The clock parts are bounded here too: DateTime rolls 24:30 or 10:75 over
+                // to another time, and the filter would then use a boundary nobody asked for.
+                if (!preg_match('/^\d{4}-\d{2}-\d{2}(?:[T ](?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z|[+-](?:0\d|1[0-4]):?[0-5]\d)?)?$/', $value)) {
+                    throw new \Exception('Not a date');
+                }
+                // A day that does not exist (February 30) is rolled over by DateTime, not refused.
+                if (!checkdate((int) substr($value, 5, 2), (int) substr($value, 8, 2), (int) substr($value, 0, 4))) {
+                    throw new \Exception('Not a date');
+                }
+                $date   = new \DateTime($value, wp_timezone());
+                // Anything else the parser had to adjust is refused, not used.
+                $errors = \DateTime::getLastErrors();
+                if ($errors && (!empty($errors['warning_count']) || !empty($errors['error_count']))) {
+                    throw new \Exception('Not a date');
+                }
+                $date->setTimezone(wp_timezone());
+                // "On or before" a bare date includes that whole day.
+                if ($field === 'created_before' && preg_match('/^\d{4}-\d{2}-\d{2}$/', $value)) {
+                    $date->setTime(23, 59, 59);
+                }
+                $args[$field] = $date->format('Y-m-d H:i:s');
             } catch (\Exception $e) {
-                return MCPHelper::error('invalid_param', sprintf(__("Invalid date format for '%s'", 'fluent-support'), $field), ['fields' => [$field], 'hint' => 'Use YYYY-MM-DD or ISO 8601']);
+                return MCPHelper::error('invalid_param', sprintf("Invalid date format for '%s'", $field), ['fields' => [$field], 'hint' => 'Use YYYY-MM-DD or ISO 8601']);
             }
+        }
+
+        // A reversed range matches nothing and would read as "no tickets".
+        if (!empty($args['created_after']) && !empty($args['created_before']) && $args['created_after'] > $args['created_before']) {
+            return MCPHelper::error('invalid_param', 'created_after is later than created_before', ['fields' => ['created_after', 'created_before']]);
         }
 
         return $args;
@@ -249,18 +294,18 @@ class TicketTools
     {
         $agent = MCPHelper::resolveAgent();
         if (!$agent) {
-            return MCPHelper::error('unauthorized', __('No agent found for current user', 'fluent-support'));
+            return MCPHelper::error('unauthorized', 'No agent found for current user');
         }
 
         $ticketId = (int) ($params['ticket_id'] ?? 0);
         if (!$ticketId) {
-            return MCPHelper::error('invalid_param', __('ticket_id is required', 'fluent-support'), ['fields' => ['ticket_id']]);
+            return MCPHelper::error('invalid_param', 'ticket_id is required', ['fields' => ['ticket_id']]);
         }
 
         $ticket = Ticket::with(['customer', 'agent', 'product', 'mailbox', 'tags'])->find($ticketId);
 
         if (!$ticket) {
-            return MCPHelper::error('not_found', __('Ticket not found', 'fluent-support'), ['next_step' => 'Use list-tickets to find valid ticket IDs']);
+            return MCPHelper::error('not_found', 'Ticket not found', ['next_step' => 'Use list-tickets to find valid ticket IDs']);
         }
 
         if ($err = TicketAccessGuard::assert($ticket)) {
@@ -391,7 +436,7 @@ class TicketTools
             }
 
             if ($responseId && $rows->isEmpty()) {
-                return MCPHelper::error('not_found', __('Response not found on this ticket', 'fluent-support'), ['fields' => ['response_id']]);
+                return MCPHelper::error('not_found', 'Response not found on this ticket', ['fields' => ['response_id']]);
             }
 
             // Inline images carry signed URLs that expire; re-sign them.
@@ -425,7 +470,7 @@ class TicketTools
     {
         $agent = MCPHelper::resolveAgent();
         if (!$agent) {
-            return MCPHelper::error('unauthorized', __('No agent found for current user', 'fluent-support'));
+            return MCPHelper::error('unauthorized', 'No agent found for current user');
         }
 
         $title   = sanitize_text_field($params['title'] ?? '');
@@ -433,12 +478,12 @@ class TicketTools
         $content = wp_kses_post(Helper::decodeNonMarkupEntities(MCPHelper::processContent($params['content'] ?? '', $format)));
 
         if (!$title || !$content) {
-            return MCPHelper::error('invalid_param', __('title and content are required', 'fluent-support'), ['fields' => ['title', 'content']]);
+            return MCPHelper::error('invalid_param', 'title and content are required', ['fields' => ['title', 'content']]);
         }
 
         $email = sanitize_email($params['customer_email'] ?? '');
         if (!$email || !is_email($email)) {
-            return MCPHelper::error('invalid_param', __('A valid customer_email is required', 'fluent-support'), ['fields' => ['customer_email']]);
+            return MCPHelper::error('invalid_param', 'A valid customer_email is required', ['fields' => ['customer_email']]);
         }
 
         $customer = CustomerService::findOrCreate(array_filter([
@@ -447,7 +492,7 @@ class TicketTools
             'last_name'  => sanitize_text_field($params['customer_last_name'] ?? ''),
         ]));
         if (!$customer || !$customer->exists) {
-            return MCPHelper::error('customer_create_failed', __('Could not create a customer record for this email', 'fluent-support'));
+            return MCPHelper::error('customer_create_failed', 'Could not create a customer record for this email');
         }
 
         $ticketData = [
@@ -468,7 +513,7 @@ class TicketTools
         if (!empty($params['product_id'])) {
             $productId = (int) $params['product_id'];
             if (!\FluentSupport\App\Models\Product::find($productId)) {
-                return MCPHelper::error('invalid_param', __('The specified product does not exist', 'fluent-support'), ['fields' => ['product_id'], 'next_step' => 'Use get-support-context to see available products and their IDs']);
+                return MCPHelper::error('invalid_param', 'The specified product does not exist', ['fields' => ['product_id'], 'next_step' => 'Use get-support-context with include=["products"] to see available products and their IDs']);
             }
             $ticketData['product_id'] = $productId;
         }
@@ -479,7 +524,7 @@ class TicketTools
                 return $err;
             }
             if (!\FluentSupport\App\Models\MailBox::find($mailboxId)) {
-                return MCPHelper::error('invalid_param', __('The specified mailbox does not exist', 'fluent-support'), ['fields' => ['mailbox_id'], 'next_step' => 'Use get-support-context to see available mailboxes and their IDs']);
+                return MCPHelper::error('invalid_param', 'The specified mailbox does not exist', ['fields' => ['mailbox_id'], 'next_step' => 'Use get-support-context with include=["mailboxes"] to see available mailboxes and their IDs']);
             }
             $ticketData['mailbox_id'] = $mailboxId;
         }
@@ -522,7 +567,7 @@ class TicketTools
             !PermissionManager::currentUserCan('fst_manage_unassigned_tickets') &&
             !PermissionManager::currentUserCan('fst_manage_other_tickets')
         ) {
-            $data['warning'] = __('Ticket created unassigned. Your permission level does not include access to unassigned tickets, so follow-up actions (reply, close, update) will be denied until the ticket is assigned to you by a manager.', 'fluent-support');
+            $data['warning'] = 'Ticket created unassigned. Your permission level does not include access to unassigned tickets, so follow-up actions (reply, close, update) will be denied until the ticket is assigned to you by a manager.';
         }
 
         return MCPHelper::envelope(
@@ -535,17 +580,17 @@ class TicketTools
     {
         $agent = MCPHelper::resolveAgent();
         if (!$agent) {
-            return MCPHelper::error('unauthorized', __('No agent found for current user', 'fluent-support'));
+            return MCPHelper::error('unauthorized', 'No agent found for current user');
         }
 
         $ticketId = (int) ($params['ticket_id'] ?? 0);
         if (!$ticketId) {
-            return MCPHelper::error('invalid_param', __('ticket_id is required', 'fluent-support'), ['fields' => ['ticket_id']]);
+            return MCPHelper::error('invalid_param', 'ticket_id is required', ['fields' => ['ticket_id']]);
         }
 
         $ticket = Ticket::find($ticketId);
         if (!$ticket) {
-            return MCPHelper::error('not_found', __('Ticket not found', 'fluent-support'), ['next_step' => 'Use list-tickets to find valid ticket IDs']);
+            return MCPHelper::error('not_found', 'Ticket not found', ['next_step' => 'Use list-tickets to find valid ticket IDs']);
         }
 
         if ($err = TicketAccessGuard::assert($ticket)) {
@@ -598,17 +643,17 @@ class TicketTools
     {
         $agent = MCPHelper::resolveAgent();
         if (!$agent) {
-            return MCPHelper::error('unauthorized', __('No agent found for current user', 'fluent-support'));
+            return MCPHelper::error('unauthorized', 'No agent found for current user');
         }
 
         $ticketId = (int) ($params['ticket_id'] ?? 0);
         if (!$ticketId) {
-            return MCPHelper::error('invalid_param', __('ticket_id is required', 'fluent-support'), ['fields' => ['ticket_id']]);
+            return MCPHelper::error('invalid_param', 'ticket_id is required', ['fields' => ['ticket_id']]);
         }
 
         $ticket = Ticket::find($ticketId);
         if (!$ticket) {
-            return MCPHelper::error('not_found', __('Ticket not found', 'fluent-support'), ['next_step' => 'Use list-tickets to find valid ticket IDs']);
+            return MCPHelper::error('not_found', 'Ticket not found', ['next_step' => 'Use list-tickets to find valid ticket IDs']);
         }
 
         if ($err = TicketAccessGuard::assert($ticket)) {
@@ -628,7 +673,7 @@ class TicketTools
             if (!PermissionManager::currentUserCan('fst_manage_settings')) {
                 return MCPHelper::error(
                     'forbidden',
-                    __('You do not have permission to move this ticket to another mailbox.', 'fluent-support'),
+                    'You do not have permission to move this ticket to another mailbox.',
                     ['fields' => ['mailbox_id'], 'retryable' => false]
                 );
             }
@@ -637,7 +682,7 @@ class TicketTools
                 return $err;
             }
             if (!\FluentSupport\App\Models\MailBox::find($targetMailboxId)) {
-                return MCPHelper::error('invalid_param', __('The specified mailbox does not exist', 'fluent-support'), ['fields' => ['mailbox_id'], 'next_step' => 'Use get-support-context to see available mailboxes and their IDs']);
+                return MCPHelper::error('invalid_param', 'The specified mailbox does not exist', ['fields' => ['mailbox_id'], 'next_step' => 'Use get-support-context with include=["mailboxes"] to see available mailboxes and their IDs']);
             }
         }
 
@@ -666,7 +711,7 @@ class TicketTools
             if ($assigneeToCheck && TicketAccessGuard::assertAssignableAgent($ticket, $assigneeToCheck, $targetMailboxId)) {
                 return MCPHelper::error(
                     'forbidden',
-                    __('The assigned agent is restricted from the selected mailbox. Reassign the ticket before moving it.', 'fluent-support'),
+                    'The assigned agent is restricted from the selected mailbox. Reassign the ticket before moving it.',
                     ['fields' => ['mailbox_id'], 'next_step' => 'Pass agent_id in the same call to reassign, or assign the ticket to an unrestricted agent first']
                 );
             }
@@ -681,7 +726,7 @@ class TicketTools
             if ($field === 'product_id') {
                 $pid = (int) $params['product_id'];
                 if ($pid > 0 && !\FluentSupport\App\Models\Product::find($pid)) {
-                    return MCPHelper::error('invalid_param', __('The specified product does not exist', 'fluent-support'), ['fields' => ['product_id'], 'next_step' => 'Use get-support-context to see available products and their IDs']);
+                    return MCPHelper::error('invalid_param', 'The specified product does not exist', ['fields' => ['product_id'], 'next_step' => 'Use get-support-context with include=["products"] to see available products and their IDs']);
                 }
                 $changes['product_id'] = $pid;
                 continue;
@@ -696,13 +741,13 @@ class TicketTools
             if ($field === 'status') {
                 $allowedStatuses = ['new', 'active'];
                 if (!in_array($value, $allowedStatuses, true)) {
-                    return MCPHelper::error('invalid_param', sprintf(__("Invalid status '%s'", 'fluent-support'), $value), ['fields' => ['status'], 'allowed' => $allowedStatuses]);
+                    return MCPHelper::error('invalid_param', sprintf("Invalid status '%s'", $value), ['fields' => ['status'], 'allowed' => $allowedStatuses]);
                 }
                 // status=active reopens a closed ticket, as reopen in the ticket view does.
                 if ($ticket->status === 'closed' && $value !== 'active') {
                     return MCPHelper::error(
                         'ticket_closed',
-                        __('This ticket is closed. Pass status=active to reopen it.', 'fluent-support'),
+                        'This ticket is closed. Pass status=active to reopen it.',
                         ['fields' => ['status'], 'retryable' => false]
                     );
                 }
@@ -764,17 +809,17 @@ class TicketTools
     {
         $agent = MCPHelper::resolveAgent();
         if (!$agent) {
-            return MCPHelper::error('unauthorized', __('No agent found for current user', 'fluent-support'));
+            return MCPHelper::error('unauthorized', 'No agent found for current user');
         }
 
         $ticketId = (int) ($params['ticket_id'] ?? 0);
         if (!$ticketId) {
-            return MCPHelper::error('invalid_param', __('ticket_id is required', 'fluent-support'), ['fields' => ['ticket_id']]);
+            return MCPHelper::error('invalid_param', 'ticket_id is required', ['fields' => ['ticket_id']]);
         }
 
         $ticket = Ticket::find($ticketId);
         if (!$ticket) {
-            return MCPHelper::error('not_found', __('Ticket not found', 'fluent-support'), ['next_step' => 'Use list-tickets to find valid ticket IDs']);
+            return MCPHelper::error('not_found', 'Ticket not found', ['next_step' => 'Use list-tickets to find valid ticket IDs']);
         }
 
         if ($err = TicketAccessGuard::assert($ticket)) {
@@ -794,17 +839,17 @@ class TicketTools
     {
         $agent = MCPHelper::resolveAgent();
         if (!$agent) {
-            return MCPHelper::error('unauthorized', __('No agent found for current user', 'fluent-support'));
+            return MCPHelper::error('unauthorized', 'No agent found for current user');
         }
 
         $ticketId = (int) ($params['ticket_id'] ?? 0);
         if (!$ticketId) {
-            return MCPHelper::error('invalid_param', __('ticket_id is required', 'fluent-support'), ['fields' => ['ticket_id']]);
+            return MCPHelper::error('invalid_param', 'ticket_id is required', ['fields' => ['ticket_id']]);
         }
 
         $ticket = Ticket::find($ticketId);
         if (!$ticket) {
-            return MCPHelper::error('not_found', __('Ticket not found', 'fluent-support'), ['next_step' => 'Use list-tickets to find valid ticket IDs']);
+            return MCPHelper::error('not_found', 'Ticket not found', ['next_step' => 'Use list-tickets to find valid ticket IDs']);
         }
 
         if ($err = TicketAccessGuard::assert($ticket)) {
@@ -843,18 +888,18 @@ class TicketTools
     {
         $agent = MCPHelper::resolveAgent();
         if (!$agent) {
-            return MCPHelper::error('unauthorized', __('No agent found for current user', 'fluent-support'));
+            return MCPHelper::error('unauthorized', 'No agent found for current user');
         }
 
         if (!class_exists('\FluentSupportPro\App\Services\ProTicketService')) {
-            return MCPHelper::error('not_available', __('Merge tickets requires Fluent Support Pro', 'fluent-support'));
+            return MCPHelper::error('not_available', 'Merge tickets requires Fluent Support Pro');
         }
 
         $targetId = (int) ($params['target_ticket_id'] ?? 0);
         $mergeIds = array_map('intval', (array) ($params['merge_ticket_ids'] ?? []));
 
         if (!$targetId || empty($mergeIds)) {
-            return MCPHelper::error('invalid_param', __('target_ticket_id and merge_ticket_ids are required', 'fluent-support'), ['fields' => ['target_ticket_id', 'merge_ticket_ids']]);
+            return MCPHelper::error('invalid_param', 'target_ticket_id and merge_ticket_ids are required', ['fields' => ['target_ticket_id', 'merge_ticket_ids']]);
         }
 
         $mergeIds = array_values(array_unique($mergeIds));
@@ -862,14 +907,14 @@ class TicketTools
         if (in_array($targetId, $mergeIds, true)) {
             return MCPHelper::error(
                 'invalid_param',
-                __('target_ticket_id must not also appear in merge_ticket_ids', 'fluent-support'),
+                'target_ticket_id must not also appear in merge_ticket_ids',
                 ['fields' => ['target_ticket_id', 'merge_ticket_ids']]
             );
         }
 
         $target = Ticket::find($targetId);
         if (!$target) {
-            return MCPHelper::error('not_found', __('Target ticket not found', 'fluent-support'), ['fields' => ['target_ticket_id'], 'next_step' => 'Use list-tickets to find valid ticket IDs']);
+            return MCPHelper::error('not_found', 'Target ticket not found', ['fields' => ['target_ticket_id'], 'next_step' => 'Use list-tickets to find valid ticket IDs']);
         }
 
         if ($err = TicketAccessGuard::assert($target)) {
@@ -889,8 +934,7 @@ class TicketTools
             return MCPHelper::error(
                 'forbidden',
                 sprintf(
-                    /* translators: %s is a comma-separated list of ticket IDs */
-                    _n('You do not have access to this ticket: %s', 'You do not have access to these tickets: %s', count($inaccessible), 'fluent-support'),
+                    count($inaccessible) === 1 ? 'You do not have access to this ticket: %s' : 'You do not have access to these tickets: %s',
                     implode(', ', $inaccessible)
                 )
             );
@@ -900,7 +944,7 @@ class TicketTools
         $result     = $proService->mergeCustomerTickets($mergeIds, $targetId);
 
         if ($result === null) {
-            return MCPHelper::error('merge_failed', __('Ticket merge failed or was only partially completed. Some tickets may be in an inconsistent state.', 'fluent-support'));
+            return MCPHelper::error('merge_failed', 'Ticket merge failed or was only partially completed. Some tickets may be in an inconsistent state.');
         }
 
         $target->load(['customer', 'agent', 'product', 'mailbox', 'tags']);
@@ -929,22 +973,22 @@ class TicketTools
     {
         $agent = MCPHelper::resolveAgent();
         if (!$agent) {
-            return MCPHelper::error('unauthorized', __('No agent found for current user', 'fluent-support'));
+            return MCPHelper::error('unauthorized', 'No agent found for current user');
         }
 
         if (!class_exists('\FluentSupportPro\App\Services\ProTicketService')) {
-            return MCPHelper::error('not_available', __('Split ticket requires Fluent Support Pro', 'fluent-support'));
+            return MCPHelper::error('not_available', 'Split ticket requires Fluent Support Pro');
         }
 
         $ticketId   = (int) ($params['ticket_id'] ?? 0);
         $responseId = (int) ($params['response_id'] ?? 0);
         if (!$ticketId || !$responseId) {
-            return MCPHelper::error('invalid_param', __('ticket_id and response_id are required', 'fluent-support'), ['fields' => ['ticket_id', 'response_id']]);
+            return MCPHelper::error('invalid_param', 'ticket_id and response_id are required', ['fields' => ['ticket_id', 'response_id']]);
         }
 
         $ticket = Ticket::find($ticketId);
         if (!$ticket) {
-            return MCPHelper::error('not_found', __('Ticket not found', 'fluent-support'), ['next_step' => 'Use list-tickets to find valid ticket IDs']);
+            return MCPHelper::error('not_found', 'Ticket not found', ['next_step' => 'Use list-tickets to find valid ticket IDs']);
         }
 
         if ($err = TicketAccessGuard::assert($ticket)) {
@@ -957,7 +1001,7 @@ class TicketTools
             ->where('conversation_type', 'response')
             ->first();
         if (!$response) {
-            return MCPHelper::error('not_found', __('Message not found on this ticket', 'fluent-support'), [
+            return MCPHelper::error('not_found', 'Message not found on this ticket', [
                 'fields'    => ['response_id'],
                 'next_step' => 'Use get-ticket and pick a response of type "response"',
             ]);
@@ -970,7 +1014,7 @@ class TicketTools
             $customerId = ($author && $author->person_type === 'customer') ? (int) $author->id : (int) $ticket->customer_id;
         }
         if (!Customer::find($customerId)) {
-            return MCPHelper::error('not_found', __('Customer not found', 'fluent-support'), ['fields' => ['customer_id']]);
+            return MCPHelper::error('not_found', 'Customer not found', ['fields' => ['customer_id']]);
         }
 
         $content = $response->content;
@@ -991,7 +1035,7 @@ class TicketTools
                 return $err;
             }
             if (!\FluentSupport\App\Models\MailBox::find($mailboxId)) {
-                return MCPHelper::error('invalid_param', __('The specified mailbox does not exist', 'fluent-support'), ['fields' => ['mailbox_id'], 'next_step' => 'Use get-support-context to see available mailboxes and their IDs']);
+                return MCPHelper::error('invalid_param', 'The specified mailbox does not exist', ['fields' => ['mailbox_id'], 'next_step' => 'Use get-support-context with include=["mailboxes"] to see available mailboxes and their IDs']);
             }
         }
 
@@ -1030,7 +1074,7 @@ class TicketTools
             $result = (new \FluentSupportPro\App\Services\ProTicketService())->splitToNewTicket($ticket->id, $data);
         } catch (\Throwable $e) {
             // Not Helper::getSafeErrorMessage(): it throws, which would surface as a retryable internal_error.
-            return MCPHelper::error('split_failed', $e->getMessage() ?: __('Could not split the ticket', 'fluent-support'), ['retryable' => false]);
+            return MCPHelper::error('split_failed', $e->getMessage() ?: 'Could not split the ticket', ['retryable' => false]);
         } finally {
             if ($quiet) {
                 remove_filter('fluent_support/should_send_notification', $quiet, 10);
@@ -1039,12 +1083,11 @@ class TicketTools
 
         $newTicket = Ticket::with(['customer', 'agent', 'product', 'mailbox', 'tags'])->find((int) ($result['new_ticket_id'] ?? 0));
         if (!$newTicket) {
-            return MCPHelper::error('split_failed', __('The new ticket could not be loaded', 'fluent-support'), ['retryable' => false]);
+            return MCPHelper::error('split_failed', 'The new ticket could not be loaded', ['retryable' => false]);
         }
 
         return MCPHelper::envelope(
-            /* translators: 1: response ID, 2: original ticket ID, 3: new ticket ID */
-            sprintf(__('Message #%1$d moved from ticket #%2$d to new ticket #%3$d', 'fluent-support'), $response->id, $ticket->id, $newTicket->id),
+            sprintf('Message #%1$d moved from ticket #%2$d to new ticket #%3$d', $response->id, $ticket->id, $newTicket->id),
             ['ticket' => MCPHelper::formatTicketForMCP($newTicket), 'original_ticket_id' => (int) $ticket->id]
         );
     }

@@ -497,9 +497,13 @@
         flex-wrap: wrap;
         width: 90%;
 
+        // One 32px chip per filter, the same height as the toolbar buttons.
         .fs_filter_tag {
             display: flex;
             align-items: center;
+            height: 32px;
+            box-sizing: border-box;
+            max-width: 100%;
             border-radius: var(--fs-radius-md, 8px);
             border: 1px solid var(--fs-border-default, #E1E4EA);
             background: var(--fs-bg-primary, #FFFFFF);
@@ -507,18 +511,25 @@
 
             &.fs_filter_tag_with_select {
                 min-width: 300px;
+
+                &:focus-within {
+                    border-color: var(--fs-stroke-strong, #0E121B);
+                }
             }
 
             .fs_filter_icon_name {
                 display: flex;
-                padding: 0 12px;
+                padding: 0 10px;
                 justify-content: center;
                 align-items: center;
                 align-self: stretch;
                 gap: 6px;
                 border-right: 1px solid var(--fs-border-default, #E1E4EA);
                 background: var(--fs-subtle-btn-bg, #F9FAFB);
-                font-size: 14px;
+                font-size: 13px;
+                font-weight: 500;
+                line-height: 18px;
+                white-space: nowrap;
                 color: var(--fs-text-primary, #0E121B);
 
                 .fs_filter_icon {
@@ -530,7 +541,8 @@
 
             .fs_filter_value {
                 display: flex;
-                padding: 6px 12px;
+                min-width: 0;
+                padding: 0 6px;
                 justify-content: center;
                 align-items: center;
                 align-self: stretch;
@@ -544,20 +556,29 @@
                 line-height: 20px;
                 letter-spacing: -0.084px;
 
-                span {
-                    background: var(--fs-primary-tags-bg, #E1E4EA);
-                    border-radius: 4px;
-                    padding: 2px 8px;
-                    color: var(--fs-text-secondary, #525866);
-                    font-size: 14px;
-                    font-style: normal;
-                    font-weight: 400;
+                // Value pill; direct child only, so the product select's own spans keep their styles.
+                > span {
+                    display: inline-block;
+                    max-width: 220px;
+                    height: 22px;
+                    padding: 0 8px;
+                    overflow: hidden;
+                    border-radius: var(--fs-radius-6, 6px);
+                    background: var(--fs-state-faded-light, #F2F5F8);
+                    color: var(--fs-text-primary, #0E121B);
+                    font-size: 12px;
+                    font-weight: 500;
+                    line-height: 22px;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
                 }
             }
 
             .fs_filter_close {
                 display: flex;
-                padding: 6px;
+                align-self: stretch;
+                width: 30px;
+                padding: 0;
                 justify-content: center;
                 align-items: center;
                 gap: 6px;
@@ -570,16 +591,18 @@
                 }
 
                 svg {
-                    width: 20px;
-                    height: 20px;
+                    width: 16px;
+                    height: 16px;
                 }
             }
         }
     }
 
+    // 32px tall so Reset Filter lines up with the first row of chips.
     .fs_filter_actions {
         display: flex;
         align-items: center;
+        min-height: 32px;
         gap: 8px;
         width: 10%;
         justify-content: flex-end;
@@ -617,10 +640,34 @@
     min-width: 200px;
 
     .el-select__wrapper {
+        min-height: 30px;
         border: none;
         box-shadow: none;
         background: transparent;
         padding: 0;
+        font-size: 13px;
+
+        // No inner focus/hover ring; the whole chip shows focus instead.
+        &.is-focused,
+        &.is-hovering {
+            box-shadow: none;
+        }
+    }
+
+    // Element Plus pulls the tags 8px left to offset its wrapper padding, which is 0 here.
+    .el-select__selection.is-near {
+        margin-left: 0;
+    }
+
+    .el-select__selection .el-tag {
+        height: 22px;
+        padding: 0 4px 0 8px;
+        border: none;
+        border-radius: var(--fs-radius-6, 6px);
+        background: var(--fs-state-faded-light, #F2F5F8);
+        color: var(--fs-text-primary, #0E121B);
+        font-size: 12px;
+        font-weight: 500;
     }
 
     .el-select__selection {

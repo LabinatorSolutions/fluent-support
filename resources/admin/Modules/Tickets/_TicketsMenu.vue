@@ -81,17 +81,18 @@
         </el-collapse-transition>
     </div>
     <div v-else class="fs_tk_inner_sidebar" :class="{ 'is-collapsed': isCollapsed, 'has-view-route': hasViewRoute }">
-        <div class="fs_sidebar_header" v-if="!isViewingTicket">
-            <h3 class="fs_sidebar_title">{{ $t('Ticket Filters') }}</h3>
-            <el-button
-                class="fs_tickets_collapse_btn"
-                :class="{ 'collapsed': isCollapsed }"
+        <div class="fs_sidebar_topbar" v-if="!isViewingTicket">
+            <button
+                type="button"
+                class="fs_sidebar_topbar_icon"
+                :title="isCollapsed ? $t('Expand Sidebar') : $t('Collapse Sidebar')"
+                :aria-label="isCollapsed ? $t('Expand Sidebar') : $t('Collapse Sidebar')"
+                :aria-expanded="isCollapsed ? 'false' : 'true'"
                 @click="$emit('toggle-collapse')"
-                :title="$t(isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar')"
-                text
             >
-                <DynamicIcon name="ArrowLeftLine"/>
-            </el-button>
+                <IconPack icon-key="reports_nav_icon" :width="20" :height="20"/>
+            </button>
+            <span class="fs_sidebar_topbar_title">{{ $t('Ticket Filters') }}</span>
         </div>
         <TicketViewsList
             :groups="visibleGroups"
@@ -112,6 +113,7 @@ import { mapState, mapWritableState } from 'pinia';
 import { useTicketListStore, defaultFilters } from '@/admin/stores/ticketList.store';
 import { shortcutModifiers, isTypingTarget } from '@/admin/Bits/shortcuts';
 import DynamicIcon from '@/admin/Components/Icons/DynamicIcon.vue';
+import IconPack from '@/admin/Components/IconPack.vue';
 
 // The counts follow list reloads, but at most this often.
 const COUNTS_REFRESH_MS = 20 * 1000;
@@ -137,6 +139,7 @@ export default {
     name: 'TicketsMenu',
     components: {
         DynamicIcon,
+        IconPack,
         TicketViewsList
     },
     props: {

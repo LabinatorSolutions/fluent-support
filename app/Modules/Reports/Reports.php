@@ -235,7 +235,8 @@ class Reports
         return $agents;
     }
 
-    const WAIT_COLUMNS = 'AVG(UNIX_TIMESTAMP(waiting_since)) AS avg_since, MIN(UNIX_TIMESTAMP(waiting_since)) AS oldest_since, COUNT(*) AS total';
+    // waiting_since is site time, so the wait is measured against site time too.
+    const WAIT_COLUMNS = 'AVG(TIMESTAMPDIFF(SECOND, waiting_since, ?)) AS avg_wait, MAX(TIMESTAMPDIFF(SECOND, waiting_since, ?)) AS max_wait, COUNT(*) AS total';
 
     /**
      * Open tickets waiting on an agent, from $tickets.
@@ -250,7 +251,7 @@ class Reports
      */
     public static function waitingOnCustomer($tickets)
     {
-        return $tickets->where('status', '!=', 'closed')->whereNotNull('waiting_since')->whereColumn('last_customer_response', '<', 'last_agent_response');
+        return $tickets->where('status', '!=', 'closed')->whereNotNull('waiting_since')->waitingOnCustomer();
     }
 
     /**
@@ -286,7 +287,9 @@ class Reports
      */
     public static function waitStats(array $filters = [])
     {
-        return self::formatWaiting(self::waiting(self::tickets($filters))->selectRaw(self::WAIT_COLUMNS)->first());
+        $now = current_time('mysql');
+
+        return self::formatWaiting(self::waiting(self::tickets($filters))->selectRaw(self::WAIT_COLUMNS, [$now, $now])->first());
     }
 
     /**
@@ -297,9 +300,10 @@ class Reports
      */
     public static function waitStatsBy($column, array $filters = [])
     {
+        $now = current_time('mysql');
         $rows = self::waiting(self::tickets($filters))
             ->whereNotNull($column)
-            ->selectRaw("$column AS group_id, " . self::WAIT_COLUMNS)
+            ->selectRaw("$column AS group_id, " . self::WAIT_COLUMNS, [$now, $now])
             ->groupBy($column)
             ->get();
 
@@ -321,16 +325,27 @@ class Reports
 
     private static function formatWaiting($row)
     {
-        $avg = $row ? (int) $row->avg_since : 0;
-        $oldest = $row ? (int) $row->oldest_since : 0;
-        $seconds = time() - $avg;
+        $count = $row ? (int) $row->total : 0;
 
         return [
-            // Between 2 and 48 hours the average reads better in hours.
-            'average_waiting' => $avg ? ($seconds > 7200 && $seconds < 172800 ? ceil($seconds / 3600) . ' hours' : human_time_diff($avg, time())) : 0,
-            'max_waiting'     => $oldest ? human_time_diff($oldest, time()) : 0,
-            'waiting_tickets' => $row ? (int) $row->total : 0,
+            'average_waiting' => $count ? self::waitLabel((int) round($row->avg_wait)) : 0,
+            'max_waiting'     => $count ? self::waitLabel((int) $row->max_wait) : 0,
+            'waiting_tickets' => $count,
         ];
+    }
+
+    /**
+     * A wait in seconds as text. Between 2 and 48 hours it reads in hours, not days.
+     */
+    private static function waitLabel($seconds)
+    {
+        $seconds = max(0, $seconds);
+
+        if ($seconds > 2 * HOUR_IN_SECONDS && $seconds < 2 * DAY_IN_SECONDS) {
+            return round($seconds / HOUR_IN_SECONDS) . ' hours';
+        }
+
+        return human_time_diff(time() - $seconds, time());
     }
 
     /**

@@ -196,10 +196,10 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex-wrap: wrap;
     gap: 12px;
     width: 100%;
     @media (max-width: 768px) {
-        flex-wrap: wrap;
         gap: 6px;
     }
 }
@@ -258,6 +258,10 @@
             gap: 8px;
             min-width: 0;
         }
+
+        .el-icon + span {
+            margin-left: 0;
+        }
     }
 
     .el-button.fs_composer_prompt_reply {
@@ -288,7 +292,7 @@
 
     .fs_composer_prompt_icon {
         flex-shrink: 0;
-        font-size: 18px;
+        font-size: 16px;
     }
 }
 
@@ -319,6 +323,8 @@
 
 .fs_header_right_group {
     display: flex;
+    flex-wrap: wrap;
+    min-width: 0;
     gap: 10px;
     align-items: center;
 
@@ -346,6 +352,14 @@
         min-width: 0;
         overflow: hidden;
         text-overflow: ellipsis;
+    }
+
+    .fs_header_lead_icon {
+        font-size: 18px;
+    }
+
+    &.el-button .fs_header_dropdown_text {
+        margin-left: 0;
     }
 }
 

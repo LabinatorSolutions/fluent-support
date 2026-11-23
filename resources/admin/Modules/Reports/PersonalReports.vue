@@ -50,6 +50,7 @@
             v-for="(stat, index) in mergedReports"
             :key="index"
             :label="stat.label"
+            :tooltip="stat.tooltip"
             :value="stat.value"
             :icon="stat.icon"
             :icon-bg="stat.iconBg"
@@ -161,6 +162,10 @@ export default {
                 'resolved': 'closed_tickets',
             };
             const defaultIcon = 'new_tickets';
+            const tooltips = {
+                new_tickets: this.$t('Your tickets created in the date range that still have the New status.'),
+                open_tickets: this.$t('Your tickets created in the date range that are still open.'),
+            };
 
             // Merge overall_reports
             Object.keys(this.overall_reports || {}).forEach((key) => {
@@ -171,6 +176,7 @@ export default {
                     value: this.formatStatValue(stat.count || 0),
                     icon: iconMap[statKey] || iconMap[statKey.replace('_', '')] || iconMap[statKey.split('_')[0]] || defaultIcon,
                     iconBg: '',
+                    tooltip: tooltips[key] || '',
                 });
             });
 

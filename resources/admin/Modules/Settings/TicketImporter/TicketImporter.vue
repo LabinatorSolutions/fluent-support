@@ -6,99 +6,100 @@
                     <h3>{{ $t('Ticket Migration Settings') }}</h3>
                 </div>
             </div>
-            <div v-if="!first_loading" class="fs_box_body" v-loading="loading">
+            <div v-if="!first_loading" class="fs_box_body fs_importer_body" v-loading="loading">
                 <div v-if="settings.length" class="fs_importer_list">
-                    <div v-for="(setting, index) in settings" :key="setting.handler" class="fs_importer_item">
-                        <div class="fs_importer_item_content">
-                            <div class="fs_importer_content">
-                                <h3 class="fs_importer_title">
-                                    {{ setting.name }}
-                                    <span v-if="setting.last_migrated" class="fs_last_migration_inline">
-                                        <!-- translators: %s is the date of the last migration -->
-                                        {{ $t('(Last migration: %s)', setting.last_migrated) }}
-                                    </span>
-                                </h3>
-                                <p class="fs_importer_description">
-                                    <template v-if="setting?.type=='sass'">
-                                        <!-- translators: %s is the name of the help desk to import from, e.g. Zendesk -->
-                                        {{ $t('Migrate tickets from %s in one click.', setting.name) }}
+                    <div v-for="group in groups" :key="group.key" class="fs_importer_group">
+                        <div class="fs_importer_group_label">{{ group.label }}</div>
+                        <div v-for="setting in group.items" :key="setting.handler" class="fs_importer_item">
+                            <div class="fs_importer_item_content">
+                                <div class="fs_importer_content">
+                                    <h3 class="fs_importer_title">
+                                        {{ setting.name }}
+                                        <span v-if="setting.last_migrated" class="fs_last_migration_inline">
+                                            <!-- translators: %s is the date of the last migration -->
+                                            {{ $t('(Last migration: %s)', setting.last_migrated) }}
+                                        </span>
+                                    </h3>
+                                    <p class="fs_importer_description">
+                                        <template v-if="setting?.type=='sass'">
+                                            <!-- translators: %s is the name of the help desk to import from, e.g. Zendesk -->
+                                            {{ $t('Migrate tickets from %s in one click.', setting.name) }}
+                                        </template>
+                                        <template v-else>
+                                            <!-- translators: %1$s is the number of tickets, %2$s the number of replies, %3$s the number of customers to migrate -->
+                                            {{ $t('Ready to import. Tickets: %1$s, replies: %2$s, customers: %3$s. Tickets that were already migrated are skipped.', setting.tickets, setting.replies, setting.customers) }}
+                                        </template>
+                                    </p>
+
+
+                                </div>
+
+                                <div class="fs_importer_actions">
+                                    <template v-if="imporing && currently_importing == setting.handler">
+                                        <el-button disabled plain>
+                                            {{ $t('Importing...') }}
+                                        </el-button>
+                                    </template>
+                                    <template v-else-if="deleting && currently_importing == setting.handler">
+                                        <el-button disabled plain>
+                                            {{ $t('Deleting...') }}
+                                        </el-button>
                                     </template>
                                     <template v-else>
-                                        <!-- translators: %1$s is the number of tickets, %2$s the number of replies, %3$s the number of customers to migrate -->
-                                        {{ $t('Ready to import. Tickets: %1$s, replies: %2$s, customers: %3$s. Tickets that were already migrated are skipped.', setting.tickets, setting.replies, setting.customers) }}
+                                        <el-button
+                                            v-if="setting.type=='sass'"
+                                            class="fs_outline_btn"
+                                            @click="(openSettings=true)&&(currently_importing=setting.handler)"
+                                            plain>
+                                            {{ $t('Import Tickets') }}
+                                        </el-button>
+                                        <el-button
+                                            v-else
+                                            class="fs_outline_btn"
+                                            @click="importTickets(setting.handler)"
+                                            plain>
+                                            {{ $t('Import Tickets') }}
+                                        </el-button>
                                     </template>
-                                </p>
-
-
-                            </div>
-
-                            <div class="fs_importer_actions">
-                                <template v-if="imporing && currently_importing == setting.handler">
-                                    <el-button disabled plain>
-                                        {{ $t('Importing...') }}
-                                    </el-button>
-                                </template>
-                                <template v-else-if="deleting && currently_importing == setting.handler">
-                                    <el-button disabled plain>
-                                        {{ $t('Deleting...') }}
-                                    </el-button>
-                                </template>
-                                <template v-else>
-                                    <el-button
-                                        v-if="setting.type=='sass'"
-                                        class="fs_outline_btn"
-                                        @click="(openSettings=true)&&(currently_importing=setting.handler)"
-                                        plain>
-                                        {{ $t('Import Tickets') }}
-                                    </el-button>
-                                    <el-button
-                                        v-else
-                                        class="fs_outline_btn"
-                                        @click="importTickets(setting.handler)"
-                                        plain>
-                                        {{ $t('Import Tickets') }}
-                                    </el-button>
-                                </template>
-                            </div>
-                        </div>
-
-                            <!-- Progress bars -->
-                        <div class="fs_progress_wrap">
-                            <div v-if="imporing && currently_importing == setting.handler" class="fs_progress_container">
-                                <div class="fs_progress_line">
-                                    <div class="fs_progress_text_wrapper">
-                                        <span class="fs_progress_text">{{ $t('Migrating...') }}</span>
-                                        <span class="fs_progress_percentage">{{ completed }}%</span>
-                                    </div>
-
-                                    <div class="fs_progress_bar_wrapper">
-                                        <el-progress
-                                            :text-inside="false"
-                                            :stroke-width="8"
-                                            :percentage="completed"
-                                            :show-text="false"
-                                        />
-                                    </div>
                                 </div>
                             </div>
 
-                            <div v-if="deleting && currently_importing == setting.handler"  class="fs_progress_container">
-                                <div class="fs_progress_line">
-                                    <span class="fs_progress_text">{{ $t('Deleting...') }}</span>
-                                    <div class="fs_progress_bar_wrapper">
-                                        <el-progress
-                                            :stroke-width="8"
-                                            :percentage="50"
-                                            status="exception"
-                                            :indeterminate="true"
-                                            :show-text="false"
-                                        />
+                                <!-- Progress bars -->
+                            <div class="fs_progress_wrap">
+                                <div v-if="imporing && currently_importing == setting.handler" class="fs_progress_container">
+                                    <div class="fs_progress_line">
+                                        <div class="fs_progress_text_wrapper">
+                                            <span class="fs_progress_text">{{ $t('Migrating...') }}</span>
+                                            <span class="fs_progress_percentage">{{ completed }}%</span>
+                                        </div>
+
+                                        <div class="fs_progress_bar_wrapper">
+                                            <el-progress
+                                                :text-inside="false"
+                                                :stroke-width="8"
+                                                :percentage="completed"
+                                                :show-text="false"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div v-if="deleting && currently_importing == setting.handler"  class="fs_progress_container">
+                                    <div class="fs_progress_line">
+                                        <span class="fs_progress_text">{{ $t('Deleting...') }}</span>
+                                        <div class="fs_progress_bar_wrapper">
+                                            <el-progress
+                                                :stroke-width="8"
+                                                :percentage="50"
+                                                status="exception"
+                                                :indeterminate="true"
+                                                :show-text="false"
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <!-- Separator line (except for last item) -->
-                        <hr v-if="index < settings.length - 1" class="fs_divider">
                     </div>
                 </div>
 
@@ -145,7 +146,7 @@
                 v-model="openSettings"
                 :title="$t('Configure Help Scout Import')"
                 width="60%"
-                class="fs_dialog"
+                class="fs_dialog fs_dialog_md"
             >
                 <help-scout-importer
                     :show="openSettings"
@@ -162,7 +163,7 @@
                 v-model="openSettings"
                 :title="$t('Configure FreshDesk Import')"
                 width="60%"
-                class="fs_dialog"
+                class="fs_dialog fs_dialog_md"
             >
                 <fresh-desk-importer
                     :show="openSettings"
@@ -179,7 +180,7 @@
                 v-model="openSettings"
                 :title="$t('Configure Zendesk Import')"
                 width="60%"
-                class="fs_dialog"
+                class="fs_dialog fs_dialog_md"
             >
                 <zendesk-importer
                     :show="openSettings"
@@ -207,7 +208,7 @@ export default {
     },
     data() {
         return {
-            settings: {},
+            settings: [],
             imporing: false,
             import_page: 1,
             total_tickets: 0,
@@ -225,6 +226,15 @@ export default {
             import_from_sass: false,
             had_tickets: true,
             previous_migration_data: []
+        }
+    },
+
+    computed: {
+        groups() {
+            return [
+                { key: 'sass', label: this.$t('Help desk services'), items: this.settings.filter(setting => setting.type == 'sass') },
+                { key: 'plugin', label: this.$t('WordPress plugins'), items: this.settings.filter(setting => setting.type != 'sass') }
+            ].filter(group => group.items.length);
         }
     },
 

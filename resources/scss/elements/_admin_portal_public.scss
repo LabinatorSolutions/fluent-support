@@ -150,16 +150,11 @@
         background: var(--fs-bg-subtle, #F5F7FA);
         color: var(--fs-text-primary, #0E121B);
     }
-    .fs_tk_inner_sidebar .fs_sidebar_header .fs_tickets_collapse_btn {
+    .fs_tk_inner_sidebar .fs_sidebar_topbar .fs_sidebar_topbar_icon {
         margin-left: 0;
     }
     .fs_filter_actions .fs_reset_filter_btn {
         padding: 0;
-    }
-    @media (min-width: 1025px) {
-        .fs_tk_inner_sidebar .fs_sidebar_header {
-            padding: 0;
-        }
     }
     img {
         max-width: fit-content;
@@ -196,6 +191,10 @@
     .fs_tickets_view .fs_tk_inner_body{
         overscroll-behavior: initial;
         overflow-y: auto;
+    }
+    // The filters panel has no height limit here, so `contain` only swallowed the wheel the page needs.
+    .fs_tk_inner_sidebar .fs_sidebar_items {
+        overscroll-behavior: auto;
     }
 }
 

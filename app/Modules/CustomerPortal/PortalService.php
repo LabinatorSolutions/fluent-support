@@ -90,6 +90,11 @@ class PortalService
             throw self::notFound();
         }
 
+        // Logged as an internal note and not answered yet: the customer doesn't know it exists.
+        if ($ticket->isHiddenFromCustomer()) {
+            throw self::notFound();
+        }
+
         // Site admins have full access and may not have an agent record at all.
         if ($onBehalf && !current_user_can('manage_options') && !(new AgentTicketAccess())->currentAgentCanAccess($ticket)) {
             throw self::notFound();

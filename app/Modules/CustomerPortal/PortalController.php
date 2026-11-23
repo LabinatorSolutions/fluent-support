@@ -57,6 +57,7 @@ class PortalController extends Controller
         $statuses = ['open' => ['new', 'active', 'on-hold'], 'closed' => ['closed']];
 
         $query = Ticket::where('customer_id', $customer->id)
+            ->visibleToCustomer()
             ->filterByStatues(Arr::get($statuses, (string) Arr::get($input, 'filter_type'), []))
             ->searchBy(Arr::get($input, 'search'))
             ->filterByProductId(Arr::get($input, 'filters.product_id'))
@@ -137,7 +138,8 @@ class PortalController extends Controller
                 'full_name'       => $creator->full_name,
                 'photo'           => $creator->photo,
                 // The agent's first response is the opening message; skip the placeholder body.
-                'agent_initiated' => $ticket->isAgentInitiated(),
+                // A logged ticket's body is a placeholder too: the first reply opens it.
+                'agent_initiated' => $ticket->isAgentInitiated() || $ticket->source === Ticket::SOURCE_AGENT_LOGGED,
             ];
         }
 
@@ -205,6 +207,9 @@ class PortalController extends Controller
         if (!$customer) {
             throw new ApiException(__('Unable to identify. Please make sure you have provided correct information.', 'fluent-support'), 403, ['error_type' => '403']);
         }
+
+        // Lets Pro drop values the form did not offer this customer, such as another buyer's order.
+        $customData = (array) apply_filters('fluent_support/portal_ticket_custom_data', $customData, $customer);
 
         $data = [
             'title'       => $request->getSafe('title', 'sanitize_text_field'),

@@ -115,20 +115,20 @@
                 <p class="fs_piping_description">{{ $t('All the forwarded emails to this address will be synced with your tickets. Below is your mask email address') }}</p>
 
                 <div class="fs_piping_form">
+                    <div class="fs_email_input_wrapper">
+                        <el-input
+                            :readonly="true"
+                            v-model="email_pipe.mapped_email"
+                            class="fs_text_input fs_text_input_40"
+                        />
+                        <el-button
+                            @click="copyToClipboard(email_pipe.mapped_email)"
+                            class="fs_copy_btn"
+                            size="small"
+                        >
+                            <DynamicIcon name="Copy"/>
+                        </el-button>
                     </div>
-                <div class="fs_email_input_wrapper">
-                    <el-input
-                        :readonly="true"
-                        v-model="email_pipe.mapped_email"
-                        class="fs_text_input fs_text_input_40"
-                    />
-                    <el-button
-                        @click="copyToClipboard(email_pipe.mapped_email)"
-                        class="fs_copy_btn"
-                        size="small"
-                    >
-                        <DynamicIcon name="Copy"/>
-                    </el-button>
                 </div>
             </div>
 

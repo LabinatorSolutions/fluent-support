@@ -44,6 +44,10 @@ class AuthService
             'use_type'         => $type === self::LOGIN_CODE ? 'email_2_fa' : 'signup_verification',
             'used_count'       => 0,
             'two_fa_code_hash' => wp_hash_password($code),
+            // Site time: current_time('timestamp') is already shifted by the site's
+            // offset, and gmdate() prints it without shifting again. status() reads it
+            // back the same way (strtotime($validTill . ' UTC') against
+            // current_time('timestamp')), so the two agree in every timezone.
             'valid_till'       => gmdate('Y-m-d H:i:s', current_time('timestamp') + self::CODE_TTL_SECONDS),
             'created_at'       => current_time('mysql'),
             'updated_at'       => current_time('mysql'),

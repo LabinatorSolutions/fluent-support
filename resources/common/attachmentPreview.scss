@@ -1,0 +1,202 @@
+// Shared by the admin app and the portal; appended to <body>, outside .fs_client_portal.
+// Admin token names with light fallbacks: admin defines them on :root, the portal's html.dark for dark mode.
+.el-dialog.fs_attachment_preview_dialog {
+    --el-dialog-bg-color: var(--fs-bg-primary, #FFFFFF);
+    max-width: 1100px;
+    padding: 0;
+    border-radius: 8px;
+    overflow: hidden;
+
+    // Above the WP admin bar and menu; the admin's global dialog top margin would push the footer off screen.
+    &.is-fullscreen {
+        margin: 0 !important;
+        max-width: none;
+        border-radius: 0;
+        display: flex;
+        flex-direction: column;
+
+        .el-dialog__body {
+            flex: 1;
+            min-height: 0;
+        }
+
+        .fs_attachment_preview_body {
+            height: 100%;
+        }
+    }
+
+    .el-dialog__header {
+        padding: 12px 12px 12px 20px;
+        margin: 0;
+        border-bottom: 1px solid var(--fs-border-default, #E1E4EA);
+    }
+
+    .el-dialog__body {
+        padding: 0;
+    }
+
+    .el-dialog__footer {
+        padding: 12px 20px;
+        border-top: 1px solid var(--fs-border-default, #E1E4EA);
+    }
+}
+
+.fs_attachment_preview_header {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    .el-dialog__title {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 16px;
+        line-height: 24px;
+        font-weight: 500;
+        color: var(--fs-text-primary, #0E121B);
+    }
+
+    .el-button.fs_attachment_preview_icon_btn {
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        margin: 0;
+        color: var(--fs-text-secondary, #525866);
+
+        &:hover,
+        &:focus-visible {
+            color: var(--fs-text-primary, #0E121B);
+            background: var(--fs-bg-subtle, #F5F7FA);
+        }
+    }
+}
+
+.fs_attachment_preview_body {
+    // Header and footer take ~120px; keep the whole dialog inside the window.
+    height: min(75vh, calc(100vh - 160px));
+    background: var(--fs-bg-subtle, #F5F7FA);
+}
+
+.fs_attachment_preview_pdf {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+.fs_attachment_preview_markdown {
+    height: 100%;
+    overflow: auto;
+    background: var(--fs-bg-primary, #FFFFFF);
+}
+
+.fs_attachment_preview_error {
+    margin: 0;
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--fs-text-secondary, #525866);
+}
+
+.fs_attachment_preview_markdown_body {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 24px 32px;
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--fs-text-primary, #0E121B);
+    overflow-wrap: anywhere;
+
+    h1, h2, h3, h4, h5, h6 {
+        margin: 1.4em 0 0.6em;
+        line-height: 1.3;
+        color: var(--fs-text-primary, #0E121B);
+    }
+
+    h1 { font-size: 1.8em; }
+    h2 { font-size: 1.45em; }
+    h3 { font-size: 1.2em; }
+
+    h1, h2 {
+        padding-bottom: 0.3em;
+        border-bottom: 1px solid var(--fs-border-default, #E1E4EA);
+    }
+
+    > :first-child {
+        margin-top: 0;
+    }
+
+    p, ul, ol, blockquote, pre, table {
+        margin: 0 0 1em;
+    }
+
+    ul, ol {
+        padding-inline-start: 1.6em;
+    }
+
+    ul { list-style: disc; }
+    ol { list-style: decimal; }
+
+    a {
+        color: var(--fs-text-link, #089360);
+    }
+
+    code {
+        padding: 0.15em 0.4em;
+        border-radius: 4px;
+        font-size: 0.9em;
+        background: var(--fs-bg-subtle, #F5F7FA);
+    }
+
+    pre {
+        padding: 12px 16px;
+        border-radius: 8px;
+        overflow: auto;
+        background: var(--fs-bg-subtle, #F5F7FA);
+
+        code {
+            padding: 0;
+            background: none;
+        }
+    }
+
+    blockquote {
+        padding: 0 1em;
+        border-inline-start: 4px solid var(--fs-border-default, #E1E4EA);
+        color: var(--fs-text-secondary, #525866);
+    }
+
+    table {
+        display: block;
+        overflow: auto;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 6px 12px;
+        border: 1px solid var(--fs-border-default, #E1E4EA);
+    }
+
+    hr {
+        border: 0;
+        border-top: 1px solid var(--fs-border-default, #E1E4EA);
+    }
+}
+
+// The WP admin menu (160px, 36px folded) sits above the overlay: keep the centered dialog clear of it.
+@media (min-width: 783px) {
+    .wp-admin .el-dialog.fs_attachment_preview_dialog:not(.is-fullscreen) {
+        max-width: min(1100px, calc(100vw - 340px));
+    }
+}
+
+@media (max-width: 767px) {
+    .el-dialog.fs_attachment_preview_dialog {
+        width: calc(100% - 32px) !important;
+    }
+
+    .fs_attachment_preview_markdown_body {
+        padding: 16px;
+    }
+}

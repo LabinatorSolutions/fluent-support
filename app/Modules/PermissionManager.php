@@ -20,6 +20,16 @@ class PermissionManager
     const VISIBILITY_ASSIGNED_AND_UNASSIGNED = 'assigned_and_unassigned';
     const VISIBILITY_ASSIGNED_ONLY          = 'assigned_only';
 
+    /** Any one of these lets a user reach the ticket routes, read or write. */
+    const TICKET_ROUTE_PERMISSIONS = [
+        'fst_view_tickets',
+        'fst_manage_own_tickets',
+        'fst_manage_unassigned_tickets',
+        'fst_manage_other_tickets',
+        'fst_merge_tickets',
+        'fst_draft_reply',
+    ];
+
     /**
      * @return string[]
      */
@@ -352,14 +362,7 @@ class PermissionManager
      */
     public static function canAccessTicketRoutes()
     {
-        return self::userCan([
-            'fst_view_tickets',
-            'fst_manage_own_tickets',
-            'fst_manage_unassigned_tickets',
-            'fst_manage_other_tickets',
-            'fst_merge_tickets',
-            'fst_draft_reply'
-        ]);
+        return self::userCan(self::TICKET_ROUTE_PERMISSIONS);
     }
 
     /**

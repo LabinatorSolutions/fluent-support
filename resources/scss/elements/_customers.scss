@@ -64,7 +64,9 @@
         justify-content: space-between;
         gap: 12px;
         flex-wrap: wrap;
-        padding: 16px 20px;
+        box-sizing: border-box;
+        min-height: 57px;
+        padding: 12px 20px;
     }
 
     .fs_customers_views {
@@ -82,11 +84,12 @@
         color: var(--fs-text-secondary, #525866);
         font-size: 14px;
         font-weight: 500;
-        line-height: 20px;
-        letter-spacing: -0.084px;
+        line-height: 1.4;
+        letter-spacing: 0;
         cursor: pointer;
 
         &:hover {
+            background: var(--fs-state-faded-light, #F2F5F8);
             color: var(--fs-text-primary, #0E121B);
         }
 
@@ -96,7 +99,7 @@
         }
 
         &.fs_customers_view_active {
-            background: var(--fs-bg-subtle, #F5F7FA);
+            background: var(--fs-state-faded-light, #F2F5F8);
             color: var(--fs-text-primary, #0E121B);
         }
     }
@@ -112,8 +115,9 @@
     }
 
     .el-button.fs_customers_icon_btn {
-        width: 36px;
-        height: 36px;
+        box-sizing: border-box;
+        width: 32px;
+        height: 32px;
         padding: 0;
         border: 1px solid var(--fs-stroke-soft, #E1E4EA);
         border-radius: var(--fs-radius-md, 8px);
@@ -122,9 +126,9 @@
 
         svg,
         .el-icon {
-            width: 18px;
-            height: 18px;
-            font-size: 18px;
+            width: 20px;
+            height: 20px;
+            font-size: 20px;
         }
 
         &:hover,

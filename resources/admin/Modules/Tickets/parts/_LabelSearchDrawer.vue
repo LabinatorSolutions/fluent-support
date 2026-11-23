@@ -29,10 +29,22 @@
                 <div class="fs-search-actions">
                     <el-button icon="EditPen"  @click.stop="handleLabelSearchEdit(item)">
                     </el-button>
-                    <el-popconfirm :title="$t('Are you sure to delete this?')" @confirm="handleLabelSearchDelete(item.id)">
+                    <el-popconfirm
+                        :width="260"
+                        icon="WarningFilled"
+                        icon-color="var(--el-color-warning)"
+                        :title="$t('Are you sure to delete this?')"
+                        @confirm="handleLabelSearchDelete(item.id)"
+                    >
                         <template #reference>
                             <el-button icon="Delete" @click.stop>
                             </el-button>
+                        </template>
+                        <template #actions="{ confirm, cancel }">
+                            <div class="fs_popconfirm_actions">
+                                <el-button class="fs_outline_btn" size="small" @click="cancel">{{ $t('Cancel') }}</el-button>
+                                <el-button class="fs_filled_btn" size="small" @click="confirm">{{ $t('Delete') }}</el-button>
+                            </div>
                         </template>
                     </el-popconfirm>
                 </div>

@@ -370,13 +370,19 @@ export default {
             this.watcherIds = (list || []).map(watcher => String(watcher.id));
         },
         ticket_id() {
-            if (this.widgetsRequest) {
-                this.widgetsRequest.abort();
-                this.widgetsRequest = null;
+            // Forget the old ticket's requests first, so their callbacks (run when abort() settles them) change nothing
+            const widgetsRequest = this.widgetsRequest;
+            const loadMoreRequest = this.loadMoreRequest;
+            this._widgetsToken = null;
+            this._loadMoreToken = null;
+            this.widgetsRequest = null;
+            this.loadMoreRequest = null;
+            this.loadingMoreTickets = false;
+            if (widgetsRequest) {
+                widgetsRequest.abort();
             }
-            if (this.loadMoreRequest) {
-                this.loadMoreRequest.abort();
-                this.loadMoreRequest = null;
+            if (loadMoreRequest) {
+                loadMoreRequest.abort();
             }
             this.other_tickets = [];
             this.extra_widgets = null;
@@ -425,8 +431,13 @@ export default {
             if (this.loadingMoreTickets || !this.otherTicketsMore) return;
             this.loadingMoreTickets = true;
             const nextPage = this.otherTicketsPage + 1;
-            this.loadMoreRequest = this.$get(`tickets/${this.ticket_id}/widgets`, { page: nextPage })
+            // An aborted or superseded request may still settle; only the current one may change the sidebar.
+            // Kept off data(): a plain object, so === works.
+            const token = {};
+            this._loadMoreToken = token;
+            const request = this.$get(`tickets/${this.ticket_id}/widgets`, { page: nextPage })
                 .then((response) => {
+                    if (this._loadMoreToken !== token) return;
                     this.otherTicketsPage = nextPage;
                     this.other_tickets = this.other_tickets.concat(response.other_tickets);
                     this.otherTicketsTotal = response.other_tickets_total;
@@ -434,14 +445,22 @@ export default {
                 })
                 .catch((errors) => this.$handleError(errors))
                 .always(() => {
+                    if (this._loadMoreToken !== token) return;
+                    this._loadMoreToken = null;
                     this.loadingMoreTickets = false;
                     this.loadMoreRequest = null;
                 });
+            if (this._loadMoreToken === token) {
+                this.loadMoreRequest = request;
+            }
         },
         fetchWidgets() {
             this.loading = true;
-            this.widgetsRequest = this.$get(`tickets/${this.ticket_id}/widgets`, { with: ['other_tickets', 'extra_widgets'] })
+            const token = {};
+            this._widgetsToken = token;
+            const request = this.$get(`tickets/${this.ticket_id}/widgets`, { with: ['other_tickets', 'extra_widgets'] })
                 .then((response) => {
+                    if (this._widgetsToken !== token) return;
                     this.other_tickets = response.other_tickets;
                     this.otherTicketsTotal = response.other_tickets_total;
                     this.otherTicketsMore = response.other_tickets_more;
@@ -450,9 +469,14 @@ export default {
                 })
                 .catch((errors) => this.$handleError(errors))
                 .always(() => {
+                    if (this._widgetsToken !== token) return;
+                    this._widgetsToken = null;
                     this.loading = false;
                     this.widgetsRequest = null;
                 });
+            if (this._widgetsToken === token) {
+                this.widgetsRequest = request;
+            }
 
             },
         customerManagement() {

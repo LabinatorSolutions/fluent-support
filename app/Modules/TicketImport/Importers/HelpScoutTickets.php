@@ -148,7 +148,7 @@ class HelpScoutTickets extends BaseImporter
 
 
                 $waitingTime = $response['customerWaitingSince']['time'] ?? $response['createdAt'] ?? null;
-                $waitingSince = $waitingTime ? gmdate('Y-m-d H:i:s', strtotime($waitingTime)) : null;
+                $waitingSince = $waitingTime ? $this->siteTime($waitingTime) : null;
                 $createdAt = $response['createdAt'] ?? null;
 
                 $ticketData = [
@@ -158,8 +158,8 @@ class HelpScoutTickets extends BaseImporter
                     'content'                => $content,
                     'customer'               => $customer,
                     'response_count'         => intval($response['threads']),
-                    'created_at'             => $createdAt ? gmdate('Y-m-d H:i:s', strtotime($createdAt)) : null,
-                    'updated_at'             => $createdAt ? gmdate('Y-m-d H:i:s', strtotime($createdAt)) : null,
+                    'created_at'             => $createdAt ? $this->siteTime($createdAt) : null,
+                    'updated_at'             => $createdAt ? $this->siteTime($createdAt) : null,
                     'waiting_since'          => $waitingSince,
                     'last_customer_response' => NULL,
                     'last_agent_response'    => NULL,
@@ -189,8 +189,8 @@ class HelpScoutTickets extends BaseImporter
                     $formattedReplies[] = [
                         'content' => $isLineItem ? wp_kses_post(Helper::decodeNonMarkupEntities($reply['action']['text'])) : wp_kses_post(Helper::decodeNonMarkupEntities($reply['body'])),
                         'conversation_type' => $isLineItem ? 'internal_info' : 'response',
-                        'created_at' => $replyCreatedAt ? gmdate('Y-m-d H:i:s', strtotime($replyCreatedAt)) : null,
-                        'updated_at' => $replyCreatedAt ? gmdate('Y-m-d H:i:s', strtotime($replyCreatedAt)) : null,
+                        'created_at' => $replyCreatedAt ? $this->siteTime($replyCreatedAt) : null,
+                        'updated_at' => $replyCreatedAt ? $this->siteTime($replyCreatedAt) : null,
                         'is_customer_reply' => $isLineItem ? false : ($customer->email === $repliedBy['email']),
                         'user' => $user,
                         'attachments' => $this->download($reply['_embedded']['attachments']),

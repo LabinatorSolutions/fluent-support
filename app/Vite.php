@@ -454,6 +454,7 @@ class Vite
             'admin/js/start.js'          => 'admin/start.js',
             'admin/js/global_admin.js'   => 'admin/global_admin.js',
             'admin/js/global_summary.js' => 'admin/global_summary.js',
+            'admin/js/community_ticket_menu.js' => 'admin/community_ticket_menu.js',
             'portal/js/app.js'           => 'customer_portal/portal.js',
             'portal/js/login_helper.js'  => 'customer_portal/login_helper.js',
         ];
@@ -480,6 +481,7 @@ class Vite
             'admin/js/start.js'          => 'admin/start.js',
             'admin/js/global_admin.js'   => 'admin/global_admin.js',
             'admin/js/global_summary.js' => 'admin/global_summary.js',
+            'admin/js/community_ticket_menu.js' => 'admin/community_ticket_menu.js',
             'portal/js/app.js'           => 'customer_portal/portal.js',
             'portal/js/login_helper.js'  => 'customer_portal/login_helper.js',
 

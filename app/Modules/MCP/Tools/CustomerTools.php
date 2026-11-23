@@ -14,7 +14,7 @@ class CustomerTools
     {
         $agent = MCPHelper::resolveAgent();
         if (!$agent) {
-            return MCPHelper::error('unauthorized', __('No agent found for current user', 'fluent-support'));
+            return MCPHelper::error('unauthorized', 'No agent found for current user');
         }
 
         $search = sanitize_text_field($params['search'] ?? '');
@@ -28,6 +28,8 @@ class CustomerTools
         ]);
 
         if ($search) {
+            // Literal text: % and _ are not wildcards.
+            $search = $GLOBALS['wpdb']->esc_like($search);
             $query->where(function ($q) use ($search) {
                 $q->where('first_name', 'LIKE', "%{$search}%")
                   ->orWhere('last_name', 'LIKE', "%{$search}%")
@@ -80,13 +82,14 @@ class CustomerTools
 
         $total   = $paginated->total();
         $summary = $search
-            /* translators: %1$d is the number of customers found, %2$s is the search term */
-            ? sprintf(_n('Found %1$d customer matching \'%2$s\'', 'Found %1$d customers matching \'%2$s\'', $total, 'fluent-support'), $total, $search)
-            /* translators: %d is the number of customers found */
-            : sprintf(_n('Found %d customer', 'Found %d customers', $total, 'fluent-support'), $total);
+            ? sprintf((int) $total === 1 ? 'Found %1$d customer matching \'%2$s\'' : 'Found %1$d customers matching \'%2$s\'', $total, $search)
+            : sprintf((int) $total === 1 ? 'Found %d customer' : 'Found %d customers', $total);
 
         return MCPHelper::envelope($summary, ['customers' => $customers], MCPHelper::pagingMeta($paginated));
     }
+
+    /** Customers listed when a name matches more than one. */
+    const MAX_NAME_CANDIDATES = 10;
 
     public static function getCustomerTickets($params)
     {
@@ -101,19 +104,54 @@ class CustomerTools
         } elseif ($email) {
             $customer = Customer::where('email', $email)->first();
         } elseif ($name) {
-            $customer = Customer::where(function ($q) use ($name) {
+            $name    = $GLOBALS['wpdb']->esc_like($name);
+            $matches = Customer::where(function ($q) use ($name) {
                 $q->where('first_name', 'LIKE', '%' . $name . '%')
                   ->orWhere('last_name', 'LIKE', '%' . $name . '%')
-                  ->orWhere('email', 'LIKE', '%' . $name . '%');
-            })->first();
+                  ->orWhere('email', 'LIKE', '%' . $name . '%')
+                  ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ['%' . $name . '%']);
+            });
+
+            // Same rule as search-customers, so the candidates never list a customer the agent cannot see.
+            if (PermissionManager::getRestrictedMailboxIds()) {
+                $matches->where(function ($q) {
+                    $q->whereDoesntHave('tickets')
+                      ->orWhereHas('tickets', function ($tq) {
+                          (new AgentTicketAccess())->applyMailboxRestrictionScope($tq);
+                      });
+                });
+            }
+
+            $matchCount = (clone $matches)->count();
+            if ($matchCount > 1) {
+                // A name is not an identifier: list the matches instead of picking one.
+                $candidates = [];
+                foreach ($matches->orderBy('id', 'DESC')->limit(self::MAX_NAME_CANDIDATES)->get() as $candidate) {
+                    $candidates[] = MCPHelper::formatCustomerForMCP($candidate);
+                }
+
+                return MCPHelper::envelope(
+                    sprintf('%1$d customers match \'%2$s\'. No tickets returned: call again with the customer_id or email of the one you mean.', $matchCount, $name),
+                    // No tickets key: an empty list would read as "this customer has no tickets".
+                    ['customer' => null, 'candidates' => $candidates],
+                    [
+                        'ambiguous'        => true,
+                        'match_count'      => $matchCount,
+                        'candidates_shown' => count($candidates),
+                        'next_step'        => 'Pick the customer from data.candidates and call get-customer-tickets with customer_id or email. search-customers pages through all matches.',
+                    ]
+                );
+            }
+
+            $customer = $matches->first();
         }
 
         if (!$customer) {
-            return MCPHelper::error('not_found', __('Customer not found. Provide customer_id, email, or name.', 'fluent-support'), ['next_step' => 'Use search-customers to find the customer first']);
+            return MCPHelper::error('not_found', 'Customer not found. Provide customer_id, email, or name.', ['next_step' => 'Use search-customers to find the customer first']);
         }
 
         if (!self::canSeeCustomer($customer)) {
-            return MCPHelper::error('forbidden', __('You do not have access to this customer', 'fluent-support'));
+            return MCPHelper::error('forbidden', 'You do not have access to this customer');
         }
 
         ['page' => $page, 'per_page' => $perPage] = MCPHelper::pagination($params);
@@ -153,8 +191,7 @@ class CustomerTools
 
         $total      = $paginated->total();
         $identifier = $customer->email ?: MCPHelper::personName($customer);
-        /* translators: %1$d is the number of tickets found, %2$s is the customer email or name */
-        $summary    = sprintf(_n('Found %1$d ticket for %2$s', 'Found %1$d tickets for %2$s', $total, 'fluent-support'), $total, $identifier);
+        $summary    = sprintf((int) $total === 1 ? 'Found %1$d ticket for %2$s' : 'Found %1$d tickets for %2$s', $total, $identifier);
 
         return MCPHelper::envelope(
             $summary,
@@ -190,23 +227,23 @@ class CustomerTools
     {
         $agent = MCPHelper::resolveAgent();
         if (!$agent) {
-            return MCPHelper::error('unauthorized', __('No agent found for current user', 'fluent-support'));
+            return MCPHelper::error('unauthorized', 'No agent found for current user');
         }
 
         $customerId = (int) ($params['customer_id'] ?? 0);
         $customer   = $customerId ? Customer::find($customerId) : null;
         if (!$customer) {
-            return MCPHelper::error('not_found', __('Customer not found', 'fluent-support'), ['fields' => ['customer_id'], 'next_step' => 'Use search-customers to find the customer ID']);
+            return MCPHelper::error('not_found', 'Customer not found', ['fields' => ['customer_id'], 'next_step' => 'Use search-customers to find the customer ID']);
         }
 
         if (!self::canSeeCustomer($customer)) {
-            return MCPHelper::error('forbidden', __('You do not have access to this customer', 'fluent-support'));
+            return MCPHelper::error('forbidden', 'You do not have access to this customer');
         }
 
         if (array_key_exists('email', $params) && $params['email'] !== null && $params['email'] !== '') {
             return MCPHelper::error(
                 'not_allowed',
-                __('A customer\'s email address cannot be changed through MCP.', 'fluent-support'),
+                'A customer\'s email address cannot be changed through MCP.',
                 ['fields' => ['email'], 'next_step' => 'Ask a person on your team to change it in the Fluent Support admin, and add an internal note on the ticket with the request.']
             );
         }
@@ -219,11 +256,11 @@ class CustomerTools
         }
 
         if (!$changes) {
-            return MCPHelper::error('invalid_param', __('Pass at least one field to change', 'fluent-support'), ['fields' => array_keys(self::UPDATABLE_FIELDS)]);
+            return MCPHelper::error('invalid_param', 'Pass at least one field to change', ['fields' => array_keys(self::UPDATABLE_FIELDS)]);
         }
 
         if (array_key_exists('first_name', $changes) && $changes['first_name'] === '') {
-            return MCPHelper::error('invalid_param', __('first_name cannot be empty', 'fluent-support'), ['fields' => ['first_name']]);
+            return MCPHelper::error('invalid_param', 'first_name cannot be empty', ['fields' => ['first_name']]);
         }
 
         // CustomerService::update() needs the email and first name, as the admin form always sends both.
@@ -235,7 +272,7 @@ class CustomerTools
         try {
             $updated = \FluentSupport\App\Modules\Customers\CustomerService::update($customer, $data);
         } catch (\Exception $e) {
-            return MCPHelper::error('failed', __('Failed to update the customer', 'fluent-support'), ['retryable' => true]);
+            return MCPHelper::error('failed', 'Failed to update the customer', ['retryable' => true]);
         }
 
         $item = MCPHelper::formatCustomerForMCP($updated);
@@ -244,8 +281,7 @@ class CustomerTools
         }
 
         return MCPHelper::envelope(
-            /* translators: %d is the customer ID */
-            sprintf(__('Customer #%d updated', 'fluent-support'), $updated->id),
+            sprintf('Customer #%d updated', $updated->id),
             ['customer' => $item, 'changed' => array_keys($changes)]
         );
     }

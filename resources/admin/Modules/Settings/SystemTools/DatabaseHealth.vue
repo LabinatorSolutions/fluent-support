@@ -27,10 +27,25 @@
                     </div>
                 </div>
 
-                <div class="fs_st_card_body" v-loading="loading">
+                <div class="fs_st_card_body" v-loading="loading && loaded">
                     <p class="fs_st_intro">
                         {{ $t('Fluent Support stores tickets, replies, customers and settings in these tables. If an update was interrupted, a table may be missing. Repairing recreates it safely.') }}
                     </p>
+
+                    <el-skeleton v-if="loading && !loaded" animated class="fs_st_skeleton">
+                        <template #template>
+                            <el-skeleton-item variant="p" class="fs_st_alert" style="height: 40px;" />
+                            <div class="fs_st_list">
+                                <div v-for="n in 6" :key="n" class="fs_st_list_item">
+                                    <div class="fs_st_list_info">
+                                        <el-skeleton-item variant="text" style="width: 180px;" />
+                                        <el-skeleton-item variant="text" style="width: 220px;" />
+                                    </div>
+                                    <el-skeleton-item variant="button" style="width: 64px; height: 24px;" />
+                                </div>
+                            </div>
+                        </template>
+                    </el-skeleton>
 
                     <template v-if="loaded">
                         <div v-if="needsRepair" class="fs_st_alert is_error">

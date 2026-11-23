@@ -5,7 +5,7 @@
             <div class="fs_ticket_audit_header_row">
                 <h3 class="fs_page_title">{{ $t("AI Ticket Audit") }}</h3>
             </div>
-            <div class="fs_ticket_audit_header_row fs_ticket_audit_toolbar">
+            <div v-if="has_pro" class="fs_ticket_audit_header_row fs_ticket_audit_toolbar">
                 <div class="fs_toolbar_left">
                     <div class="fs_date_button_group">
                         <div class="fs_date_button_group_item fs_date_picker_wrapper">
@@ -46,7 +46,7 @@
         </div>
 
         <!-- Main Content -->
-        <div class="fs_ticket_audit_content" v-loading="loading">
+        <div v-if="has_pro" class="fs_ticket_audit_content" v-loading="loading">
             <div class="fs_page_error" v-if="fetchError">
                 <p>{{ $t("Couldn't load this data.") }}</p>
                 <el-button size="small" @click="fetchResults">{{ $t("Retry") }}</el-button>
@@ -289,7 +289,43 @@
             </template>
         </div>
 
-        <el-dialog v-model="escalateVisible" :title="$t('Escalate ticket')" width="440px" class="fs_dialog fs_escalate_dialog">
+        <!-- Shown instead of the report when Pro is not active -->
+        <div v-else class="fs_report_pro_showcase">
+            <ProShowcase
+                :feature="$t('AI Ticket Audit')"
+                :heading="$t('Let AI flag the tickets that need you')"
+                :description="$t('Run an audit for a date range: AI reads each open ticket and gives it a mood, a sentiment score and a one-line summary, so you can see who is unhappy.')"
+                :specifics="promoSpecifics"
+                utm-content="feature_lock_report_ai-ticket-audit"
+                docs-url="https://docs.fluentsupport.com/ai-ticket-audit"
+            >
+                <template #preview>
+                    <div class="fs_pro_preview">
+                        <div class="fs_pro_preview_card fs_pro_preview_fields">
+                            <div class="fs_pro_preview_title">
+                                <span class="fs_pro_preview_checkbox"></span>
+                                <!-- translators: %s: ticket number -->
+                                {{ $t('Ticket #%s', 1729) }}
+                            </div>
+                            <div class="fs_pro_preview_row fs_pro_preview_reveal" style="--fs-row-index: 0">
+                                <span class="fs_pro_preview_row_label">{{ $t('Mood') }}</span>
+                                <span class="fs_pro_preview_row_value">{{ $t('Frustrated') }}</span>
+                            </div>
+                            <div class="fs_pro_preview_row fs_pro_preview_reveal" style="--fs-row-index: 1">
+                                <span class="fs_pro_preview_row_label">{{ $t('Score') }}</span>
+                                <span class="fs_pro_preview_row_value">2.5/10</span>
+                            </div>
+                            <div class="fs_pro_preview_row fs_pro_preview_row_focal fs_pro_preview_reveal" style="--fs-row-index: 2">
+                                <span class="fs_pro_preview_row_label">{{ $t('Escalate ticket') }}</span>
+                                <span class="fs_pro_preview_badge fs_pro_preview_badge_warning">{{ $t('Critical') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </ProShowcase>
+        </div>
+
+        <el-dialog v-if="has_pro" v-model="escalateVisible" :title="$t('Escalate ticket')" width="440px" class="fs_dialog fs_escalate_dialog">
             <p class="fs_escalate_ticket_name" v-if="escalateRow">#{{ escalateRow.ticket_id }} — {{ escalateRow.title }}</p>
             <span class="fs_priority_badge">{{ $t('Sets priority to Critical') }}</span>
 
@@ -338,6 +374,7 @@
 <script type="text/babel">
 import IconPack from "@/admin/Components/IconPack.vue";
 import Pagination from "@/admin/Pieces/Pagination.vue";
+import ProShowcase from "@/admin/Components/ProShowcase.vue";
 import { shortcuts } from "../Utils/dateShortCuts";
 import { formatDateRangeForDisplay, isFutureDate, isSameDateRange } from "../Utils/reportHelpers";
 
@@ -350,7 +387,8 @@ export default {
     emits: ["date-change"],
     components: {
         IconPack,
-        Pagination
+        Pagination,
+        ProShowcase
     },
     data() {
         return {
@@ -391,6 +429,13 @@ export default {
         };
     },
     computed: {
+        promoSpecifics() {
+            return [
+                this.$t('Mood, score out of 10 and AI summary for every audited ticket'),
+                this.$t('The unhappiest tickets shown first under Needs attention'),
+                this.$t('Escalate to Critical, assign an agent and add a note')
+            ];
+        },
         formattedDateRange() {
             return formatDateRangeForDisplay(this.localDateRange);
         },
@@ -469,6 +514,9 @@ export default {
         },
 
         async fetchResults(withAggregates = true) {
+            if (!this.has_pro) {
+                return;
+            }
             if (!this.localDateRange || this.localDateRange.length !== 2) {
                 // Invalidate any in-flight request so stale results can't land.
                 this.resultsRequestToken++;
@@ -529,6 +577,9 @@ export default {
         },
 
         async fetchAgentsFilter() {
+            if (!this.has_pro) {
+                return;
+            }
             this.agentsFilterLoading = true;
             this.agentsFilterError = false;
             try {
@@ -543,6 +594,9 @@ export default {
         },
 
         async runAudit() {
+            if (!this.has_pro) {
+                return;
+            }
             if (!this.localDateRange || this.localDateRange.length !== 2) {
                 return;
             }

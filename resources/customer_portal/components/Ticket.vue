@@ -205,7 +205,8 @@
                                                         <Paperclip/>
                                                     </el-icon>
                                                     <a target="_blank" rel="noopener"
-                                                       :href="attachment.secureUrl">{{
+                                                       :href="attachment.secureUrl"
+                                                       @click="previewAttachment($event, attachment)">{{
                                                             attachment.title
                                                         }}</a>
                                                 </li>
@@ -255,7 +256,8 @@
                                                                 <Paperclip/>
                                                             </el-icon>
                                                             <a target="_blank" rel="noopener"
-                                                               :href="attachment.secureUrl">{{
+                                                               :href="attachment.secureUrl"
+                                                               @click="previewAttachment($event, attachment)">{{
                                                                     attachment.title
                                                                 }}</a>
                                                         </li>
@@ -328,6 +330,7 @@
                 </el-button>
             </div>
         </div>
+        <AttachmentPreviewDialog v-model="previewVisible" :attachment="previewItem"/>
     </div>
 </template>
 
@@ -335,6 +338,8 @@
 import { applyPurifyGuards } from '@/common/domPurifyGuards';
 import InlineReply from "./InlineReply";
 import BackButton from "./pieces/BackButton";
+import AttachmentPreviewDialog from '@/common/AttachmentPreviewDialog.vue';
+import { shouldPreviewAttachment } from '@/common/attachmentPreview';
 import { isArray, isEmpty } from 'lodash-es';
 
 export default {
@@ -342,7 +347,8 @@ export default {
     props: ['ticket_id'],
     components: {
         InlineReply,
-        BackButton
+        BackButton,
+        AttachmentPreviewDialog
     },
     data() {
         return {
@@ -354,7 +360,9 @@ export default {
             error_message: '',
             isSticky: false,
             showPrivateAlert: true,
-            showPublicAlert: true
+            showPublicAlert: true,
+            previewVisible: false,
+            previewItem: {}
         }
     },
     computed: {
@@ -379,6 +387,15 @@ export default {
         }
     },
     methods: {
+        // PDF and Markdown attachments open in a preview dialog.
+        previewAttachment(event, attachment) {
+            if (!shouldPreviewAttachment(event, attachment)) {
+                return;
+            }
+            event.preventDefault();
+            this.previewItem = attachment;
+            this.previewVisible = true;
+        },
         fetchTicket() {
             this.fetching = true;
             this.$get(`tickets/${this.ticket_id}`, {

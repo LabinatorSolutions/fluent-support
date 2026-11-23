@@ -183,7 +183,7 @@ class TicketQuery
             $query->waitingOnly();
         }
         if (!empty($args['waiting_on_customer'])) {
-            $query->whereColumn('last_customer_response', '<', 'last_agent_response');
+            $query->waitingOnCustomer();
         }
 
         if (!empty($args['agent_id'])) {

@@ -101,7 +101,7 @@
         justify-content: center;
 
         &.fs_secondary_menu {
-            gap: 12px;
+            gap: 8px;
             margin-left: auto;
             align-items: center;
             flex: 0;
@@ -612,6 +612,12 @@
                         width: 18px;
                         height: 18px;
                     }
+                }
+
+                .fs_notifications_trigger {
+                    width: 32px;
+                    height: 32px;
+                    padding: 6px;
                 }
             }
         }

@@ -24,7 +24,7 @@ class PermissionGate
         if (!self::isEnabled()) {
             return new \WP_Error(
                 'fluent_support_mcp_disabled',
-                __('Fluent Support MCP is disabled. Enable it in Settings → MCP.', 'fluent-support')
+                'Fluent Support MCP is disabled. Enable it in Settings → MCP.'
             );
         }
 
@@ -33,7 +33,7 @@ class PermissionGate
         if (!is_user_logged_in()) {
             return new \WP_Error(
                 'fluent_support_mcp_unauthorized',
-                __('Authentication required to access the Fluent Support MCP server.', 'fluent-support')
+                'Authentication required to access the Fluent Support MCP server.'
             );
         }
 
@@ -41,7 +41,7 @@ class PermissionGate
         if (!PermissionManager::canAccessTicketRoutes()) {
             return new \WP_Error(
                 'fluent_support_mcp_forbidden',
-                __('Your account does not have Fluent Support access.', 'fluent-support')
+                'Your account does not have Fluent Support access.'
             );
         }
 

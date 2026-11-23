@@ -10,7 +10,7 @@ export default [
     },
     {
         name: 'view_ticket',
-        path: '/ticket/:ticket_id/view',
+        path: '/ticket/:ticket_id(\\d+)/view',
         component: Ticket,
         props: true
     },

@@ -1,7 +1,8 @@
 <template>
-    <el-dropdown trigger="click" placement="bottom-start" popper-class="fs_live_snapshot_popper" @command="() => {}">
-        <button class="fs_pill_dropdown_btn fs_live_pill_btn">
-            <IconPack icon-key="camera_line" :width="20" :height="20" />
+    <el-dropdown ref="dropdown" trigger="click" placement="bottom-end" popper-class="fs_live_snapshot_popper" @command="() => {}">
+        <button class="fs_pill_dropdown_btn fs_live_pill_btn" :class="{ 'is-snapshot': isSnapshotView }">
+            <svg v-if="isSnapshotView" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
+            <span v-else class="fs_live_dot"></span>
             {{ triggerLabel }}
             <el-icon class="fs_dropdown_arrow"><ArrowDown /></el-icon>
         </button>
@@ -13,22 +14,29 @@
                     @click="selectMode('live')"
                 >
                     <span class="fs_radio_dot" :class="{ 'is-selected': modelValue === 'live' }"></span>
-                    <span class="fs_radio_label">{{ $t("Live") }}</span>
+                    <span class="fs_radio_text">
+                        <span class="fs_radio_label">{{ $t("Live") }}</span>
+                        <span class="fs_radio_help">{{ $t("Current numbers. They update as tickets change.") }}</span>
+                    </span>
                 </button>
 
                 <button
                     class="fs_radio_row"
                     :class="{ 'is-selected': modelValue === 'snapshot' }"
+                    :disabled="!snapshotGroups.length"
                     @click="selectMode('snapshot')"
                 >
                     <span class="fs_radio_dot" :class="{ 'is-selected': modelValue === 'snapshot' }"></span>
-                    <span class="fs_radio_label">{{ $t("Snapshot") }}</span>
+                    <span class="fs_radio_text">
+                        <span class="fs_radio_label">{{ $t("Snapshot") }}</span>
+                        <span class="fs_radio_help">{{ $t("A saved copy of this report, taken every 6 hours. Use it to see how things looked earlier.") }}</span>
+                    </span>
                 </button>
 
-                <div class="fs_snapshot_history" v-if="modelValue === 'snapshot'">
+                <div class="fs_snapshot_history">
                     <p class="fs_snapshot_status" v-if="loading">{{ $t("Loading snapshots…") }}</p>
                     <p class="fs_snapshot_status" v-else-if="fetchError">{{ $t("Couldn't load snapshots.") }}</p>
-                    <p class="fs_snapshot_status" v-else-if="!snapshotGroups.length">{{ $t("No snapshots yet.") }}</p>
+                    <p class="fs_snapshot_status" v-else-if="!snapshotGroups.length">{{ $t("No snapshots yet. The first one is saved within 6 hours.") }}</p>
                     <template v-else>
                         <div class="fs_snapshot_group" v-for="(group, gi) in snapshotGroups" :key="gi">
                             <p class="fs_snapshot_group_label">{{ group.label }}</p>
@@ -52,7 +60,6 @@
 
 <script type="text/babel">
 import { ArrowDown } from "@element-plus/icons-vue";
-import IconPack from "@/admin/Components/IconPack.vue";
 import dayjs from "dayjs";
 
 export default {
@@ -73,8 +80,7 @@ export default {
     },
     emits: ["update:modelValue", "update:selectedSnapshot", "change"],
     components: {
-        ArrowDown,
-        IconPack
+        ArrowDown
     },
     data() {
         return {
@@ -84,17 +90,15 @@ export default {
         };
     },
     computed: {
+        isSnapshotView() {
+            return this.modelValue === "snapshot" && !!this.selectedSnapshot;
+        },
         triggerLabel() {
-            if (this.modelValue === "snapshot") {
-                if (!this.selectedSnapshot) {
-                    return this.$t("Snapshot");
-                }
-                // Snapshots recur across multiple days, so the trigger must
-                // show the date alongside the time — otherwise, once the
-                // dropdown closes, there's no way to tell which day's
-                // snapshot is being viewed (worst on pages like Workload
-                // Health, which have no date-range control or banner).
-                return `${dayjs(this.selectedSnapshot.date).format("MMM D")}, ${this.selectedSnapshot.time}`;
+            if (this.isSnapshotView) {
+                // Date and time: snapshots span several days.
+                const stamp = `${dayjs(this.selectedSnapshot.date).format("MMM D")}, ${this.selectedSnapshot.time}`;
+                // translators: %s is the snapshot date and time, e.g. "Nov 18, 2:00 PM"
+                return this.$t("Snapshot: %s", stamp);
             }
             return this.$t("Live");
         },
@@ -147,13 +151,21 @@ export default {
                     this.loading = false;
                 });
         },
+        closeMenu() {
+            this.$refs.dropdown && this.$refs.dropdown.handleClose();
+        },
         selectMode(mode) {
-            this.$emit("update:modelValue", mode);
             if (mode === "live") {
+                this.$emit("update:modelValue", "live");
                 this.$emit("update:selectedSnapshot", null);
                 this.$emit("change", { mode, snapshot: null });
-            } else {
-                this.$emit("change", { mode, snapshot: this.selectedSnapshot });
+                this.closeMenu();
+                return;
+            }
+            // Open the newest snapshot so snapshot mode is never empty.
+            const latest = this.selectedSnapshot || (this.snapshotGroups[0] && this.snapshotGroups[0].items[0]);
+            if (latest) {
+                this.selectSnapshot(latest);
             }
         },
         isSelectedSnapshot(item) {
@@ -163,6 +175,7 @@ export default {
             this.$emit("update:modelValue", "snapshot");
             this.$emit("update:selectedSnapshot", item);
             this.$emit("change", { mode: "snapshot", snapshot: item });
+            this.closeMenu();
         }
     },
     mounted() {

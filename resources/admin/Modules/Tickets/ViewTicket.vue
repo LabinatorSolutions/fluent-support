@@ -69,10 +69,10 @@
                 <transition name="fs-response-box">
                     <div v-if="show_response_box" class="fs_response_box_transition">
                         <div class="fs_response_box_transition_inner">
-                            <!-- Keyed by type so switching Notes/Reply remounts the box and reloads the reply draft. -->
+                            <!-- Keyed by ticket only: switching Reply/Note keeps the same box, so the text stays. -->
                             <create-response
                                 ref="createResponse"
-                                :key="ticket_id + '_' + show_response_box"
+                                :key="ticket_id"
                                 @created="recordNewResponse"
                                 @scheduled="onReplyScheduled"
                                 @scheduleSaved="onScheduleSaved"
@@ -86,7 +86,7 @@
                                 @close="show_response_box = ''"
                                 :type="show_response_box"
                                 :draft="draftData"
-                                :attachment_store="composerAttachments[show_response_box === 'note' ? 'note' : 'reply']"
+                                :attachment_store="composerAttachments"
                                 :openAIIntegration="openAIIntegration"
                                 :last_conversation_id="latestConversationId"
                                 @newerResponses="refreshConversations"
@@ -310,8 +310,8 @@ export default {
             draftResponse: {},
             showDraft: false,
             draftData: {},
-            // Uploads per composer, kept here because switching Reply/Notes remounts the box.
-            composerAttachments: { reply: { hashes: [], info: {} }, note: { hashes: [], info: {} } },
+            // Composer uploads, kept here so they survive closing and reopening the box.
+            composerAttachments: { hashes: [], info: {} },
             ticketNotFound: '',
             show_fbs_add_task_modal: false,
             watcherIds: [],
@@ -388,7 +388,7 @@ export default {
                 this.draftResponse = null;
                 this.showDraft = false;
                 this.show_response_box = '';
-                this.composerAttachments = { reply: { hashes: [], info: {} }, note: { hashes: [], info: {} } };
+                this.composerAttachments = { hashes: [], info: {} };
                 this.$refs.aiInsights?.close();
                 this.$nextTick(() => {
                     this.doAction('ticket_view_entered', ticketId);
@@ -1077,6 +1077,27 @@ export default {
             return this.$refs.thread?.scrollToConversation(window.location.hash.split('#').pop());
         },
 
+        // A wheel over the top bars would scroll the window (only the WP menu moves), so scroll the thread.
+        // The stacked layout and the front-end portal scroll the page, so the thread is not a scroller there.
+        forwardWheelToThread(event) {
+            const thread = this.$el?.querySelector?.('.fs_ticket_body');
+            if (event.ctrlKey || !event.deltaY || !thread || getComputedStyle(thread).overflowY !== 'auto') {
+                return;
+            }
+            event.preventDefault();
+            thread.scrollBy({ top: event.deltaMode === 1 ? event.deltaY * 16 : event.deltaY });
+        },
+
+        toggleTopBarWheel(on) {
+            document.querySelectorAll('.fs_main_navbar, .fs_combined_top_bar').forEach(bar => {
+                if (on) {
+                    bar.addEventListener('wheel', this.forwardWheelToThread, { passive: false });
+                } else {
+                    bar.removeEventListener('wheel', this.forwardWheelToThread);
+                }
+            });
+        },
+
         handleTopBarCommand(command) {
             switch (command) {
                 case 'merge':
@@ -1102,6 +1123,7 @@ export default {
         if (this.appVars.keyboard_shortcuts === 'yes') {
             window.addEventListener("keydown", this.handleKeydown);
         }
+        this.toggleTopBarWheel(true);
 
         const initialTicketId = this.ticket_id;
         await this.fetchTicket();
@@ -1124,6 +1146,7 @@ export default {
         if (this.appVars.keyboard_shortcuts === 'yes') {
             window.removeEventListener("keydown", this.handleKeydown);
         }
+        this.toggleTopBarWheel(false);
     }
 };
 </script>

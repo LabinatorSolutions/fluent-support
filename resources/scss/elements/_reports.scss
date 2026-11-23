@@ -1,4 +1,5 @@
-.fs_time_sheet {
+.fs_time_sheet,
+.fs_time_sheet_skeleton {
     position: relative;
     width: 100%;
 }
@@ -144,6 +145,17 @@
         gap: 12px;
     }
 }
+ // Report toolbars are 57px: 10px padding + 36px controls + 1px border.
+.fs_toolbar_left .fs_date_button_group {
+    min-height: 36px;
+
+    .fs_date_button_group_item.fs_date_picker_wrapper {
+        min-height: 34px;
+        padding-top: 7px;
+        padding-bottom: 7px;
+    }
+}
+
  // Date Button Group
  .fs_date_button_group {
     display: flex;
@@ -534,6 +546,8 @@
 }
 
 .fs_personal_performance_header {
+    box-sizing: border-box;
+    min-height: 57px;
     background: var(--fs-bg-primary, #FFF);
     border-bottom: 1px solid var(--fs-stroke-soft, #E1E4EA);
     padding: 12px 20px;
@@ -838,7 +852,7 @@
 
     .fs_section_header {
         padding: 12px 20px;
-        height: 56px;
+        height: 57px;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -1036,7 +1050,7 @@
         flex: 1 1 auto;
         min-width: 0;
         max-width: 383px;
-        min-height: 40px;
+        min-height: 36px;
         padding: 4px 4px 4px 12px;
         border: 1px solid var(--fs-stroke-soft, #E1E4EA);
         border-right: none;
@@ -1158,7 +1172,7 @@
         align-items: center;
         gap: 2px;
         padding: 6px;
-        min-height: 40px;
+        min-height: 36px;
         border-radius: var(--fs-radius-md, 8px);
         border: 1px solid var(--fs-stroke-soft, #E1E4EA);
         background: var(--fs-bg-primary, #FFF);
@@ -1274,6 +1288,11 @@
             background: var(--fs-state-highlighted-lighter, #FFEBF4);
             color: #EF4A9E;
         }
+
+        &--away {
+            background: var(--fs-state-away-lighter, #FFFAEB);
+            color: #E2A109;
+        }
     }
 
     .fs_stat_label {
@@ -1316,7 +1335,7 @@
 
     .fs_section_header {
         padding: 12px 20px;
-        min-height: 56px;
+        min-height: 57px;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -1484,7 +1503,7 @@
     align-items: center;
     gap: 2px;
     padding: 6px;
-    min-height: 40px;
+    min-height: 36px;
     border-radius: var(--fs-radius-md, 8px);
     border: 1px solid var(--fs-stroke-soft, #E1E4EA);
     background: var(--fs-bg-primary, #FFF);
@@ -1504,17 +1523,25 @@
 }
 
 .fs_pill_dropdown_btn.fs_live_pill_btn {
-    min-width: 100px;
-    justify-content: center;
-    gap: 2px;
-    border: none;
-    background: var(--fs-bg-subtle, #F5F7FA);
-    box-shadow: none;
-    min-height: 32px !important;
+    gap: 8px;
+    padding: 6px 10px;
 
-    &:hover {
-        border-color: transparent;
-        background: var(--fs-bg-subtle, #F5F7FA);
+    .fs_live_dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: var(--fs-state-success-dark, #1FC16B);
+        flex-shrink: 0;
+    }
+
+    &.is-snapshot {
+        background: var(--fs-state-away-lighter, #FFFAEB);
+        border-color: color-mix(in srgb, var(--fs-state-away-dark, #624C18) 30%, transparent);
+        color: var(--fs-state-away-dark, #624C18);
+
+        &:hover {
+            border-color: var(--fs-state-away-dark, #624C18);
+        }
     }
 }
 
@@ -1527,32 +1554,63 @@
 }
 
 .fs_live_snapshot_panel {
-    width: 240px;
+    width: 320px;
+    max-width: calc(100vw - 32px);
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    padding: 20px;
+    gap: 2px;
+    padding: 8px;
 }
 
 .fs_radio_row {
     display: flex;
-    align-items: center;
-    gap: 8px;
+    align-items: flex-start;
+    gap: 10px;
     width: 100%;
     background: none;
     border: none;
-    padding: 0;
+    padding: 8px;
+    border-radius: var(--fs-radius-md, 8px);
     cursor: pointer;
     text-align: left;
+
+    &:hover,
+    &.is-selected {
+        background: var(--fs-bg-subtle, #F5F7FA);
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        background: none;
+    }
+
+    .fs_radio_dot {
+        margin-top: 2px;
+    }
+}
+
+.fs_radio_text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
 }
 
 .fs_radio_label {
     font-family: 'Inter', sans-serif;
-    font-weight: 400;
+    font-weight: 500;
     font-size: 14px;
     line-height: 20px;
     letter-spacing: -0.084px;
     color: var(--fs-text-primary, #0E121B);
+}
+
+.fs_radio_help {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--fs-text-secondary, #525866);
 }
 
 .fs_radio_dot {
@@ -1569,7 +1627,6 @@
         border-radius: 999px;
     }
 
-    // Unselected: soft-200 ring, wide white center (inset 10% / 17.5%)
     &::before {
         inset: 10%;
         background: var(--fs-stroke-soft, #E1E4EA);
@@ -1580,7 +1637,6 @@
         background: var(--fs-bg-primary, #FFF);
     }
 
-    // Selected: strong-950 fill, small white center (inset 10% / 30%)
     &.is-selected {
         &::before {
             background: var(--fs-stroke-strong, #0E121B);
@@ -1595,13 +1651,12 @@
 .fs_snapshot_history {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    width: 100%;
-    padding-top: 12px;
-    border-top: 1px solid var(--fs-stroke-soft, #E1E4EA);
-    // Retention stores up to 15 days of 6-hourly snapshots (~60 entries) — cap the
-    // height and let the list scroll instead of growing the dropdown unbounded.
-    max-height: 400px;
+    gap: 8px;
+    margin: 4px 0 4px 18px;
+    padding-left: 12px;
+    border-left: 1px solid var(--fs-stroke-soft, #E1E4EA);
+    // Up to ~60 snapshots: scroll instead of growing the dropdown.
+    max-height: 320px;
     overflow-y: auto;
     overflow-x: hidden;
 
@@ -1618,8 +1673,7 @@
 .fs_snapshot_group {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    width: 100%;
+    gap: 2px;
 }
 
 .fs_snapshot_group_label {
@@ -1630,7 +1684,7 @@
     letter-spacing: 0.48px;
     text-transform: uppercase;
     color: var(--fs-text-muted, #99A0AE);
-    margin: 0 0 4px 0;
+    margin: 0 0 2px 8px;
 }
 
 .fs_snapshot_item {
@@ -1638,7 +1692,7 @@
     align-items: center;
     gap: 8px;
     width: 100%;
-    padding: 8px;
+    padding: 6px 8px;
     border-radius: var(--fs-radius-md, 8px);
     background: none;
     border: none;
@@ -1648,6 +1702,15 @@
     &:hover {
         background: var(--fs-bg-subtle, #F5F7FA);
     }
+
+    &.is-selected {
+        background: var(--fs-state-away-lighter, #FFFAEB);
+
+        .fs_snapshot_time {
+            color: var(--fs-state-away-dark, #624C18);
+            font-weight: 500;
+        }
+    }
 }
 
 .fs_snapshot_time {
@@ -1656,7 +1719,8 @@
     font-size: 14px;
     line-height: 20px;
     letter-spacing: -0.084px;
-    color: var(--fs-text-primary, #0E121B);
+    color: var(--fs-text-secondary, #525866);
+    font-variant-numeric: tabular-nums;
 }
 
 .fs_snapshot_status {
@@ -1667,6 +1731,19 @@
     color: var(--fs-text-muted, #99A0AE);
     margin: 0;
     padding: 4px 0;
+}
+
+.fs_snapshot_banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 10px var(--fs-report-gutter, 32px);
+    background: var(--fs-state-away-lighter, #FFFAEB);
+    color: var(--fs-state-away-dark, #624C18);
+    font-size: 13px;
+    font-weight: 500;
 }
 
 .fs_personal_reports_header {
@@ -1866,7 +1943,7 @@
 
     .fs_section_header {
         padding: 12px 20px;
-        height: 56px;
+        height: 57px;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -2147,7 +2224,7 @@
 
     .fs_audit_table_header {
         height: auto;
-        min-height: 56px;
+        min-height: 57px;
         justify-content: flex-start;
         flex-wrap: wrap;
 
@@ -2417,8 +2494,8 @@
 
     .fs_section_header {
         border-bottom: 1px solid var(--fs-stroke-soft, #E1E4EA);
-        padding: 12px 20px;
-        min-height: 56px;
+        padding: 10px 20px;
+        min-height: 57px;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -2545,4 +2622,9 @@
         line-height: 32px;
         color: var(--fs-text-primary, #0E121B);
     }
+}
+
+// Pro showcase a report shows in place of its data when Pro is not active.
+.fs_report_pro_showcase {
+    padding: 12px 20px 20px;
 }

@@ -24,6 +24,7 @@ const SOURCE_ICONS = {
     slack: 'SourceSlack',
     webhook: 'SourceWebhook',
     agent_initiated: 'SourceAgentInitiated',
+    agent_logged: 'SourceAgentInitiated',
     'awesome-support': 'SourceAwesomeSupport'
 };
 
@@ -258,7 +259,11 @@ export default class FluentFramework {
     }
 
     handleError(response) {
-        if (response.responseJSON) {
+        // A request the app aborted (superseded by a newer one) is not an error to show
+        if (response && response.aborted) {
+            return;
+        }
+        if (response && response.responseJSON) {
             response = response.responseJSON;
         }
         let errorMessage = '';
@@ -478,6 +483,7 @@ export default class FluentFramework {
     sourceLabel(source) {
         if (!source) return '';
         if (source === 'agent_initiated') return $t('Agent outreach');
+        if (source === 'agent_logged') return $t('Logged by agent');
         if (SOURCE_NAMES[source]) return SOURCE_NAMES[source];
         return this.ucFirst(String(source).replace(/[_-]+/g, ' '));
     }

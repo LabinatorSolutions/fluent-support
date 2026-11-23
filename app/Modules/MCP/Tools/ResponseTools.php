@@ -23,7 +23,7 @@ class ResponseTools
     {
         $agent = MCPHelper::resolveAgent();
         if (!$agent) {
-            return MCPHelper::error('unauthorized', __('No agent found for current user', 'fluent-support'));
+            return MCPHelper::error('unauthorized', 'No agent found for current user');
         }
 
         $query = SavedReply::where('created_by', $agent->id);
@@ -45,7 +45,7 @@ class ResponseTools
         $count = $replies->count();
 
         return MCPHelper::envelope(
-            sprintf(_n('Found %d saved reply', 'Found %d saved replies', $count, 'fluent-support'), $count),
+            sprintf((int) $count === 1 ? 'Found %d saved reply' : 'Found %d saved replies', $count),
             ['saved_replies' => $replies->map(function ($reply) {
                 return self::formatSavedReply($reply);
             })->toArray()],
@@ -67,12 +67,12 @@ class ResponseTools
     {
         $agent = MCPHelper::resolveAgent();
         if (!$agent) {
-            return MCPHelper::error('unauthorized', __('No agent found for current user', 'fluent-support'));
+            return MCPHelper::error('unauthorized', 'No agent found for current user');
         }
 
         $ticketId = (int) ($params['ticket_id'] ?? 0);
         if (!$ticketId) {
-            return MCPHelper::error('invalid_param', __('ticket_id is required', 'fluent-support'), ['fields' => ['ticket_id']]);
+            return MCPHelper::error('invalid_param', 'ticket_id is required', ['fields' => ['ticket_id']]);
         }
 
         $content = '';
@@ -82,7 +82,7 @@ class ResponseTools
                 ->where('created_by', $agent->id)
                 ->first();
             if (!$savedReply) {
-                return MCPHelper::error('not_found', __('Saved reply not found', 'fluent-support'), ['next_step' => 'Use list-saved-replies to find valid IDs']);
+                return MCPHelper::error('not_found', 'Saved reply not found', ['next_step' => 'Use list-saved-replies to find valid IDs']);
             }
             $content = wp_kses_post(Helper::decodeNonMarkupEntities($savedReply->content));
         }
@@ -93,12 +93,12 @@ class ResponseTools
         }
 
         if (!$content) {
-            return MCPHelper::error('invalid_param', __('content or saved_reply_id is required', 'fluent-support'), ['fields' => ['content', 'saved_reply_id']]);
+            return MCPHelper::error('invalid_param', 'content or saved_reply_id is required', ['fields' => ['content', 'saved_reply_id']]);
         }
 
         $ticket = Ticket::find($ticketId);
         if (!$ticket) {
-            return MCPHelper::error('not_found', __('Ticket not found', 'fluent-support'), ['next_step' => 'Use list-tickets to find valid ticket IDs']);
+            return MCPHelper::error('not_found', 'Ticket not found', ['next_step' => 'Use list-tickets to find valid ticket IDs']);
         }
 
         if ($err = TicketAccessGuard::assert($ticket)) {
@@ -114,7 +114,7 @@ class ResponseTools
         if ($isDraft && !empty($params['informational'])) {
             return MCPHelper::error(
                 'invalid_param',
-                __('A draft reply cannot be informational', 'fluent-support'),
+                'A draft reply cannot be informational',
                 ['fields' => ['informational', 'draft'], 'next_step' => 'Send the reply without draft, or drop informational']
             );
         }
@@ -124,8 +124,7 @@ class ResponseTools
         $requestHash = self::requestHash($ticket, $content, $params, $isDraft);
         if ($duplicate = self::findDuplicateReply($ticket, $agent, $requestHash)) {
             return MCPHelper::envelope(
-                /* translators: %d is the ticket ID */
-                sprintf(__('This reply was already added to ticket #%d a moment ago, so it was not sent again.', 'fluent-support'), $ticket->id),
+                sprintf('This reply was already added to ticket #%d a moment ago, so it was not sent again.', $ticket->id),
                 [
                     'response' => [
                         'id'         => $duplicate->id,
@@ -215,7 +214,7 @@ class ResponseTools
                 $result['response']->updateSettingsValue('mcp_request_hash', $requestHash);
             });
         } catch (\Throwable $e) {
-            return MCPHelper::error('failed', __('Failed to create response', 'fluent-support'), ['retryable' => true]);
+            return MCPHelper::error('failed', 'Failed to create response', ['retryable' => true]);
         }
 
         // Reply, reopen and assignment committed. Now fire their side effects,
@@ -237,28 +236,21 @@ class ResponseTools
 
         if (!$assigned) {
             $summary = $isClosed
-                /* translators: %d is the ticket ID */
-                ? sprintf(__('Reply sent and ticket #%d closed', 'fluent-support'), $ticketId)
-                /* translators: %d is the ticket ID */
-                : sprintf(__('Reply added to ticket #%d', 'fluent-support'), $ticketId);
+                ? sprintf('Reply sent and ticket #%d closed', $ticketId)
+                : sprintf('Reply added to ticket #%d', $ticketId);
         } elseif ((int) $assignTarget->id === (int) $agent->id) {
             $summary = $isClosed
-                /* translators: %d is the ticket ID */
-                ? sprintf(__('Reply sent, ticket #%d closed and assigned to you', 'fluent-support'), $ticketId)
-                /* translators: %d is the ticket ID */
-                : sprintf(__('Reply added to ticket #%d and assigned to you', 'fluent-support'), $ticketId);
+                ? sprintf('Reply sent, ticket #%d closed and assigned to you', $ticketId)
+                : sprintf('Reply added to ticket #%d and assigned to you', $ticketId);
         } else {
             $assigneeName = MCPHelper::personName($assignTarget);
             $summary = $isClosed
-                /* translators: %1$d is the ticket ID, %2$s is the assigned agent's name */
-                ? sprintf(__('Reply sent, ticket #%1$d closed and assigned to %2$s', 'fluent-support'), $ticketId, $assigneeName)
-                /* translators: %1$d is the ticket ID, %2$s is the assigned agent's name */
-                : sprintf(__('Reply added to ticket #%1$d and assigned to %2$s', 'fluent-support'), $ticketId, $assigneeName);
+                ? sprintf('Reply sent, ticket #%1$d closed and assigned to %2$s', $ticketId, $assigneeName)
+                : sprintf('Reply added to ticket #%1$d and assigned to %2$s', $ticketId, $assigneeName);
         }
 
         if ($reopen) {
-            /* translators: %d is the ticket ID */
-            $summary = sprintf(__('Ticket #%d was closed and has been reopened.', 'fluent-support'), $ticketId) . ' ' . $summary;
+            $summary = sprintf('Ticket #%d was closed and has been reopened.', $ticketId) . ' ' . $summary;
         }
 
         $payload = [
@@ -304,8 +296,8 @@ class ResponseTools
             return MCPHelper::error(
                 'invalid_param',
                 $draftOnly
-                    ? __('You can only save draft replies, which cannot close or assign the ticket', 'fluent-support')
-                    : __('A draft reply cannot close or assign the ticket', 'fluent-support'),
+                    ? 'You can only save draft replies, which cannot close or assign the ticket'
+                    : 'A draft reply cannot close or assign the ticket',
                 ['fields' => $conflicts, 'next_step' => 'Remove close_ticket and assignee_id, or send the reply without draft']
             );
         }
@@ -323,17 +315,15 @@ class ResponseTools
         $result = (new ResponseService())->createResponse($draft, $agent, $ticket);
 
         if (!$result) {
-            return MCPHelper::error('failed', __('Failed to save draft reply', 'fluent-support'), ['retryable' => true]);
+            return MCPHelper::error('failed', 'Failed to save draft reply', ['retryable' => true]);
         }
 
         $result['response']->updateSettingsValue('mcp_request_hash', $requestHash);
 
         return MCPHelper::envelope(
             $draftOnly
-                /* translators: %d is the ticket ID */
-                ? sprintf(__('Draft reply saved on ticket #%d. You only have the Draft Reply permission, so your replies are saved as drafts until another agent approves them.', 'fluent-support'), $ticket->id)
-                /* translators: %d is the ticket ID */
-                : sprintf(__('Draft reply saved on ticket #%d. It is not sent until an agent approves it.', 'fluent-support'), $ticket->id),
+                ? sprintf('Draft reply saved on ticket #%d. You only have the Draft Reply permission, so your replies are saved as drafts until another agent approves them.', $ticket->id)
+                : sprintf('Draft reply saved on ticket #%d. It is not sent until an agent approves it.', $ticket->id),
             [
                 'response' => [
                     'id'         => $result['response']->id,
@@ -439,7 +429,7 @@ class ResponseTools
 
     public static function updateResponse($params)
     {
-        $found = self::findOwnConversation($params, 'response_id', self::EDITABLE_TYPES, __('Draft or note', 'fluent-support'), [__CLASS__, 'scopeEditable']);
+        $found = self::findOwnConversation($params, 'response_id', self::EDITABLE_TYPES, 'Draft or note', [__CLASS__, 'scopeEditable']);
         if (is_wp_error($found)) {
             return $found;
         }
@@ -448,16 +438,14 @@ class ResponseTools
         $format  = $params['content_format'] ?? 'markdown';
         $content = wp_kses_post(Helper::decodeNonMarkupEntities(MCPHelper::processContent($params['content'] ?? '', $format)));
         if (!$content) {
-            return MCPHelper::error('invalid_param', __('content is required', 'fluent-support'), ['fields' => ['content']]);
+            return MCPHelper::error('invalid_param', 'content is required', ['fields' => ['content']]);
         }
 
         $row = (new ResponseService())->update($row, self::parseSmartcodes($content, $ticket), MCPHelper::resolveAgent());
 
         $summary = $row->conversation_type === 'draft_response'
-            /* translators: %d is the ticket ID */
-            ? sprintf(__('Draft reply updated on ticket #%d. It is still not sent.', 'fluent-support'), $ticket->id)
-            /* translators: %d is the ticket ID */
-            : sprintf(__('Internal note updated on ticket #%d.', 'fluent-support'), $ticket->id);
+            ? sprintf('Draft reply updated on ticket #%d. It is still not sent.', $ticket->id)
+            : sprintf('Internal note updated on ticket #%d.', $ticket->id);
 
         return MCPHelper::envelope($summary, ['response' => [
             'id'         => $row->id,
@@ -469,7 +457,7 @@ class ResponseTools
 
     public static function deleteResponse($params)
     {
-        $found = self::findOwnConversation($params, 'response_id', self::EDITABLE_TYPES, __('Draft or note', 'fluent-support'), [__CLASS__, 'scopeEditable']);
+        $found = self::findOwnConversation($params, 'response_id', self::EDITABLE_TYPES, 'Draft or note', [__CLASS__, 'scopeEditable']);
         if (is_wp_error($found)) {
             return $found;
         }
@@ -478,15 +466,14 @@ class ResponseTools
         // Like the admin, deleting a note needs the delete permission. An author may
         // always discard their own unsent draft.
         if ($row->conversation_type !== 'draft_response' && !PermissionManager::currentUserCan('fst_delete_tickets')) {
-            return MCPHelper::error('forbidden', __('Deleting a note needs the "Delete Tickets & Individual Responses" permission.', 'fluent-support'));
+            return MCPHelper::error('forbidden', 'Deleting a note needs the "Delete Tickets & Individual Responses" permission.');
         }
 
         $deleted = ['id' => $row->id, 'type' => $row->conversation_type];
         (new ResponseService())->delete($row, MCPHelper::resolveAgent());
 
         return MCPHelper::envelope(
-            /* translators: %d is the ticket ID */
-            sprintf(__('Deleted from ticket #%d.', 'fluent-support'), $ticket->id),
+            sprintf('Deleted from ticket #%d.', $ticket->id),
             ['deleted' => $deleted]
         );
     }
@@ -535,7 +522,7 @@ class ResponseTools
             $params,
             'response_id',
             ['draft_response'],
-            __('Draft reply', 'fluent-support'),
+            'Draft reply',
             null,
             $canApprove // an approver may publish anyone's draft
         );
@@ -545,7 +532,7 @@ class ResponseTools
         [$ticket, $draft] = $found;
 
         if (!$canApprove && !($canManage && $agent && (int) $draft->person_id === (int) $agent->id)) {
-            return MCPHelper::error('forbidden', __('You can only save drafts. An agent with the "Approve Draft Reply" permission must publish this one.', 'fluent-support'));
+            return MCPHelper::error('forbidden', 'You can only save drafts. An agent with the "Approve Draft Reply" permission must publish this one.');
         }
 
         $content = $draft->content;
@@ -556,8 +543,7 @@ class ResponseTools
         $published = (new ResponseService())->publishDraft($ticket, $draft, $agent, $content);
 
         return MCPHelper::envelope(
-            /* translators: %d is the ticket ID */
-            sprintf(__('Draft reply published on ticket #%d and sent to the customer.', 'fluent-support'), $ticket->id),
+            sprintf('Draft reply published on ticket #%d and sent to the customer.', $ticket->id),
             [
                 'response' => [
                     'id'         => $published->id,
@@ -581,19 +567,18 @@ class ResponseTools
     {
         $agent = MCPHelper::resolveAgent();
         if (!$agent) {
-            return MCPHelper::error('unauthorized', __('No agent found for current user', 'fluent-support'));
+            return MCPHelper::error('unauthorized', 'No agent found for current user');
         }
 
         $ticketId = (int) ($params['ticket_id'] ?? 0);
         $rowId    = (int) ($params[$idField] ?? 0);
         if (!$ticketId || !$rowId) {
-            /* translators: %s is a parameter name */
-            return MCPHelper::error('invalid_param', sprintf(__('ticket_id and %s are required', 'fluent-support'), $idField), ['fields' => ['ticket_id', $idField]]);
+            return MCPHelper::error('invalid_param', sprintf('ticket_id and %s are required', $idField), ['fields' => ['ticket_id', $idField]]);
         }
 
         $ticket = Ticket::find($ticketId);
         if (!$ticket) {
-            return MCPHelper::error('not_found', __('Ticket not found', 'fluent-support'), ['next_step' => 'Use list-tickets to find valid ticket IDs']);
+            return MCPHelper::error('not_found', 'Ticket not found', ['next_step' => 'Use list-tickets to find valid ticket IDs']);
         }
 
         if ($err = TicketAccessGuard::assert($ticket)) {
@@ -611,7 +596,7 @@ class ResponseTools
         if (!$row && Conversation::where('id', $rowId)->where('ticket_id', $ticket->id)->where('conversation_type', 'response')->exists()) {
             return MCPHelper::error(
                 'not_editable',
-                __('This is a sent reply. The customer already has it, so it cannot be changed or deleted here.', 'fluent-support'),
+                'This is a sent reply. The customer already has it, so it cannot be changed or deleted here.',
                 ['fields' => [$idField], 'retryable' => false]
             );
         }
@@ -619,14 +604,13 @@ class ResponseTools
         if (!$row) {
             return MCPHelper::error(
                 'not_found',
-                /* translators: %s is "Draft reply" or "Internal note" */
-                sprintf(__('%s not found on this ticket', 'fluent-support'), $label),
+                sprintf('%s not found on this ticket', $label),
                 ['fields' => [$idField], 'next_step' => 'Use get-ticket to find it: your drafts are type draft_response and your notes type note. Sent replies and internal_info activity lines cannot be changed.']
             );
         }
 
         if (!$anyAuthor && (int) $row->person_id !== (int) $agent->id) {
-            return MCPHelper::error('forbidden', __('This was written by another agent. Only its author can change or delete it.', 'fluent-support'));
+            return MCPHelper::error('forbidden', 'This was written by another agent. Only its author can change or delete it.');
         }
 
         return [$ticket, $row];
@@ -636,23 +620,23 @@ class ResponseTools
     {
         $agent = MCPHelper::resolveAgent();
         if (!$agent) {
-            return MCPHelper::error('unauthorized', __('No agent found for current user', 'fluent-support'));
+            return MCPHelper::error('unauthorized', 'No agent found for current user');
         }
 
         $ticketId = (int) ($params['ticket_id'] ?? 0);
         if (!$ticketId) {
-            return MCPHelper::error('invalid_param', __('ticket_id is required', 'fluent-support'), ['fields' => ['ticket_id']]);
+            return MCPHelper::error('invalid_param', 'ticket_id is required', ['fields' => ['ticket_id']]);
         }
 
         $format  = $params['content_format'] ?? 'markdown';
         $content = wp_kses_post(Helper::decodeNonMarkupEntities(MCPHelper::processContent($params['content'] ?? '', $format)));
         if (!$content) {
-            return MCPHelper::error('invalid_param', __('content is required', 'fluent-support'), ['fields' => ['content']]);
+            return MCPHelper::error('invalid_param', 'content is required', ['fields' => ['content']]);
         }
 
         $ticket = Ticket::find($ticketId);
         if (!$ticket) {
-            return MCPHelper::error('not_found', __('Ticket not found', 'fluent-support'), ['next_step' => 'Use list-tickets to find valid ticket IDs']);
+            return MCPHelper::error('not_found', 'Ticket not found', ['next_step' => 'Use list-tickets to find valid ticket IDs']);
         }
 
         if ($err = TicketAccessGuard::assert($ticket)) {
@@ -679,7 +663,7 @@ class ResponseTools
         $result = (new ResponseService())->createResponse($data, $agent, $ticket, true);
 
         if (!$result) {
-            return MCPHelper::error('failed', __('Failed to create internal note', 'fluent-support'), ['retryable' => true]);
+            return MCPHelper::error('failed', 'Failed to create internal note', ['retryable' => true]);
         }
 
         (new ResponseService())->fireResponseHooks($result['response'], $result['ticket'], $agent, false);

@@ -79,6 +79,7 @@ const reportTabs = [
         label: $t('Ticket Overview'),
         icon: 'ticket_overview',
         component: 'TicketOverview',
+        showcase: true,
         sensitive: true
     },
     {
@@ -95,6 +96,7 @@ const reportTabs = [
         label: $t('Agent Performance'),
         icon: 'team_performance',
         component: 'AgentPerformance',
+        showcase: true,
         sensitive: true
     },
     {
@@ -102,6 +104,7 @@ const reportTabs = [
         label: $t('Product Insight'),
         icon: 'product_support',
         component: 'ProductInsights',
+        showcase: true,
         sensitive: true
     },
     {
@@ -109,6 +112,7 @@ const reportTabs = [
         label: $t('Business Boxes'),
         icon: 'business_boxes_report',
         component: 'WorkloadHealth',
+        showcase: true,
         sensitive: true
     },
     {
@@ -117,6 +121,7 @@ const reportTabs = [
         icon: 'activity_reports',
         component: 'ActivityByTimeOfDay',
         url: 'activity-by-time-of-day',
+        showcase: true,
         sensitive: true
     },
     {
@@ -133,6 +138,7 @@ const reportTabs = [
         label: $t('AI Ticket Audit'),
         icon: 'ai_ticket_audit',
         component: 'TicketAudit',
+        showcase: true,
         sensitive: true
     }
 ];
@@ -190,7 +196,8 @@ export default {
         },
         activeComponent() {
             if (this.isProLockedTab) {
-                return 'AdvanceReportPlaceholder';
+                // Tabs with their own Pro showcase render it in place of the report.
+                return this.activeTab.showcase ? this.activeTab.component : 'AdvanceReportPlaceholder';
             }
             return (this.activeTab && this.activeTab.component) || 'AdvanceReportPlaceholder';
         },

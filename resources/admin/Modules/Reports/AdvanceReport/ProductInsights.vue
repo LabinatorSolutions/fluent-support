@@ -5,13 +5,14 @@
             <div class="fs_product_support_header_row">
                 <h3 class="fs_page_title">{{ $t("Product Insights") }}</h3>
                 <LiveSnapshotSelector
+                    v-if="has_pro"
                     v-model="liveMode"
                     v-model:selected-snapshot="selectedSnapshot"
                     report-type="product_insights"
                     @change="handleLiveModeChange"
                 />
             </div>
-            <div class="fs_product_support_header_row fs_product_support_toolbar">
+            <div v-if="has_pro" class="fs_product_support_header_row fs_product_support_toolbar">
                 <div class="fs_toolbar_left">
                     <el-dropdown trigger="click" :disabled="isSnapshotMode" @command="handleProductChange">
                         <button class="fs_pill_dropdown_btn" :disabled="isSnapshotMode">
@@ -56,10 +57,15 @@
                     </div>
                 </div>
             </div>
+            <SnapshotBanner
+                v-if="liveMode === 'snapshot' && selectedSnapshot"
+                :snapshot="selectedSnapshot"
+                @back="handleLiveModeChange({ mode: 'live', snapshot: null })"
+            />
         </div>
 
         <!-- Main Content -->
-        <div class="fs_product_support_content" v-loading="loading">
+        <div v-if="has_pro" class="fs_product_support_content" v-loading="loading">
             <div class="fs_page_error" v-if="fetchError">
                 <p>{{ $t("Couldn't load this data.") }}</p>
                 <el-button size="small" @click="retryFetch">{{ $t("Retry") }}</el-button>
@@ -72,7 +78,7 @@
                         <IconPack :icon-key="stat.icon" :width="20" :height="20" />
                     </span>
                     <div class="fs_stat_card_text">
-                        <p class="fs_stat_label">{{ stat.label }}</p>
+                        <p class="fs_stat_label">{{ stat.label }}<InfoTip v-if="stat.tooltip" :content="stat.tooltip" /></p>
                         <span class="fs_stat_value">{{ stat.value }}</span>
                     </div>
                 </div>
@@ -112,12 +118,12 @@
                             <tr>
                                 <th>{{ $t("Product") }}</th>
                                 <th>{{ $t("Ticket Volume") }}</th>
-                                <th>{{ $t("Response Activity") }}</th>
-                                <th>{{ $t("Interactions") }}</th>
-                                <th>{{ $t("Open Tickets") }}</th>
+                                <th>{{ $t("Response Activity") }}<InfoTip :content="$t('Agent replies sent in the date range.')" /></th>
+                                <th>{{ $t("Interactions") }}<InfoTip :content="$t('Different tickets that got an agent reply in the date range.')" /></th>
+                                <th>{{ $t("Open Tickets") }}<InfoTip :content="$t('Tickets created in the date range that are still open.')" /></th>
                                 <th>{{ $t("Closed") }}</th>
-                                <th>{{ $t("Unanswered") }}</th>
-                                <th>{{ $t("Waiting Workload") }}</th>
+                                <th>{{ $t("Unanswered") }}<InfoTip :content="$t('Tickets created in the date range that have no reply yet.')" /></th>
+                                <th>{{ $t("Waiting Workload") }}<InfoTip :content="$t('Open tickets where the customer sent the last reply. The date range does not change this number.')" /></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -152,14 +158,54 @@
             </div>
             </template>
         </div>
+
+        <!-- Shown instead of the report when Pro is not active -->
+        <div v-else class="fs_report_pro_showcase">
+            <ProShowcase
+                :feature="$t('Product Insight')"
+                :heading="$t('Find the products that need the most help')"
+                :description="$t('See which products bring in the most tickets and how many are still unanswered, so you know where customers need help.')"
+                :specifics="promoSpecifics"
+                utm-content="feature_lock_report_product-insight"
+                docs-url="https://docs.fluentsupport.com/products-reports"
+            >
+                <template #preview>
+                    <div class="fs_pro_preview">
+                        <div class="fs_pro_preview_card fs_pro_preview_fields">
+                            <div class="fs_pro_preview_title">
+                                <span class="fs_pro_preview_checkbox"></span>
+                                {{ $t('Ticket volume by product') }}
+                            </div>
+                            <div class="fs_pro_preview_row fs_pro_preview_reveal" style="--fs-row-index: 0">
+                                <span class="fs_pro_preview_row_label">Pro Plan</span>
+                                <!-- translators: %s is the number of selected tickets. Used inside button labels such as "Close 3 tickets" -->
+                                <span class="fs_pro_preview_row_value">{{ $_n('%s ticket', '%s tickets', 412) }}</span>
+                            </div>
+                            <div class="fs_pro_preview_row fs_pro_preview_reveal" style="--fs-row-index: 1">
+                                <span class="fs_pro_preview_row_label">Starter</span>
+                                <!-- translators: %s is the number of selected tickets. Used inside button labels such as "Close 3 tickets" -->
+                                <span class="fs_pro_preview_row_value">{{ $_n('%s ticket', '%s tickets', 198) }}</span>
+                            </div>
+                            <div class="fs_pro_preview_row fs_pro_preview_row_focal fs_pro_preview_reveal" style="--fs-row-index: 2">
+                                <span class="fs_pro_preview_row_label">{{ $t('Busiest product') }}</span>
+                                <span class="fs_pro_preview_chip fs_pro_preview_chip_orange">Pro Plan</span>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </ProShowcase>
+        </div>
     </div>
 </template>
 
 <script type="text/babel">
 import ComparisonBarChart from "../Charts/ComparisonBarChart.vue";
 import LiveSnapshotSelector from "./Parts/LiveSnapshotSelector.vue";
+import SnapshotBanner from "./Parts/SnapshotBanner.vue";
 import IconPack from "@/admin/Components/IconPack.vue";
+import InfoTip from "@/admin/Components/InfoTip.vue";
 import Pagination from "@/admin/Pieces/Pagination";
+import ProShowcase from "@/admin/Components/ProShowcase.vue";
 import { ArrowDown } from "@element-plus/icons-vue";
 import { shortcuts } from "../Utils/dateShortCuts";
 import { formatDateRangeForDisplay, formatStatValue, isFutureDate, isSameDateRange } from "../Utils/reportHelpers";
@@ -169,11 +215,14 @@ export default {
     props: ["url", "date_range"],
     emits: ["date-change"],
     components: {
+        InfoTip,
         ComparisonBarChart,
         LiveSnapshotSelector,
+        SnapshotBanner,
         IconPack,
         Pagination,
-        ArrowDown
+        ArrowDown,
+        ProShowcase
     },
     data() {
         return {
@@ -195,6 +244,13 @@ export default {
         };
     },
     computed: {
+        promoSpecifics() {
+            return [
+                this.$t('Ticket volume for every product'),
+                this.$t('Open, closed and unanswered tickets per product'),
+                this.$t('Filter by date range')
+            ];
+        },
         productOptions() {
             return [
                 { id: "all", name: this.$t("All Products") },
@@ -233,9 +289,9 @@ export default {
 
             return [
                 { icon: "product_support", variant: "information", label: this.$t("Total Tickets"), value: this.formatStatValue(totalTickets) },
-                { icon: "error_warning_line", variant: "warning", label: this.$t("Unanswered Tickets"), value: this.formatStatValue(unanswered) },
-                { icon: "hourglass_line", variant: "highlighted", label: this.$t("Waiting Workload"), value: this.formatStatValue(waiting) },
-                { icon: "line_chart_line", variant: "feature", label: this.$t("Response Activity"), value: this.formatStatValue(responses) },
+                { icon: "error_warning_line", variant: "warning", label: this.$t("Unanswered Tickets"), tooltip: this.$t("Tickets created in the date range that have no reply yet."), value: this.formatStatValue(unanswered) },
+                { icon: "hourglass_line", variant: "highlighted", label: this.$t("Waiting Workload"), tooltip: this.$t("Open tickets where the customer sent the last reply. The date range does not change this number."), value: this.formatStatValue(waiting) },
+                { icon: "line_chart_line", variant: "feature", label: this.$t("Response Activity"), tooltip: this.$t("Agent replies sent in the date range."), value: this.formatStatValue(responses) },
             ];
         },
         isSnapshotMode() {
@@ -351,6 +407,9 @@ export default {
             this.pagination.current_page = 1;
         },
         fetchProductInsights() {
+            if (!this.has_pro) {
+                return;
+            }
             if (!this.localDateRange || this.localDateRange.length !== 2) {
                 // Invalidate any in-flight request so its callbacks can't
                 // repopulate the page after the range has been cleared.

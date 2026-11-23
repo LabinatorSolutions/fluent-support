@@ -125,8 +125,8 @@
                     @selection-change="handleSelectionChange"
                     @row-click="openCustomer"
                 >
-                    <el-table-column type="selection" width="48" />
-                    <el-table-column :label="$t('Customer')" min-width="260" class-name="fs_col_customer">
+                    <el-table-column type="selection" fixed="left" width="48" />
+                    <el-table-column fixed="left" :label="$t('Customer')" min-width="260" class-name="fs_col_customer">
                         <template #default="{ row }">
                             <div class="fs_customer_name_cell">
                                 <div class="fs_customer_avatar">
@@ -263,7 +263,7 @@
             v-model="showEditModal"
             v-if="editing_customer"
             width="60%"
-            class="fs_dialog"
+            class="fs_dialog fs_dialog_md"
         >
             <customer-form
                 v-if="editing_customer"

@@ -21,7 +21,7 @@
 
 return [
     'expected' => [
-        'POST'   => 98,
+        'POST'   => 99,
         'PUT'    => 18,
         'DELETE' => 18,
     ],
@@ -226,6 +226,14 @@ return [
             'payload' => [],
         ],
 
+        // ---- community ticket (core, CommunityTicketPolicy) ----
+        [
+            'label'   => 'community: create ticket',
+            'method'  => 'POST',
+            'route'   => '/community/ticket',
+            'payload' => ['type' => 'feed', 'id' => 1],
+        ],
+
         // ---- products (core, AdminSettingsPolicy) ----
         [
             'label'   => 'products: create',
@@ -333,6 +341,12 @@ return [
             'label'   => 'settings: mcp install adapter',
             'method'  => 'POST',
             'route'   => '/settings/mcp/install-adapter',
+            'payload' => [],
+        ],
+        [
+            'label'   => 'settings: mcp turn on the hub',
+            'method'  => 'POST',
+            'route'   => '/settings/mcp/enable-hub',
             'payload' => [],
         ],
 

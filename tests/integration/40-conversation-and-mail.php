@@ -205,8 +205,8 @@ return function () {
         FsTest::interceptMail();
         [$toCustomer, $toAdmin] = $createdEmailCounts('active');
 
-        // Control for the blocked case: "Ticket Created" + "Ticket Logged by Agent".
-        FsTest::assertSame(2, $toCustomer, 'creation emails to an active customer');
+        // Control for the blocked case: only "Ticket Logged by Agent", since an agent created it.
+        FsTest::assertSame(1, $toCustomer, 'creation emails to an active customer');
         FsTest::assertSame(1, $toAdmin, 'creation email to the mailbox admin');
     });
 

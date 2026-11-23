@@ -32,7 +32,7 @@ return function () {
 
     $context = function () use ($plain) {
         ManagementTools::invalidateSupportContextCache();
-        return $plain(ManagementTools::getSupportContext([]))['data'];
+        return $plain(ManagementTools::getSupportContext(['include' => ['views']]))['data'];
     };
 
     $listTotal = function ($args) use ($plain) {

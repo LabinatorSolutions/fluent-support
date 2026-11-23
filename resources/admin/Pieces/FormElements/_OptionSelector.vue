@@ -8,7 +8,7 @@
                 v-for="option in options"
                 :key="option.id"
                 :value="option.id"
-                :label="option.title"><span v-html="option.title"></span></el-option>
+                :label="option.title">{{ option.title }}</el-option>
         </el-select>
     </div>
 </template>

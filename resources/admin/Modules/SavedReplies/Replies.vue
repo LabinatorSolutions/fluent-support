@@ -170,7 +170,7 @@
             v-model="showModal"
             v-if="editing_reply"
             width="60%"
-            class="fs_dialog fs_reply_modal"
+            class="fs_dialog fs_reply_modal fs_dialog_md"
             @closed="resetEditingReply"
         >
             <el-form label-position="top" :data="editing_reply">

@@ -228,6 +228,35 @@ return function () {
             FsTest::assertSame((int) $hiddenCustomer->id, is_wp_error($result) ? null : (int) $result['data']['customer']['id'], 'admin still reads the customer');
         });
 
+        FsTest::case('mcp get-customer-tickets by name: restricted viewer gets no candidate or count for a hidden customer', function () use ($switchTo, $viewerUserId, $adminId, $restrictedBox, $otherAgent) {
+            $name = 'Hiddenname' . FsTest::uniq('n');
+            $hidden = FsFactory::customer(['first_name' => $name, 'last_name' => 'Hidden']);
+            $visible = FsFactory::customer(['first_name' => $name, 'last_name' => 'Visible']);
+            FsFactory::ticket(['customer_id' => $hidden->id, 'mailbox_id' => $restrictedBox->id, 'agent_id' => $otherAgent->id, 'status' => 'active']);
+
+            $plain = function ($result) {
+                return is_wp_error($result) ? ['error' => $result->get_error_code(), 'raw' => $result->get_error_message()] : json_decode(wp_json_encode($result), true);
+            };
+
+            $switchTo($viewerUserId);
+            try {
+                // Two customers share the name; the viewer can see one, so it is not ambiguous for them.
+                $shared = $plain(CustomerTools::getCustomerTickets(['name' => $name]));
+                FsTest::assertSame((int) $visible->id, (int) ($shared['data']['customer']['id'] ?? 0), 'the visible customer is returned');
+                FsTest::assert(!isset($shared['meta']['match_count']) && !isset($shared['data']['candidates']), 'no count or candidate list');
+                FsTest::assert(strpos(wp_json_encode($shared), $hidden->email) === false, 'the hidden customer is not in the result');
+
+                $onlyHidden = $plain(CustomerTools::getCustomerTickets(['name' => $name . ' Hidden']));
+                FsTest::assertSame('not_found', $onlyHidden['error'] ?? 'returned data', 'a hidden customer looks like no customer');
+                FsTest::assert(strpos($onlyHidden['raw'] ?? '', $hidden->email) === false, 'the error does not name them');
+            } finally {
+                $switchTo($adminId);
+            }
+
+            $admin = $plain(CustomerTools::getCustomerTickets(['name' => $name]));
+            FsTest::assertSame([true, 2], [$admin['meta']['ambiguous'] ?? null, $admin['meta']['match_count'] ?? null], 'an admin sees both as candidates');
+        });
+
         FsTest::case('mcp search-customers: restricted viewer finds a customer whose only ticket has no mailbox',function () use ($switchTo, $viewerUserId, $adminId, $noMailboxCustomer) {
             $switchTo($viewerUserId);
             try {

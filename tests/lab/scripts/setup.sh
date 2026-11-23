@@ -55,6 +55,11 @@ printf 'Installing WooCommerce...\n'
 wp_cli plugin is-installed woocommerce || wp_cli plugin install woocommerce >/dev/null
 wp_cli plugin activate woocommerce >/dev/null
 
+# FluentCommunity backs the community ticket suite (127), which skips without it.
+printf 'Installing FluentCommunity...\n'
+wp_cli plugin is-installed fluent-community || wp_cli plugin install fluent-community >/dev/null
+wp_cli plugin activate fluent-community >/dev/null
+
 # FluentCRM backs the FluentCRM settings E2E spec, which fails without it.
 printf 'Installing FluentCRM...\n'
 wp_cli plugin is-installed fluent-crm || wp_cli plugin install fluent-crm >/dev/null

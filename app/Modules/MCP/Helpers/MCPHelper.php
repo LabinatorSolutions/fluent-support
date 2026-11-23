@@ -26,8 +26,12 @@ class MCPHelper
      * 2 (2026-10-07): last_reply_by became waiting_on; reply_email shows the
      * template instead of guessed greeting/sign-off flags; uploads lists
      * allowed_extensions; the customer email can no longer be changed.
+     *
+     * 3 (2026-11-16): get-support-context lists hold ticket ids, with each row once
+     * under tickets; agents, products, mailboxes, tags, views and uploads are
+     * returned only when include asks for them.
      */
-    const SCHEMA_VERSION = 2;
+    const SCHEMA_VERSION = 3;
 
     /** Max chars in a content preview. */
     const PREVIEW_CHARS = 150;
@@ -44,11 +48,9 @@ class MCPHelper
 
     /**
      * Whose turn it is on an open ticket: "agent" when the customer is owed a reply
-     * (a new ticket counts), "customer" when we answered and wait for them. Null on a
-     * closed ticket, and on an imported one with no reply history.
-     *
-     * Ticket::last_reply_by holds the same fact under an older, inverted name;
-     * informational replies and notes do not change it.
+     * (a new ticket counts, and one with no agent reply), "customer" when we answered
+     * and wait for them. Null on a closed ticket. Informational replies and notes do
+     * not change it.
      *
      * @param \FluentSupport\App\Models\Ticket $ticket
      * @return string|null
@@ -59,12 +61,16 @@ class MCPHelper
             return null;
         }
 
-        $lastReplyBy = $ticket->last_reply_by;
-        if ($lastReplyBy === 'customer') {
+        // The same rule as Ticket::scopeWaitingOnly(), so a row agrees with the
+        // waiting_for_reply and waiting_on filters. A tie counts as answered: an
+        // outreach ticket has both timestamps set to its creation time.
+        $agentAt    = $ticket->last_agent_response;
+        $customerAt = $ticket->last_customer_response;
+        if ($ticket->status === 'new' || !$agentAt || ($customerAt && strtotime($agentAt) < strtotime($customerAt))) {
             return 'agent';
         }
 
-        return $lastReplyBy === 'agent' ? 'customer' : null;
+        return 'customer';
     }
 
     public static function formatTicketForMCP($ticket)
@@ -287,7 +293,7 @@ class MCPHelper
                 'file_type'      => $attachment->file_type,
                 'file_size'      => (int) $attachment->file_size,
                 'url'            => $attachment->signedUrl($expires),
-                'url_expires_at' => gmdate('c', $expires),
+                'url_expires_at' => wp_date('c', $expires),
             ];
         }
 
@@ -539,6 +545,7 @@ class MCPHelper
 
     /**
      * Keep scalars only, strip tags, cap depth, list sizes and string lengths.
+     * ISO 8601 dates with an offset are moved to the site's timezone.
      *
      * @param array $data
      * @param int   $depth
@@ -567,6 +574,12 @@ class MCPHelper
                 // Links come from other sites: web addresses only.
                 if ($key === 'url' && !preg_match('#^https?://#i', $value)) {
                     continue;
+                }
+
+                // Integrations send ISO 8601 dates, most in UTC. Show the same moment
+                // in site time, as every other date the tools return.
+                if (preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-]\d{2}:\d{2})$/', $value) && ($timestamp = strtotime($value))) {
+                    $value = wp_date('c', $timestamp);
                 }
 
                 $clean[$key] = mb_substr($value, 0, self::WIDGET_MAX_STRING);
@@ -643,8 +656,10 @@ class MCPHelper
         $html = preg_replace('#<br\s*/?>|</?(p|div|li|ul|ol|tr|td|th|h[1-6]|blockquote|pre|table|section|article|header|footer)\b[^>]*>#i', ' ', $html);
 
         $text = wp_strip_all_tags($html);
-        $text = html_entity_decode($text, ENT_QUOTES, 'UTF-8');
-        $text = preg_replace('/\s+/', ' ', $text);
+        // ENT_HTML5: the default HTML 4.01 table leaves &apos; as it is.
+        $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        // \xA0: a decoded &nbsp; is not whitespace to \s without the u flag.
+        $text = preg_replace('/(?:\s|\xC2\xA0)+/', ' ', $text);
 
         return trim($text);
     }
@@ -690,17 +705,17 @@ class MCPHelper
     public static function resolveAssignmentTarget($agentId, $ticket = null, $fieldName = 'agent_id')
     {
         if (!PermissionManager::currentUserCan('fst_assign_agents')) {
-            return self::error('forbidden', __('You do not have permission to assign agents', 'fluent-support'));
+            return self::error('forbidden', 'You do not have permission to assign agents');
         }
 
         $agentId = (int) $agentId;
         if ($agentId <= 0) {
-            return self::error('invalid_param', sprintf(__('%s must be a positive integer', 'fluent-support'), $fieldName), ['fields' => [$fieldName]]);
+            return self::error('invalid_param', sprintf('%s must be a positive integer', $fieldName), ['fields' => [$fieldName]]);
         }
 
         $targetAgent = Agent::find($agentId);
         if (!$targetAgent) {
-            return self::error('invalid_param', __('The specified agent does not exist', 'fluent-support'), ['fields' => [$fieldName], 'next_step' => 'Use get-support-context to see available agents and their IDs']);
+            return self::error('invalid_param', 'The specified agent does not exist', ['fields' => [$fieldName], 'next_step' => 'Use get-support-context with include=["agents"] to see available agents and their IDs']);
         }
 
         if ($ticket instanceof Ticket) {
@@ -761,16 +776,17 @@ class MCPHelper
         if ($seconds < 60) {
             return $seconds . 's';
         }
-        if ($seconds < 3600) {
-            return round($seconds / 60) . 'm';
+
+        // Round to the smaller unit shown first, then split, so it never reads "60m" or "24h".
+        $minutes = (int) round($seconds / 60);
+        if ($minutes < 60) {
+            return $minutes . 'm';
         }
-        if ($seconds < 86400) {
-            $h = floor($seconds / 3600);
-            $m = round(($seconds % 3600) / 60);
-            return $h . 'h ' . $m . 'm';
+        if ($minutes < 1440) {
+            return intdiv($minutes, 60) . 'h ' . ($minutes % 60) . 'm';
         }
-        $d = floor($seconds / 86400);
-        $h = round(($seconds % 86400) / 3600);
-        return $d . 'd ' . $h . 'h';
+
+        $hours = (int) round($seconds / 3600);
+        return intdiv($hours, 24) . 'd ' . ($hours % 24) . 'h';
     }
 }

@@ -119,7 +119,17 @@ describe('ticket bulk bar', () => {
     });
 
     it('shows the selection count', () => {
-        expect(el.querySelector('.fs_bb_count').textContent).toContain('2 selected');
+        expect(el.querySelector('.fs_bb_count').textContent).toContain('2 items Selected');
+    });
+
+    it('bolds the count even when the translation has the same digit earlier', async () => {
+        vm.$.appContext.config.globalProperties.$_n = (one, many, n) => 'Page 2: %s items Selected'.replace('%s', n);
+        store.ticket_selections = [11, 12];
+        await flush();
+        const strong = el.querySelector('.fs_bb_count strong');
+        expect(strong.textContent).toBe('2');
+        expect(strong.previousSibling.textContent).toBe('Page 2: ');
+        expect(strong.nextSibling.textContent).toBe(' items Selected');
     });
 
     it('removes a tag from the selection through remove_tags', async () => {

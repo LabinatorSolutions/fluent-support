@@ -506,11 +506,24 @@ class TicketService
      */
     public function storeTicket($ticketData, $customer, $silently = false)
     {
+        // The note needs an agent to write it; without one the text would become a visible ticket body.
+        if (Arr::get($ticketData, 'start_with_note') === 'yes' && !Helper::getAgentByUserId()) {
+            throw new \Exception(esc_html__('Only a support agent can start a ticket with an internal note.', 'fluent-support'), 403);
+        }
+
         // Agents may attach files even when the customer ticket form disables uploads.
         $disabledFields = array_diff(apply_filters('fluent_support/disabled_ticket_fields', []), ['file_upload']);
 
         // Empty when no agent is logged in, so cron and API callers pass.
         $restrictedBoxes = (new AgentTicketAccess())->getRestrictedMailboxIds();
+
+        // Hidden from the first insert, so the row never shows the note text to the customer,
+        // even if a later step fails. The channel moves to the note.
+        $isLogged = Arr::get($ticketData, 'start_with_note') === 'yes';
+        if ($isLogged) {
+            $loggedChannel = Arr::get($ticketData, 'source') ?: 'web';
+            $ticketData['source'] = Ticket::SOURCE_AGENT_LOGGED;
+        }
 
         $requestedAgentId = (int) Arr::get($ticketData, 'agent_id');
         list($createdTicket, $ticketData) = $this->insertTicket($ticketData, $customer, $disabledFields, $restrictedBoxes);
@@ -520,7 +533,34 @@ class TicketService
             $isAgentInitiated = Arr::get($ticketData, 'agent_initiated') === 'yes';
             $createdTicket->created_by = $agent->id;
 
-            if ($isAgentInitiated) {
+            if ($isLogged) {
+                // A call or visit logged for the record: the text becomes an internal note and the
+                // customer sees nothing until the first response (Ticket::isHiddenFromCustomer()).
+                // A filter may have changed the source; keep the ticket hidden.
+                $createdTicket->source = Ticket::SOURCE_AGENT_LOGGED;
+
+                $note = (new ResponseService())->createResponse([
+                    'content'           => $createdTicket->content,
+                    'conversation_type' => 'note',
+                    'source'            => $loggedChannel,
+                    // Content that sanitizes to nothing still gets the note, so the files below have a home.
+                    'allow_empty_content' => true,
+                ], $agent, $createdTicket, true)['response'];
+
+                // Every ticket-level file (attachments and pasted images) moves to the note,
+                // so the portal never shows them with the opening message.
+                Attachment::where('ticket_id', $createdTicket->id)
+                    ->whereNull('conversation_id')
+                    ->update([
+                        'person_id'       => $agent->id,
+                        'conversation_id' => $note->id
+                    ]);
+
+                // The portal shows the body as the opening message, so it must not hold the note.
+                /* translators: %s is the agent's name */
+                $createdTicket->content = sprintf(__('%s logged this ticket', 'fluent-support'), esc_html($agent->full_name));
+                $createdTicket->content_hash = md5($createdTicket->content);
+            } elseif ($isAgentInitiated) {
                 // The agent's first response below sends its own email. Scoped to this
                 // ticket and removed after its creation hooks, so later tickets in the
                 // same request (MCP, imports, workflows) still get their emails.

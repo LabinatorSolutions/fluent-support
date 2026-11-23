@@ -8,6 +8,9 @@
  *   admin needs fst_assign_agents.
  * - A piped email ticket goes through the shared create path, so
  *   before_ticket_create sees the data after create_ticket_data.
+ * - A ticket an agent logs for a customer sends the customer one email: "Logged by
+ *   Agent" when it is on, else "Ticket Created". Its subject has no "Re:", even when
+ *   the mailbox template (locked in email mailboxes) starts with one.
  */
 
 use FluentSupport\App\Models\Conversation;
@@ -15,6 +18,8 @@ use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Modules\MCP\Tools\TicketTools;
 use FluentSupport\App\Modules\PermissionManager;
+use FluentSupport\App\Services\EmailNotification\Settings;
+use FluentSupport\App\Services\Tickets\TicketService;
 
 return function () {
     $marker = FsFactory::marker();
@@ -28,6 +33,33 @@ return function () {
         foreach (Customer::where('email', 'LIKE', '%' . $marker . '%')->get() as $customer) {
             FsFactory::adoptRestCustomer($customer);
         }
+    };
+
+    // A mailbox with only the given customer created emails on, each with its own subject.
+    // The teardown does not remove mailbox meta, so the finally below does.
+    $boxes = [];
+    $mailboxWith = function (array $onKeys) use ($marker, &$boxes) {
+        $box = FsFactory::mailbox(['settings' => ['admin_email_address' => '']]);
+        $boxes[] = $box;
+        $settings = new Settings();
+        foreach (['ticket_created_email_to_customer', 'ticket_created_by_agent_email_to_customer'] as $key) {
+            $emailSettings = $settings->getBoxEmailSettings($box, $key);
+            $emailSettings['status'] = in_array($key, $onKeys, true) ? 'yes' : 'no';
+            $emailSettings['email_subject'] = $key . ' ' . $marker;
+            $settings->saveBoxEmailSettings($box, $key, $emailSettings);
+        }
+
+        return $box;
+    };
+    $subjectsTo = function ($email) {
+        $subjects = [];
+        foreach (FsTest::sentMails() as $mail) {
+            if (in_array($email, (array) ($mail['to'] ?? []), true)) {
+                $subjects[] = strtok((string) $mail['subject'], ' ');
+            }
+        }
+
+        return $subjects;
     };
 
     try {
@@ -122,6 +154,66 @@ return function () {
             FsTest::assertSame(1, Conversation::where('ticket_id', $ticket->id)->where('conversation_type', 'internal_info')->where('content', 'LIKE', 'assigned this ticket%')->count(), 'activity line');
         });
 
+        FsTest::case('create: an agent\'s ticket sends the customer only the Logged by Agent email', function () use ($marker, $adopt, $mailboxWith, $subjectsTo) {
+            $box = $mailboxWith(['ticket_created_email_to_customer', 'ticket_created_by_agent_email_to_customer']);
+            $customer = FsFactory::customer(['email' => $marker . '-both@example.invalid']);
+            FsTest::interceptMail();
+            $result = FsTest::rest('POST', 'tickets', ['ticket' => ['title' => 'Both emails ' . $marker, 'content' => '<p>Body</p>', 'customer_id' => $customer->id, 'mailbox_id' => $box->id]]);
+            $adopt();
+            FsTest::assertHealthy($result, 'create');
+            FsTest::assertSame(['ticket_created_by_agent_email_to_customer'], $subjectsTo($customer->email), 'one email to the customer');
+        });
+
+        FsTest::case('create: with Logged by Agent off, an agent\'s ticket still sends Ticket Created', function () use ($marker, $adopt, $mailboxWith, $subjectsTo) {
+            $box = $mailboxWith(['ticket_created_email_to_customer']);
+            $customer = FsFactory::customer(['email' => $marker . '-generic@example.invalid']);
+            FsTest::interceptMail();
+            $result = FsTest::rest('POST', 'tickets', ['ticket' => ['title' => 'Generic email ' . $marker, 'content' => '<p>Body</p>', 'customer_id' => $customer->id, 'mailbox_id' => $box->id]]);
+            $adopt();
+            FsTest::assertHealthy($result, 'create');
+            FsTest::assertSame(['ticket_created_email_to_customer'], $subjectsTo($customer->email), 'the Ticket Created email');
+        });
+
+        FsTest::case('create: in an email mailbox an agent\'s ticket email has no Re:, a customer\'s keeps it', function () use ($marker, $adopt, &$boxes) {
+            $box = FsFactory::mailbox(['box_type' => 'email', 'settings' => ['admin_email_address' => '']]);
+            $boxes[] = $box;
+            $settings = new Settings();
+            $created = $settings->getBoxEmailSettings($box, 'ticket_created_email_to_customer');
+            $created['status'] = 'yes';
+            $settings->saveBoxEmailSettings($box, 'ticket_created_email_to_customer', $created);
+            $subjectTo = function ($email) {
+                foreach (FsTest::sentMails() as $mail) {
+                    if (in_array($email, (array) ($mail['to'] ?? []), true)) {
+                        return (string) $mail['subject'];
+                    }
+                }
+
+                return null;
+            };
+
+            $agentCustomer = FsFactory::customer(['email' => $marker . '-agent-re@example.invalid']);
+            FsTest::interceptMail();
+            FsTest::rest('POST', 'tickets', ['ticket' => ['title' => 'Agent subject ' . $marker, 'content' => '<p>Body</p>', 'customer_id' => $agentCustomer->id, 'mailbox_id' => $box->id]]);
+            $adopt();
+            FsTest::assertSame('Agent subject ' . $marker, $subjectTo($agentCustomer->email), 'Ticket Created without Re:');
+
+            $byAgent = $settings->getBoxEmailSettings($box, 'ticket_created_by_agent_email_to_customer');
+            $byAgent['status'] = 'yes';
+            $byAgent['email_subject'] = 'Re: {{ticket.title}}';
+            $settings->saveBoxEmailSettings($box, 'ticket_created_by_agent_email_to_customer', $byAgent);
+            $loggedCustomer = FsFactory::customer(['email' => $marker . '-logged-re@example.invalid']);
+            FsTest::interceptMail();
+            FsTest::rest('POST', 'tickets', ['ticket' => ['title' => 'Logged subject ' . $marker, 'content' => '<p>Body</p>', 'customer_id' => $loggedCustomer->id, 'mailbox_id' => $box->id]]);
+            $adopt();
+            FsTest::assertSame('Logged subject ' . $marker, $subjectTo($loggedCustomer->email), 'Logged by Agent without Re:');
+
+            $ownCustomer = FsFactory::customer(['email' => $marker . '-own-re@example.invalid']);
+            FsTest::interceptMail();
+            $ticket = (new TicketService())->storeCustomerTicket(['title' => 'Own subject ' . $marker, 'content' => '<p>Body</p>', 'mailbox_id' => $box->id], $ownCustomer);
+            FsFactory::adoptRestTicket($ticket);
+            FsTest::assertSame('Re: Own subject ' . $marker, $subjectTo($ownCustomer->email), 'a customer\'s own ticket keeps Re:');
+        });
+
         FsTest::case('create: a piped ticket goes through create_ticket_data before before_ticket_create', function () use ($marker, $adopt) {
             if (!defined('FLUENTSUPPORTPRO')) {
                 FsTest::skip('Fluent Support Pro is not active');
@@ -148,6 +240,9 @@ return function () {
             FsTest::assertSame('Piped create ' . $marker . ' [filtered]', Ticket::where('title', 'LIKE', 'Piped create ' . $marker . '%')->value('title'), 'stored');
         });
     } finally {
+        foreach ($boxes as $box) {
+            $box->deleteAllMeta();
+        }
         require_once ABSPATH . 'wp-admin/includes/user.php';
         foreach ($userIds as $userId) {
             wp_delete_user($userId);
